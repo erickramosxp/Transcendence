@@ -1,0 +1,14 @@
+FROM maven:3.9.12-eclipse-temurin
+
+WORKDIR /app
+
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
+
+RUN mvn -B dependency:resolve dependency:resolve-plugins
+
+COPY . .
+
+EXPOSE 8080
+CMD ["mvn", "quarkus:dev"]
