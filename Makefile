@@ -2,18 +2,36 @@
 COMPOSE := docker compose
 
 help:
-	@echo "Targets:"
-	@echo "  make env        # cria .env a partir do .env.example"
-	@echo "  make up         # sobe tudo (db + backend + frontend)"
-	@echo "  make down       # derruba tudo"
-	@echo "  make restart    # reinicia tudo"
-	@echo "  make logs       # logs de todos os serviços"
-	@echo "  make backend    # sobe apenas backend + db"
-	@echo "  make frontend   # sobe apenas frontend"
-	@echo "  make db         # sobe apenas db"
-	@echo "  make stop       # para serviços (mantém containers)"
-	@echo "  make clean      # remove containers, rede e volumes"
-	@echo "  make fclean     # full clean (containers + volumes + .env)"
+	@echo "╔════════════════════════════════════════════════════════════╗"
+	@echo "║           Transcendence - Makefile Commands                ║"
+	@echo "╚════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "🚀 Primeiros passos:"
+	@echo "  make env           # Criar .env a partir do .env.example"
+	@echo "  make build         # Build das imagens Docker"
+	@echo "  make up            # Iniciar todos os serviços"
+	@echo ""
+	@echo "🐳 Containers:"
+	@echo "  make backend       # Backend (Java/Quarkus) + Database"
+	@echo "  make frontend      # Frontend (React/Vite)"
+	@echo "  make db            # Apenas Database (PostgreSQL)"
+	@echo "  make ps            # Listar containers rodando"
+	@echo ""
+	@echo "⚙️  Controle:"
+	@echo "  make down          # Parar todos os serviços"
+	@echo "  make stop          # Pausar serviços (mantém containers)"
+	@echo "  make restart       # Reiniciar todos os serviços"
+	@echo "  make logs          # Ver logs em tempo real"
+	@echo ""
+	@echo "🧹 Limpeza:"
+	@echo "  make clean         # Remove containers, rede e volumes"
+	@echo "  make fclean        # Limpeza completa (+ prune + .env)"
+	@echo "  make re            # Rebuild completo (fclean + build)"
+	@echo ""
+	@echo "📋 URLs:"
+	@echo "  Backend:  http://localhost:8080"
+	@echo "  Frontend: http://localhost:5173"
+	@echo "  Database: localhost:5433"
 
 env:
 	@cp -n .env.example .env || true
@@ -23,7 +41,7 @@ build:
 	$(COMPOSE) up --build -d
 
 up:
-	$(COMPOSE) up 
+	$(COMPOSE) up
 
 down:
 	$(COMPOSE) down
@@ -50,10 +68,14 @@ stop:
 clean:
 	$(COMPOSE) down --volumes --remove-orphans
 
-
 fclean:
 	$(COMPOSE) down --volumes --remove-orphans
 	docker system prune -af
 	rm -f .env
 
-.PHONY: help env up down restart logs backend frontend db stop clean fclean
+re: fclean build
+
+ps:
+	@docker ps --filter "label=com.docker.compose.project=transcendence" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+.PHONY: help env up down restart logs backend frontend db stop clean fclean re build ps re build ps
