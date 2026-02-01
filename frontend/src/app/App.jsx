@@ -3,8 +3,8 @@ import { Home } from '../pages/Home';
 import { EditProfile } from '../pages/EditProfile';
 import { Chat } from '../pages/Chat';
 import { Feed } from '../pages/Feed';
-import { LoginPage } from '../pages/LoginPage';
-import { RegisterPage } from '../pages/RegisterPage';
+import { LoginPage } from '../pages/Login';
+import { RegisterPage } from '../pages/SignUp';
 import { Search } from '../pages/Search';
 import { Profile } from '../pages/Profile';
 import './App.css'
@@ -32,7 +32,6 @@ function App() {
         <Route path='/profile' element={<Profile />}/>
         <Route path='/editProfile' element={<EditProfile />}/>
         <Route path='/chat' element={<Chat />}/>
-        <Route path='/search' element={<Search />}/>
       </Routes>
     </BrowserRouter>
   )
