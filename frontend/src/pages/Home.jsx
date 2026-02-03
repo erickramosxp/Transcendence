@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { useState } from 'react'
 import { Link } from "react-router-dom"
 import { Button } from "../components/ui/Button.jsx"
 import { Card, CardContent } from "../components/ui/Card.jsx"
@@ -20,9 +21,38 @@ import {
     ArrowRight
 } from "lucide-react"
 
+
 export function Home() {
     const navigate = useNavigate();
+    const [isHoveredCard, setIsHoveredCard] = useState(null);
 
+
+    const features = [
+        {
+            icon: Users,
+            title: 'Conecte-se',
+            description: 'Faça amigos e expanda sua rede social',
+            color: 'from-[#6e93c4] to-[#4a78b5]',
+        },
+        {
+            icon: MessageCircle,
+            title: 'Converse',
+            description: 'Chat em tempo real com chamadas de voz',
+            color: 'from-[#4a78b5] to-[#3b6091]',
+        },
+        {
+            icon: Heart,
+            title: 'Compartilhe',
+            description: 'Publique momentos e interaja com amigos',
+            color: 'from-[#3b6091] to-[#2c486d]',
+        },
+        {
+            icon: Shield,
+            title: 'Seguro',
+            description: 'Seus dados sempre protegidos',
+            color: 'from-[#2c486d] to-[#1e3048]',
+        },
+    ];
     const handleLogin = (e) => {
         e.preventDefault();
         if (!loginEmail || !loginPassword) {
@@ -88,6 +118,44 @@ export function Home() {
                                     Conectando ideias, rede social sabor twitter.
                                 </p>
 
+                            </div>
+                            {/* Cards */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {features.map((feature, index) => {
+                                    const Icon = feature.icon;
+                                    const isHovered = isHoveredCard === index;
+
+                                    return (
+                                        <Card
+                                            key={index}
+                                            onMouseEnter={() => setIsHoveredCard(index)}
+                                            onMouseLeave={() => setIsHoveredCard(null)}
+                                            className={`border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl transition-all duration-300 cursor-pointer ${isHovered
+                                                ? 'shadow-2xl -translate-y-2 scale-105'
+                                                : 'shadow-lg hover:shadow-xl'
+                                                }`}
+                                        >
+                                            <CardContent className="p-4 sm:p-6">
+                                                <div className="flex items-start gap-3 sm:gap-4">
+                                                    <div
+                                                        className={`inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.color} shadow-lg transition-all duration-300 flex-shrink-0 ${isHovered ? 'scale-110 rotate-12' : ''
+                                                            } `}
+                                                    >
+                                                        <Icon className="h-5 w-5 sm:h-7 sm:w-6 text-white" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="font-bold text-slate-900 dark:text-white mb-1 text-sm sm:text-base">
+                                                            {feature.title}
+                                                        </h3>
+                                                        <p className="text-xs sm:text-slate-600 dark:text-slate-400 line-clamp-2">
+                                                            {feature.description}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -156,10 +224,10 @@ export function Home() {
                                                 </Button>
 
                                                 <div className="relative my-5 sm:my-6">
-                                                    <Separator/>
-                                                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 px-3 sm:px-4 text-xs sm:text-sm text-slate-500">
-                                                            ou
-                                                        </span>
+                                                    <Separator />
+                                                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 px-3 sm:px-4 text-xs sm:text-sm text-slate-500">
+                                                        ou
+                                                    </span>
                                                 </div>
                                                 <Button
                                                     type="button"
