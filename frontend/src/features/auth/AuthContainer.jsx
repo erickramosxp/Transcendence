@@ -10,8 +10,8 @@ export function AuthContainer() {
     const { login } = useAuth();
     const [mode, setMode] = useState("login");
 
-    const handleLogin = () => {
-        login();
+    const handleLogin = (credentials) => {
+        login(credentials);
     }
 
     const handleRegister = () => {
