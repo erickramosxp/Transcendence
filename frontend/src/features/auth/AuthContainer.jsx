@@ -1,4 +1,3 @@
-import { Button} from '../../shared/components/Button'
 import { useAuth } from '../../app/providers/AuthProvider';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
@@ -10,12 +9,12 @@ export function AuthContainer() {
     const { login } = useAuth();
     const [mode, setMode] = useState("login");
 
-    const handleLogin = (credentials) => {
-        login(credentials);
+    const handleLogin = async (credentials) => {
+        await login(credentials);
     }
 
-    const handleRegister = () => {
-        login();
+    const handleRegister = async () => {
+        await login();
     }
 
     return (

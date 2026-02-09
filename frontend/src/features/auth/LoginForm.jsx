@@ -6,7 +6,6 @@ export function LoginForm({onSubmit, onSwitch}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-
     const handleSubmit = () => {
         onSubmit({email, password});
     }
