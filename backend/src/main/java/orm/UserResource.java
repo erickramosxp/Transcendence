@@ -1,6 +1,6 @@
-package org.acme.resource;
+package orm;
 
-import org.acme.model.User;
+
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
