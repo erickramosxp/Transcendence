@@ -21,7 +21,7 @@ public class MeResource {
     @GET
     @Authenticated
     public UserResponse me() {
-        String email = jwt.getName(); // upn=email
+        String email = jwt.getName();
         User user = User.findByEmail(email);
         if (user == null) throw new NotAuthorizedException("Invalid token");
         return UserResponse.fromEntity(user);

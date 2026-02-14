@@ -1,5 +1,8 @@
 package com.ft.transcendence.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.time.OffsetDateTime;
 import jakarta.persistence.*;
 
@@ -33,6 +36,9 @@ public class User extends PanacheEntityBase {
 
     @Column(name = "last_login")
     public OffsetDateTime lastLogin;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Post> posts = new ArrayList<>();
 
     public static User findByEmailOrUsername(String identifier) {
         return find("email = ?1 OR username = ?1", identifier).firstResult();

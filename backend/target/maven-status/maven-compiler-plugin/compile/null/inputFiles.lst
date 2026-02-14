@@ -9,4 +9,9 @@
 /app/src/main/java/com/ft/transcendence/auth/dto/UserResponse.java
 /app/src/main/java/com/ft/transcendence/entity/AuthProvider.java
 /app/src/main/java/com/ft/transcendence/entity/AuthProviderType.java
+/app/src/main/java/com/ft/transcendence/entity/Comment.java
+/app/src/main/java/com/ft/transcendence/entity/Like.java
+/app/src/main/java/com/ft/transcendence/entity/Post.java
+/app/src/main/java/com/ft/transcendence/entity/PostResource.java
 /app/src/main/java/com/ft/transcendence/entity/User.java
+/app/src/main/java/com/ft/transcendence/entity/UserResource.java

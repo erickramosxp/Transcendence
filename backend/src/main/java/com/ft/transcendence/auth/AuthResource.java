@@ -24,6 +24,6 @@ public class AuthResource {
     @POST
     @Path("/login")
     public AuthResponse login(LoginRequest req) {
-        return authService.login(req.identifier, req.password);
+        return authService.login(req.username, req.password);
     }
 }
