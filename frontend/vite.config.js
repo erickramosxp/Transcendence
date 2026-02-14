@@ -14,5 +14,10 @@ export default defineConfig({
     watch: {
       usePolling: true // Necessário para o Hot Reload funcionar bem no Docker/WSL
     }
-  }
+  },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/test/setup.js",
+  },
 })
