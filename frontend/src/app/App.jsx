@@ -1,39 +1,46 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Home } from '../pages/Home';
 import { EditProfile } from '../pages/EditProfile';
 import { Chat } from '../pages/Chat';
 import { Feed } from '../pages/Feed';
-import { LoginPage } from '../pages/Login';
-import { RegisterPage } from '../pages/SignUp';
 import { Search } from '../pages/Search';
 import { Profile } from '../pages/Profile';
+import { PrivateLayout } from './layouts/PrivateLayout';
+import { PublicLayout } from './layouts/PublicLayout';
+import { PublicRoute } from './routes/PublicRoute';
+import { PrivateRoute } from './routes/PrivateRoute';
 import './App.css'
 
 function App() {
 
   return (
-    <BrowserRouter>
-      {/* <nav style={{display: 'flex', gap: '20px'}}>
-        <Link to={"/"}>Home</Link>
-        <Link to={"/login"}>Login</Link>
-        <Link to={"/register"}>Register</Link>
-        <Link to={"/feed"}>Feed</Link>
-        <Link to={"/search"}>Search</Link>
-        <Link to={"/profile"}>Profile</Link>
-        <Link to={"/editProfile"}>EditProfile</Link>
-        <Link to={"/chat"}>Chat</Link>
-      </nav> */}
-      <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/register' element={<RegisterPage/>}/>
+    <Routes>
+
+      <Route element={<PublicLayout />}>
+        
+        <Route path='/' 
+          element={
+            <PublicRoute>
+              <Home />
+            </PublicRoute>
+          }
+        />
+      </Route>
+
+
+      <Route element={
+          <PrivateRoute>
+            <PrivateLayout />
+          </PrivateRoute>
+        }>
+          
         <Route path='/feed' element={<Feed/>}/>
         <Route path='/search' element={<Search />}/>
         <Route path='/profile' element={<Profile />}/>
         <Route path='/editProfile' element={<EditProfile />}/>
         <Route path='/chat' element={<Chat />}/>
-      </Routes>
-    </BrowserRouter>
+      </Route>
+    </Routes>
   )
 }
 
