@@ -8,6 +8,7 @@ import { ThemeToggle } from "../components/ThemeToggle.jsx"
 import { Label } from "../components/ui/Label.jsx"
 import { Input } from "../components/ui/Input.jsx"
 import { Separator } from "../components/ui/Separator.jsx"
+import { LanguageSwitcher } from "../components/LanguageSwitcher.jsx"
 
 import {
     Sparkles,
@@ -75,7 +76,7 @@ export function Home() {
 
     const handleGoogleAuth = () => {
         toast.info('Autenticação com Google em desenvolvimento');
-        // Aqui você implementaria a integração real com Google OAuth
+        // implementar integração com Google OAuth
     };
 
 
@@ -87,7 +88,7 @@ export function Home() {
                 <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-xl p-1.5 shadow-lg border border-slate-200/50 dark:border-slate-800/50 flex items-center gap-1">
                     <ThemeToggle compact={true} />
                     <div className="w-px h-6 bg-slate-200 dark:bg-slate-800" />
-
+                    <LanguageSwitcher compact={true} />
                 </div>
             </div>
 
