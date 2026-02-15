@@ -1,5 +1,4 @@
-package orm;
-
+package com.ft.transcendence.entity;
 
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;

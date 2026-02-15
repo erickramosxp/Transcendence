@@ -56,6 +56,9 @@ logs:
 backend:
 	$(COMPOSE) up --build -d database backend
 
+backend-clean:
+	sudo rm -rf backend/target backend/.quarkus
+
 frontend:
 	$(COMPOSE) up --build -d frontend
 
