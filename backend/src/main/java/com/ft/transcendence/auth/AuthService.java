@@ -1,0 +1,90 @@
+package com.ft.transcendence.auth;
+
+import java.time.OffsetDateTime;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
+
+import com.ft.transcendence.auth.dto.AuthResponse;
+import com.ft.transcendence.auth.dto.RegisterRequest;
+import com.ft.transcendence.entity.AuthProvider;
+import com.ft.transcendence.entity.AuthProviderType;
+import com.ft.transcendence.entity.User;
+
+import io.quarkus.elytron.security.common.BcryptUtil;
+import io.smallrye.jwt.build.Jwt;
+
+@ApplicationScoped
+public class AuthService {
+
+    @Transactional
+    public AuthResponse registerLocal(RegisterRequest req) {
+        validateRegister(req);
+
+        if (User.find("email", req.email).firstResult() != null)
+            throw new BadRequestException("Email already in use");
+        if (User.find("username", req.username).firstResult() != null)
+            throw new BadRequestException("Username already in use");
+
+        var now = OffsetDateTime.now();
+
+        var user = new User();
+        user.email = req.email.trim().toLowerCase();
+        user.username = req.username.trim();
+        user.name = req.name;
+        user.active = true;
+        user.createdAt = now;
+        user.updatedAt = now;
+        user.persist();
+
+        var ap = new AuthProvider();
+        ap.user = user;
+        ap.providerType = AuthProviderType.LOCAL;
+        ap.passwordHash = BcryptUtil.bcryptHash(req.password);
+        ap.createdAt = now;
+        ap.persist();
+
+        String token = issueToken(user);
+        return AuthResponse.of(token, user);
+    }
+
+    @Transactional
+    public AuthResponse login(String identifier, String password) {
+        if (identifier == null || identifier.isBlank() || password == null || password.isBlank()) {
+            throw new NotAuthorizedException("Invalid credentials");
+        }
+
+        User user = User.findByEmailOrUsername(identifier.trim());
+        if (user == null || !user.active) throw new NotAuthorizedException("Invalid credentials");
+
+        AuthProvider local = AuthProvider.findLocalByUserId(user.id);
+        if (local == null || local.passwordHash == null) throw new NotAuthorizedException("Invalid credentials");
+
+        if (!BcryptUtil.matches(password, local.passwordHash)) {
+            throw new NotAuthorizedException("Invalid credentials");
+        }
+
+        user.lastLogin = OffsetDateTime.now();
+        user.updatedAt = OffsetDateTime.now();
+
+        String token = issueToken(user);
+        return AuthResponse.of(token, user);
+    }
+
+    private String issueToken(User user) {
+        // upn=email e claim uid
+        return Jwt.upn(user.email)
+                .claim("uid", user.id)
+                .issuer("https://videa")
+                .sign();
+    }
+
+    private void validateRegister(RegisterRequest req) {
+        if (req == null) throw new BadRequestException("Invalid payload");
+        if (req.email == null || req.email.isBlank()) throw new BadRequestException("Email is required");
+        if (req.username == null || req.username.isBlank()) throw new BadRequestException("Username is required");
+        if (req.password == null || req.password.isBlank()) throw new BadRequestException("Password is required");
+    }
+}
