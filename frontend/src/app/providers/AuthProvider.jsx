@@ -26,13 +26,10 @@ export function AuthProvider({children}) {
 
     const login = async (credentials) =>  {
 
-        // console.log(credentials);
-
         try {
             const resp = await authService.login(credentials);
 
             const { token, user } = resp.data;
-
             localStorage.setItem('@trascendence:token', token);
             localStorage.setItem('@trascendence:user', JSON.stringify(user));
 
@@ -44,14 +41,26 @@ export function AuthProvider({children}) {
         }
 
     }
+
+    const register = (infoUserRegister) => {
+
+        console.log(infoUserRegister);
+        alert('Em desenvolvimento');
+    }
+
     const logout = () => {
         localStorage.removeItem('@trascendence:token');
         localStorage.removeItem('@trascendence:user');
         setIsAuthenticated(false);
         navigate("/");
     }
+
+    const socialLogin = () => {
+        alert("Login social em desenvolvimento");
+    } 
+
     return (
-        <AuthContext.Provider value={{isAuthenticated, user, loading, login, logout}}>
+        <AuthContext.Provider value={{isAuthenticated, user, loading, login, register, socialLogin, logout}}>
             {children}
         </AuthContext.Provider>
     );

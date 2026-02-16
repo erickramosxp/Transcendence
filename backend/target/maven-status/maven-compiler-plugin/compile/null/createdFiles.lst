@@ -4,8 +4,8 @@ com/ft/transcendence/entity/AuthProviderType.class
 com/ft/transcendence/auth/MeResource.class
 com/ft/transcendence/auth/dto/LoginResponse.class
 com/ft/transcendence/entity/Post.class
-com/ft/transcendence/auth/dto/AuthResponse.class
 com/ft/transcendence/auth/dto/LoginRequest.class
+com/ft/transcendence/auth/dto/AuthResponse.class
 com/ft/transcendence/entity/AuthProvider.class
 com/ft/transcendence/auth/AuthResource.class
 com/ft/transcendence/entity/Comment.class
