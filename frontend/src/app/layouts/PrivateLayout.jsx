@@ -4,9 +4,9 @@ import { LeftSidebar } from './LeftSidebar'
 export function PrivateLayout() {
 
     return (
-        <div>
+        <div className="flex">
             <LeftSidebar />
-            <main>
+            <main className="flex-1">
                 <Outlet />
             </main>
         </div>

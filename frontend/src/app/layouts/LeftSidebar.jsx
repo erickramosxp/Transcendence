@@ -8,7 +8,7 @@ export function LeftSidebar() {
 
     return (
         <>
-            <nav className="flex gap-2 underline">
+            <nav className="flex flex-col gap-2 underline p-4 border-r min-h-screen w-48">
                 <Link to={"/"}>Home</Link>
                 <Link to={"/feed"}>Feed</Link>
                 <Link to={"/chat"}>Chat</Link>
@@ -20,3 +20,5 @@ export function LeftSidebar() {
         </>
     )
 }
+
+export default LeftSidebar;

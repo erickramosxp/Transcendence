@@ -17,8 +17,8 @@ function App() {
     <Routes>
 
       <Route element={<PublicLayout />}>
-        
-        <Route path='/' 
+
+        <Route path='/'
           element={
             <PublicRoute>
               <Home />
@@ -33,7 +33,7 @@ function App() {
             <PrivateLayout />
           </PrivateRoute>
         }>
-          
+
         <Route path='/feed' element={<Feed/>}/>
         <Route path='/search' element={<Search />}/>
         <Route path='/profile' element={<Profile />}/>
