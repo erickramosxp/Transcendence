@@ -4,20 +4,32 @@ import { Button } from "../../components/ui/Button";
 import { TabsContent } from "../../components/ui/Tabs";
 import { Label } from "../../components/ui/Label";
 import { Input } from "../../components/ui/Input";
-import { User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
 import { Separator } from "../../components/ui/Separator";
 import { SocialLogin } from "./SocialLogin" 
+import { toast } from 'react-toastify'
 
 export function RegisterForm({ onSubmit }) {
 
     const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [disableButton, setDisableButton] = useState(false);
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({name, email, password});
+
+        setDisableButton(true);
+        if (!email || !username || !name || !password) {
+            toast.error('Preencha todos os campos');
+            setDisableButton(false);
+            return;
+        }
+
+        onSubmit({name, username, email, password});
+        setDisableButton(false);
     }
 
 
@@ -55,6 +67,23 @@ export function RegisterForm({ onSubmit }) {
 
         <div className="space-y-2">
           <Label
+            htmlFor="signup-username"
+            className="text-slate-700 dark:text-slate-300 text-sm"
+          >
+            <AtSign className="h-4 w-4" />
+            Username
+          </Label>
+          <Input
+            id="signup-username"
+            type="text"
+            placeholder="Nome de usuário"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="h-10 sm:h-11"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label
             htmlFor="signup-email"
             className="text-slate-700 dark:text-slate-300 text-sm"
           >
@@ -90,6 +119,7 @@ export function RegisterForm({ onSubmit }) {
 
         <Button
           className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover:to-[#2c486d] shadow-lg shadow-[#4a78b5]/30 hover:shadow-xl transition-all"
+          disabled={disableButton}
         >
           Criar Conta
           <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />

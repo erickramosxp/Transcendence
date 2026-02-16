@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../features/auth/authService";
-
+import { toast } from "react-toastify";
 const AuthContext = createContext(null);
 
 export function AuthProvider({children}) {
@@ -30,22 +30,50 @@ export function AuthProvider({children}) {
             const resp = await authService.login(credentials);
 
             const { token, user } = resp.data;
+
             localStorage.setItem('@trascendence:token', token);
             localStorage.setItem('@trascendence:user', JSON.stringify(user));
 
             setUser(user);
             setIsAuthenticated(true);
+
+            toast.success('Login realizado com sucesso!');
+            setTimeout(() => navigate('/feed'), 1000);
+
         } catch (err){
+            console.log(err);
             const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
-            alert(errorMsg);
+            console.log(errorMsg);
+            toast.error(errorMsg);
         }
 
     }
 
-    const register = (infoUserRegister) => {
+    const register = async (infoUserRegister) => {
 
-        console.log(infoUserRegister);
-        alert('Em desenvolvimento');
+        try {
+            const resp = await authService.register(infoUserRegister);
+
+            const { token, user } = resp.data;
+
+            toast.success("Registro efetuado com sucesso");
+
+            localStorage.setItem('@trascendence:token', token);
+            localStorage.setItem('@trascendence:user', JSON.stringify(user));
+
+            setUser(user);
+            setIsAuthenticated(true);
+
+            setTimeout(() => {
+                toast.success('Redirecionado para página inicial');
+                navigate('/feed');
+            }, 2000);
+
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            console.log(errorMsg);
+            alert(errorMsg);
+        }
     }
 
     const logout = () => {

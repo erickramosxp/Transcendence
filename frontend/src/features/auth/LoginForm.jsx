@@ -9,15 +9,33 @@ import { Input } from "../../components/ui/Input";
 import { Separator } from "../../components/ui/Separator";
 import { SocialLogin } from "./SocialLogin"
 
+import { toast } from 'react-toastify'
+
 export function LoginForm({onSubmit}) {
 
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({email, password});
+
+        if (!username || !password) {
+            toast.error('Preencha todos os campos');
+            return;
+        }
+        
+        onSubmit({username, password});
     }
+
+    //   const handleLogin = (e) => {
+    //     e.preventDefault();
+    //     if (!loginEmail || !loginPassword) {
+    //         toast.error('Preencha todos os campos');
+    //         return;
+    //     }
+    //     toast.success('Login realizado com sucesso!');
+    //     setTimeout(() => navigate('/feed'), 1000);
+    // };
     
     return (
 
@@ -45,9 +63,9 @@ export function LoginForm({onSubmit}) {
                       id="login-email"
                       type="email"
                       placeholder="Digite seu email"
-                      value={email}
+                      value={username}
                       onChange={(e) => {
-                        setEmail(e.target.value);
+                        setUsername(e.target.value);
                       }}
                       className="h-10 sm:h-11"
                     />
