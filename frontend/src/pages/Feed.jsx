@@ -2,13 +2,16 @@ import { useState } from "react";
 import CreatePost from "../components/ui/CreatePost";
 import PostList from "../components/ui/PostList";
 
+
 export function Feed() {
     const [posts, setPosts] = useState([]);
 
-    function addPost(content){
+    function addPost(postData){
         const newPost = {
             id: Date.now(),
-            content: content,
+            content: postData.text,
+            file: postData.file,
+            imageUrl: postData.file ? URL.createObjectURL(postData.file) : null,
             likes: 0,
             liked: false
         };
@@ -33,19 +36,20 @@ export function Feed() {
         setPosts(updatePosts);
     }
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#edf2f8] via-[#dbe4f0] to-[#b7c9e1] dark:from-slate-950 dark:via-[#0f1824] dark:to-[#1e3048] overflow-hidden relative">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center py-20 sm:py-24 lg:py-12">
-                <div>
-                    <h1>Meu Feed</h1>
-                    <CreatePost onAddPost={addPost} />
-                    <PostList posts={posts} onLike={handleLike} />
-                </div>
-                <div>
-                    <div>
-                        <h1>Amigos Online</h1>
+        <div className="min-h-screen bg-gradient-to-br from-[#edf2f8] via-[#dbe4f0] to-[#b7c9e1] dark:from-slate-950 dark:via-[#0f1824] dark:to-[#1e3048]">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+                <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
+                    <div className="space-y-6">
+                        <CreatePost onAddPost={addPost} />
+                        <PostList posts={posts} onLike={handleLike} />
                     </div>
-                    <div>
-                        <h1>Em Alta</h1>
+                    <div className="space-y-6">
+                        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">
+                            <h2 className="text-lg font-semibold mb-4">Amigos Online</h2>
+                        </div>
+                        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">
+                            <h2 className="text-lg font-semibold mb-4">Em Alta</h2>
+                        </div>
                     </div>
                 </div>
             </div>
