@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CreatePost from "../components/ui/CreatePost";
 import PostList from "../components/ui/PostList";
-
+import PostMenu from "../components/ui/PostMenu";
 
 export function Feed() {
     const [posts, setPosts] = useState([]);
@@ -40,7 +40,7 @@ export function Feed() {
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
                     <div className="space-y-6">
-                        <CreatePost onAddPost={addPost} />
+                        <PostMenu onAddPost={addPost}/>
                         <PostList posts={posts} onLike={handleLike} />
                     </div>
                     <div className="space-y-6">

@@ -7,10 +7,11 @@ import EmojiPicker from "emoji-picker-react";
 import FileUploadButton from "./FileUploadButton";
 
 
-function CreatePost({ onAddPost}){
+function CreatePost({ onAddPost, onClose}){
 	const [text, setText] = useState("");
 	const [file, setFile]= useState(null);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
 
 	function handleSubmit() {
 		if (text.trim() === "") return ;
@@ -21,6 +22,7 @@ function CreatePost({ onAddPost}){
 		});
 		setText("");
 		setFile(null);
+		onClose();
 	}
 
 	function handleChange(e){
@@ -95,11 +97,8 @@ function CreatePost({ onAddPost}){
 								</Button>
 							</div>
 						</div>
-
 					</div>
-
 				</div>
-
 			</CardContent>
 		</Card>
 	);
