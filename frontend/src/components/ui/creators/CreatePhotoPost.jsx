@@ -1,51 +1,27 @@
-import { useState } from "react"
-import { Button } from "./Button";
-import { Card, CardContent } from "./Card";
-import Textarea from "./Textarea";
+import { useCreatePost } from "./useCreatePost";
+import { Button } from "../Button";
+import { Card, CardContent } from "../Card";
+import Textarea from "../Textarea";
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-import FileUploadButton from "./FileUploadButton";
+import FileUploadButton from "../FileUploadButton";
 
 
-function CreatePost({ onAddPost, onClose}){
-	const [text, setText] = useState("");
-	const [file, setFile]= useState(null);
-	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-
-	function handleSubmit() {
-		if (text.trim() === "") return ;
-
-		onAddPost({
-			text: text,
-			file: file
-		});
-		setText("");
-		setFile(null);
-		onClose();
-	}
-
-	function handleChange(e){
-		const value = e.target.value;
-		setText(value);
-		const match = value.match(/:(\w*)$/);
-
-		if(match){
-			setShowEmojiPicker(true);
-		}else{
-			setShowEmojiPicker(false);
-		}
-	}
-
-	function handleEmojiSelect(emojiData){
-		setText(prev => prev.replace(/:(\w*)$/, "") + emojiData.emoji);
-	}
+function CreatePhotoPost({onAddPost, onClose}){
+	const {
+		text,
+		file, setFile,
+		showEmojiPicker,
+		handleSubmit,
+		handleChange,
+		handleEmojiSelect
+	} = useCreatePost(onAddPost, onClose);
 
 	return (
-		<Card className=" border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+
+<Card className=" border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
 			<CardContent className="p-4 sm:p-6">
 				<div className="flex gap-3 sm:gap-4">
-					{/* Avatar */}
 					<div className="flex-1 space-y-3 sm:space-y-4 min-w-0 relative">
 						<Textarea
 							value={text}
@@ -55,7 +31,7 @@ function CreatePost({ onAddPost, onClose}){
 						/>
 						{showEmojiPicker && (
 							<div className="absolute">
-								<EmojiPicker onEmojiClick={handleEmojiSelect}/>
+								<EmojiPicker onEmojiClick={handleEmojiSelect} />
 							</div>
 						)}
 						{file && (
@@ -83,17 +59,16 @@ function CreatePost({ onAddPost, onClose}){
 						)}
 						<div className="flex items-center justify-between gap-2">
 							<div className="flex gap-1 sm:gap-2">
-								<FileUploadButton onFileSelect={setFile}/>
+								<FileUploadButton onFileSelect={setFile} accept="image/*" />
 							</div>
 							<div>
-
 								<Button
-								onClick={handleSubmit}
-								size="sm"
-								className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
+									onClick={handleSubmit}
+									size="sm"
+									className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
 								>
-									<Send className="h-4 w-4 mr-2 "/>
-									Postar
+									<Send className="h-4 w-4 mr-2 " />
+									Postar Foto
 								</Button>
 							</div>
 						</div>
@@ -104,4 +79,4 @@ function CreatePost({ onAddPost, onClose}){
 	);
 }
 
-export default CreatePost;
+export default CreatePhotoPost;
