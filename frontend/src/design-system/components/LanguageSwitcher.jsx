@@ -1,4 +1,4 @@
-import { Button } from "../components/ui/Button.jsx"
+import { Button } from "../primitives/Button.jsx"
 import { Languages } from 'lucide-react';
 
 export function LanguageSwitcher() {

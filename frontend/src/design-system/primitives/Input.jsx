@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "../utils/colors.js";
+import { cn } from "@/design-system/tokens/colors";
 
 const Input = React.forwardRef(({ className, type, ...props }, ref) => {
   return (

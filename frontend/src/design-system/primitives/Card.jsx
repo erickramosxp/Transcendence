@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "../utils/colors.js";
+import { cn } from "@/design-system/tokens/colors";
 
 const Card = React.forwardRef(({ className, ...props }, ref) => {
   return (

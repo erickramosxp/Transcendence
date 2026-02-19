@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router-dom"
 import { useState } from 'react'
-import { Card, CardContent } from "../components/ui/Card.jsx"
-import { ThemeToggle } from "../components/ThemeToggle.jsx"
-import { LanguageSwitcher } from "../components/LanguageSwitcher.jsx"
+import { Card, CardContent } from "@/design-system/primitives/Card.jsx"
+import { ThemeToggle } from "@/design-system/components/ThemeToggle.jsx"
+import { LanguageSwitcher } from "@/design-system/components/LanguageSwitcher"
 
 import {
     Sparkles,

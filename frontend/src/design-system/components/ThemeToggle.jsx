@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { Button } from './ui/Button.jsx';
+import { Button } from '@/design-system/primitives//Button';
 
 export function ThemeToggle({ variant = "ghost", compact = false }) {
   const [isDark, setIsDark] = useState(false);

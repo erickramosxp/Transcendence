@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useAuth } from "../providers/AuthProvider"
-import { Button } from "../../components/ui/Button";
+import { Button } from "../../design-system/primitives/Button";
 
 export function LeftSidebar() {
 

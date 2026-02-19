@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../../design-system/primitives/Button";
 import { useAuth } from "../../app/providers/AuthProvider";
 
 export function SocialLogin({buttonTitle}) {

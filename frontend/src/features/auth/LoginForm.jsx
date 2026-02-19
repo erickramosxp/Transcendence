@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Button } from "../../components/ui/Button";
+import { Button } from "@/design-system/primitives/Button";
 
-import { TabsContent } from "../../components/ui/Tabs";
-import { Label } from "../../components/ui/Label";
+import { TabsContent } from "@/design-system/primitives/Tabs";
+import { Label } from "../../design-system/primitives/Label";
 
 import { Mail, Lock } from "lucide-react";
-import { Input } from "../../components/ui/Input";
-import { Separator } from "../../components/ui/Separator";
+import { Input } from "@/design-system/primitives/Input";
+import { Separator } from "../../design-system/primitives/Separator";
 import { SocialLogin } from "./SocialLogin"
 
 export function LoginForm({onSubmit}) {
