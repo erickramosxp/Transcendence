@@ -24,14 +24,28 @@ function CreateVideoPost({ onAddPost, onClose }) {
 				<div className="flex gap-3 sm:gap-4">
 					<div className="flex-1 space-y-3 sm:space-y-4 min-w-0 relative">
 						<Textarea
+							maxLength={500}
 							value={text}
 							onChange={handleChange}
-							placeholder="O que você está pensando?"
+							placeholder="O que está acontecendo aqui?"
 							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
 						/>
+						<p className="text-sm text-muted-foreground text-right">
+							{text.length}/500
+						</p>
 						{showEmojiPicker && (
 							<div className="absolute">
 								<EmojiPicker onEmojiClick={handleEmojiSelect} />
+							</div>
+						)}
+						{!file && (
+							<div className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
+								<div className="flex-1 flex items-center gap-2">
+									<span className="text-[#4a78b5]">🎥</span>
+									<span className="text-xs text-slate-500">
+										Grave, envie e compartilhe!
+									</span>
+								</div>
 							</div>
 						)}
 						{file && (
@@ -59,7 +73,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 						)}
 						<div className="flex items-center justify-between gap-2">
 							<div className="flex gap-1 sm:gap-2">
-								<FileUploadButton onFileSelect={setFile} accept="video/*" />
+								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" />
 							</div>
 							<div>
 								<Button

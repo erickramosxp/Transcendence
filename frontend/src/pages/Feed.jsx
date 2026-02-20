@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CreatePost from "../components/ui/CreatePost";
 import PostList from "../components/ui/PostList";
 import PostMenu from "../components/ui/PostMenu";
 

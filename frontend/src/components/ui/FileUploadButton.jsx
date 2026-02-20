@@ -1,8 +1,9 @@
 import { Button } from "./Button"
-import { ImageIcon } from "lucide-react";
+import { Upload } from "lucide-react";
 import { useRef } from "react";
 
-function FileUploadButton({onFileSelect}){
+
+function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg"}){
 
 	const inputRef = useRef(null);
 
@@ -26,7 +27,7 @@ function FileUploadButton({onFileSelect}){
 			ref={inputRef}
 			className="hidden"
 			onChange={handleChange}
-			accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg"
+			accept={accept}
 			/>
 			<Button
 			variant="ghost"
@@ -34,7 +35,7 @@ function FileUploadButton({onFileSelect}){
 			className="h-8 w-8 sm:h-9 sm:w-9 p-0"
 			onClick={() => inputRef.current.click()}
 			>
-				<ImageIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4a78b5]"/>
+				<Upload className="h-4 w-4 sm:h-5 sm:w-5 text-[#4a78b5]"/>
 			</Button>
 		</>
 	)
