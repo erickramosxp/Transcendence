@@ -5,7 +5,7 @@ export function PrivateLayout() {
 
     return (
         <div>
-            <LeftSidebar />
+            {/* <LeftSidebar /> */}
             <main>
                 <Outlet />
             </main>

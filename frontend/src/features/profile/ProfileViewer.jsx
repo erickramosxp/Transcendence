@@ -1,7 +1,13 @@
 import React from 'react'
+import { ProfileHeader } from './components/ProfileHeader'
 
-export default function ProfileViewer() {
+export function ProfileViewer() {
   return (
-    <div>ProfileViewer</div>
+    <div>
+      <ProfileHeader />
+      <p>
+        ProfileViewer Posts
+      </p>
+    </div>
   )
 }
