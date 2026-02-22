@@ -1,18 +1,25 @@
 import { useState } from "react";
 import PostList from "../components/ui/PostList";
 import PostMenu from "../components/ui/PostMenu";
+import { useAuth } from "../app/providers/AuthProvider";
 
 export function Feed() {
     const [posts, setPosts] = useState([]);
+    const {user} = useAuth();
+    console.log(user.name);
 
     function addPost(postData){
         const newPost = {
+            name: user.name,
+            username:"user_name",
+            userPhoto:null,
             id: Date.now(),
             content: postData.text,
             file: postData.file,
             imageUrl: postData.file ? URL.createObjectURL(postData.file) : null,
             likes: 0,
-            liked: false
+            isLiked: false,
+            date_time:Date.now(),
         };
 
         setPosts([newPost, ...posts]);
@@ -22,13 +29,13 @@ export function Feed() {
         const updatePosts = posts.map((post) => {
             if (post.id === postId)
             {
-                if (post.liked)
+                if (post.isLiked)
                 {
-                    return { ...post, likes: post.likes - 1, liked: false};
+                    return { ...post, likes: post.likes - 1, isLiked: false};
                 }
                 else
                 {
-                    return { ...post, likes: post.likes + 1, liked: true};
+                    return { ...post, likes: post.likes + 1, isLiked: true};
                 }
             } return post;
         });

@@ -15,7 +15,7 @@ function CreatePhotoPost({onAddPost, onClose}){
 		handleSubmit,
 		handleChange,
 		handleEmojiSelect
-	} = useCreatePost(onAddPost, onClose);
+	} = useCreatePost(onAddPost, onClose, "photo");
 
 	return (
 

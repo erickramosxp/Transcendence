@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export function useCreatePost(onAddPost, onClose) {
+export function useCreatePost(onAddPost, onClose, postType) {
 
 	const [text, setText] = useState("");
 	const [file, setFile]= useState(null);
@@ -8,7 +8,9 @@ export function useCreatePost(onAddPost, onClose) {
 
 
 	function handleSubmit() {
-		if (text.trim() === "") return ;
+		if (text.trim() === "") return;
+
+		if ((postType === "photo" || postType === "video") && file == null) return;
 
 		onAddPost({
 			text: text,

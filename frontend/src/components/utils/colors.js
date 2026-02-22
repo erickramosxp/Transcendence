@@ -36,6 +36,7 @@ export const yaleBlue = {
     light: 'text-[#4a78b5]',
     dark: 'text-[#2c486d]',
     hover: 'hover:text-[#4a78b5]',
+    like: 'hover:text-[#DD2D4A]'
   },
 
   // Background colors
@@ -50,3 +51,5 @@ export const yaleBlue = {
   // Border colors
   border: 'border-[#4a78b5]',
 };
+
+
