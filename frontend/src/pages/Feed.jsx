@@ -16,6 +16,7 @@ export function Feed() {
             content: postData.text,
             file: postData.file,
             imageUrl: postData.file ? URL.createObjectURL(postData.file) : null,
+            fileType:postData.fileType,
             likes: 0,
             isLiked: false,
             date_time:Date.now(),
@@ -39,6 +40,7 @@ export function Feed() {
             } return post;
         });
         setPosts(updatePosts);
+
     }
     return (
         <div className="feed-background">

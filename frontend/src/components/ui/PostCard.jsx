@@ -4,7 +4,7 @@ import { Heart, MessageSquare } from "lucide-react";
 import { Avatar } from "../ui/Avatar"
 
 function PostCard({ post, onLike }) {
-
+	console.log(post.fileType);
 	function getRelativeTime(date_time) {
 		const now = Date.now();
 		const diff = now - date_time;
@@ -52,11 +52,20 @@ function PostCard({ post, onLike }) {
 					</div>
 
 					{post.imageUrl && (
-						<img
-							src={post.imageUrl}
-							alt="Post attachment"
-							style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-						/>
+						post.fileType === "video" ? (
+							<video
+								src={post.imageUrl}
+								controls
+								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
+
+							/>
+						) : (
+							<img
+								src={post.imageUrl}
+								alt="Post attachment"
+								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
+							/>
+						)
 					)}
 					<div className="flex items-center gap-6 mt-3 text-slate-500">
 						<button
@@ -83,4 +92,4 @@ function PostCard({ post, onLike }) {
 	);
 }
 
-			export default PostCard;
+export default PostCard;

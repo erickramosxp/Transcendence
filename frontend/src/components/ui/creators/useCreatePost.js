@@ -14,7 +14,8 @@ export function useCreatePost(onAddPost, onClose, postType) {
 
 		onAddPost({
 			text: text,
-			file: file
+			file: file,
+			fileType: typeof postType === 'string' ? postType : (postType?.type || "")
 		});
 		setText("");
 		setFile(null);
