@@ -2,7 +2,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../features/auth/authService";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
 const AuthContext = createContext(null);
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export function AuthProvider({children}) {
 
@@ -72,7 +75,7 @@ export function AuthProvider({children}) {
         } catch (err) {
             const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
             console.log(errorMsg);
-            alert(errorMsg);
+            toast.error(errorMsg);
         }
     }
 
@@ -83,9 +86,39 @@ export function AuthProvider({children}) {
         navigate("/");
     }
 
-    const socialLogin = () => {
-        alert("Login social em desenvolvimento");
-    } 
+
+    const socialLogin = clientId ? (
+        useGoogleLogin({
+            onSuccess: async (googleTokenResponse) => {
+                
+                try {
+
+                    const resp = await authService.socialLogin(googleTokenResponse);
+
+                    const { token, user } = resp.data;
+
+                    localStorage.setItem('@trascendence:token', token);
+                    localStorage.setItem('@trascendence:user', JSON.stringify(user));
+
+                    setUser(user);
+                    setIsAuthenticated(true);
+                    
+                    setTimeout(() => {
+                    toast.success('Redirecionado para página inicial');
+                    navigate('/feed');
+                    }, 2000);
+
+                } catch (err) {
+
+                    const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+                    console.log(errorMsg);
+                    toast.error(errorMsg);
+                }
+            }
+        })
+    ) : (
+        null
+    )
 
     return (
         <AuthContext.Provider value={{isAuthenticated, user, loading, login, register, socialLogin, logout}}>

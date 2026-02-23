@@ -4,6 +4,7 @@ import { RegisterForm } from "./RegisterForm";
 
 import { Card, CardContent } from "../../components/ui/Card";
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/Tabs";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export function AuthContainer() {
 
@@ -16,11 +17,6 @@ export function AuthContainer() {
   const handleRegister = async (infoUserRegister) => {
     await register(infoUserRegister);
   };
-
-    const handleGoogleAuth = () => {
-        alert('Autenticação com Google em desenvolvimento');
-        // implementar integração com Google OAuth
-    };
 
   return (
     <div className="flex items-center justify-center lg:min-h-screen lg:pt-16">
@@ -37,10 +33,10 @@ export function AuthContainer() {
             </TabsList>
 
             {/* Formulario Login */}
-            <LoginForm onSubmit={handleLogin} handlerOAuth={handleGoogleAuth}/>
+            <LoginForm onSubmit={handleLogin} />
 
             {/* Formulario Cadastro */}
-            <RegisterForm onSubmit={handleRegister} handlerOAuth={handleGoogleAuth}/>
+            <RegisterForm onSubmit={handleRegister}/>
           </Tabs>
         </CardContent>
       </Card>

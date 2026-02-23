@@ -6,7 +6,7 @@ import { Label } from "../../components/ui/Label";
 import { Input } from "../../components/ui/Input";
 import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
 import { Separator } from "../../components/ui/Separator";
-import { SocialLogin } from "./SocialLogin" 
+import { SocialLogin } from "./components/SocialLogin" 
 import { toast } from 'react-toastify'
 
 export function RegisterForm({ onSubmit }) {

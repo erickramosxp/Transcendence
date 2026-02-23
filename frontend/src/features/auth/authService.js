@@ -47,5 +47,9 @@ export const authService = {
 
   register: async (infoUserRegister) => {
     return api.post("/auth/register", infoUserRegister);
+  },
+
+  socialLogin: async (googleTokenResponse) => {
+    return api.post("/auth/google", googleTokenResponse);
   }
 };

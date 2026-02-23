@@ -1,16 +1,27 @@
 import React from "react";
-import { Button } from "../../components/ui/Button";
-import { useAuth } from "../../app/providers/AuthProvider";
+import { Button } from "../../../components/ui/Button";
+import { useAuth } from "../../../app/providers/AuthProvider";
+import { toast } from "react-toastify";
 
 export function SocialLogin({buttonTitle}) {
 
     const { socialLogin } = useAuth();
+
+    const handleGoogleLogin = () => {
+
+      if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+        toast.error('Login com Google indisponível');
+        return ;
+      }
+
+      socialLogin();
+    }
     
   return (
     <Button
       type="button"
       variant="outline"
-      onClick={socialLogin}
+      onClick={handleGoogleLogin}
       className="w-full h-11 sm:h-12 text-sm sm:text-base border-2 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
     >
       <svg className="mr-2 h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
