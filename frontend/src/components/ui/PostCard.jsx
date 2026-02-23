@@ -29,7 +29,7 @@ function PostCard({ post, onLike }) {
 			<div className="flex gap-4">
 				<Avatar
 					src={post.userPhoto}
-					name={post.username}
+					name={post.name}
 					size="lg"
 				/>
 				<div className="flex-1">

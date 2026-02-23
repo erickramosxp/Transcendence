@@ -31,6 +31,8 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
+
+  /* Side Bar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: #030213;
@@ -39,6 +41,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+    /* container */
+  --container-max-width: 80rem; /* 1280px */
+  --container-padding-x: 1rem;  /* 16px */
+  --container-padding-y: 1.5rem; /* 24px */
+  --grid-gap: 1.5rem; /* 24px */
+
 
   /* Yale Blue Custom Colors */
   --yale-blue-50: #edf2f8;
@@ -52,6 +61,12 @@
   --yale-blue-800: #1e3048;
   --yale-blue-900: #0f1824;
   --yale-blue-950: #0a1119;
+
+		/* Gradients */
+    --gradient-primary: linear-gradient(90deg, #6e93c4 0%, #4a78b5 50%, #3b6091 100%);
+    --gradient-background: linear-gradient(135deg, #edf2f8 0%, #dbe4f0 50%, #b7c9e1 100%);
+    --gradient-dark: linear-gradient(135deg, #0a1119 0%, #0f1824 50%, #1e3048 100%);
+    --gradient-icon: linear-gradient(135deg, #6e93c4 0%, #92aed3 100%);
 }
 
 .dark {
@@ -192,3 +207,34 @@
     line-height: 1.5;
   }
 }
+
+.feed-background {
+  background: linear-gradient(
+    135deg,
+    var(--color-background) 0%,
+    var(--color-secondary) 100%
+  );
+  min-height: 100vh;
+}
+
+.feed-background {
+  background:  var(--gradient-background);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding-x);
+  padding-right: var(--container-padding-x);
+  padding-top: var(--container-padding-y);
+  padding-bottom: var(--container-padding-y);
+}
+
+.feed-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--grid-gap);
+}
+

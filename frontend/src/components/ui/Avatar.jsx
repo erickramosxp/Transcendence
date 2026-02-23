@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-function getInitials(name=""){
-	const names = name.trim().split("");
-	if (names.lenght === 1)
+function getInitials(name = ""){
+	const names = name.trim().split(" ");
+	if (names.length === 1)
 		return names[0][0]?.toUpperCase();
 	return(
 		(names[0][0] || "") +
@@ -40,7 +40,7 @@ function Avatar ({src, name, size="md", className=""}){
 					className="h-full w-full object-cover"
 				/>
 			):(
-				<span>{getInitials(name)}</span>
+				<span>{src || getInitials(name)}</span>
 			)}
 		</div>
 	);

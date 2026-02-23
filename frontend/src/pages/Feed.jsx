@@ -6,13 +6,12 @@ import { useAuth } from "../app/providers/AuthProvider";
 export function Feed() {
     const [posts, setPosts] = useState([]);
     const {user} = useAuth();
-    console.log(user.name);
 
     function addPost(postData){
         const newPost = {
             name: user.name,
             username:"user_name",
-            userPhoto:null,
+            userPhoto:"https://kwaksf.com/cdn/shop/files/Swimmer_with_drink_Rubber_Duck.png?v=1749514215&width=990",
             id: Date.now(),
             content: postData.text,
             file: postData.file,
@@ -42,9 +41,9 @@ export function Feed() {
         setPosts(updatePosts);
     }
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#edf2f8] via-[#dbe4f0] to-[#b7c9e1] dark:from-slate-950 dark:via-[#0f1824] dark:to-[#1e3048]">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-                <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
+        <div className="feed-background">
+            <div className="container">
+                <div className="feed-grid">
                     <div className="space-y-6">
                         <PostMenu onAddPost={addPost}/>
                         <PostList posts={posts} onLike={handleLike} />
