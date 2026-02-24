@@ -47,6 +47,7 @@ jobs:
           cache: maven
 
       - name: Make mvnw executable
+        working-directory: backend
         run: chmod +x mvnw
 
       - name: Wait for Postgres
@@ -61,5 +62,6 @@ jobs:
           done
 
       - name: Build and test
+        working-directory: backend
         run: ./mvnw -B clean test
 
