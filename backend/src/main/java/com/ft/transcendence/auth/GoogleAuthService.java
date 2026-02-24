@@ -45,6 +45,24 @@ public class GoogleAuthService {
         if (idTokenString == null || idTokenString.isBlank())
             throw new BadRequestException("ID Token is required");
 
+        GoogleIdToken.Payload payload = verifyGoogleToken(idTokenString);
+
+        OffsetDateTime now = OffsetDateTime.now();
+        User user = findOrCreateUser(payload, now);
+
+
+        user.lastLogin = now;
+        user.updatedAt = now;
+
+        String token = Jwt
+                .upn(user.email)
+                .claim("uid", user.id)
+                .sign();
+
+        return AuthResponse.of(token, user);
+    }
+
+    private GoogleIdToken.Payload verifyGoogleToken(String idTokenString) {
         GoogleIdToken idToken;
 
         try {
@@ -56,15 +74,17 @@ public class GoogleAuthService {
         if (idToken == null)
             throw new NotAuthorizedException("Invalid or expired ID token");
 
-        GoogleIdToken.Payload payload = idToken.getPayload();
+        return idToken.getPayload();
+    }
 
+    private User findOrCreateUser(GoogleIdToken.Payload payload, OffsetDateTime now) {
         String sub = payload.getSubject();
         String email = payload.getEmail();
-        Boolean emailVerified = (Boolean) payload.get("email_verified");
+        boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
 
         if (email == null || email.isBlank())
             throw new BadRequestException("Google account does not have email");
-        if (emailVerified == null || !emailVerified)
+        if (!emailVerified)
             throw new BadRequestException("The email address associated with the Google account is not verified");
 
         String normalizedEmail = email.trim().toLowerCase();
@@ -84,41 +104,23 @@ public class GoogleAuthService {
                 user.username = generateUsername(normalizedEmail);
                 user.name = (String) payload.get("name");
                 user.active = true;
-                OffsetDateTime now = OffsetDateTime.now();
                 user.createdAt = now;
                 user.updatedAt = now;
                 user.persist();
-
-                AuthProvider googleProvider = new AuthProvider();
-                googleProvider.user = user;
-                googleProvider.providerType = AuthProviderType.GOOGLE;
-                googleProvider.providerUserId = sub;
-                googleProvider.passwordHash = null;
-                googleProvider.createdAt = now;
-                googleProvider.persist();
-            } else {
-                OffsetDateTime now = OffsetDateTime.now();
-
-                AuthProvider googleProvider = new AuthProvider();
-                googleProvider.user = user;
-                googleProvider.providerType = AuthProviderType.GOOGLE;
-                googleProvider.providerUserId = sub;
-                googleProvider.passwordHash = null;
-                googleProvider.createdAt = now;
-                googleProvider.persist();
             }
+            linkGoogleProvider(user, sub, now);
         }
 
-        user.lastLogin = OffsetDateTime.now();
-        user.updatedAt = OffsetDateTime.now();
+        return user;
+    }
 
-        String token = Jwt
-                .upn(user.email)
-                .claim("uid", user.id)
-                .issuer("https://videa")
-                .sign();
-
-        return AuthResponse.of(token, user);
+    private void linkGoogleProvider(User user, String sub, OffsetDateTime now) {
+        var provider = new AuthProvider();
+        provider.user = user;
+        provider.providerType = AuthProviderType.GOOGLE;
+        provider.providerUserId = sub;
+        provider.createdAt = now;
+        provider.persist();
     }
 
     private static String generateUsername(String email) {
@@ -132,9 +134,15 @@ public class GoogleAuthService {
 
         local = Normalizer.normalize(local, Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
 
-        return local.toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9._]+", ".")
-                .replaceAll("\\.+", ".")
-                .replaceAll("^[._]+|[._]+$", "");
+        String base = local.toLowerCase(Locale.ROOT)
+                        .replaceAll("[^a-z0-9._]+", ".")
+                        .replaceAll("\\.+", ".")
+                        .replaceAll("^[._]+|[._]+$", "");
+        String username = base;
+        int suffix = 1;
+        while (User.find("username", username).firstResult() != null) {
+            username = base + suffix++;
+        }
+        return username;
     }
 }

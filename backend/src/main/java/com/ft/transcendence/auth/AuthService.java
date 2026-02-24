@@ -15,6 +15,7 @@ import com.ft.transcendence.entity.User;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class AuthService {
@@ -66,18 +67,17 @@ public class AuthService {
         if (!BcryptUtil.matches(password, local.passwordHash))
             throw new NotAuthorizedException("Incorrect password");
 
-        user.lastLogin = OffsetDateTime.now();
-        user.updatedAt = OffsetDateTime.now();
+        var now = OffsetDateTime.now();
+        user.lastLogin = now;
+        user.updatedAt = now;
 
         String token = issueToken(user);
         return AuthResponse.of(token, user);
     }
 
     private String issueToken(User user) {
-        // upn=email e claim uid
         return Jwt.upn(user.email)
                 .claim("uid", user.id)
-                .issuer("https://videa")
                 .sign();
     }
 
