@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 
 import { AuthContainer } from "../features/auth/AuthContainer"
+import { BgAnimated } from '@/design-system/components/BgAnimated'
 
 export function Home() {
     // const navigate = useNavigate();
@@ -44,26 +45,6 @@ export function Home() {
             color: 'from-[#2c486d] to-[#1e3048]',
         },
     ];
-    // const handleLogin = (e) => {
-    //     e.preventDefault();
-    //     if (!loginEmail || !loginPassword) {
-    //         toast.error('Preencha todos os campos');
-    //         return;
-    //     }
-    //     toast.success('Login realizado com sucesso!');
-    //     setTimeout(() => navigate('/feed'), 1000);
-    // };
-
-    // const handleSignup = (e) => {
-    //     e.preventDefault();
-    //     if (!signupName || !signupEmail || !signupPassword) {
-    //         toast.error('Preencha todos os campos');
-    //         return;
-    //     }
-    //     toast.success('Conta criada com sucesso!');
-    //     setTimeout(() => navigate('/feed'), 1000);
-    // };
-
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#edf2f8] via-[#dbe4f0] to-[#b7c9e1] dark:from-slate-950 dark:via-[#0f1824] dark:to-[#1e3048] overflow-hidden relative">
@@ -78,11 +59,7 @@ export function Home() {
             </div>
 
             {/* Animated background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-[#6e93c4]/20 to-[#92aed3]/20 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-gradient-to-tr from-[#6e93c4]/20 to-[#92aed3]/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-[#92aed3]/10 to-[#6e93c4]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
-            </div>
+            <BgAnimated />
 
             <div className="relative min-h-screen">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8" >
