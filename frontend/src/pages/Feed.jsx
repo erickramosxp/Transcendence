@@ -17,6 +17,7 @@ export function Feed() {
             file: postData.file,
             imageUrl: postData.file ? URL.createObjectURL(postData.file) : null,
             fileType:postData.fileType,
+            linkPreview: postData.linkPreview || null,
             likes: 0,
             isLiked: false,
             date_time:Date.now(),

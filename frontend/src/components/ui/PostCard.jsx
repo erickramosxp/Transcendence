@@ -4,7 +4,6 @@ import { Heart, MessageSquare } from "lucide-react";
 import { Avatar } from "../ui/Avatar"
 
 function PostCard({ post, onLike }) {
-	console.log(post.fileType);
 	function getRelativeTime(date_time) {
 		const now = Date.now();
 		const diff = now - date_time;
@@ -51,13 +50,41 @@ function PostCard({ post, onLike }) {
 						{post.content}
 					</div>
 
+					{post.linkPreview && (
+						<a
+							href={post.linkPreview.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="mt-2 block rounded-lg border border-slate-200 overflow-hidden hover:border-slate-300 transition-colors"
+						>
+							<div className="flex gap-3 p-3">
+								{post.linkPreview.image && (
+									<img
+										src={post.linkPreview.image}
+										alt={post.linkPreview.title}
+										className="w-20 h-20 object-cover rounded-md shrink-0"
+									/>
+								)}
+								<div className="min-w-0 flex-1">
+									<h3 className="text-sm font-medium text-stone-800 line-clamp-2">
+										{post.linkPreview.title}
+									</h3>
+									{post.linkPreview.description && (
+										<p className="text-sm text-slate-500 mt-0.5 line-clamp-2">
+											{post.linkPreview.description}
+										</p>
+									)}
+								</div>
+							</div>
+						</a>
+					)}
+
 					{post.imageUrl && (
 						post.fileType === "video" ? (
 							<video
 								src={post.imageUrl}
 								controls
 								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-
 							/>
 						) : (
 							<img

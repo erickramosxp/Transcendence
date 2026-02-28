@@ -13,7 +13,10 @@ function CreateTextPost({ onAddPost, onClose }) {
 		showEmojiPicker,
 		handleSubmit,
 		handleChange,
-		handleEmojiSelect
+		handleEmojiSelect,
+		linkPreview,
+		linkPreviewLoading,
+		linkPreviewError,
 	} = useCreatePost(onAddPost, onClose);
 
 	return (
@@ -28,6 +31,17 @@ function CreateTextPost({ onAddPost, onClose }) {
 							placeholder="O que você está pensando?"
 							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
 						/>
+						{linkPreview && (
+							<div className="mt-2">
+								<div className="flex items-center gap-2">
+									<img src={linkPreview.image} alt={linkPreview.title}  rel="noopener noreferrer" className="w-10 h-10 rounded-md" />
+									<div>
+										<h3 className="text-sm font-medium">{linkPreview.title}</h3>
+										<p className="text-sm text-muted-foreground">{linkPreview.description}</p>
+									</div>
+								</div>
+							</div>
+						)}
 						<p className="text-sm text-muted-foreground text-right">
 							{text.length}/500
 						</p>
