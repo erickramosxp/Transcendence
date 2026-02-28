@@ -23,7 +23,7 @@ const mockLogin = (credentials) => {
 const apiLogin = async (credentials) => {
 
   try {
-    const resp = await api.post("/auth/login", credentials);
+    const resp = await api.post("/auth/login", credentials, {skipAuth: true});
     return resp;
 
   } catch (err) {
@@ -46,10 +46,10 @@ export const authService = {
   },
 
   register: async (infoUserRegister) => {
-    return api.post("/auth/register", infoUserRegister);
+    return api.post("/auth/register", infoUserRegister, {skipAuth: true});
   },
 
   socialLogin: async (googleTokenResponse) => {
-    return api.post("/auth/google", googleTokenResponse);
+    return api.post("/auth/google", googleTokenResponse, {skipAuth: true});
   }
 };

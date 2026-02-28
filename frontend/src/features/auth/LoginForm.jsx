@@ -83,6 +83,7 @@ export function LoginForm({onSubmit}) {
 
                 <Button
                   className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover:to-[#2c486d] shadow-lg shadow-[#4a78b5]/30 hover:shadow-xl transition-all"
+                  type="submit"
                 >
                   Entrar
                 </Button>

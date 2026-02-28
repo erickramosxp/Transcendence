@@ -6,6 +6,9 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
 
+  if (config.skipAuth)
+    return config;
+
   const token = localStorage.getItem('@trascendence:token');
 
   if (token) {
@@ -18,6 +21,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+
+    if (error.config?.skipAuth)
+      return Promise.reject(error);
+
     if (error.response?.status === 401) {
       localStorage.removeItem('@trascendence:token');
       localStorage.removeItem('@trascendence:user');
