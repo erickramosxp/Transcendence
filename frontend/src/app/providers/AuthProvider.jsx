@@ -89,11 +89,11 @@ export function AuthProvider({children}) {
 
     const socialLogin = clientId ? (
         useGoogleLogin({
-            onSuccess: async (googleTokenResponse) => {
+            flow: "auth-code",
+            onSuccess: async (googleCodeResponse) => {
                 
                 try {
-
-                    const resp = await authService.socialLogin(googleTokenResponse);
+                    const resp = await authService.socialLogin({ code: googleCodeResponse.code });
 
                     const { token, user } = resp.data;
 
@@ -114,7 +114,8 @@ export function AuthProvider({children}) {
                     console.log(errorMsg);
                     toast.error(errorMsg);
                 }
-            }
+            },
+            onError: () => toast.error("Falha no login com Google"),
         })
     ) : (
         null

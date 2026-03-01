@@ -1,5 +1,6 @@
 package com.ft.transcendence.auth;
 
+import com.ft.transcendence.auth.dto.GoogleLoginRequest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,7 +15,6 @@ import com.ft.transcendence.auth.dto.RegisterRequest;
 public class AuthResource {
 
     @Inject AuthService authService;
-
     @POST
     @Path("/register")
     public AuthResponse register(RegisterRequest req) {
@@ -25,5 +25,12 @@ public class AuthResource {
     @Path("/login")
     public AuthResponse login(LoginRequest req) {
         return authService.login(req.username, req.password);
+    }
+
+    @Inject GoogleAuthService googleAuthService;
+    @POST
+    @Path("/google")
+    public AuthResponse loginWithGoogle(GoogleLoginRequest req) {
+        return googleAuthService.loginOrRegisterWithGoogleCode(req.code);
     }
 }

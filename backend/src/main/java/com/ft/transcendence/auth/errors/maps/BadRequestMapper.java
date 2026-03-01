@@ -1,4 +1,4 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.errors.maps;
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MediaType;

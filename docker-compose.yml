@@ -15,6 +15,10 @@ services:
       QUARKUS_DATASOURCE_USERNAME: ${DATABASE_USER}
       QUARKUS_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
       QUARKUS_HTTP_CORS_ORIGINS: http://localhost:5173
+      QUARKUS_DATASOURCE_WEB_ID_GOOGLE: ${WEB_CLIENT_ID_GOOGLE}
+      QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
+      QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+
     depends_on:
       database:
         condition: service_healthy
@@ -23,7 +27,7 @@ services:
     build: ./frontend
     environment:
       VITE_BACKEND_URL: http://localhost:8080
-      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
+      VITE_GOOGLE_CLIENT_ID: ${WEB_CLIENT_ID_GOOGLE}
     ports:
       - "5173:5173"
     volumes:

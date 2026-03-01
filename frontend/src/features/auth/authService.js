@@ -49,7 +49,7 @@ export const authService = {
     return api.post("/auth/register", infoUserRegister, {skipAuth: true});
   },
 
-  socialLogin: async (googleTokenResponse) => {
-    return api.post("/auth/google", googleTokenResponse, {skipAuth: true});
+  socialLogin: async (code) => {
+    return api.post("/auth/google", code , {skipAuth: true});
   }
 };

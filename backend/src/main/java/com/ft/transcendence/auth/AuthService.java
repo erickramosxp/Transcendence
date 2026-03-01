@@ -15,6 +15,7 @@ import com.ft.transcendence.entity.User;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class AuthService {
@@ -51,40 +52,43 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse login(String identifier, String password) {
-        if (identifier == null || identifier.isBlank() || password == null || password.isBlank()) {
-            throw new NotAuthorizedException("Invalid credentials");
-        }
+    public AuthResponse login(String username, String password) {
+        if (username == null || username.isBlank() || password == null || password.isBlank())
+            throw new NotAuthorizedException("Username or Password is blank");
 
-        User user = User.findByEmailOrUsername(identifier.trim());
-        if (user == null || !user.active) throw new NotAuthorizedException("Invalid credentials");
+        User user = User.findByEmailOrUsername(username.trim());
+        if (user == null || !user.active)
+            throw new NotAuthorizedException("User not found");
 
         AuthProvider local = AuthProvider.findLocalByUserId(user.id);
-        if (local == null || local.passwordHash == null) throw new NotAuthorizedException("Invalid credentials");
+        if (local == null || local.passwordHash == null)
+            throw new NotAuthorizedException("User not found");
 
-        if (!BcryptUtil.matches(password, local.passwordHash)) {
-            throw new NotAuthorizedException("Invalid credentials");
-        }
+        if (!BcryptUtil.matches(password, local.passwordHash))
+            throw new NotAuthorizedException("Incorrect password");
 
-        user.lastLogin = OffsetDateTime.now();
-        user.updatedAt = OffsetDateTime.now();
+        var now = OffsetDateTime.now();
+        user.lastLogin = now;
+        user.updatedAt = now;
 
         String token = issueToken(user);
         return AuthResponse.of(token, user);
     }
 
     private String issueToken(User user) {
-        // upn=email e claim uid
         return Jwt.upn(user.email)
                 .claim("uid", user.id)
-                .issuer("https://videa")
                 .sign();
     }
 
     private void validateRegister(RegisterRequest req) {
-        if (req == null) throw new BadRequestException("Invalid payload");
-        if (req.email == null || req.email.isBlank()) throw new BadRequestException("Email is required");
-        if (req.username == null || req.username.isBlank()) throw new BadRequestException("Username is required");
-        if (req.password == null || req.password.isBlank()) throw new BadRequestException("Password is required");
+        if (req == null)
+            throw new BadRequestException("Invalid payload");
+        if (req.email == null || req.email.isBlank())
+            throw new BadRequestException("Email is required");
+        if (req.username == null || req.username.isBlank())
+            throw new BadRequestException("Username is required");
+        if (req.password == null || req.password.isBlank())
+            throw new BadRequestException("Password is required");
     }
 }
