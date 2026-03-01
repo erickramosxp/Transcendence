@@ -2,6 +2,7 @@ import React from "react";
 import { yaleBlue } from "../utils/colors";
 import { Heart, MessageSquare } from "lucide-react";
 import { Avatar } from "../ui/Avatar"
+import { TextWithLink } from "../ui/TextWithLink";
 
 function PostCard({ post, onLike }) {
 	function getRelativeTime(date_time) {
@@ -47,7 +48,7 @@ function PostCard({ post, onLike }) {
 					</div>
 
 					<div className="mt-2 text-stone-700 leading-relaxed">
-						{post.content}
+						<TextWithLink text={post.content} />
 					</div>
 
 					{post.linkPreview && (
