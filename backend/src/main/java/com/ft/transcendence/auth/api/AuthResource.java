@@ -1,5 +1,7 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.api;
 
+import com.ft.transcendence.auth.app.AuthService;
+import com.ft.transcendence.auth.app.GoogleAuthService;
 import com.ft.transcendence.auth.dto.GoogleLoginRequest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -14,7 +16,8 @@ import com.ft.transcendence.auth.dto.RegisterRequest;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
-    @Inject AuthService authService;
+    @Inject
+    AuthService authService;
     @POST
     @Path("/register")
     public AuthResponse register(RegisterRequest req) {
@@ -27,7 +30,8 @@ public class AuthResource {
         return authService.login(req.username, req.password);
     }
 
-    @Inject GoogleAuthService googleAuthService;
+    @Inject
+    GoogleAuthService googleAuthService;
     @POST
     @Path("/google")
     public AuthResponse loginWithGoogle(GoogleLoginRequest req) {

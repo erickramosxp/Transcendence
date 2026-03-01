@@ -1,4 +1,4 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.app;
 
 import java.time.OffsetDateTime;
 
@@ -9,13 +9,12 @@ import jakarta.ws.rs.NotAuthorizedException;
 
 import com.ft.transcendence.auth.dto.AuthResponse;
 import com.ft.transcendence.auth.dto.RegisterRequest;
-import com.ft.transcendence.entity.AuthProvider;
-import com.ft.transcendence.entity.AuthProviderType;
-import com.ft.transcendence.entity.User;
+import com.ft.transcendence.auth.domain.AuthProvider;
+import com.ft.transcendence.auth.domain.AuthProviderType;
+import com.ft.transcendence.user.User;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class AuthService {

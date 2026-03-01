@@ -1,6 +1,6 @@
-package com.ft.transcendence.auth.dto;
+package com.ft.transcendence.user.dto;
 
-import com.ft.transcendence.entity.User;
+import com.ft.transcendence.user.User;
 
 public class UserResponse {
     public Long id;

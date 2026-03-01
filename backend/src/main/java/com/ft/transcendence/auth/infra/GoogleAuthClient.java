@@ -1,4 +1,4 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.infra;
 
 import com.ft.transcendence.auth.dto.GoogleTokenResponse;
 import jakarta.ws.rs.Consumes;

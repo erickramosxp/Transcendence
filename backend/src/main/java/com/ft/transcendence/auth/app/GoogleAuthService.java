@@ -1,10 +1,11 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.app;
 
 import com.ft.transcendence.auth.dto.AuthResponse;
 import com.ft.transcendence.auth.dto.GoogleTokenResponse;
-import com.ft.transcendence.entity.AuthProvider;
-import com.ft.transcendence.entity.AuthProviderType;
-import com.ft.transcendence.entity.User;
+import com.ft.transcendence.auth.infra.GoogleAuthClient;
+import com.ft.transcendence.auth.domain.AuthProvider;
+import com.ft.transcendence.auth.domain.AuthProviderType;
+import com.ft.transcendence.user.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -16,12 +17,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 

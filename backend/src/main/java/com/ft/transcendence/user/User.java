@@ -1,9 +1,11 @@
-package com.ft.transcendence.entity;
+package com.ft.transcendence.user;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import java.time.OffsetDateTime;
+
+import com.ft.transcendence.post.domain.Post;
 import jakarta.persistence.*;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -46,5 +48,9 @@ public class User extends PanacheEntityBase {
 
     public static User findByEmail(String email) {
         return find("email", email).firstResult();
+    }
+
+    public static User findById(Long id) {
+        return find("id", id).firstResult();
     }
 }

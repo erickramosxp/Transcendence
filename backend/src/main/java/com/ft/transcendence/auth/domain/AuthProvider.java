@@ -1,6 +1,8 @@
-package com.ft.transcendence.entity;
+package com.ft.transcendence.auth.domain;
 
 import java.time.OffsetDateTime;
+
+import com.ft.transcendence.user.User;
 import jakarta.persistence.*;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
