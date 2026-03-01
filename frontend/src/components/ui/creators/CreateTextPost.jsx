@@ -17,7 +17,7 @@ function CreateTextPost({ onAddPost, onClose }) {
 		linkPreview,
 		linkPreviewLoading,
 		linkPreviewError,
-	} = useCreatePost(onAddPost, onClose);
+	} = useCreatePost(onAddPost, onClose, "text");
 
 	return (
 		<Card className="max-w-[520px] w-full mx-auto border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">

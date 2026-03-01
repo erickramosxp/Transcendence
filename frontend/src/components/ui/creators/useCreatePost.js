@@ -41,7 +41,7 @@ export function useCreatePost(onAddPost, onClose, postType) {
 	}, [debouncedText]);
 
 	function handleSubmit() {
-		if (text.trim() === "") return;
+		if ( postType === "text" && text.trim() === "") return;
 
 		if ((postType === "photo" || postType === "video") && file == null) return;
 
