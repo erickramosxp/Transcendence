@@ -1,6 +1,7 @@
 package com.ft.transcendence.auth;
 
 import com.ft.transcendence.auth.dto.AuthResponse;
+import com.ft.transcendence.auth.dto.GoogleTokenResponse;
 import com.ft.transcendence.entity.AuthProvider;
 import com.ft.transcendence.entity.AuthProviderType;
 import com.ft.transcendence.entity.User;
@@ -15,7 +16,14 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -28,16 +36,47 @@ import java.util.Locale;
 public class GoogleAuthService {
 
     private final GoogleIdTokenVerifier verifier;
+    private final String clientId;
+    private final String clientSecret;
+    private final String redirectUri;
 
     @Inject
-    public GoogleAuthService(@ConfigProperty(name = "google.oauth.web-client-id") String clientId) {
+    @RestClient
+    GoogleAuthClient googleAuthClient;
+
+    @Inject
+    public GoogleAuthService(@ConfigProperty(name = "google.oauth.web-client-id") String clientId,
+                            @ConfigProperty(name = "google.oauth.web-client-secret") String clientSecret,
+                            @ConfigProperty(name = "google.oauth.redirect-uri") String redirectUri) {
         if (clientId == null || clientId.isBlank())
             throw new IllegalStateException("google.oauth.web-client-id not configured");
 
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.redirectUri = redirectUri;
         this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
                 .setIssuer("https://accounts.google.com")
                 .build();
+    }
+
+    private GoogleTokenResponse exchangeCodeForTokens(String code) {
+        return googleAuthClient.token(
+                code,
+                clientId,
+                clientSecret,
+                redirectUri,
+                "authorization_code"
+        );
+    }
+
+    @Transactional
+    public AuthResponse loginOrRegisterWithGoogleCode(String code) {
+        if (code == null || code.isBlank())
+            throw new BadRequestException("Authorization code is required");
+
+        GoogleTokenResponse tr = exchangeCodeForTokens(code);
+        return loginOrRegisterWithGoogle(tr.id_token);
     }
 
     @Transactional
@@ -46,6 +85,7 @@ public class GoogleAuthService {
             throw new BadRequestException("ID Token is required");
 
         GoogleIdToken.Payload payload = verifyGoogleToken(idTokenString);
+
 
         OffsetDateTime now = OffsetDateTime.now();
         User user = findOrCreateUser(payload, now);

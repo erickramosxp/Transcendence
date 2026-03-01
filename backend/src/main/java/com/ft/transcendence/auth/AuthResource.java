@@ -31,6 +31,6 @@ public class AuthResource {
     @POST
     @Path("/google")
     public AuthResponse loginWithGoogle(GoogleLoginRequest req) {
-        return googleAuthService.loginOrRegisterWithGoogle(req.idToken);
+        return googleAuthService.loginOrRegisterWithGoogleCode(req.code);
     }
 }
