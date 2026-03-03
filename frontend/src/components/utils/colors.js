@@ -20,7 +20,6 @@ export const yaleBlue = {
     hoverDark: 'dark:hover:from-[#0a1119]/20 dark:hover:via-[#0f1824]/20 dark:hover:to-[#1e3048]/20',
   },
 
-  // Shadow utilities
   shadow: {
     sm: 'shadow-[#4a78b5]/30',
     md: 'shadow-lg shadow-[#4a78b5]/30',

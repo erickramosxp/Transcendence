@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
 import { yaleBlue } from "../../../components/utils/colors";
 import { Button } from "../../../components/ui/Button";
-import { SquarePen } from 'lucide-react';
+import { SquarePen, Settings } from 'lucide-react';
+import { Modal } from "../../../components/Modal";
+import { EditProfileForm } from "./EditProfileForm";
+import { ThemeToggle } from "../../../components/ThemeToggle";
 
 const userData = {
 name: "Morty",
@@ -25,15 +28,27 @@ avatarUrl: "https://github.com/shadcn.png",
 
 export const ProfileHeader = () => {
   
+	const [editOpen, setEditOpen] = useState(false);
 
   return (
-  	<div className={`min-h-screen ${yaleBlue.bg.lightest} pb-10`}>
-		<div className="w-full max-w-4xl mx-auto bg-white shadow-md overflow-hidden">
-			<CoverPhoto 
+	<>
+		<Modal 
+			open={editOpen}
+			title="Editar Perfil"
+			onClose={() => setEditOpen(false)}
+		>
+			<EditProfileForm 
+				onCancel={() => setEditOpen(false)}
+				onSaved={() => setEditOpen(false)}
+			/>
+		</Modal>
+  	<div className={`${yaleBlue.bg.lightest} pb-5`}>
+		<div className="w-full max-w-4xl mx-auto">
+			<CoverPhoto className='overflow-hidden'
 				coverUrl={userData.coverUrl}
 			/>
 
-			<div className="px-4 pb-4">
+			<div className="px-4 pb-4 bg-white shadow-md">
 
 				<div className="flex justify-between items-start relative">
 
@@ -49,10 +64,18 @@ export const ProfileHeader = () => {
 
 					</div>
 
-					<Button variant={"yaleGradient"} size={"lg"} className="mt-4 rounded-full">
-						<SquarePen />
-						Editar Perfil
-					</Button>
+					<div className="flex justify-center items-center gap-2.5">
+						<Button variant={"yaleGradient"} size={"lg"} className="mt-4 rounded-full" onClick={() => setEditOpen(true)}>
+							<SquarePen />
+							Editar Perfil
+						</Button>
+						<Button className='mt-4 bg-white border-2'>
+							<Settings color="#0d0d0d"/>
+						</Button>
+						<div className="mt-4">
+							<ThemeToggle />
+						</div>
+					</div>
 				</div>
 			<ProfileInfo  
 				{...userData}
@@ -60,5 +83,6 @@ export const ProfileHeader = () => {
 			</div>
 		</div>
     </div>
+	</>
   );
 };

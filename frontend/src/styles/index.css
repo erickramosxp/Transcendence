@@ -1,6 +1,7 @@
 @import "./tailwind.css";
 @import "./fonts.css";
 @import "./theme.css";
+@import "./modal.css"
 /* @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities); */
 

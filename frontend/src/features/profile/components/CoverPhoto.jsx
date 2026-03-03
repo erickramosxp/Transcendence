@@ -4,13 +4,13 @@ import { yaleBlue } from '../../../components/utils/colors';
 export const CoverPhoto = ({coverUrl}) => {
 
   return (
-    // Definimos a altura fixa aqui. O relative é para o Avatar poder se sobrepor depois
-    <div className="h-32 sm:h-48 w-full relative bg-gray-200">
+    
+    <div className="h-40 sm:h-52 w-full relative bg-white">
       {coverUrl ? (
         <img
           src={coverUrl}
           alt="Capa do perfil"
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover  rounded-b-xl md:rounded-b-3xl" 
         />
       ) : (
         <div className={`w-full h-full ${yaleBlue.gradient.primary}`}></div>

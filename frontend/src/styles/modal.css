@@ -1,0 +1,35 @@
+@reference "./tailwind.css";
+
+@layer components {
+  .modal-overlay {
+    @apply fixed inset-0 flex items-center justify-center p-6;
+    background: var(--modal-overlay);
+    z-index: var(--modal-z);
+  }
+
+  .modal-card {
+    width: var(--modal-width);
+    background: var(--modal-surface);
+    color: var(--modal-foreground);
+    border: 1px solid var(--modal-border);
+    border-radius: var(--modal-radius);
+    box-shadow: var(--modal-shadow);
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between px-4 pb-2 pt-4;
+  }
+
+  .modal-body {
+    @apply px-4 pb-4 pt-2;
+  }
+
+  .modal-close {
+    @apply cursor-pointer border-0 bg-transparent text-[22px] opacity-80;
+    color: var(--modal-foreground);
+  }
+
+  .modal-close:hover {
+    opacity: 1;
+  }
+}

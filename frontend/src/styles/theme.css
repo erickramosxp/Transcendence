@@ -1,15 +1,22 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+
+
   --font-size: 16px;
+
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
+
   --card: #ffffff;
   --card-foreground: oklch(0.145 0 0);
+
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
+
   --primary: #030213;
   --primary-foreground: oklch(1 0 0);
+  
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
@@ -52,6 +59,43 @@
   --yale-blue-800: #1e3048;
   --yale-blue-900: #0f1824;
   --yale-blue-950: #0a1119;
+
+
+    /* Modal semantic tokens (light) */
+  --modal-overlay: rgba(0, 0, 0, 0.55);
+  --modal-surface: var(--card);
+  --modal-foreground: var(--card-foreground);
+  --modal-border: var(--border);
+
+  --modal-radius: 12px;                 /* ou var(--radius) */
+  --modal-shadow: 0 20px 80px rgba(0,0,0,.6);
+  --modal-z: 9999;
+  --modal-width: min(560px, 100%);
+
+
+  /*  Profile Edit forms */
+  
+  --epf-label: color-mix(in oklab, var(--foreground) 80%, transparent);
+  --epf-input-bg: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --epf-input-border: color-mix(in oklab, var(--foreground) 15%, transparent);
+  --epf-placeholder: color-mix(in oklab, var(--foreground) 40%, transparent);
+
+  --epf-focus: #6366f1; /* ou var(--primary) se você quiser */
+  --epf-focus-ring: color-mix(in oklab, var(--epf-focus) 20%, transparent);
+
+  --epf-divider: color-mix(in oklab, var(--foreground) 8%, transparent);
+
+  --epf-radius: 8px;
+  --epf-backdrop-blur: 10px;
+
+  --epf-btn-secondary-bg: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --epf-btn-secondary-bg-hover: color-mix(in oklab, var(--foreground) 15%, transparent);
+  --epf-btn-secondary-fg: color-mix(in oklab, var(--foreground) 80%, transparent);
+
+  --epf-btn-primary-a: #6366f1;
+  --epf-btn-primary-b: #8b5cf6;
+  --epf-btn-primary-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.4);
+  --epf-btn-primary-shadow-hover: 0 6px 20px 0 rgba(99, 102, 241, 0.5);
 }
 
 .dark {
@@ -89,6 +133,22 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+
+    /* Modal semantic tokens (dark) */
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --modal-surface: var(--card);
+  --modal-foreground: var(--card-foreground);
+  --modal-border: var(--border);
+
+  --modal-radius: 12px;
+  --modal-shadow: 0 20px 80px rgba(0,0,0,.75);
+  --modal-z: 9999;
+  --modal-width: min(560px, 100%);
+
+  /* Profile Edit forms  */
+
+  --epf-focus-ring: color-mix(in oklab, var(--epf-focus) 30%, transparent);
 }
 
 @theme inline {
@@ -130,6 +190,17 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+
+  --color-modal-overlay: var(--modal-overlay);
+  --color-modal-surface: var(--modal-surface);
+  --color-modal-foreground: var(--modal-foreground);
+  --color-modal-border: var(--modal-border);
+
+  --radius-modal: var(--modal-radius);
+  --shadow-modal: var(--modal-shadow);
+  --z-modal: var(--modal-z);
+  --width-modal: var(--modal-width);
 }
 
 @layer base {
@@ -191,4 +262,11 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
+}
+
+@layer utilities {
+  .text-secondary { color: var(--muted-foreground); }
+  /* se quiser: */
+  .text-primary-text { color: var(--foreground); }
+  .text-link { color: var(--yale-blue-500); }
 }
