@@ -10,11 +10,16 @@ import { PublicLayout } from './layouts/PublicLayout';
 import { PublicRoute } from './routes/PublicRoute';
 import { PrivateRoute } from './routes/PrivateRoute';
 import './App.css'
+import { ThemeShowcase } from '@/pages/dev/ThemeShowcase';
 
 function App() {
 
   return (
     <Routes>
+
+      {import.meta.env.DEV && (
+        <Route path="/dev/theme-showcase" element={<ThemeShowcase />} />
+      )}
 
       <Route element={<PublicLayout />}>
         

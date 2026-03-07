@@ -47,7 +47,7 @@ export function Home() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#edf2f8] via-[#dbe4f0] to-[#b7c9e1] dark:from-slate-950 dark:via-[#0f1824] dark:to-[#1e3048] overflow-hidden relative">
+        <div className="min-h-screen overflow-hidden relative">
 
             {/* Top Bar - Language & Theme Switchers */}
             <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[100]">
