@@ -12,10 +12,11 @@ public class PostResponse {
     public String imageUrl;
     public Long likeCount;
     public Long commentCount;
+    public boolean likedByMe;
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
 
-    public static PostResponse of(Post p) {
+    public static PostResponse of(Post p, boolean likedByMe) {
         var r = new PostResponse();
         r.id = p.id;
         r.userId = p.user.id;
@@ -23,6 +24,7 @@ public class PostResponse {
         r.imageUrl = p.imageUrl;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;
+        r.likedByMe = likedByMe;
         r.createdAt = p.createdAt;
         r.updatedAt = p.updatedAt;
         return r;

@@ -2,14 +2,12 @@ package com.ft.transcendence.post.api;
 
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.post.app.PostService;
+import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/posts")
@@ -27,5 +25,13 @@ public class PostResource {
     public PostResponse post(PostRequest req) {
         long userId = currentUser.id();
         return postService.create(userId, req);
+    }
+
+    @GET
+    @Authenticated
+    public FeedResponse feed(@QueryParam("page") @DefaultValue("0") int page,
+                             @QueryParam("size") @DefaultValue("20") int size) {
+        long userId = currentUser.id();
+        return postService.feed(page, size, userId);
     }
 }
