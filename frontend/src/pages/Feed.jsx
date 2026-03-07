@@ -2,17 +2,19 @@ import { useState } from "react";
 import PostList from "../components/ui/PostList";
 import PostMenu from "../components/ui/PostMenu";
 import { useAuth } from "../app/providers/AuthProvider";
+import CommentsCard from "../components/ui/CommentCard";
 
 export function Feed() {
     const [posts, setPosts] = useState([]);
+    const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
     const {user} = useAuth();
 
     function addPost(postData){
         const newPost = {
+            id: Date.now(),
             name: user.name,
             username:"user_name",
             userPhoto:"https://kwaksf.com/cdn/shop/files/Swimmer_with_drink_Rubber_Duck.png?v=1749514215&width=990",
-            id: Date.now(),
             content: postData.text,
             file: postData.file,
             imageUrl: postData.file ? URL.createObjectURL(postData.file) : null,
@@ -21,9 +23,33 @@ export function Feed() {
             likes: 0,
             isLiked: false,
             date_time:Date.now(),
+            comments: [],
+            countComments: 0,
         };
 
         setPosts([newPost, ...posts]);
+    }
+
+    function addComment(postId, commentData){
+        const updatePosts = posts.map((post) => {
+            if (post.id === postId)
+            {
+                const newComment = {
+                    id: Date.now(),
+                    user_id: user.id,
+                    name: user.name,
+                    user_username: "user_name",
+                    user_profile_photo:null,
+                    content: commentData.text,
+                    date_time: Date.now(),
+                    likes: 0,
+                    likedByMe: false
+                };
+                return { ...post, comments: [...post.comments, newComment] };
+            }
+            return post;
+        });
+        setPosts(updatePosts);
     }
 
     function handleLike(postId) {
@@ -41,15 +67,26 @@ export function Feed() {
             } return post;
         });
         setPosts(updatePosts);
-
     }
+
+    function toggleComments(postId) {
+        console.log("Toggle comments for post", postId);
+        setActiveCommentsPostId((prev) => (prev === postId ? null : postId));
+    }
+
     return (
         <div className="feed-background">
             <div className="container">
                 <div className="feed-grid">
                     <div className="space-y-6">
                         <PostMenu onAddPost={addPost}/>
-                        <PostList posts={posts} onLike={handleLike} />
+                        <PostList 
+                            posts={posts} 
+                            onAddComment={addComment} 
+                            onLike={handleLike} 
+                            onToggleComments={toggleComments}
+                            activeCommentsPostId={activeCommentsPostId}
+                        />
                     </div>
                     <div className="space-y-6">
                         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">

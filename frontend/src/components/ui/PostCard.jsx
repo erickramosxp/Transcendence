@@ -3,25 +3,12 @@ import { yaleBlue } from "../utils/colors";
 import { Heart, MessageSquare } from "lucide-react";
 import { Avatar } from "../ui/Avatar"
 import { TextWithLink } from "../ui/TextWithLink";
+import CommentCard from "./CommentCard";
+import { getCurrentTime } from "../../shared/getCurrentTime";
 
-function PostCard({ post, onLike }) {
-	function getRelativeTime(date_time) {
-		const now = Date.now();
-		const diff = now - date_time;
+function PostCard({ post, onAddComment, onLike, onToggleComments, activeCommentsPostId}) {
+	
 
-		const seconds = Math.floor(diff / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const hours = Math.floor(minutes / 60);
-		const days = Math.floor(hours / 24);
-
-		if (days > 0)
-			return `há ${days} dia${days > 1 ? 's' : ''}`;
-		if (hours > 0)
-			return `há ${hours} hora${hours > 1 ? 's' : ''}`;
-		if (minutes)
-			return `há ${minutes} minuto${minutes > 1 ? 's' : ''}`;
-		return `há poucos segundos`;
-	}
 
 	return (
 
@@ -43,7 +30,7 @@ function PostCard({ post, onLike }) {
 						</span>
 
 						<span className="text-slate-400">
-							{getRelativeTime(post.date_time)}
+							{getCurrentTime(post.date_time)}
 						</span>
 					</div>
 
@@ -107,15 +94,22 @@ function PostCard({ post, onLike }) {
 							{post.likes}
 						</button>
 						<button
-							// onClick={() => setShowComments(!showComments)}
-							className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-[#4a78b5] dark:hover:text-[#6e93c4] transition-all hover:scale-105"
-						>
+							onClick={() => onToggleComments(post.id)}
+							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${activeCommentsPostId
+									? "text-[#4a78b5] dark:text-[#6e93c4]"
+									: "text-slate-500 dark:text-slate-400 hover:text-[#4a78b5] dark:hover:text-[#6e93c4]"
+								}`}						>
 							<MessageSquare className="h-5 w-5" />
-							{/* <span className="font-medium">{comments.length}</span> */}
+							<span className="font-medium">{post.countComments}</span>
 						</button>
 					</div>
 				</div>
 			</div>
+				{activeCommentsPostId === post.id && (
+					<div className="px-4 pb-4">
+						<CommentCard post={post} onAddComment={onAddComment} />
+					</div>
+				)}
 		</div>
 	);
 }
