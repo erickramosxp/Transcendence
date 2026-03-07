@@ -7,26 +7,26 @@ import java.time.OffsetDateTime;
 
 public class PostResponse {
     public Long id;
-    public Long userId;
-    public String text;
-    public String imageUrl;
+    public String name;
+    public String userName;
+    public String content;
+    public boolean likedByMe;
     public Long likeCount;
     public Long commentCount;
-    public boolean likedByMe;
-    public OffsetDateTime createdAt;
-    public OffsetDateTime updatedAt;
+    public String media;
+    public OffsetDateTime date_time;
 
     public static PostResponse of(Post p, boolean likedByMe) {
         var r = new PostResponse();
         r.id = p.id;
-        r.userId = p.user.id;
-        r.text = p.text;
-        r.imageUrl = p.imageUrl;
+        r.name = p.user.name;
+        r.userName = p.user.username;
+        r.content = p.text;
+        r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;
-        r.likedByMe = likedByMe;
-        r.createdAt = p.createdAt;
-        r.updatedAt = p.updatedAt;
+        r.media = p.imageUrl;
+        r.date_time = p.createdAt;
         return r;
     }
 }
