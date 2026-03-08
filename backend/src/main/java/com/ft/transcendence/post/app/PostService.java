@@ -1,6 +1,6 @@
 package com.ft.transcendence.post.app;
 
-import com.ft.transcendence.like.Like;
+import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostRequest;

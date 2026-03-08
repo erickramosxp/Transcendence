@@ -34,4 +34,8 @@ public class Post extends PanacheEntityBase {
 
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
+
+    public static Post findById(Long id) {
+        return find("id", id).firstResult();
+    }
 }

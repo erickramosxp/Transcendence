@@ -1,4 +1,4 @@
-package com.ft.transcendence.like;
+package com.ft.transcendence.like.domain;
 
 import com.ft.transcendence.comment.Comment;
 import com.ft.transcendence.user.User;
