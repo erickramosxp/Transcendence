@@ -20,8 +20,8 @@ public class Post extends PanacheEntityBase {
     @Column(name = "text", nullable = false)
     public String text;
 
-    @Column(name = "image_url")
-    public String imageUrl;
+    @Column(name = "media_url")
+    public String mediaUrl;
 
     @Column(name = "like_count", nullable = false)
     public Long likeCount = 0L;

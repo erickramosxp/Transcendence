@@ -20,6 +20,9 @@ public class User extends PanacheEntityBase {
     @Column(nullable = false, unique = true)
     public String email;
 
+    @Column(name = "avatar_url")
+    public String avatarUrl;
+
     @Column(nullable = false, unique = true)
     public String username;
 

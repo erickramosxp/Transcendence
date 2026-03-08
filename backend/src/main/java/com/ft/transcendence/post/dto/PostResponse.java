@@ -1,7 +1,6 @@
 package com.ft.transcendence.post.dto;
 
 import com.ft.transcendence.post.domain.Post;
-import com.ft.transcendence.user.dto.UserResponse;
 
 import java.time.OffsetDateTime;
 
@@ -25,7 +24,7 @@ public class PostResponse {
         r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;
-        r.media = p.imageUrl;
+        r.media = p.mediaUrl;
         r.date_time = p.createdAt;
         return r;
     }
