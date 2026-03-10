@@ -6,9 +6,7 @@ import { TextWithLink } from "../ui/TextWithLink";
 import CommentCard from "./CommentCard";
 import { getCurrentTime } from "../../shared/getCurrentTime";
 
-function PostCard({ post, onAddComment, onLike, onToggleComments, activeCommentsPostId}) {
-	
-
+function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId }) {
 
 	return (
 
@@ -107,7 +105,7 @@ function PostCard({ post, onAddComment, onLike, onToggleComments, activeComments
 			</div>
 				{activeCommentsPostId === post.id && (
 					<div className="px-4 pb-4">
-						<CommentCard post={post} onAddComment={onAddComment} />
+						<CommentCard post={post} onAddComment={onAddComment} onCommentLike={onCommentLike} />
 					</div>
 				)}
 		</div>

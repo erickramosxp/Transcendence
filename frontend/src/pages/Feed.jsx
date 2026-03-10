@@ -69,6 +69,20 @@ export function Feed() {
         setPosts(updatePosts);
     }
 
+    function handleCommentLike(postId, commentId) {
+        const updatePosts = posts.map((post) => {
+            if (post.id !== postId) return post;
+            const comments = (post.comments ?? []).map((comment) => {
+                if (comment.id !== commentId) return comment;
+                const likedByMe = !comment.likedByMe;
+                const likes = likedByMe ? comment.likes + 1 : comment.likes - 1;
+                return { ...comment, likedByMe, likes };
+            });
+            return { ...post, comments };
+        });
+        setPosts(updatePosts);
+    }
+
     function toggleComments(postId) {
         console.log("Toggle comments for post", postId);
         setActiveCommentsPostId((prev) => (prev === postId ? null : postId));
@@ -80,10 +94,11 @@ export function Feed() {
                 <div className="feed-grid">
                     <div className="space-y-6">
                         <PostMenu onAddPost={addPost}/>
-                        <PostList 
-                            posts={posts} 
-                            onAddComment={addComment} 
-                            onLike={handleLike} 
+                        <PostList
+                            posts={posts}
+                            onAddComment={addComment}
+                            onLike={handleLike}
+                            onCommentLike={handleCommentLike}
                             onToggleComments={toggleComments}
                             activeCommentsPostId={activeCommentsPostId}
                         />

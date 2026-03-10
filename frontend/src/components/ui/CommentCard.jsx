@@ -8,9 +8,10 @@ import { Send } from "lucide-react";
 import { Separator } from "./Separator";
 import { getCurrentTime } from "../../shared/getCurrentTime";
 import { Scroll } from "./Scroll";
+import { Heart } from "lucide-react";
 
 
-function CommentCard({ post, onAddComment }) {
+function CommentCard({ post, onAddComment, onCommentLike }) {
     const comments = post.comments ?? [];
     const [commentText, setCommentText] = useState("");
 
@@ -31,37 +32,51 @@ function CommentCard({ post, onAddComment }) {
                 </div>
             ) : (
                 <Scroll className="max-h-50">
-                {comments.map((comment) => (
-                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
-                        <div className="flex gap-4">
+                    <div className="space-y-3">
+                        {comments.map((comment) => (
+                            <div key={comment.id ?? comment.user_id + comment.date_time} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                                <div className="flex gap-3">
 
-                            <Avatar
-                                src={comment.user_profile_photo}
-                                name={comment.name}
-                                size="MD"
-                            />
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className={yaleBlue.text.hover}>
-                                        {comment.name}
-                                    </span>
+                                <Avatar
+                                    src={comment.user_profile_photo}
+                                    name={comment.name}
+                                    size="MD"
+                                />
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className={yaleBlue.text.hover}>
+                                            {comment.name}
+                                        </span>
 
-                                    <span className="text-slate-500">
-                                        @{comment.user_username}
-                                    </span>
+                                        <span className="text-slate-500">
+                                            @{comment.user_username}
+                                        </span>
 
-                                    <span className="text-slate-400">
-                                        {getCurrentTime(post.date_time)}
-                                    </span>
+                                        <span className="text-slate-400">
+                                            {getCurrentTime(post.date_time)}
+                                        </span>
+                                    </div>
+                                    <div className="mt-2 text-stone-700 leading-relaxed">
+                                        <TextWithLink text={comment.content} />
+                                    </div>
+                                    <div className="flex items-center gap-6 mt-3 text-slate-500">
+                                        <button
+                                            onClick={() => onCommentLike?.(post.id, comment.id)}
+                                            className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${comment.likedByMe
+                                                ? 'text-pink-600 dark:text-pink-400'
+                                                : 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
+                                                }`}
+                                        >
+                                            <Heart className={`h-5 w-5 ${comment.likedByMe ? 'fill-current' : ''}`} />
+                                            {comment.likes}
+                                        </button>
+
+                                    </div>
                                 </div>
-                                <div className="mt-2 text-stone-700 leading-relaxed">
-                                    <TextWithLink text={comment.content} />
-                                </div>
-
                             </div>
                         </div>
+                        ))}
                     </div>
-                    ))}
                 </Scroll>
             )}
             <form onSubmit={handleSubmit} className="space-y-2">

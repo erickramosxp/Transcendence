@@ -1,7 +1,7 @@
 import PostCard from "./PostCard";
 import { Card } from "./Card";
 
-function PostList({ posts, onAddComment, onLike, onToggleComments, activeCommentsPostId }) {
+function PostList({ posts, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId }) {
 	return (
 		<div className="space-y-8">
 			{posts.length === 0 ? (
@@ -18,6 +18,7 @@ function PostList({ posts, onAddComment, onLike, onToggleComments, activeComment
 							post={post}
 							onLike={onLike}
 							onAddComment={onAddComment}
+							onCommentLike={onCommentLike}
 							onToggleComments={onToggleComments}
 							activeCommentsPostId={activeCommentsPostId}
 							/>
