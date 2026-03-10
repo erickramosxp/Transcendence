@@ -33,4 +33,8 @@ public class Comment extends PanacheEntityBase {
 
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
+
+    public static Comment findById(Long id) {
+        return find("id", id).firstResult();
+    }
 }

@@ -37,6 +37,8 @@ public class CommentService {
         comment.updatedAt = now;
         comment.persist();
 
+        post.commentCount = post.commentCount + 1;
+
         return CommentResponse.of(comment, false);
     }
 
