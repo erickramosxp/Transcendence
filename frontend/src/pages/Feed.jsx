@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import PostList from "../components/ui/PostList";
 import PostMenu from "../components/ui/PostMenu";
 import { useAuth } from "../app/providers/AuthProvider";
-import CommentsCard from "../components/ui/CommentCard";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 
 export function Feed() {
     const [posts, setPosts] = useState([]);
     const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
-    const {user} = useAuth();
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(false);
+    const sentinelRef = useRef(null);
+    const { user } = useAuth();
+
+    const loadMore = useCallback(() => {
+        if (isLoadingMore || !hasMore) return;
+        // TODO: chamar API paginada (ex.: GET /posts?page=N), depois:
+        // setIsLoadingMore(true);
+        // fetch(...).then((newPosts) => { setPosts(prev => [...prev, ...newPosts]); setHasMore(conforme resposta); setIsLoadingMore(false); });
+    }, [isLoadingMore, hasMore]);
+
+    useInfiniteScroll(sentinelRef, loadMore, {
+        enabled: hasMore && !isLoadingMore,
+        rootMargin: "200px",
+    });
 
     function addPost(postData){
         const newPost = {
@@ -27,7 +42,7 @@ export function Feed() {
             countComments: 0,
         };
 
-        setPosts([newPost, ...posts]);
+        setPosts((prev) => [newPost, ...prev]);
     }
 
     function addComment(postId, commentData){
@@ -97,6 +112,9 @@ export function Feed() {
                         <PostMenu onAddPost={addPost}/>
                         <PostList
                             posts={posts}
+                            sentinelRef={sentinelRef}
+                            isLoadingMore={isLoadingMore}
+                            hasMore={hasMore}
                             onAddComment={addComment}
                             onLike={handleLike}
                             onCommentLike={handleCommentLike}
