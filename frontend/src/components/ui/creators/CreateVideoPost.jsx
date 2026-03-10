@@ -26,6 +26,12 @@ function CreateVideoPost({ onAddPost, onClose }) {
 							maxLength={500}
 							value={text}
 							onChange={handleChange}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && !e.shiftKey) {
+									e.preventDefault();
+									handleSubmit();
+								}
+							}}
 							placeholder="O que está acontecendo aqui?"
 							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
 						/>

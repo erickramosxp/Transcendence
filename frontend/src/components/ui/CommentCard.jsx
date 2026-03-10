@@ -70,6 +70,12 @@ function CommentCard({ post, onAddComment }) {
                         maxLength={500}
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSubmit(e);
+                            }
+                        }}
                         placeholder="Escreva um comentário..."
                         className="min-h-[40px] resize-none"
                     />
