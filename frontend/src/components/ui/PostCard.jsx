@@ -98,7 +98,7 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 									: "text-slate-500 dark:text-slate-400 hover:text-[#4a78b5] dark:hover:text-[#6e93c4]"
 								}`}						>
 							<MessageSquare className="h-5 w-5" />
-							<span className="font-medium">{post.countComments}</span>
+							<span className="font-medium">{post.countComments ?? post.comments?.length ?? 0}</span>
 						</button>
 					</div>
 				</div>

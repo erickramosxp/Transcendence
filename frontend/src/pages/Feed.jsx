@@ -45,7 +45,8 @@ export function Feed() {
                     likes: 0,
                     likedByMe: false
                 };
-                return { ...post, comments: [...post.comments, newComment] };
+                const updatedComments = [...(post.comments ?? []), newComment];
+                return { ...post, comments: updatedComments, countComments: updatedComments.length };
             }
             return post;
         });
@@ -92,7 +93,7 @@ export function Feed() {
         <div className="feed-background">
             <div className="container">
                 <div className="feed-grid">
-                    <div className="space-y-6">
+                    <div className="space-y-6 min-w-0">
                         <PostMenu onAddPost={addPost}/>
                         <PostList
                             posts={posts}
@@ -103,7 +104,7 @@ export function Feed() {
                             activeCommentsPostId={activeCommentsPostId}
                         />
                     </div>
-                    <div className="space-y-6">
+                    <div className="feed-sidebar space-y-6">
                         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">
                             <h2 className="text-lg font-semibold mb-4">Amigos Online</h2>
                         </div>

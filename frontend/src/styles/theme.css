@@ -236,5 +236,13 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: var(--grid-gap);
+  align-items: start;
+}
+
+/* Sidebar fixa ao rolar: lateral estática, centro com scroll natural */
+.feed-sidebar {
+  position: sticky;
+  top: var(--container-padding-y);
+  align-self: start;
 }
 
