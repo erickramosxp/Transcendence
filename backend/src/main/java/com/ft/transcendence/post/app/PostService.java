@@ -18,7 +18,7 @@ public class PostService {
 
     @Transactional
     public PostResponse create(Long userId, PostRequest req) {
-        if ((req.text == null || req.text.isBlank()) && (req.imageUrl == null || req.imageUrl.isBlank()))
+        if ((req.text == null || req.text.isBlank()) && (req.mediaUrl == null || req.mediaUrl.isBlank()))
             throw new BadRequestException("Posts must contain text or images");
 
         var now = OffsetDateTime.now();
@@ -26,7 +26,7 @@ public class PostService {
         Post post = new Post();
         post.user = User.findById(userId);
         post.text = req.text;
-        post.mediaUrl = req.imageUrl;
+        post.mediaUrl = req.mediaUrl;
         post.likeCount = 0L;
         post.commentCount = 0L;
         post.createdAt = now;

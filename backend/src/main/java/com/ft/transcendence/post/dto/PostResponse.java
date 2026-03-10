@@ -9,23 +9,25 @@ public class PostResponse {
     public String name;
     public String userName;
     public String content;
+    public String avatarUrl;
     public boolean likedByMe;
     public Long likeCount;
     public Long commentCount;
     public String media;
-    public OffsetDateTime date_time;
+    public OffsetDateTime created_at;
 
     public static PostResponse of(Post p, boolean likedByMe) {
         var r = new PostResponse();
         r.id = p.id;
         r.name = p.user.name;
         r.userName = p.user.username;
+        r.avatarUrl = p.user.avatarUrl;
         r.content = p.text;
         r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;
         r.media = p.mediaUrl;
-        r.date_time = p.createdAt;
+        r.created_at = p.createdAt;
         return r;
     }
 }
