@@ -230,11 +230,14 @@
   padding-right: var(--container-padding-x);
   padding-top: var(--container-padding-y);
   padding-bottom: var(--container-padding-y);
-  @media (max-width:640px){
-    .container{
-      padding-left: 0.75rem;
-      padding-right: 0.75rem;
-    }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 }
 

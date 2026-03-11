@@ -22,7 +22,7 @@ function PostMenu({onAddPost}) {
 	}
 	return (
 		<Card className=" border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
-			<div className="inline-flex items-center justify-center gap-2 p-4">
+			<div className="flex flex-wrap items-center justify-center gap-2 p-3 sm:p-4 sm:gap-3">
 				<Button onClick={() => handleOpen("text")} size="rounded" variant="secondary" >
 					<ALargeSmall size={0} className=" size-6 text-[#4a78b5]" />
 				</Button>

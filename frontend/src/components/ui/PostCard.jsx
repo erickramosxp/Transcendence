@@ -10,29 +10,28 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 
 	return (
 
-		<div className="bg-white rounded-2xl shadow-md p-4">
-			<div className="flex gap-4">
+		<div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-3 sm:p-4">
+			<div className="flex gap-3 sm:gap-4 min-w-0">
 				<Avatar
 					src={post.userPhoto}
 					name={post.name}
 					size="lg"
+					className="shrink-0"
 				/>
-				<div className="flex-1">
-					<div className="flex items-center gap-2 text-sm">
-						<span className={yaleBlue.text.hover}>
+				<div className="flex-1 min-w-0">
+					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
+						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>
 							{post.name}
 						</span>
-
-						<span className="text-slate-500">
+						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.username}`}>
 							@{post.username}
 						</span>
-
-						<span className="text-slate-400">
+						<span className="text-slate-400 shrink-0">
 							{getCurrentTime(post.date_time)}
 						</span>
 					</div>
 
-					<div className="mt-2 text-stone-700 leading-relaxed">
+					<div className="mt-2 text-stone-700 dark:text-stone-300 leading-relaxed break-words overflow-hidden">
 						<TextWithLink text={post.content} />
 					</div>
 
@@ -80,7 +79,7 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 							/>
 						)
 					)}
-					<div className="flex items-center gap-6 mt-3 text-slate-500">
+					<div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-3 text-slate-500">
 						<button
 							onClick={() => onLike(post.id)}
 							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${post.isLiked

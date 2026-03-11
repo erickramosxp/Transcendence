@@ -108,7 +108,7 @@ export function Feed() {
         <div className="feed-background">
             <div className="container">
                 <div className="feed-grid">
-                    <div className="space-y-6 min-w-0">
+                    <div className="space-y-6 min-w-0 max-w-full overflow-hidden">
                         <PostMenu onAddPost={addPost}/>
                         <PostList
                             posts={posts}

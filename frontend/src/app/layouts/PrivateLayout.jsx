@@ -7,7 +7,7 @@ export function PrivateLayout() {
     return (
         <div className="flex">
             <LeftSidebar />
-            <main className="flex-1 pb-20">
+            <main className="flex-1 pb-20 lg:pb-0">
                 <Outlet />
             </main>
             <div className="lg:hidden">
