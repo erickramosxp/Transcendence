@@ -230,19 +230,32 @@
   padding-right: var(--container-padding-x);
   padding-top: var(--container-padding-y);
   padding-bottom: var(--container-padding-y);
+  @media (max-width:640px){
+    .container{
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
 }
 
 .feed-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--grid-gap);
   align-items: start;
+  @media (min-width: 1024px) {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
-/* Sidebar fixa ao rolar: lateral estática, centro com scroll natural */
+
 .feed-sidebar {
   position: sticky;
   top: var(--container-padding-y);
   align-self: start;
+  display: none;
+  @media (min-width: 1024px) {
+    display: block;
+  }
 }
 
