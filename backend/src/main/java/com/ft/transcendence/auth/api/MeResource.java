@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import com.ft.transcendence.user.dto.UserResponse;
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 
 import io.quarkus.security.Authenticated;
 

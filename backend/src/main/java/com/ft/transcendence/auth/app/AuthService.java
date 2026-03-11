@@ -11,7 +11,7 @@ import com.ft.transcendence.auth.dto.AuthResponse;
 import com.ft.transcendence.auth.dto.RegisterRequest;
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;

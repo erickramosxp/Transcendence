@@ -1,6 +1,6 @@
 package com.ft.transcendence.user.dto;
 
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 
 public class UserResponse {
     public Long id;

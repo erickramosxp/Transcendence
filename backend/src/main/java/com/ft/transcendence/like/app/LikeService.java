@@ -3,7 +3,7 @@ package com.ft.transcendence.like.app;
 import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
@@ -68,6 +68,7 @@ public class LikeService {
         comment.likeCount = comment.likeCount + 1;
     }
 
+    @Transactional
     public void unlikeComment(long userId, long commentId) {
         Comment comment = Comment.findById(commentId);
         if (comment == null)

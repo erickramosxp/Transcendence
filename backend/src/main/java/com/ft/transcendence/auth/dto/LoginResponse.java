@@ -1,6 +1,6 @@
 package com.ft.transcendence.auth.dto;
 
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.UserResponse;
 
 public class LoginResponse {

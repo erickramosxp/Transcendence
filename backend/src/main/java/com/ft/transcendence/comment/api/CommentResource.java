@@ -10,6 +10,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/comment")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -36,5 +37,23 @@ public class CommentResource {
     public CommentsByPostResponse commentsOnAPost(@PathParam("postId") Long postId) {
         long userId = currentUser.id();
         return commentService.commentsByPost(userId, postId);
+    }
+
+    @POST
+    @Path("/{commentId}/like")
+    @Authenticated
+    public Response like(@PathParam("commentId") Long commentId) {
+        long userId = currentUser.id();
+        likeService.likeComment(userId, commentId);
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("/{commentId}/like")
+    @Authenticated
+    public Response unlike(@PathParam("commentId") Long commentId) {
+        long userId = currentUser.id();
+        likeService.unlikeComment(userId, commentId);
+        return Response.noContent().build();
     }
 }

@@ -5,7 +5,7 @@ import com.ft.transcendence.auth.dto.GoogleTokenResponse;
 import com.ft.transcendence.auth.infra.GoogleAuthClient;
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;

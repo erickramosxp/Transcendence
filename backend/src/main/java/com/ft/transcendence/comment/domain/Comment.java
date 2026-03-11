@@ -1,6 +1,6 @@
 package com.ft.transcendence.comment.domain;
 
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.post.domain.Post;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;

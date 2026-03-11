@@ -6,7 +6,7 @@ import com.ft.transcendence.comment.dto.CommentResponse;
 import com.ft.transcendence.comment.dto.CommentsByPostResponse;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
-import com.ft.transcendence.user.User;
+import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
