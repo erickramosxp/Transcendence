@@ -7,16 +7,24 @@ import { Label } from "../../components/ui/Label";
 import { Mail, Lock } from "lucide-react";
 import { Input } from "../../components/ui/Input";
 import { Separator } from "../../components/ui/Separator";
-import { SocialLogin } from "./SocialLogin"
+import { SocialLogin } from "./components/SocialLogin"
+
+import { toast } from 'react-toastify'
 
 export function LoginForm({onSubmit}) {
 
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({email, password});
+
+        if (!username || !password) {
+            toast.error('Preencha todos os campos');
+            return;
+        }
+        
+        onSubmit({username, password});
     }
     
     return (
@@ -45,9 +53,9 @@ export function LoginForm({onSubmit}) {
                       id="login-email"
                       type="email"
                       placeholder="Digite seu email"
-                      value={email}
+                      value={username}
                       onChange={(e) => {
-                        setEmail(e.target.value);
+                        setUsername(e.target.value);
                       }}
                       className="h-10 sm:h-11"
                     />
@@ -75,6 +83,7 @@ export function LoginForm({onSubmit}) {
 
                 <Button
                   className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover:to-[#2c486d] shadow-lg shadow-[#4a78b5]/30 hover:shadow-xl transition-all"
+                  type="submit"
                 >
                   Entrar
                 </Button>

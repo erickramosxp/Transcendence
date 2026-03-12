@@ -45,15 +45,6 @@ export function Home() {
             color: 'from-[#2c486d] to-[#1e3048]',
         },
     ];
-    // const handleLogin = (e) => {
-    //     e.preventDefault();
-    //     if (!loginEmail || !loginPassword) {
-    //         toast.error('Preencha todos os campos');
-    //         return;
-    //     }
-    //     toast.success('Login realizado com sucesso!');
-    //     setTimeout(() => navigate('/feed'), 1000);
-    // };
 
     // const handleSignup = (e) => {
     //     e.preventDefault();
