@@ -48,8 +48,8 @@ public class CommentResource {
         return Response.noContent().build();
     }
 
-    @DELETE
-    @Path("/{commentId}/like")
+    @POST
+    @Path("/{commentId}/unlike")
     @Authenticated
     public Response unlike(@PathParam("commentId") Long commentId) {
         long userId = currentUser.id();

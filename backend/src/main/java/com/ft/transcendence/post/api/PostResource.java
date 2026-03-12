@@ -48,8 +48,8 @@ public class PostResource {
         return Response.noContent().build();
     }
 
-    @DELETE
-    @Path("/{postId}/like")
+    @POST
+    @Path("/{postId}/unlike")
     @Authenticated
     public Response unlike(@PathParam("postId") Long postId) {
         long userId = currentUser.id();
