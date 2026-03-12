@@ -8,7 +8,7 @@ public class CommentResponse {
     public Long id;
     public String name;
     public String userName;
-    public String content;
+    public String contents;
     public String avatarUrl;
     public boolean likedByMe;
     public Long likeCount;
@@ -19,7 +19,7 @@ public class CommentResponse {
         r.id = comment.id;
         r.name = comment.user.name;
         r.userName = comment.user.username;
-        r.content = comment.text;
+        r.contents = comment.text;
         r.avatarUrl = comment.user.avatarUrl;
         r.likedByMe = likedByMe;
         r.likeCount = comment.likeCount;

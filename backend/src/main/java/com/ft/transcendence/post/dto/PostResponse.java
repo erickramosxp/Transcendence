@@ -8,7 +8,7 @@ public class PostResponse {
     public Long id;
     public String name;
     public String userName;
-    public String content;
+    public String contents;
     public String avatarUrl;
     public boolean likedByMe;
     public Long likeCount;
@@ -22,7 +22,7 @@ public class PostResponse {
         r.name = p.user.name;
         r.userName = p.user.username;
         r.avatarUrl = p.user.avatarUrl;
-        r.content = p.text;
+        r.contents = p.text;
         r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;

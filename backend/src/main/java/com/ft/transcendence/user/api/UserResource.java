@@ -17,6 +17,7 @@ public class UserResource {
 
     @GET
     @Path("/{username}")
+    @Authenticated
     public UserPageResponse getUser(@PathParam("username") String username) {
         return userService.getUserPage(username);
     }
