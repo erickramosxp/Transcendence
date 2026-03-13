@@ -5,30 +5,49 @@
   --font-size: 16px;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --radius: 0.625rem;
 
-  --background: #EEF2F8; /* Fundo páginas */
-  --foreground: oklch(0.145 0 0); /* Textos principais */
+  --background:  #F0F2F7; /* Fundo páginas */
+  --foreground: #0a0a0a; /* Textos principais */
 
-  --primary: #030213; /* Botões principais */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53); /* Botões alternativos */
+  --primary: #4a78b5; /* Botões principais */
+  --primary-foreground: #f0f4fa; /* Cor do texto do botão principal*/
+
+  --secondary: #eceef2; /* Botões alternativos */
   --secondary-foreground: #030213;
+
   --muted: #ececf0; /* Baixa ênfase */
   --muted-foreground: #717182;
+
   --card: #ffffff; /* Cards */
   --card-foreground: oklch(0.145 0 0);
+
   --popover: oklch(1 0 0); /* Popovers */
   --popover-foreground: oklch(0.145 0 0);
+
   --accent: #e9ebef; /* Hover/destaques */
   --accent-foreground: #030213;
+
   --destructive: #d4183d; /* Erros/vermelho */
   --destructive-foreground: #ffffff;
+
   --border: rgba(0, 0, 0, 0.1); /* Bordas gerais */
+
   --input: transparent;
+
   --input-background: #f3f3f5;
   --switch-background: #cbced4;
+
   --ring: oklch(0.708 0 0); /* Foco */
+
+  /*  Escala de radius (Bordas)*/
+  --radius-sm: 0.5rem;    /* 8px — inputs, badges */
+  --radius-md: 0.75rem;   /* 12px — botões */
+  --radius: 1rem;         /* 16px — cards de post, cards de amigo */
+  --radius-xl: 1.25rem;   /* 20px — card de login, perfil hero */
+
+  /* status online e unread */
+  --color-online: #22c55e;
+  --color-unread: #4a78b5;
 
   /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -71,6 +90,9 @@
   --gradient-anim-light: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-300) 100%);
   --gradient-anim-center: linear-gradient(to bottom right, var(--yale-blue-300) 10%, var(--yale-blue-400) 100%);
 
+  --gradient-btn-primary: linear-gradient(to right, var(--yale-blue-400), var(--yale-blue-500), var(--yale-blue-600));
+  --gradient-btn-primary-hover: linear-gradient(to right, var(--yale-blue-500), var(--yale-blue-600), var(--yale-blue-700));
+
   /* === SHADOWS & GLASS === */
   --shadow-primary: 0 25px 50px -12px hsl(var(--primary) / 0.25);
   --shadow-primary-strong: 0 35px 60px -12px var(--yale-blue-500) / 0.5;
@@ -84,11 +106,13 @@
   /* === DARK MODE CORE === */
   --background: #0A1222;
   --foreground: #FAFAFA;
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+
+  --primary: #4a78b5;;
+  --primary-foreground: #ffffff;;
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: #0e1629;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -110,7 +134,7 @@
   --chart-5: oklch(0.645 0.246 16.439);
 
   /* Sidebar dark */
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: #0D1628;;
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -122,12 +146,15 @@
   /* === DARK GRADIENTS & GLASS === */
   --gradient-main: linear-gradient(to bottom right, var(--yale-blue-950) 0%, var(--yale-blue-900) 50%, var(--yale-blue-800) 100%);
   --gradient-sparkle: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 50%, var(--yale-blue-600) 100%); /* Mantém vibrante */
+
   /* ... outros gradients iguais ou ajuste */
   --shadow-primary: 0 25px 50px -12px hsl(var(--primary) / 0.4);
   --glass-bg: 0.95;
   --glass-card: 0.9;
   --glass-border: 0.5;
   --divider: hsl(var(--border));
+
+  --input-background: #151f30; 
 }
 
 @theme inline {
@@ -178,6 +205,11 @@
   --background-image-gradient-secure: var(--gradient-secure);
   --background-image-gradient-anim-light: var(--gradient-anim-light);
   --background-image-gradient-anim-center: var(--gradient-anim-center);
+
+  --background-image-gradient-btn-primary:       var(--gradient-btn-primary);
+  --background-image-gradient-btn-primary-hover: var(--gradient-btn-primary-hover);
+  --shadow-btn-primary: 0 10px 25px -5px rgb(74 120 181 / 0.4);
+  
   --shadow-primary: var(--shadow-primary);
   --shadow-primary-strong: var(--shadow-primary-strong);
   --color-glass-bg: hsl(var(--background) / var(--glass-bg));
@@ -185,71 +217,16 @@
   --color-glass-border: hsla(var(--border), var(--glass-border));
   --color-divider: var(--divider);
   --color-yale-blue-400: var(--yale-blue-400);
-  /* ... adicione outros yale-blue se usar */
-}
+  
 
-/* @theme inline {
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-xl: var(--radius-xl);
+  --color-online: var(--color-online);
+  --color-unread: var(--color-unread);
 
-  --gradient-main: var(--gradient-main);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  
-  --color-border: var(--border);
-  
-  --color-input: var(--input);
   --color-input-background: var(--input-background);
-  
-  --color-switch-background: var(--switch-background);
-  
-  --color-ring: var(--ring);
-  
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  
-  --color-sidebar: var(--sidebar);
-  
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  
-  --color-sidebar-border: var(--sidebar-border);
-  
-  --color-sidebar-ring: var(--sidebar-ring);
-} */
+}
 
 @layer base {
   * {

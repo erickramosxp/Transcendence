@@ -1,16 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
-import { Home } from '../pages/Home';
-import { EditProfile } from '../pages/EditProfile';
-import { Chat } from '../pages/Chat';
-import { Feed } from '../pages/Feed';
-import { Search } from '../pages/Search';
-import { Profile } from '../pages/Profile';
-import { PrivateLayout } from './layouts/PrivateLayout';
-import { PublicLayout } from './layouts/PublicLayout';
-import { PublicRoute } from './routes/PublicRoute';
-import { PrivateRoute } from './routes/PrivateRoute';
-import './App.css'
+import { Home } from '@/pages/Home';
+import { EditProfile } from '@/pages/EditProfile';
+import { Chat } from '@/pages/Chat';
+import { Feed } from '@/pages/Feed';
+import { Search } from '@/pages/Search';
+import { Profile } from '@/pages/Profile';
+import { PrivateLayout } from '@/app/layouts/PrivateLayout';
+import { PublicLayout } from '@/app/layouts/PublicLayout';
+import { PublicRoute } from '@/app/routes/PublicRoute';
+import { PrivateRoute } from '@/app/routes/PrivateRoute';
 import { ThemeShowcase } from '@/pages/dev/ThemeShowcase';
+import './App.css'
 
 function App() {
 

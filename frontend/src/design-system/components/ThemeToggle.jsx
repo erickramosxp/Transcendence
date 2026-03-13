@@ -58,7 +58,7 @@ export function ThemeToggle({ variant = "ghost", compact = false }) {
       variant={variant}
       size="icon"
       onClick={toggleTheme}
-      className="h-9 w-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      className="h-9 w-9 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
       aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
     >
       {isDark ? (

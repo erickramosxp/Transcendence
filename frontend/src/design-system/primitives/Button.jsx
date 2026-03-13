@@ -6,33 +6,32 @@ import { cn } from "@/design-system/tokens/colors";
 
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-ring",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        primary: "bg-gradient-btn-primary text-primary-foreground shadow-btn-primary hover:bg-gradient-btn-primary-hover hover:shadow-lg transition-all",
+        outline:     "border border-border bg-transparent text-foreground hover:bg-accent",
+        secondary:   "bg-card text-foreground border border-border hover:bg-accent",
+        ghost:       "bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground",
+        "nav-active":"bg-primary text-primary-foreground",
+        destructive: "bg-transparent border border-border text-destructive hover:bg-destructive/10",
+        link: "bg-transparent text-primary underline-offset-4 hover:underline p-0 h-auto cursor-pointer",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9 rounded-md",
+        default: "h-10 px-4 py-2 rounded-md",
+        sm:      "h-8 px-3 text-sm rounded-lg",
+        lg:      "h-12 px-6 rounded-xl",
+        icon:    "h-9 w-9 rounded-lg",
+        full:    "h-11 sm:h-12 w-full px-4 rounded-md",
+        nav:     "h-10 w-full px-3 rounded-lg justify-start",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
-  },
+  }
 );
 
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {

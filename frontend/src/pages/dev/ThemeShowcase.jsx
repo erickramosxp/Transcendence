@@ -1,13 +1,21 @@
+import { Button } from "@/design-system/primitives/Button"
+import { ThemeToggle } from "@/design-system/components/ThemeToggle"
 
 
 export function ThemeShowcase() {
   return (
     <div className="min-h-screen bg-background text-foreground p-8 space-y-10">
-      <section className="space-y-4">
-        <h1 className="text-4xl font-bold">Theme Showcase</h1>
-        <p className="text-muted-foreground">
-          Visualização dos tokens do design system
-        </p>
+      <section className=" flex gap-3 space-y-4">
+        <div>
+          <h1 className="text-4xl font-bold">Theme Showcase</h1>
+          <p className="text-muted-foreground">
+            Visualização dos tokens do design system
+          </p>
+        </div>
+        <div className="bg-accent rounded-2xl text-center p-3">
+          <h3>Trocar tema: </h3>
+          <ThemeToggle />
+        </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
@@ -27,16 +35,30 @@ export function ThemeShowcase() {
         </div>
       </section>
 
-      <section className="flex flex-wrap gap-4">
-        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg">
-          Primary
-        </button>
-        <button className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg">
-          Secondary
-        </button>
-        <button className="bg-destructive text-destructive-foreground px-4 py-2 rounded-lg">
-          Destructive
-        </button>
+      <section className=" bg-backgroud p-5 rounded-2xl">
+        <div>
+          <h3>Buttons:</h3>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <Button>
+            Default
+          </Button>
+          <Button variant={'destructive'}>
+            Destructive
+          </Button>
+          <Button variant={'secondary'}>
+            Secondary
+          </Button>
+          <Button variant={'outline'}>
+            Outline
+          </Button>
+          <Button variant={'ghost'}>
+            Ghost
+          </Button>
+          <Button variant={'link'}>
+            Link
+          </Button>
+        </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">

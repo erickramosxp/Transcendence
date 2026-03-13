@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { LeftSidebar } from './LeftSidebar'
+import { LeftSidebar } from '@/app/layouts/LeftSidebar'
 
 export function PrivateLayout() {
 
