@@ -1,4 +1,4 @@
-package com.ft.transcendence.auth;
+package com.ft.transcendence.auth.api;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -6,8 +6,8 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import com.ft.transcendence.auth.dto.UserResponse;
-import com.ft.transcendence.entity.User;
+import com.ft.transcendence.user.dto.UserResponse;
+import com.ft.transcendence.user.domain.User;
 
 import io.quarkus.security.Authenticated;
 

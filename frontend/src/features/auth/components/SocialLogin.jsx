@@ -16,7 +16,7 @@ export function SocialLogin({buttonTitle}) {
 
       socialLogin();
     }
-    
+
   return (
     <Button
       type="button"

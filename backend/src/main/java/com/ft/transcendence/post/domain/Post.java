@@ -1,5 +1,6 @@
-package com.ft.transcendence.entity;
+package com.ft.transcendence.post.domain;
 
+import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -19,8 +20,8 @@ public class Post extends PanacheEntityBase {
     @Column(name = "text", nullable = false)
     public String text;
 
-    @Column(name = "image_url")
-    public String imageUrl;
+    @Column(name = "media_url")
+    public String mediaUrl;
 
     @Column(name = "like_count", nullable = false)
     public Long likeCount = 0L;
@@ -33,4 +34,8 @@ public class Post extends PanacheEntityBase {
 
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
+
+    public static Post findById(Long id) {
+        return find("id", id).firstResult();
+    }
 }
