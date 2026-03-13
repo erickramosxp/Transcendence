@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:backend/src/main/java/com/ft/transcendence/auth/errors/maps/BadRequestMapper.java
-package com.ft.transcendence.auth.errors.maps;
-========
 package com.ft.transcendence.common.errors;
->>>>>>>> main:backend/src/main/java/com/ft/transcendence/common/errors/BadRequestMapper.java
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.MediaType;
