@@ -1,4 +1,4 @@
-import { parseTextWithLinks } from "../utils/linkPreview";
+import { parseTextWithLinks } from "@/shared/linkPreview";
 
 export function TextWithLink({ text, className = "" }) {
 	const parts = parseTextWithLinks(text);

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { Card } from "./Card";
-import { Button } from "./Button";
+import { Card } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
 import { Camera, Video, Music, ALargeSmall} from "lucide-react";
-import Popup from "./Popup";
-import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "./creators";
+import Popup from "../../components/ui/Popup";
+import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "../../features/feed/creators";
 
 function PostMenu({onAddPost}) {
 	const [open, setOpen] = useState(false);

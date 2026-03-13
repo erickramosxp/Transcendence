@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "../../../components/ui/Button";
-import { useAuth } from "../../../app/providers/AuthProvider";
+import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { toast } from "react-toastify";
 
 export function SocialLogin({buttonTitle}) {

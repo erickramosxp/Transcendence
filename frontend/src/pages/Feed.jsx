@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import PostList from "../components/ui/PostList";
-import PostMenu from "../components/ui/PostMenu";
+import PostMenu from "../features/feed/PostMenu";
 import { useAuth } from "../app/providers/AuthProvider";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 

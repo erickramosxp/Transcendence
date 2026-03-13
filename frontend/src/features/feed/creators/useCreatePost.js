@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { extractUrl } from "../../utils/linkPreview";
-import linkPreviewService from "../../../shared/api/linkPreviewService";
-import { useDebounce } from "../../../hooks/useDebounce";
+import { extractUrl } from "@/shared/linkPreview";
+import linkPreviewService from "@/shared/api/linkPreviewService";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const LINK_PREVIEW_DEBOUNCE_MS = 600;
 
