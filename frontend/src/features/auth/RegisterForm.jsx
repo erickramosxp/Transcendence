@@ -4,20 +4,32 @@ import { TabsContent } from "@/design-system/primitives/Tabs"
 import { Label } from "@/design-system/primitives/Label";
 import { Input } from "@/design-system/primitives//Input";
 import { Separator } from "@/design-system/primitives/Separator";
+import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
+import { SocialLogin } from "@/features/auth/components/SocialLogin" 
+import { toast } from 'react-toastify'
 
-import { User, Mail, Lock, ArrowRight } from "lucide-react";
-import { SocialLogin } from "./SocialLogin" 
 
 export function RegisterForm({ onSubmit }) {
 
     const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [disableButton, setDisableButton] = useState(false);
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({name, email, password});
+
+        setDisableButton(true);
+        if (!email || !username || !name || !password) {
+            toast.error('Preencha todos os campos');
+            setDisableButton(false);
+            return;
+        }
+
+        onSubmit({name, username, email, password});
+        setDisableButton(false);
     }
 
 
@@ -54,6 +66,23 @@ export function RegisterForm({ onSubmit }) {
 
         <div className="space-y-2">
           <Label
+            htmlFor="signup-username"
+            className="text-slate-700 dark:text-slate-300 text-sm"
+          >
+            <AtSign className="h-4 w-4" />
+            Username
+          </Label>
+          <Input
+            id="signup-username"
+            type="text"
+            placeholder="Nome de usuário"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="h-10 sm:h-11"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label
             htmlFor="signup-email"
           >
             <Mail className="h-4 w-4" />
@@ -86,6 +115,8 @@ export function RegisterForm({ onSubmit }) {
         <Button
           variant="primary"
           size="full"
+          disabled={disableButton}
+          type="submit"
         >
           Criar Conta
           <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />

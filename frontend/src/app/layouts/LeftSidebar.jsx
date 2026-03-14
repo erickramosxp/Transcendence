@@ -9,16 +9,18 @@ export function LeftSidebar() {
 
     return (
         <>
-            <nav className="flex gap-2">
-                <Link to={"/"} className="underline">Home</Link>
-                <Link to={"/feed"} className="underline">Feed</Link>
-                <Link to={"/chat"} className="underline">Chat</Link>
-                <Link to={"/search"} className="underline">Search</Link>
-                <Link to={"/profile"} className="underline">Profile</Link>
-                <Link to={"/editProfile"} className="underline">Edit Profile</Link>
+            <nav className="sticky top-0 h-screen flex flex-col gap-2 underline p-4 border-r w-48 shrink-0 hidden lg:flex">
+                <Link to={"/"}>Home</Link>
+                <Link to={"/feed"}>Feed</Link>
+                <Link to={"/chat"}>Chat</Link>
+                <Link to={"/search"}>Search</Link>
+                <Link to={"/profile"}>Profile</Link>
+                <Link to={"/editProfile"}>Edit Profile</Link>
                 <ThemeToggle />
                 <Button onClick={logout}>Logout</Button>
             </nav>
         </>
     )
 }
+
+export default LeftSidebar;

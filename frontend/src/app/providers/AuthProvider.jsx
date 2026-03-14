@@ -1,8 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "@/features/auth/authService";
 
+import { authService } from "@/features/auth/authService";
+import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
 const AuthContext = createContext(null);
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export function AuthProvider({children}) {
 
@@ -30,22 +34,50 @@ export function AuthProvider({children}) {
             const resp = await authService.login(credentials);
 
             const { token, user } = resp.data;
+
             localStorage.setItem('@trascendence:token', token);
             localStorage.setItem('@trascendence:user', JSON.stringify(user));
 
             setUser(user);
             setIsAuthenticated(true);
+
+            toast.success('Login realizado com sucesso!');
+            setTimeout(() => navigate('/feed'), 1000);
+
         } catch (err){
+            console.log(err);
             const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
-            alert(errorMsg);
+            console.log(errorMsg);
+            toast.error(errorMsg);
         }
 
     }
 
-    const register = (infoUserRegister) => {
+    const register = async (infoUserRegister) => {
 
-        console.log(infoUserRegister);
-        alert('Em desenvolvimento');
+        try {
+            const resp = await authService.register(infoUserRegister);
+
+            const { token, user } = resp.data;
+
+            toast.success("Registro efetuado com sucesso");
+
+            localStorage.setItem('@trascendence:token', token);
+            localStorage.setItem('@trascendence:user', JSON.stringify(user));
+
+            setUser(user);
+            setIsAuthenticated(true);
+
+            setTimeout(() => {
+                toast.success('Redirecionado para página inicial');
+                navigate('/feed');
+            }, 2000);
+
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            console.log(errorMsg);
+            toast.error(errorMsg);
+        }
     }
 
     const logout = () => {
@@ -55,9 +87,40 @@ export function AuthProvider({children}) {
         navigate("/");
     }
 
-    const socialLogin = () => {
-        alert("Login social em desenvolvimento");
-    } 
+
+    const socialLogin = clientId ? (
+        useGoogleLogin({
+            flow: "auth-code",
+            onSuccess: async (googleCodeResponse) => {
+                
+                try {
+                    const resp = await authService.socialLogin({ code: googleCodeResponse.code });
+
+                    const { token, user } = resp.data;
+
+                    localStorage.setItem('@trascendence:token', token);
+                    localStorage.setItem('@trascendence:user', JSON.stringify(user));
+
+                    setUser(user);
+                    setIsAuthenticated(true);
+                    
+                    setTimeout(() => {
+                    toast.success('Redirecionado para página inicial');
+                    navigate('/feed');
+                    }, 2000);
+
+                } catch (err) {
+
+                    const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+                    console.log(errorMsg);
+                    toast.error(errorMsg);
+                }
+            },
+            onError: () => toast.error("Falha no login com Google"),
+        })
+    ) : (
+        null
+    )
 
     return (
         <AuthContext.Provider value={{isAuthenticated, user, loading, login, register, socialLogin, logout}}>

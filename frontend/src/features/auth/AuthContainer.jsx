@@ -17,11 +17,6 @@ export function AuthContainer() {
     await register(infoUserRegister);
   };
 
-    const handleGoogleAuth = () => {
-        alert('Autenticação com Google em desenvolvimento');
-        // implementar integração com Google OAuth
-    };
-
   return (
     <div className="flex items-center justify-center lg:min-h-screen lg:pt-16">
       <Card className="
@@ -39,9 +34,10 @@ export function AuthContainer() {
               </TabsTrigger>
             </TabsList>
             {/* Formulario Login */}
-            <LoginForm onSubmit={handleLogin} handlerOAuth={handleGoogleAuth}/>
+            <LoginForm onSubmit={handleLogin} />
+
             {/* Formulario Cadastro */}
-            <RegisterForm onSubmit={handleRegister} handlerOAuth={handleGoogleAuth}/>
+            <RegisterForm onSubmit={handleRegister}/>
           </Tabs>
         </CardContent>
       </Card>

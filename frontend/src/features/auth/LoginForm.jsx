@@ -4,19 +4,25 @@ import { TabsContent } from "@/design-system/primitives/Tabs";
 import { Separator } from "@/design-system/primitives/Separator";
 import { Label } from "@/design-system/primitives/Label";
 import { Input } from "@/design-system/primitives/Input";
-
 import { Mail, Lock, ArrowRight } from "lucide-react";
-import { SocialLogin } from "./SocialLogin"
+import { SocialLogin } from "@/features/auth/components/SocialLogin"
+import { toast } from 'react-toastify'
 
 
 export function LoginForm({onSubmit}) {
 
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({email, password});
+
+        if (!username || !password) {
+            toast.error('Preencha todos os campos');
+            return;
+        }
+        
+        onSubmit({username, password});
     }
     
     return (
@@ -44,9 +50,9 @@ export function LoginForm({onSubmit}) {
                       id="login-email"
                       type="email"
                       placeholder="Digite seu email"
-                      value={email}
+                      value={username}
                       onChange={(e) => {
-                        setEmail(e.target.value);
+                        setUsername(e.target.value);
                       }}
                     />
                   </div>

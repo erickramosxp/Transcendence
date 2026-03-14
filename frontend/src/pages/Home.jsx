@@ -1,4 +1,3 @@
-import { FeatureCard } from '@/design-system/components/FeatureCard'
 import {
     Users,
     MessageCircle,
@@ -6,7 +5,8 @@ import {
     Shield,
 } from "lucide-react"
 
-import { AuthContainer } from "../features/auth/AuthContainer"
+import { FeatureCard } from '@/design-system/components/FeatureCard'
+import { AuthContainer } from "@/features/auth/AuthContainer"
 import { BgAnimated } from '@/design-system/components/BgAnimated'
 import { BrandHeader } from "@/design-system/components/BrandHeader"
 import { TopBar } from "@/design-system/components/TopBar"

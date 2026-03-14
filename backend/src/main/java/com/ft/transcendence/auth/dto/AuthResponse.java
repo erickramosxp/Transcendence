@@ -1,6 +1,7 @@
 package com.ft.transcendence.auth.dto;
 
-import com.ft.transcendence.entity.User;
+import com.ft.transcendence.user.domain.User;
+import com.ft.transcendence.user.dto.UserResponse;
 
 public class AuthResponse {
     public String token;

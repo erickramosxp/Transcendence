@@ -5,6 +5,8 @@ import { Chat } from '@/pages/Chat';
 import { Feed } from '@/pages/Feed';
 import { Search } from '@/pages/Search';
 import { Profile } from '@/pages/Profile';
+import { Friends } from '@/pages/Friends';
+import { Notifications } from '@/pages/Notifications';
 import { PrivateLayout } from '@/app/layouts/PrivateLayout';
 import { PublicLayout } from '@/app/layouts/PublicLayout';
 import { PublicRoute } from '@/app/routes/PublicRoute';
@@ -22,8 +24,8 @@ function App() {
       )}
 
       <Route element={<PublicLayout />}>
-        
-        <Route path='/' 
+
+        <Route path='/'
           element={
             <PublicRoute>
               <Home />
@@ -38,12 +40,16 @@ function App() {
             <PrivateLayout />
           </PrivateRoute>
         }>
-          
-        <Route path='/feed' element={<Feed/>}/>
+
+        <Route path='/feed' element={<Feed/>}/> 
         <Route path='/search' element={<Search />}/>
         <Route path='/profile' element={<Profile />}/>
         <Route path='/editProfile' element={<EditProfile />}/>
         <Route path='/chat' element={<Chat />}/>
+        <Route path='/notifications' element={<Notifications />}/>
+        <Route path='/friends' element={<Friends />}/>
+
+
       </Route>
     </Routes>
   )
