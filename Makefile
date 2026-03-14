@@ -1,6 +1,8 @@
 
 COMPOSE := docker compose
 
+COMPOSE_DEV := docker compose -f docker-compose_dev.yml
+
 help:
 	@echo "╔════════════════════════════════════════════════════════════╗"
 	@echo "║           Transcendence - Makefile Commands                ║"
@@ -46,6 +48,9 @@ up:
 down:
 	$(COMPOSE) down
 
+down_dev:
+	$(COMPOSE_DEV) down
+
 restart:
 	$(COMPOSE) down
 	$(COMPOSE) up --build -d
@@ -53,8 +58,14 @@ restart:
 logs:
 	$(COMPOSE) logs -f --tail=200
 
+logs_dev:
+	$(COMPOSE_DEV) logs -f --tail=200
+
 backend:
-	$(COMPOSE) up --build -d database backend
+	$(COMPOSE) up --build -d backend
+
+backend_dev:
+	$(COMPOSE_DEV) up -d database_dev backend_dev
 
 backend-clean:
 	sudo rm -rf backend/target backend/.quarkus

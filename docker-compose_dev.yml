@@ -1,6 +1,6 @@
 services:
 
-  backend:
+  backend_dev:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
@@ -11,7 +11,7 @@ services:
       - ~/.m2:/root/.m2
     environment:
       QUARKUS_PROFILE: dev
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://database:5432/${DATABASE_NAME}
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://database_dev:5432/${DATABASE_NAME}
       QUARKUS_DATASOURCE_USERNAME: ${DATABASE_USER}
       QUARKUS_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
       QUARKUS_HTTP_CORS_ORIGINS: http://localhost:5173
@@ -20,10 +20,10 @@ services:
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
 
     depends_on:
-      database:
+      database_dev:
         condition: service_healthy
 
-  frontend:
+  frontend_dev:
     build: ./frontend
     environment:
       VITE_BACKEND_URL: http://localhost:8080
@@ -34,9 +34,9 @@ services:
       - ./frontend:/app
       - /app/node_modules
     depends_on:
-      - backend
+      - backend_dev
 
-  database:
+  database_dev:
     image: postgres:16-alpine3.23
     environment:
       POSTGRES_DB: ${DATABASE_NAME}
