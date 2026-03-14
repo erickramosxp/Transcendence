@@ -25,8 +25,8 @@ public class PostService {
 
         Post post = new Post();
         post.user = User.findById(userId);
-        post.text = req.text;
-        post.mediaUrl = req.mediaUrl;
+        post.text = req.text == "" ? null : req.text;
+        post.mediaUrl = req.mediaUrl == "" ? null : req.mediaUrl;
         post.likeCount = 0L;
         post.commentCount = 0L;
         post.createdAt = now;

@@ -11,7 +11,7 @@ services:
       - ~/.m2:/root/.m2
     environment:
       QUARKUS_PROFILE: dev
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://database:5432/${DATABASE_NAME}
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:5432/postgres
       QUARKUS_DATASOURCE_USERNAME: ${DATABASE_USER}
       QUARKUS_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
       QUARKUS_HTTP_CORS_ORIGINS: http://localhost:5173
@@ -19,9 +19,9 @@ services:
       QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
 
-    depends_on:
-      database:
-        condition: service_healthy
+    # depends_on:
+    #   database:
+    #     condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -36,23 +36,23 @@ services:
     depends_on:
       - backend
 
-  database:
-    image: postgres:16-alpine3.23
-    environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+#   database:
+#     image: postgres:16-alpine3.23
+#     environment:
+#       POSTGRES_DB: ${DATABASE_NAME}
+#       POSTGRES_USER: ${DATABASE_USER}
+#       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 3
+#       start_period: 10s
 
-volumes:
-  db_data:
+# volumes:
+#   db_data:
