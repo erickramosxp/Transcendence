@@ -1,3 +1,4 @@
+-- V2__auth_provider.sql
 -- 1) Enum do provider
 DO $$ BEGIN
 CREATE TYPE auth_provider_type AS ENUM ('LOCAL','GOOGLE','GITHUB');
