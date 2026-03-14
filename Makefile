@@ -11,29 +11,39 @@ help:
 	@echo "🚀 Primeiros passos:"
 	@echo "  make env           # Criar .env a partir do .env.example"
 	@echo "  make build         # Build das imagens Docker"
+	@echo "  make build_dev     # Build das imagens Docker do ambiente de desenvolvimento"
 	@echo "  make up            # Iniciar todos os serviços"
+	@echo "  make up_dev        # Iniciar todos os serviços no ambiente de desenvolvimento"
 	@echo ""
 	@echo "🐳 Containers:"
-	@echo "  make backend       # Backend (Java/Quarkus) + Database"
+	@echo "  make backend       # Backend (Java/Quarkus) + Database(supabase)"
+	@echo "  make backend_dev   # Backend (Java/Quarkus) + Database(local) ambiente de desenvolvimento"
 	@echo "  make frontend      # Frontend (React/Vite)"
 	@echo "  make db            # Apenas Database (PostgreSQL)"
 	@echo "  make ps            # Listar containers rodando"
 	@echo ""
 	@echo "⚙️  Controle:"
 	@echo "  make down          # Parar todos os serviços"
+	@echo "  make down_dev      # Parar todos os serviços de dev"
 	@echo "  make stop          # Pausar serviços (mantém containers)"
+	@echo "  make stop_dev      # Pauser serviços de dev"
 	@echo "  make restart       # Reiniciar todos os serviços"
+	@echo "  mkae restart_dev   # Reiniciar todos os serviços no ambiente dev"
 	@echo "  make logs          # Ver logs em tempo real"
+	@echo "  make logs_dev      # Ver logs do ambiente de desenvolvimento"
 	@echo ""
 	@echo "🧹 Limpeza:"
-	@echo "  make clean         # Remove containers, rede e volumes"
-	@echo "  make fclean        # Limpeza completa (+ prune + .env)"
+	@echo "  make clean         # Remove containers e redes"
+	@echo "  make clean_dev     # Remove containers, rede e volumes do ambiente dev"
+	@echo "  make fclean        # Limpeza completa (+ prune)"
+	@echo "  make fclean_dev    # Limpeza completa (+ prune) do ambiente dev"
 	@echo "  make re            # Rebuild completo (fclean + build)"
+	@echo "  make re_dev        # Rebuild completo (fclean + build) em ambiente dev"
 	@echo ""
 	@echo "📋 URLs:"
 	@echo "  Backend:  http://localhost:8080"
 	@echo "  Frontend: http://localhost:5173"
-	@echo "  Database: localhost:5433"
+	@echo "  Database: aws-1-us-east-1.pooler.supabase.com:5432"
 
 env:
 	@cp -n .env.example .env || true
@@ -42,8 +52,14 @@ env:
 build:
 	$(COMPOSE) up --build -d
 
+build_dev:
+	$(COMPOSE_DEV) up --build -d
+
 up:
-	$(COMPOSE) up
+	$(COMPOSE) up -d
+
+uo_dev:
+	$(COMPOSE_DEV) up -d
 
 down:
 	$(COMPOSE) down
@@ -54,6 +70,10 @@ down_dev:
 restart:
 	$(COMPOSE) down
 	$(COMPOSE) up --build -d
+
+restart_dev:
+	$(COMPOSE_DEV) down
+	$(COMPOSE_DEV) up --build -d
 
 logs:
 	$(COMPOSE) logs -f --tail=200
@@ -73,21 +93,29 @@ backend-clean:
 frontend:
 	$(COMPOSE) up --build -d frontend
 
-db:
-	$(COMPOSE) up --build -d database
-
 stop:
 	$(COMPOSE) stop
+
+stop_dev:
+	$(COMPOSE_DEV) stop
 
 clean:
 	$(COMPOSE) down --volumes --remove-orphans
 
+clean_dev:
+	$(COMPOSE_DEV) down --volumes --remove-orphans
+
 fclean:
 	$(COMPOSE) down --volumes --remove-orphans
 	docker system prune -af
-	rm -f .env
+
+fclean_dev:
+	$(COMPOSE_DEV) down --volumes --remove-orphans
+	docker system prune -af
 
 re: fclean build
+
+re_dev: fclean_dev build_dev
 
 ps:
 	@docker ps --filter "label=com.docker.compose.project=transcendence" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
