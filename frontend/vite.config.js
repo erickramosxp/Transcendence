@@ -29,9 +29,4 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.js",
   },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
-    }
-  }
 })
