@@ -8,6 +8,9 @@ public class UserPageResponse {
     public String bannerImgUrl;
     public String username;
     public String name;
+    public String biography;
+    public String websiteUrl;
+    public String location;
     public Long followers;
     public Long following;
     public OffsetDateTime registerDate;

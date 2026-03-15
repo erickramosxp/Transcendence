@@ -2,6 +2,8 @@ package com.ft.transcendence.user.api;
 
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.user.app.UserService;
+import com.ft.transcendence.user.dto.UpdateUserProfileRequest;
+import com.ft.transcendence.user.dto.UpdateUserProfileResponse;
 import com.ft.transcendence.user.dto.UserPageResponse;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
@@ -14,11 +16,21 @@ import jakarta.ws.rs.core.MediaType;
 public class UserResource {
     @Inject
     UserService userService;
+    @Inject
+    CurrentUser currentUser;
 
     @GET
     @Path("/{username}")
     @Authenticated
     public UserPageResponse getUser(@PathParam("username") String username) {
         return userService.getUserPage(username);
+    }
+
+    @PATCH
+    @Path("/profile")
+    @Authenticated
+    public UpdateUserProfileResponse updateProfile(UpdateUserProfileRequest req) {
+        long userId = currentUser.id();
+        return userService.updateProfile(userId, req);
     }
 }
