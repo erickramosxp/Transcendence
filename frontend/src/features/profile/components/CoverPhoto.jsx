@@ -1,5 +1,5 @@
 import React from 'react'
-import { yaleBlue } from '../../../components/utils/colors';
+import { yaleBlue } from '@/design-system/tokens/colors';
 
 export const CoverPhoto = ({coverUrl}) => {
 

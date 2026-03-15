@@ -2,7 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 
-import { cn, yaleBlue } from "../utils/colors.js";
+import { cn } from "@/design-system/tokens/colors.js";
 
 
 const buttonVariants = cva(
@@ -20,30 +20,14 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
-        yale: cn(
-          yaleBlue.bg.main, 
-          "text-white", 
-          yaleBlue.bg.hoverDark,
-          yaleBlue.shadow.md,
-          yaleBlue.shadow.hover
-        ),
-        yaleGradient: cn(
-          yaleBlue.gradient.primary,
-          yaleBlue.gradient.primaryHover,
-          "text-white shadow-md hover:shadow-lg"
-        ),
-        yaleOutline: cn(
-          "border",
-          yaleBlue.border,
-          yaleBlue.text.light,
-          "hover:bg-[#edf2f8]"
-        )
+        like: "hover:"
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9 rounded-md",
+        rounded: "size-18 rounded-full"
       },
     },
     defaultVariants: {
@@ -53,7 +37,7 @@ const buttonVariants = cva(
   },
 );
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef(({ className, variant, size, asChild = false, type = "button", ...props }, ref) => {
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -61,6 +45,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
       ref={ref}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      type={asChild ? undefined : type}
       {...props}
     />
   );

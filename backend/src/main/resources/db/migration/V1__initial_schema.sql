@@ -1,3 +1,4 @@
+-- V1__initial_schema.sql
 CREATE SCHEMA IF NOT EXISTS public;
 SET search_path TO public;
 

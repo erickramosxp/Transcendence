@@ -1,9 +1,10 @@
+import api from "../../shared/api/httpClient";
 
 const mockLogin = (credentials) => {
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (credentials.email === "teste@teste.com" && credentials.password === "123456") {
+      if (credentials.username === "teste@teste.com" && credentials.password === "123456") {
 
         resolve({
           data: {
@@ -18,9 +19,37 @@ const mockLogin = (credentials) => {
   });
 };
 
+
+const apiLogin = async (credentials) => {
+
+  try {
+    const resp = await api.post("/auth/login", credentials, {skipAuth: true});
+    return resp;
+
+  } catch (err) {
+    const backendDown = !err.response || err.response.status >= 500;
+
+    if (backendDown) {
+      console.warn("Backend indisponível → usando mock");
+      return mockLogin(credentials);
+    }
+
+    throw err;
+  }
+}
+
+
 export const authService = {
     
   login: async (credentials) => {
-    return mockLogin(credentials);
+    return apiLogin(credentials);
+  },
+
+  register: async (infoUserRegister) => {
+    return api.post("/auth/register", infoUserRegister, {skipAuth: true});
+  },
+
+  socialLogin: async (code) => {
+    return api.post("/auth/google", code , {skipAuth: true});
   }
 };

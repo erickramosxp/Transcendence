@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { cn } from '../../../components/utils/colors';
+import { cn } from '@/design-system/tokens/colors';
 
 const sizeVariants = {
   sm: 'size-10', // Pequeno (40x40)
@@ -11,7 +11,6 @@ const sizeVariants = {
 
 export const Avatar = ({imgUrl, name = 'Usuário',size = 'md'}) => {
 
-    
     const [imageError, setImageError] = useState(false);
     const initial = name.charAt(0).toUpperCase();
     const showFallback = !imgUrl || imageError;

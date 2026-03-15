@@ -1,29 +1,30 @@
 import React, { useState } from "react";
+import { SquarePen, Settings } from 'lucide-react';
+
 import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
-import { yaleBlue } from "../../../components/utils/colors";
-import { Button } from "../../../components/ui/Button";
-import { SquarePen, Settings } from 'lucide-react';
-import { Modal } from "../../../components/Modal";
 import { EditProfileForm } from "./EditProfileForm";
-import { ThemeToggle } from "../../../components/ThemeToggle";
+import { yaleBlue } from "@/design-system/tokens/colors";
+import { Button } from "@/design-system/primitives/Button";
+import { Modal } from "@/design-system/components/Modal";
+import { ThemeToggle } from "@/design-system/components/ThemeToggle";
 
 const userData = {
-name: "Morty",
-username: "morty",
-bio: "Apaixonado por tecnologia e inovação 💻",
+	name: "Morty",
+	username: "morty",
+	bio: "Apaixonado por tecnologia e inovação 💻",
 
-location: "São Paulo, Brasil",
-website: "example.com",
-joinDate: "Janeiro 2024",
+	location: "São Paulo, Brasil",
+	website: "example.com",
+	joinDate: "Janeiro 2024",
 
-followers: "1.2k",
-following: "256",
-// Teste colocar uma URL de imagem aqui depois, ex: "https://images.unsplash.com/photo-1504805572947-34fad45aed93"
-coverUrl: "https://images.unsplash.com/photo-1504805572947-34fad45aed93",
-// "https://github.com/shadcn.png"
-avatarUrl: "https://github.com/shadcn.png",
+	followers: "1.2k",
+	following: "256",
+	// Teste colocar uma URL de imagem aqui depois, ex: "https://images.unsplash.com/photo-1504805572947-34fad45aed93"
+	coverUrl: "https://images.unsplash.com/photo-1504805572947-34fad45aed93",
+	// "https://github.com/shadcn.png"
+	avatarUrl: "https://github.com/shadcn.png",
 };
 
 export const ProfileHeader = () => {

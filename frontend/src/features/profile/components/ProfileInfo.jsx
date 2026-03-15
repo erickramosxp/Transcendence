@@ -1,6 +1,6 @@
 import React from 'react'
-import { yaleBlue } from '../../../components/utils/colors'
 import { MapPin, Link, Calendar } from 'lucide-react';
+import { yaleBlue } from '@/design-system/tokens/colors'
 
 
 export const ProfileInfo = ({ name, username, bio, location, website, joinDate, followers, following }) => {

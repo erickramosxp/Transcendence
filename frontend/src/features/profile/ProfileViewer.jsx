@@ -1,7 +1,7 @@
 import React from 'react'
-import { ProfileHeader } from './components/ProfileHeader'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/Tabs'
-import { yaleBlue } from "../../components/utils/colors";
+import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs'
+import { yaleBlue } from "@/design-system/tokens/colors";
 
 export function ProfileViewer() {
   return (

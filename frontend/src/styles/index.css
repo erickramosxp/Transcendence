@@ -1,7 +1,18 @@
 @import "./tailwind.css";
 @import "./fonts.css";
 @import "./theme.css";
-@import "./modal.css"
+@import "./modal.css";
 /* @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities); */
+
+@media (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 100vw !important;
+    padding: 0 8px; /* margem laterais */
+  }
+  .Toastify__toast {
+    margin: 0 4px; /* espaçamento toasts */
+    font-size: 14px; /* texto menor */
+  }
+}
 
