@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import { Button } from "./Button";
-import Textarea from "./Textarea";
-import { Avatar } from "./Avatar";
-import { yaleBlue } from "../utils/colors";
-import { TextWithLink } from "./TextWithLink";
-import { Send } from "lucide-react";
-import { Separator } from "./Separator";
-import { getCurrentTime } from "../../shared/getCurrentTime";
-import { Scroll } from "./Scroll";
-import { Heart } from "lucide-react";
+import { Heart, Send } from "lucide-react";
 
 
-function CommentCard({ post, onAddComment, onCommentLike }) {
+import Textarea from "@/design-system/primitives/Textarea";
+
+import { Button } from "@/design-system/primitives/Button";
+import { Avatar } from "@/design-system/primitives/Avatar";
+import { TextWithLink } from "@/design-system/primitives/TextWithLink";
+
+import { Separator } from "@/design-system/primitives/Separator";
+
+import { Scroll } from "@/design-system/primitives/Scroll";
+import { yaleBlue } from "@/design-system/tokens/colors";
+
+import { getCurrentTime } from "@/shared/getCurrentTime";
+
+
+export default function CommentCard({ post, onAddComment, onCommentLike }) {
     const comments = post.comments ?? [];
     const [commentText, setCommentText] = useState("");
 
@@ -56,7 +61,7 @@ function CommentCard({ post, onAddComment, onCommentLike }) {
                                             {getCurrentTime(post.date_time)}
                                         </span>
                                     </div>
-                                    <div className="mt-2 text-stone-700 leading-relaxed">
+                                    <div className="mt-2 leading-relaxed">
                                         <TextWithLink text={comment.content} />
                                     </div>
                                     <div className="flex items-center gap-6 mt-3 text-slate-500">
@@ -108,5 +113,3 @@ function CommentCard({ post, onAddComment, onCommentLike }) {
         </div>
     );
 }
-
-export default CommentCard;

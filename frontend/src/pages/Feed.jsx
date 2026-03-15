@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from "react";
-import PostList from "../components/ui/PostList";
-import PostMenu from "../features/feed/PostMenu";
-import { useAuth } from "../app/providers/AuthProvider";
-import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import PostList from "@/features/feed/components/PostList";
+import PostMenu from "@/features/feed/PostMenu";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export function Feed() {
     const [posts, setPosts] = useState([]);

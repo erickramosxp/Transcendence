@@ -1,5 +1,5 @@
-import PostCard from "./PostCard";
-import { Card } from "./Card";
+import PostCard from "@/features/feed/components/PostCard";
+import { Card } from "@/design-system/primitives/Card";
 
 function PostList({
 	posts,

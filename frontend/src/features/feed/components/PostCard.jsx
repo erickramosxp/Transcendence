@@ -1,10 +1,11 @@
 import React from "react";
-import { yaleBlue } from "../utils/colors";
 import { Heart, MessageSquare } from "lucide-react";
-import { Avatar } from "../ui/Avatar"
-import { TextWithLink } from "../ui/TextWithLink";
-import CommentCard from "./CommentCard";
-import { getCurrentTime } from "../../shared/getCurrentTime";
+import { yaleBlue } from "@/design-system/tokens/colors";
+import { Avatar } from "@/design-system/primitives/Avatar"
+import { TextWithLink } from "@/design-system/primitives/TextWithLink";
+import { getCurrentTime } from "@/shared/getCurrentTime";
+import  CommentCard  from "@/features/feed/components/CommentCard";
+
 
 function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId }) {
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
-import { Button } from "./Button";
-import { Separator } from "./Separator"
+import { Button } from "@/design-system/primitives/Button";
+import { Separator } from "@/design-system/primitives/Separator"
 
 
 function Popup({ open, onClose, children }) {

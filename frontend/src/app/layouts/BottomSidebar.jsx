@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom"
-import { cn } from "../../components/utils/colors"
+import { cn } from "@/design-system/tokens/colors"
 import { Home, MessageCircle, Bell, Users, User } from "lucide-react"
 
 export function BottomSidebar() {
