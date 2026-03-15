@@ -25,8 +25,8 @@ public class PostService {
 
         Post post = new Post();
         post.user = User.findById(userId);
-        post.text = req.text == "" ? null : req.text;
-        post.mediaUrl = req.mediaUrl == "" ? null : req.mediaUrl;
+        post.text = req.text.isEmpty() ? null : req.text;
+        post.mediaUrl = req.mediaUrl.isEmpty() ? null : req.mediaUrl;
         post.likeCount = 0L;
         post.commentCount = 0L;
         post.createdAt = now;
@@ -38,10 +38,11 @@ public class PostService {
     }
 
     public FeedResponse feed(int page, int size, long userId) {
-        int pageSizePlusOne = size + 1;
+        int start = page * size;
+        int end = start + size;
 
         List<Post> posts = Post.find("order by createdAt desc")
-                .page(page, pageSizePlusOne).list();
+                .range(start, end).list();
 
         boolean hasMore = posts.size() > size;
         if (hasMore)

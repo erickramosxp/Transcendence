@@ -2,6 +2,8 @@ package com.ft.transcendence.user.api;
 
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.user.app.UserService;
+import com.ft.transcendence.user.domain.User;
+import com.ft.transcendence.user.dto.PostsLikedByUserResponse;
 import com.ft.transcendence.user.dto.UpdateUserProfileRequest;
 import com.ft.transcendence.user.dto.UpdateUserProfileResponse;
 import com.ft.transcendence.user.dto.UserPageResponse;
@@ -32,5 +34,17 @@ public class UserResource {
     public UpdateUserProfileResponse updateProfile(UpdateUserProfileRequest req) {
         long userId = currentUser.id();
         return userService.updateProfile(userId, req);
+    }
+
+    @GET
+    @Path("/{username}/likes")
+    @Authenticated
+    public PostsLikedByUserResponse postsLikedByUser(@PathParam("username") String username,
+                                                     @QueryParam("page") @DefaultValue("0") int page,
+                                                     @QueryParam("size") @DefaultValue("20") int size) {
+        User user = User.findByEmailOrUsername(username);
+        if (user == null)
+            throw new NotFoundException("User not found");
+        return userService.getPostsLikedByUser(user.id, page, size);
     }
 }
