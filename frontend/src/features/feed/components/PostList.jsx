@@ -1,5 +1,10 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import PostCard from "@/features/feed/components/PostCard";
 import { Card } from "@/design-system/primitives/Card";
+
+import { getFeed } from "@/features/feed/feedService";
+import { toast } from 'react-toastify';
 
 //     {
 //   "items": [
@@ -21,17 +26,126 @@ import { Card } from "@/design-system/primitives/Card";
 //   "hasMore": true
 // }
 
-function PostList({
-	posts,
-	sentinelRef,
-	isLoadingMore,
-	hasMore,
-	onAddComment,
-	onLike,
-	onCommentLike,
-	onToggleComments,
-	activeCommentsPostId,
-}) {
+function PostList({posts, setPosts}) {
+
+    const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
+    const sentinelRef = useRef(null);
+
+    useEffect(() => {
+
+        async function loadInitialFeed() {
+            try {
+                const data = await getFeed(0, 10);
+                const resp = data.data;
+                setPosts(resp.items);
+                console.log("resp:", resp);
+                setPage(resp.page + 1);
+                setHasMore(resp.hasMore);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        
+        loadInitialFeed();
+    }, []);
+
+    const loadMore = useCallback(async () => {
+
+        if (isLoadingMore || !hasMore) return;
+
+        setIsLoadingMore(true);
+
+        try {
+            const data = await getFeed(page, 10);
+
+            setPosts(prev => [...prev, ...data.items]);
+            setPage(data.page + 1);
+            setHasMore(data.hasMore);
+
+        } catch (err) {
+            console.error(err);
+            toast.error('Falha ao carregar os posts');
+            
+        }
+
+        setIsLoadingMore(false);
+        // TODO: chamar API paginada (ex.: GET /posts?page=N), depois:
+        // setIsLoadingMore(true);
+        // fetch(...).then((newPosts) => { setPosts(prev => [...prev, ...newPosts]); setHasMore(conforme resposta); setIsLoadingMore(false); });
+    }, [isLoadingMore, hasMore, page]);
+
+    useInfiniteScroll(sentinelRef, loadMore, {
+        enabled: hasMore && !isLoadingMore,
+        rootMargin: "200px",
+    });
+
+
+//     {
+//   "items": [
+//     {
+//       "id": 0,
+//       "name": "string",
+//       "userName": "string",
+//       "contents": "string",
+//       "avatarUrl": "string",
+//       "likedByMe": true,
+//       "likeCount": 0,
+//       "commentCount": 0,
+//       "media": "string",
+//       "created_at": "2022-03-10T12:15:50-04:00"
+//     }
+//   ],
+//   "page": 0,
+//   "size": 0,
+//   "hasMore": true
+// }
+
+    async function handleLike(postId) {
+
+        const liked = posts.find(p => p.id == postId).likedByMe;
+
+        setPosts(prev =>
+                prev.map(p =>
+                    p.id === postId
+                        ? {
+                            ...p,
+                            likedByMe: !p.likedByMe,
+                            likeCount: p.likedByMe
+                                ? p.likeCount - 1
+                                : p.likeCount + 1
+                        }
+                        : p
+                )
+        );
+
+        if (liked) {
+            await unlikePost(postId);
+        } else {
+            await likePost(postId);
+        }
+    }
+
+
+    function toggleComments(postId) {
+        console.log("Toggle comments for post", postId);
+        setActiveCommentsPostId((prev) => (prev === postId ? null : postId));
+    }
+
+	const incrementCommentCount = (postId) => {
+
+		setPosts(prev => 
+			prev.map( p => p.id === postId ?
+				{ ...p, commentCount: (p.commentCount ?? 0) + 1 }
+                : p
+			)
+
+		)
+	}
+
+
 
 	return (
 		<div className="space-y-8">
@@ -49,11 +163,10 @@ function PostList({
 						>
 							<PostCard
 								post={post}
-								onLike={onLike}
-								onAddComment={onAddComment}
-								onCommentLike={onCommentLike}
-								onToggleComments={onToggleComments}
+								onLike={handleLike}
+								onToggleComments={toggleComments}
 								activeCommentsPostId={activeCommentsPostId}
+								incrementCommentCount={incrementCommentCount}
 							/>
 						</Card>
 					))}

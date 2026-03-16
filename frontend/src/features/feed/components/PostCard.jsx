@@ -26,7 +26,8 @@ import  CommentCard  from "@/features/feed/components/CommentCard";
 //   "hasMore": true
 // }
 
-function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId }) {
+function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount }) {
+
 
 	return (
 
@@ -124,7 +125,7 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 			</div>
 				{activeCommentsPostId === post.id && (
 					<div className="px-4 pb-4">
-						<CommentCard post={post} onAddComment={onAddComment} onCommentLike={onCommentLike} />
+						<CommentCard postId={post.id} incrementCommentCount={incrementCommentCount}/>
 					</div>
 				)}
 		</div>

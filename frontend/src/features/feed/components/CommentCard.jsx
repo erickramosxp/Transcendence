@@ -33,7 +33,7 @@ import { getComments, likeComment, unlikeComment, createComment } from "../feedS
 
 // definir commnetCout ao fazer um novo comentario
 
-export default function CommentCard({ post, onAddComment, onCommentLike }) {
+export default function CommentCard({ postId, incrementCommentCount }) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
 
@@ -50,11 +50,12 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
         // trocar para definir no frontend primeiro e depois fazer a requisição
         try {
 
-            const newComment = await createComment({postId: post.id, text: commentText});
+            const newComment = await createComment({postId: postId, text: commentText});
 
             setComments(prev => [...prev, newComment]);
 
             setCommentText("");
+            incrementCommentCount(postId);
 
         } catch (err) {
             console.log(err);
@@ -66,7 +67,7 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
         const requestComments = async () => {
             try {
 
-                const data = await getComments(post.id);
+                const data = await getComments(postId);
                 const resp = data.data;
                 setComments(resp.items);
 
@@ -186,7 +187,6 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
                         <Button
                             onClick={handleSubmit}
                             size="sm"
-                            className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
                         >
                             <Send className="h-4 w-4" />
                         </Button>
