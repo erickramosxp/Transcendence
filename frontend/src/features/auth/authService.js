@@ -1,4 +1,4 @@
-import api from "../../shared/api/httpClient";
+import api from "@/shared/api/httpClient";
 
 const mockLogin = (credentials) => {
 
