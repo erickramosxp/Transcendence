@@ -3,14 +3,13 @@ package com.ft.transcendence.user.api;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.user.app.UserService;
 import com.ft.transcendence.user.domain.User;
-import com.ft.transcendence.user.dto.PostsByUserResponse;
-import com.ft.transcendence.user.dto.UpdateUserProfileRequest;
-import com.ft.transcendence.user.dto.UpdateUserProfileResponse;
-import com.ft.transcendence.user.dto.UserPageResponse;
+import com.ft.transcendence.user.dto.*;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import javax.print.attribute.standard.Media;
 
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -58,5 +57,17 @@ public class UserResource {
         if (user == null)
             throw new NotFoundException("User not found");
         return userService.getUserPosts(user.id, page, size);
+    }
+
+    @GET
+    @Path("/{username}/media")
+    @Authenticated
+    public UserMediaResponse userMedia(@PathParam("username") String username,
+                                       @QueryParam("page") @DefaultValue("0") int page,
+                                       @QueryParam("size") @DefaultValue("20") int size) {
+        User user = User.findByEmailOrUsername(username);
+        if (user == null)
+            throw new NotFoundException("User not found");
+        return userService.getUserMedia(user.id, page, size);
     }
 }

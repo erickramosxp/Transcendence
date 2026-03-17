@@ -38,6 +38,9 @@ public class PostService {
     }
 
     public FeedResponse feed(int page, int size, long userId) {
+        if (page < 0 || size <= 0)
+            throw new BadRequestException("Invalid page or size");
+
         int start = page * size;
         int end = start + size;
 

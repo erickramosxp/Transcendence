@@ -5,12 +5,10 @@ import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
-import com.ft.transcendence.user.dto.PostsByUserResponse;
-import com.ft.transcendence.user.dto.UpdateUserProfileRequest;
-import com.ft.transcendence.user.dto.UpdateUserProfileResponse;
-import com.ft.transcendence.user.dto.UserPageResponse;
+import com.ft.transcendence.user.dto.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
@@ -61,8 +59,11 @@ public class UserService {
     }
 
     public PostsByUserResponse getPostsLikedByUser(long userId, int page, int size) {
+        if (page < 0 || size <= 0)
+            throw new BadRequestException("Invalid page or size");
+
         int start = page * size;
-        int end = page + size;
+        int end = start + size;
 
         List<Like> likes = Like.find("user.id = ?1 and post is not null order by createdAt desc", userId)
                 .range(start, end)
@@ -85,8 +86,11 @@ public class UserService {
     }
 
     public PostsByUserResponse getUserPosts(long userId, int page, int size) {
+        if (page < 0 || size <= 0)
+            throw new BadRequestException("Invalid page or size");
+
         int start = page * size;
-        int end = page + size;
+        int end = start + size;
 
         List<Post> posts = Post.find("user.id = ?1 order by createdAt desc", userId)
                 .range(start, end)
@@ -98,6 +102,29 @@ public class UserService {
 
         PostsByUserResponse resp = new PostsByUserResponse();
         resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+        return resp;
+    }
+
+    public UserMediaResponse getUserMedia(long userId, int page, int size) {
+        if (page < 0 || size <= 0)
+            throw new BadRequestException("Invalid page or size");
+
+        int start = page * size;
+        int end = start + size;
+
+        List<Post> posts = Post.find("user.id = ?1 and mediaUrl is not null order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = posts.size() > size;
+        if (hasMore)
+            posts = posts.subList(0, size);
+
+        UserMediaResponse resp = new UserMediaResponse();
+        resp.items = posts.stream().map(MediaResponse::of).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
