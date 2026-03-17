@@ -104,6 +104,7 @@
   /* === SHADOWS & GLASS === */
   --shadow-primary: 0 25px 50px -12px hsl(var(--primary) / 0.25);
   --shadow-primary-strong: 0 35px 60px -12px var(--yale-blue-500) / 0.5;
+
   --glass-bg: 0.95;
   --glass-card: 0.9;
   --glass-border: 0.5;
@@ -125,7 +126,7 @@
 
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --card: #0e1629;
+  --card: #121a2c;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);

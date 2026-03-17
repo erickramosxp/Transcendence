@@ -5,13 +5,16 @@ import { Avatar } from "@/design-system/primitives/Avatar"
 import { TextWithLink } from "@/design-system/primitives/TextWithLink";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import  CommentCard  from "@/features/feed/components/CommentCard";
+import { cn } from "@/design-system/tokens/colors";
 
 
-function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId }) {
+function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId, className }) {
 
 	return (
 
-		<div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-3 sm:p-4">
+		<div className={cn(
+			"bg-card rounded-2xl shadow-md p-3 sm:p-4",
+			className)}>
 			<div className="flex gap-3 sm:gap-4 min-w-0">
 				<Avatar
 					src={post.userPhoto}

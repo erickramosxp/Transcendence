@@ -1,6 +1,9 @@
 
 import { useState } from "react";
-import './EditProfileForm.css'
+
+import { Label } from "@/design-system/primitives/Label";
+import { Input } from "@/design-system/primitives/Input";
+import { Button } from "@/design-system/primitives/Button";
 
 export function EditProfileForm({ onCancel, onSaved }) {
   const [formData, setFormData] = useState({
@@ -29,12 +32,12 @@ export function EditProfileForm({ onCancel, onSaved }) {
   ];
 
   return (
-    <form onSubmit={onSubmit} className="edit-profile-form">
-      <div className="form-grid">
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="grid gap-4">
         {inputs.map(({ id, label, type, value, placeholder, onChange, maxLength }) => (
-          <div key={id} className="input-group">
-            <label htmlFor={id}>{label}</label>
-            <input
+          <div key={id} className="space-y-2">
+            <Label htmlFor={id}>{label}</Label>
+            <Input
               id={id}
               type={type}
               value={value}
@@ -43,17 +46,30 @@ export function EditProfileForm({ onCancel, onSaved }) {
               maxLength={maxLength}
               autoComplete="off"
             />
+            {id === "bio" && (
+              <p className="text-xs text-muted-foreground">
+                Máx. 160 caracteres
+              </p>
+            )}
           </div>
         ))}
       </div>
 
-      <div className="form-actions">
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+      <div className="flex justify-end gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onCancel}
+        >
           Cancelar
-        </button>
-        <button type="submit" className="btn btn-primary">
+        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm">
           Salvar
-        </button>
+        </Button>
       </div>
     </form>
   );

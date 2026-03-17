@@ -5,10 +5,8 @@ import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
 import { EditProfileForm } from "./EditProfileForm";
-import { yaleBlue } from "@/design-system/tokens/colors";
 import { Button } from "@/design-system/primitives/Button";
 import { Modal } from "@/design-system/components/Modal";
-import { ThemeToggle } from "@/design-system/components/ThemeToggle";
 
 const userData = {
 	name: "Morty",
@@ -43,17 +41,17 @@ export const ProfileHeader = () => {
 				onSaved={() => setEditOpen(false)}
 			/>
 		</Modal>
-  	<div className={`${yaleBlue.bg.lightest} pb-5`}>
+  	<div className={`pb-5`}>
 		<div className="w-full max-w-4xl mx-auto">
 			<CoverPhoto className='overflow-hidden'
 				coverUrl={userData.coverUrl}
 			/>
 
-			<div className="px-4 pb-4 bg-white shadow-md">
+			<div className="px-4 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
 
 				<div className="flex justify-between items-start relative">
 
-					<div className="-mt-16 rounded-full bg-white p-1 relative z-10"> 
+					<div className="-mt-16 rounded-full p-1 relative z-10 border-background bg-background"> 
 
 						<Avatar
 							size="xl"
@@ -66,16 +64,13 @@ export const ProfileHeader = () => {
 					</div>
 
 					<div className="flex justify-center items-center gap-2.5">
-						<Button variant={"yaleGradient"} size={"lg"} className="mt-4 rounded-full" onClick={() => setEditOpen(true)}>
+						<Button variant='outline' className="mt-4 rounded-full cursor-pointer" onClick={() => setEditOpen(true)}>
 							<SquarePen />
 							Editar Perfil
 						</Button>
-						<Button className='mt-4 bg-white border-2'>
-							<Settings color="#0d0d0d"/>
+						<Button variant='outline' className='mt-4 rounded-full cursor-pointer'>
+							<Settings />
 						</Button>
-						<div className="mt-4">
-							<ThemeToggle />
-						</div>
 					</div>
 				</div>
 			<ProfileInfo  
