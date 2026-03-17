@@ -4,7 +4,7 @@ import com.ft.transcendence.post.dto.PostResponse;
 
 import java.util.List;
 
-public class PostsLikedByUserResponse {
+public class PostsByUserResponse {
         public List<PostResponse> items;
         public int page;
         public int size;

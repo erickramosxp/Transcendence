@@ -5,7 +5,7 @@ import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
-import com.ft.transcendence.user.dto.PostsLikedByUserResponse;
+import com.ft.transcendence.user.dto.PostsByUserResponse;
 import com.ft.transcendence.user.dto.UpdateUserProfileRequest;
 import com.ft.transcendence.user.dto.UpdateUserProfileResponse;
 import com.ft.transcendence.user.dto.UserPageResponse;
@@ -60,7 +60,7 @@ public class UserService {
         return UpdateUserProfileResponse.of(user);
     }
 
-    public PostsLikedByUserResponse getPostsLikedByUser(long userId, int page, int size) {
+    public PostsByUserResponse getPostsLikedByUser(long userId, int page, int size) {
         int start = page * size;
         int end = page + size;
 
@@ -76,7 +76,27 @@ public class UserService {
                 .map(l -> l.post)
                 .toList();
 
-        PostsLikedByUserResponse resp = new PostsLikedByUserResponse();
+        PostsByUserResponse resp = new PostsByUserResponse();
+        resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+        return resp;
+    }
+
+    public PostsByUserResponse getUserPosts(long userId, int page, int size) {
+        int start = page * size;
+        int end = page + size;
+
+        List<Post> posts = Post.find("user.id = ?1 order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = posts.size() > size;
+        if (hasMore)
+            posts = posts.subList(0, size);
+
+        PostsByUserResponse resp = new PostsByUserResponse();
         resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
         resp.page = page;
         resp.size = size;
