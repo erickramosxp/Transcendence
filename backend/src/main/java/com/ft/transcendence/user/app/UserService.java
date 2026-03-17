@@ -10,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -129,5 +130,12 @@ public class UserService {
         resp.size = size;
         resp.hasMore = hasMore;
         return resp;
+    }
+
+    @Transactional
+    public Response updateAvatar(long userId, AvatarRequest req) {
+        User user = User.findById(userId);
+        user.avatarUrl = normalize(req.avatarUrl);
+        return Response.noContent().build();
     }
 }

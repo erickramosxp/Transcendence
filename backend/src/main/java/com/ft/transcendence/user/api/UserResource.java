@@ -8,6 +8,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import javax.print.attribute.standard.Media;
 
@@ -69,5 +70,13 @@ public class UserResource {
         if (user == null)
             throw new NotFoundException("User not found");
         return userService.getUserMedia(user.id, page, size);
+    }
+
+    @PATCH
+    @Path("/avatar")
+    @Authenticated
+    public Response updateAvatar(AvatarRequest req) {
+        long userId = currentUser.id();
+        return userService.updateAvatar(userId, req);
     }
 }
