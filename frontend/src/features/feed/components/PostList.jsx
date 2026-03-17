@@ -5,6 +5,7 @@ import { Card } from "@/design-system/primitives/Card";
 
 import { getFeed } from "@/features/feed/feedService";
 import { toast } from 'react-toastify';
+import { likePost, unlikePost } from "@/features/feed/feedService";
 
 //     {
 //   "items": [
@@ -41,7 +42,6 @@ function PostList({posts, setPosts}) {
                 const data = await getFeed(0, 10);
                 const resp = data.data;
                 setPosts(resp.items);
-                console.log("resp:", resp);
                 setPage(resp.page + 1);
                 setHasMore(resp.hasMore);
             } catch (err) {
@@ -60,22 +60,27 @@ function PostList({posts, setPosts}) {
 
         try {
             const data = await getFeed(page, 10);
+            const items = data.items || data.data?.items || [];
 
-            setPosts(prev => [...prev, ...data.items]);
+            if (items.length === 0) {
+                setHasMore(false);
+                return ;
+            }
+            setPosts(prev => [...prev, ...items]);
             setPage(data.page + 1);
             setHasMore(data.hasMore);
 
         } catch (err) {
             console.error(err);
             toast.error('Falha ao carregar os posts');
-            
+        } finally {
+            setIsLoadingMore(false);
         }
 
-        setIsLoadingMore(false);
         // TODO: chamar API paginada (ex.: GET /posts?page=N), depois:
         // setIsLoadingMore(true);
         // fetch(...).then((newPosts) => { setPosts(prev => [...prev, ...newPosts]); setHasMore(conforme resposta); setIsLoadingMore(false); });
-    }, [isLoadingMore, hasMore, page]);
+    }, [page]);
 
     useInfiniteScroll(sentinelRef, loadMore, {
         enabled: hasMore && !isLoadingMore,
