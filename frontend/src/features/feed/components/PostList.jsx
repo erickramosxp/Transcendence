@@ -77,10 +77,7 @@ function PostList({posts, setPosts}) {
             setIsLoadingMore(false);
         }
 
-        // TODO: chamar API paginada (ex.: GET /posts?page=N), depois:
-        // setIsLoadingMore(true);
-        // fetch(...).then((newPosts) => { setPosts(prev => [...prev, ...newPosts]); setHasMore(conforme resposta); setIsLoadingMore(false); });
-    }, [page]);
+    }, [hasMore, isLoadingMore, page]);
 
     useInfiniteScroll(sentinelRef, loadMore, {
         enabled: hasMore && !isLoadingMore,
