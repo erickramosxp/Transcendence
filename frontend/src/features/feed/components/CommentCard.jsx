@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, Send } from "lucide-react";
 
 
@@ -14,10 +14,27 @@ import { Scroll } from "@/design-system/primitives/Scroll";
 import { yaleBlue } from "@/design-system/tokens/colors";
 
 import { getCurrentTime } from "@/shared/getCurrentTime";
+import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
 
+// {
+//   "items": [
+//     {
+//       "id": 0,
+//       "name": "string",
+//       "userName": "string",
+//       "contents": "string",
+//       "avatarUrl": "string",
+//       "likedByMe": true,
+//       "likeCount": 0,
+//       "created_at": "2022-03-10T12:15:50-04:00"
+//     }
+//   ]
+// }
 
-export default function CommentCard({ post, onAddComment, onCommentLike }) {
-    const comments = post.comments ?? [];
+// definir commnetCout ao fazer um novo comentario
+
+export default function CommentCard({ postId, incrementCommentCount }) {
+    const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
 
     function handleSubmit(e) {
@@ -25,9 +42,76 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
         const value = commentText.trim();
         if (!value) return;
 
-        onAddComment?.(post.id, { text: value });
-        setCommentText("");
+        handleCreateComment();
     }
+
+    const handleCreateComment = async () => {
+
+        // trocar para definir no frontend primeiro e depois fazer a requisição
+        try {
+
+            const newComment = await createComment({postId: postId, text: commentText});
+
+            setComments(prev => [...prev, newComment]);
+
+            setCommentText("");
+            incrementCommentCount(postId);
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    useEffect(() => {
+
+        const requestComments = async () => {
+            try {
+
+                const data = await getComments(postId);
+                const resp = data.data;
+                setComments(resp.items);
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        requestComments();
+
+    }, []);
+
+    const handleToggleLike = async (commentId) => {
+
+        try {
+
+            const liked = comments.find(c => c.id == commentId).likedByMe;
+
+            setComments(prev =>
+                prev.map(c =>
+                    c.id === commentId
+                        ? {
+                            ...c,
+                            likedByMe: !c.likedByMe,
+                            likeCount: c.likedByMe
+                                ? c.likeCount - 1
+                                : c.likeCount + 1
+                        }
+                        : c
+                )
+            );
+
+            if (liked) {
+                await unlikeComment(commentId);
+            } else {
+                await likeComment(commentId);
+            }
+
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div className="pt-2 space-y-3">
             <Separator />
@@ -39,47 +123,47 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
                 <Scroll className="max-h-50">
                     <div className="space-y-3">
                         {comments.map((comment) => (
-                            <div key={comment.id ?? comment.user_id + comment.date_time} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                            <div key={comment.id ?? comment.user_id + comment.created_at} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
                                 <div className="flex gap-3">
 
-                                <Avatar
-                                    src={comment.user_profile_photo}
-                                    name={comment.name}
-                                    size="MD"
-                                />
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <span className={yaleBlue.text.hover}>
-                                            {comment.name}
-                                        </span>
+                                    <Avatar
+                                        src={comment.avatarUrl}
+                                        name={comment.name}
+                                        size="MD"
+                                    />
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className={yaleBlue.text.hover}>
+                                                {comment.name}
+                                            </span>
 
-                                        <span className="text-slate-500">
-                                            @{comment.user_username}
-                                        </span>
+                                            <span className="text-slate-500">
+                                                @{comment.userName}
+                                            </span>
 
-                                        <span className="text-slate-400">
-                                            {getCurrentTime(post.date_time)}
-                                        </span>
-                                    </div>
-                                    <div className="mt-2 leading-relaxed">
-                                        <TextWithLink text={comment.content} />
-                                    </div>
-                                    <div className="flex items-center gap-6 mt-3 text-slate-500">
-                                        <button
-                                            onClick={() => onCommentLike?.(post.id, comment.id)}
-                                            className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${comment.likedByMe
-                                                ? 'text-pink-600 dark:text-pink-400'
-                                                : 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
-                                                }`}
-                                        >
-                                            <Heart className={`h-5 w-5 ${comment.likedByMe ? 'fill-current' : ''}`} />
-                                            {comment.likes}
-                                        </button>
+                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400">
+                                                {getCurrentTime(comment.created_at)}
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 leading-relaxed">
+                                            <TextWithLink text={comment.contents} />
+                                        </div>
+                                        <div className="flex items-center gap-6 mt-3 text-slate-500">
+                                            <button
+                                                onClick={() => handleToggleLike(comment.id)}
+                                                className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${comment.likedByMe
+                                                    ? 'text-pink-600 dark:text-pink-400'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
+                                                    }`}
+                                            >
+                                                <Heart className={`h-5 w-5 ${comment.likedByMe ? 'fill-current' : ''}`} />
+                                                {comment.likeCount}
+                                            </button>
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         ))}
                     </div>
                 </Scroll>
@@ -103,7 +187,6 @@ export default function CommentCard({ post, onAddComment, onCommentLike }) {
                         <Button
                             onClick={handleSubmit}
                             size="sm"
-                            className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
                         >
                             <Send className="h-4 w-4" />
                         </Button>
