@@ -10,8 +10,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import javax.print.attribute.standard.Media;
-
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -75,8 +73,16 @@ public class UserResource {
     @PATCH
     @Path("/avatar")
     @Authenticated
-    public Response updateAvatar(AvatarRequest req) {
+    public Response updateAvatar(UpdateAvatarRequest req) {
         long userId = currentUser.id();
         return userService.updateAvatar(userId, req);
+    }
+
+    @PATCH
+    @Path("/banner")
+    @Authenticated
+    public Response updateBanner(UpdateBannerRequest req) {
+        long userId = currentUser.id();
+        return userService.updateBanner(userId, req);
     }
 }

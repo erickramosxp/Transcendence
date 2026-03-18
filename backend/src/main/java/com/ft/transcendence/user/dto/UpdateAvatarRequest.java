@@ -1,5 +1,5 @@
 package com.ft.transcendence.user.dto;
 
-public class AvatarRequest {
+public class UpdateAvatarRequest {
     public String avatarUrl;
 }

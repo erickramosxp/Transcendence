@@ -133,9 +133,16 @@ public class UserService {
     }
 
     @Transactional
-    public Response updateAvatar(long userId, AvatarRequest req) {
+    public Response updateAvatar(long userId, UpdateAvatarRequest req) {
         User user = User.findById(userId);
         user.avatarUrl = normalize(req.avatarUrl);
+        return Response.noContent().build();
+    }
+
+    @Transactional
+    public Response updateBanner(long userId, UpdateBannerRequest req) {
+        User user = User.findById(userId);
+        user.bannerImgUrl = normalize(req.bannerUrl);
         return Response.noContent().build();
     }
 }
