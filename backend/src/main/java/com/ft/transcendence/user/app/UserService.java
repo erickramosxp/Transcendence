@@ -12,6 +12,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -59,7 +60,7 @@ public class UserService {
         return UpdateUserProfileResponse.of(user);
     }
 
-    public PostsByUserResponse getPostsLikedByUser(long userId, int page, int size) {
+    public UserPostsResponse getPostsLikedByUser(long userId, int page, int size) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
 
@@ -78,7 +79,7 @@ public class UserService {
                 .map(l -> l.post)
                 .toList();
 
-        PostsByUserResponse resp = new PostsByUserResponse();
+        UserPostsResponse resp = new UserPostsResponse();
         resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
         resp.page = page;
         resp.size = size;
@@ -86,7 +87,7 @@ public class UserService {
         return resp;
     }
 
-    public PostsByUserResponse getUserPosts(long userId, int page, int size) {
+    public UserPostsResponse getUserPosts(long userId, int page, int size) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
 
@@ -101,7 +102,7 @@ public class UserService {
         if (hasMore)
             posts = posts.subList(0, size);
 
-        PostsByUserResponse resp = new PostsByUserResponse();
+        UserPostsResponse resp = new UserPostsResponse();
         resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
         resp.page = page;
         resp.size = size;
@@ -144,5 +145,48 @@ public class UserService {
         User user = User.findById(userId);
         user.bannerImgUrl = normalize(req.bannerUrl);
         return Response.noContent().build();
+    }
+
+    @Transactional
+    public void followUser(long currentUserId, User followedUser) {
+        if (currentUserId == followedUser.id)
+            throw new IllegalArgumentException("Users cannot be the same");
+
+        boolean alreadyFollowing = Follow.find("follower.id = ?1 and followee.id = ?2", currentUserId, followedUser.id)
+                .firstResultOptional().isPresent();
+
+        if (alreadyFollowing)
+            return;
+
+        Follow follow = new Follow();
+        follow.follower = User.findById(currentUserId);
+        follow.followee = User.findById(followedUser.id);
+        follow.createdAt = OffsetDateTime.now();
+
+        follow.persist();
+    }
+
+    @Transactional
+    public void unfollowUser(long currentUserId, User followedUser) {
+        if (currentUserId == followedUser.id)
+            throw new IllegalArgumentException("Users cannot be the same");
+
+        Follow.delete("follower.id = ?1 and followee.id = ?2", currentUserId, followedUser.id);
+    }
+
+    public UserFollowListResponse getFollowers(long userId) {
+        List<Follow> follows = Follow.find("followee.id = ?1 order by createdAt desc", userId).list();
+
+        UserFollowListResponse list = new UserFollowListResponse();
+        list.items = follows.stream().map(UserFollowResponse::ofFollowers).toList();
+        return list;
+    }
+
+    public UserFollowListResponse getFollowing(long userId) {
+        List<Follow> follows = Follow.find("follower.id = ?1 order by createdAt desc", userId).list();
+
+        UserFollowListResponse list = new UserFollowListResponse();
+        list.items = follows.stream().map(UserFollowResponse::ofFollowing).toList();
+        return list;
     }
 }

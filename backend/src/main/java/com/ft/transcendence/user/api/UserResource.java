@@ -10,6 +10,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.List;
+
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,9 +39,9 @@ public class UserResource {
     @GET
     @Path("/{username}/likes")
     @Authenticated
-    public PostsByUserResponse postsLikedByUser(@PathParam("username") String username,
-                                                @QueryParam("page") @DefaultValue("0") int page,
-                                                @QueryParam("size") @DefaultValue("20") int size) {
+    public UserPostsResponse postsLikedByUser(@PathParam("username") String username,
+                                              @QueryParam("page") @DefaultValue("0") int page,
+                                              @QueryParam("size") @DefaultValue("20") int size) {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
@@ -49,9 +51,9 @@ public class UserResource {
     @GET
     @Path("/{username}/posts")
     @Authenticated
-    public PostsByUserResponse userPosts(@PathParam("username") String username,
-                                         @QueryParam("page") @DefaultValue("0") int page,
-                                         @QueryParam("size") @DefaultValue("20") int size) {
+    public UserPostsResponse userPosts(@PathParam("username") String username,
+                                       @QueryParam("page") @DefaultValue("0") int page,
+                                       @QueryParam("size") @DefaultValue("20") int size) {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
@@ -84,5 +86,49 @@ public class UserResource {
     public Response updateBanner(UpdateBannerRequest req) {
         long userId = currentUser.id();
         return userService.updateBanner(userId, req);
+    }
+
+    @POST
+    @Path("/{username}/follow")
+    @Authenticated
+    public Response follow(@PathParam("username") String username) {
+        User followedUser = User.findByEmailOrUsername(username);
+        if (followedUser == null)
+            throw new NotFoundException("User not found");
+        long currentUserId = currentUser.id();
+        userService.followUser(currentUserId, followedUser);
+        return Response.status(200).build();
+    }
+
+    @POST
+    @Path("/{username}/unfollow")
+    @Authenticated
+    public Response unfollow(@PathParam("username") String username) {
+        User followedUser = User.findByEmailOrUsername(username);
+        if (followedUser == null)
+            throw new NotFoundException("User not found");
+        long currentUserId = currentUser.id();
+        userService.unfollowUser(currentUserId, followedUser);
+        return Response.status(200).build();
+    }
+
+    @GET
+    @Path("/{username}/followers")
+    @Authenticated
+    public UserFollowListResponse followers(@PathParam("username") String username) {
+        User user = User.findByEmailOrUsername(username);
+        if (user == null)
+            throw new NotFoundException("User not found");
+        return userService.getFollowers(user.id);
+    }
+
+    @GET
+    @Path("/{username}/following")
+    @Authenticated
+    public UserFollowListResponse following(@PathParam("username") String username) {
+        User user = User.findByEmailOrUsername(username);
+        if (user == null)
+            throw new NotFoundException("User not found");
+        return userService.getFollowing(user.id);
     }
 }
