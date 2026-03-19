@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
 const AuthContext = createContext(null);
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = import.meta.env.WEB_CLIENT_ID_GOOGLE;
 
 export function AuthProvider({children}) {
 
@@ -92,7 +92,7 @@ export function AuthProvider({children}) {
         useGoogleLogin({
             flow: "auth-code",
             onSuccess: async (googleCodeResponse) => {
-                
+
                 try {
                     const resp = await authService.socialLogin({ code: googleCodeResponse.code });
 
@@ -103,7 +103,7 @@ export function AuthProvider({children}) {
 
                     setUser(user);
                     setIsAuthenticated(true);
-                    
+
                     setTimeout(() => {
                     toast.success('Redirecionado para página inicial');
                     navigate('/feed');

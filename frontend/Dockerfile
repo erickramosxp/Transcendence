@@ -1,13 +1,26 @@
-FROM node:alpine3.22
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json package-lock.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
+ARG VITE_BACKEND_URL
+ARG WEB_CLIENT_ID_GOOGLE
 
-EXPOSE 5173
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+ENV WEB_CLIENT_ID_GOOGLE=${WEB_CLIENT_ID_GOOGLE}
 
-CMD ["npm", "run", "dev"]
+RUN npm run build
+
+FROM nginx:1.27-alpine
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

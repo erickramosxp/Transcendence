@@ -24,10 +24,12 @@ services:
         condition: service_healthy
 
   frontend_dev:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     environment:
       VITE_BACKEND_URL: http://localhost:8080
-      VITE_GOOGLE_CLIENT_ID: ${WEB_CLIENT_ID_GOOGLE}
+      WEB_CLIENT_ID_GOOGLE: ${WEB_CLIENT_ID_GOOGLE}
     ports:
       - "5173:5173"
     volumes:
