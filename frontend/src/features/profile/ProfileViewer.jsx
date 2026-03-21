@@ -43,6 +43,9 @@ export function ProfileViewer() {
 		getProfileInfo();
 	},[username]);
 
+  const changeFields = (data) => {
+    setUserData(data);
+  }
 
 
   	if (loadHeader) {
@@ -64,7 +67,7 @@ export function ProfileViewer() {
 
   return (
     <div className={`bg-background min-h-screen`}>
-      <ProfileHeader userData={userData}/>
+      <ProfileHeader userData={userData} changeFields={changeFields}/>
       <div className='max-w-4xl mx-auto px-4 pb-10'>
         <Tabs defaultValue="posts" className={`max-w-4xl`} >
           <TabsList className='mb-4'>

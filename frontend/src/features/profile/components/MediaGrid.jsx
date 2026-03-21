@@ -4,6 +4,7 @@ import  PostCard  from "@/features/feed/components/PostCard";
 import { usePostList } from "../hooks/usePostList";
 import { getUserMediaPosts } from '../services/profileService'
 import Loading from "@/design-system/components/Loading";
+import { toast } from 'react-toastify';
 
 export function MediaGrid({ username }) {
 
@@ -21,8 +22,8 @@ export function MediaGrid({ username }) {
         await loadInitial();
 
       } catch (err) {
-
-        console.err(err);
+        console.error(err);
+        toast.error("Falha ao buscar mídias do usuário");
       } finally {
         setLoading(false);
       }
@@ -94,23 +95,3 @@ export function MediaGrid({ username }) {
   );
 }
 
-
-//     {
-//   "items": [
-//     {
-//       "id": 0,
-//       "name": "string",
-//       "userName": "string",
-//       "contents": "string",
-//       "avatarUrl": "string",
-//       "likedByMe": true,
-//       "likeCount": 0,
-//       "commentCount": 0,
-//       "media": "string",
-//       "created_at": "2022-03-10T12:15:50-04:00"
-//     }
-//   ],
-//   "page": 0,
-//   "size": 0,
-//   "hasMore": true
-// }

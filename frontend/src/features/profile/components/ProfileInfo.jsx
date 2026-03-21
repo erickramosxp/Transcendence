@@ -15,7 +15,7 @@ import { Button } from '@/design-system/primitives/Button';
 // }
 
 
-export const ProfileInfo = ({ name, username, bio, location, website, registerDate, followers, following, onFollowersClick, onFollowingClick }) => {
+export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registerDate, followers, following, onFollowersClick, onFollowingClick }) => {
   
   return (
     <div className="">
@@ -43,17 +43,17 @@ export const ProfileInfo = ({ name, username, bio, location, website, registerDa
         )}
 
         {/* Só aparece se "website" não for nulo/vazio */}
-        {website && (
+        {websiteUrl && (
           <span className="flex items-center gap-1">
             {/* Ícone de Link */}
             <Link className="h-4 w-4"/>
             {/* Adicionando a tag <a> para tornar o link clicável */}
             <a 
-              href={`https://${website}`}
+              href={`https://${websiteUrl}`}
               target="_blank" 
               rel="noopener noreferrer" 
               className={`text-primary hover:underline`}>
-              {website}
+              {websiteUrl}
             </a>
           </span>
         )}

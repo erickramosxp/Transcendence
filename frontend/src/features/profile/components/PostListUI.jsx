@@ -1,5 +1,5 @@
 import React from "react";
-import PostCard from "../feed/components/PostCard";
+import PostCard from "@/features/feed/components/PostCard";
 import { Card } from "@/design-system/primitives/Card";
 
 
@@ -8,7 +8,7 @@ export function PostListUI({ posts, hasMore, isLoadingMore, sentinelRef, activeC
   return (
     <div className="space-y-8">
       {posts?.length === 0 ? (
-        <div className="text-center text-muted-foreground py-8">
+        <div className="text-center text-muted-foreground py-12 text-sm">
           Nada por aqui ainda.<br />
           {/* Seja o primeiro a compartilhar algo ✨ */}
         </div>

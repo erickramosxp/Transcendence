@@ -23,7 +23,7 @@ import { Avatar } from "@/design-system/primitives/Avatar";
 //   "registerDate": "2022-03-10T12:15:50-04:00"
 // }
 
-export const ProfileHeader = ({userData}) => {
+export const ProfileHeader = ({userData, changeFields}) => {
   
 	const [connectionsModal, setConnectionsModal] = useState({ open: false, tab: 'followers' });
 
@@ -48,6 +48,7 @@ export const ProfileHeader = ({userData}) => {
 				onCancel={() => setEditOpen(false)}
 				onSaved={() => setEditOpen(false)}
 				userData={userData}
+				changeFields={changeFields}
 			/>
 		</Modal>
 		<FollowersModal
@@ -55,6 +56,7 @@ export const ProfileHeader = ({userData}) => {
 		onClose={closeConnections}
 		defaultTab={connectionsModal.tab}
 		userId={userData?.id}
+		username={user?.username}
 		currentUserId={user?.id}
 		/>
   	<div className={`pb-5`}>

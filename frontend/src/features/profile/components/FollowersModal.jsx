@@ -8,14 +8,49 @@ import { Avatar } from '@/design-system/primitives/Avatar';
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import Scroll from '@/design-system/primitives/Scroll';
+import { followUser, unfollowUser } from "../services/profileService";
 
-function UserList({ users, loading, currentUserId, onClose }) {
+function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
 
   const navigate = useNavigate();
 
   function handleNavigate(username) {
     onClose?.();                          
     navigate(`/profile/${username}`); 
+  }
+
+    const handleFollowUser = async (username) => {
+
+    try {
+      await followUser(username);
+      toggleFollow(username);
+    } catch (err) {
+      console.error(err)
+    } finally {
+
+    }
+  }
+
+  const handleUnfollowUser = async (username) => {
+    
+    try {
+      await unfollowUser(username);
+      toggleFollow(username);
+    } catch (err) {
+      console.error(err)
+    } finally {
+
+    }
+  }
+
+  const handleUserFollowrs =  async (username, isFollowing) => {
+
+    if (isFollowing) {
+      await handleUnfollowUser(username);
+    } else {
+      await handleFollowUser(username);
+    }
+
   }
 
   if (loading) {
@@ -48,11 +83,6 @@ function UserList({ users, loading, currentUserId, onClose }) {
             username={user.username}
             size='md'
           />
-          {/* <img
-            
-            alt={user.name}
-            className="h-10 w-10 rounded-full object-cover ring-1 ring-border shrink-0"
-          /> */}
           <div className="flex flex-col flex-1 min-w-0">
             <Link
               to={`/profile/${user.username}`}
@@ -71,7 +101,7 @@ function UserList({ users, loading, currentUserId, onClose }) {
             <Button
               variant={user.isFollowing ? "secondary" : "primary"}
               size="follow"
-              // onClick={handleFollow}
+              onClick={() => handleUserFollowrs(user.username, user.isFollowing)}
             >
               {user.isFollowing ? 'Seguindo' : 'Seguir'}
             </Button>
@@ -82,7 +112,7 @@ function UserList({ users, loading, currentUserId, onClose }) {
   );
 }
 
-export function FollowersModal({ open, onClose, defaultTab = 'followers', userId, currentUserId }) {
+export function FollowersModal({ open, onClose, defaultTab = 'followers', userId, currentUserId, username }) {
 
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
@@ -95,7 +125,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
         const fetchFollowers = async () => {
         setLoadingFollowers(true);
         try {
-            const res  = await getFollowersList(userId);
+            const res  = await getFollowersList(username);
             setFollowers(res);
         } finally {
             setLoadingFollowers(false);
@@ -106,7 +136,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
 
         setLoadingFollowing(true);
         try {
-            const res  = await getFollowingList(userId);
+            const res  = await getFollowingList(username);
             setFollowing(res);
         } finally {
             setLoadingFollowing(false);
@@ -116,7 +146,29 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
     // Busca os dois em paralelo ao abrir
     fetchFollowers();
     fetchFollowing();
-    }, [open, userId]);
+    }, [open, username]);
+
+    const toggleFollow = (username) => {
+      setFollowers((prevFollowers) => {
+        const updated = prevFollowers.map((user) =>
+          user.username === username
+            ? { ...user, isFollowing: !user.isFollowing }
+            : user
+        );
+
+        const targetUser = updated.find((u) => u.username === username);
+
+        setFollowing((prevFollowing) => {
+          if (targetUser.isFollowing) {
+            return [...prevFollowing, targetUser];
+          } else {
+            return prevFollowing.filter((u) => u.username !== username);
+          }
+        });
+
+        return updated;
+      });
+    };
 
     return (
         <Modal open={open} onClose={onClose} title="Conexões" size="md" scrollable={false}>
@@ -136,6 +188,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
                 loading={loadingFollowing}
                 currentUserId={currentUserId}
                 onClose={onClose}
+                toggleFollow={toggleFollow}
             />
             </TabsContent>
             <TabsContent value="followers">
@@ -144,6 +197,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
                 loading={loadingFollowers}
                 currentUserId={currentUserId}
                 onClose={onClose}
+                toggleFollow={toggleFollow}
             />
             </TabsContent>
 

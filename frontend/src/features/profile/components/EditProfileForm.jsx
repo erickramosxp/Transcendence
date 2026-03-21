@@ -7,7 +7,7 @@ import { Button } from "@/design-system/primitives/Button";
 import { updateProfileInfo } from "@/features/profile/services/profileService";
 import {toast} from 'react-toastify'
 
-export function EditProfileForm({ onCancel, onSaved , userData}) {
+export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
 
   const [formData, setFormData] = useState({
     name: "",
@@ -32,7 +32,7 @@ export function EditProfileForm({ onCancel, onSaved , userData}) {
       name: userData?.name || '',
       bio: userData?.bio || '',
       location: userData?.location || '',
-      website: userData?.website || ''
+      websiteUrl: userData?.websiteUrl || ''
     })
   }, []);
 
@@ -47,8 +47,11 @@ export function EditProfileForm({ onCancel, onSaved , userData}) {
       toast.error("Bio só pode ter 160 caracteres!");
       return;
     }
+
     try {
       await updateProfileInfo(formData);
+      changeFields(formData);
+      toast.success("Perfil atualizado com sucesso");
     } catch(err) {
       console.log(err);
       toast.error("Falha ao atualizar perfil");
@@ -64,7 +67,7 @@ export function EditProfileForm({ onCancel, onSaved , userData}) {
     { id: "name", label: "Nome", type: "text", value: formData.name, placeholder: "Digite seu nome", onChange: e => updateField("name", e.target.value) },
     { id: "bio", label: "Biografia", type: "text", value: formData.bio, placeholder: "", onChange: e => updateField("bio", e.target.value), maxLength: 160 },
     { id: "location", label: "Localização", type: "text", value: formData.location, placeholder: "", onChange: e => updateField("location", e.target.value) },
-    { id: "website", label: "Website", type: "url", value: formData.website, placeholder: "https://exemplo.com", onChange: e => updateField("website", e.target.value) }
+    { id: "website", label: "Website", type: "url", value: formData.websiteUrl, placeholder: "https://exemplo.com", onChange: e => updateField("website", e.target.value) }
   ];
 
   return (

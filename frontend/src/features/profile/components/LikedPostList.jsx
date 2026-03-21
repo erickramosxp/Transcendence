@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getLikedPosts } from "../services/profileService";
-import { PostListUI } from "../PostListUI";
+import { PostListUI } from "./PostListUI";
 import { usePostList } from "../hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
+import { toast } from 'react-toastify';
 
 export function LikedPostList({ username }) {
 
@@ -18,8 +19,8 @@ export function LikedPostList({ username }) {
         await loadInitial();
 
       } catch (err) {
-
-        console.err(err);
+        console.error(err);
+        toast.error("Falha ao buscar posts curtidos pelo usuário");
       } finally {
         setLoading(false);
       }
