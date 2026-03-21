@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Button } from '@/design-system/primitives/Button';
 
-export function Modal({open, title, onClose, children, size = "md" }) {
+export function Modal({open, title, onClose, children, size = "md", scrollable = true}) {
 
     const sizes = {
         sm: "w-full max-w-sm",
@@ -38,7 +38,7 @@ export function Modal({open, title, onClose, children, size = "md" }) {
         <div
             className="
             fixed inset-0 z-50
-            flex items-center justify-center
+            flex items-center justify-center p-1 sm:p-4
             bg-black/40
             backdrop-blur-sm
             "
@@ -49,23 +49,43 @@ export function Modal({open, title, onClose, children, size = "md" }) {
             <div 
                 className={`${sizes[size]}
                     w-full max-w-sm sm:max-w-lg
+                    ${scrollable ? 'max-h-[95vh]' : 'max-h-full'}
                     bg-card text-foreground
                     rounded-xl border border-border
                     shadow-2xl
+                    animate-in slide-in-from-bottom-4 duration-300
+                    flex flex-col
                     `}
                 role='dialog'
                 aria-modal='true'>
-                <div className="flex items-center justify-between px-4 py-3">
+                    
+                <div className="flex items-center justify-between p-2 sm:px-4 sm:py-3">
                     <h2 className="text-2xl font-semibold">{title}</h2>
-                    <Button variant='destructive' className='cursor-pointer' onClick={onClose} aria-label='Fechar'>
+                    <Button size='sm' variant='destructive' className='cursor-pointer' onClick={onClose} aria-label='Fechar'>
                         x
                     </Button>
                 </div>
+                 {scrollable ? (
+                    /* Para PostCard/Mídia - COM SCROLL */
+                    // <div className="flex-1 min-h-0 overflow-hidden">
+                        // {/* <div className="h-full overflow-y-auto px-4 sm:px-6 py-4 pb-20 sm:pb-8 scrollbar-thin"> */}
+                        <div className="flex-1 overflow-y-auto px-2 pb-24 sm:pb-6 ">
+                            {children}
+                        </div>
+                    // {/* </div> */}
+                    ) : (
+                    /* Para Editar/ Seguidores - SEM SCROLL FORÇADO */
+                    <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+                        {children}
+                    </div>
+                    )}
 
-                <div className="px-4 py-4">
+                {/* <div className="flex-1 overflow-y-auto px-2 pb-24 sm:pb-6">
                     {children}
-                </div>
+                </div> */}
             </div>
         </div>
     )
 }
+
+       

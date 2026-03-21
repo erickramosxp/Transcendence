@@ -6,9 +6,30 @@ import { TextWithLink } from "@/design-system/primitives/TextWithLink";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import  CommentCard  from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";
+import { Link } from 'react-router-dom'
 
+//     {
+//   "items": [
+//     {
+//       "id": 0,
+//       "name": "string",
+//       "userName": "string",
+//       "contents": "string",
+//       "avatarUrl": "string",
+//       "likedByMe": true,
+//       "likeCount": 0,
+//       "commentCount": 0,
+//       "media": "string",
+//       "created_at": "2022-03-10T12:15:50-04:00"
+//     }
+//   ],
+//   "page": 0,
+//   "size": 0,
+//   "hasMore": true
+// }
 
-function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments, activeCommentsPostId, className }) {
+function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount, className }) {
+
 
 	return (
 
@@ -17,26 +38,29 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 			className)}>
 			<div className="flex gap-3 sm:gap-4 min-w-0">
 				<Avatar
-					src={post.userPhoto}
+					src={post.avatarUrl}
 					name={post.name}
+					username={post.userName}
 					size="lg"
 					className="shrink-0"
 				/>
 				<div className="flex-1 min-w-0">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
 						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>
-							{post.name}
+							<Link to={`/${post.userName}`}>
+								{post.name}
+							</Link>
 						</span>
-						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.username}`}>
-							@{post.username}
+						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.userName}`}>
+							@{post.userName}
 						</span>
-						<span className="text-slate-400 shrink-0">
-							{getCurrentTime(post.date_time)}
+						<span title={new Date(post.created_at).toLocaleString()} className="text-slate-400 shrink-0">
+							{getCurrentTime(post.created_at)}
 						</span>
 					</div>
 
 					<div className="mt-2 text-stone-700 dark:text-stone-300 leading-relaxed break-words overflow-hidden">
-						<TextWithLink text={post.content} />
+						<TextWithLink text={post.contents} />
 					</div>
 
 					{post.linkPreview && (
@@ -68,16 +92,16 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 						</a>
 					)}
 
-					{post.imageUrl && (
+					{post.media && (
 						post.fileType === "video" ? (
 							<video
-								src={post.imageUrl}
+								src={post.media}
 								controls
 								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
 							/>
 						) : (
 							<img
-								src={post.imageUrl}
+								src={post.media}
 								alt="Post attachment"
 								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
 							/>
@@ -86,13 +110,13 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 					<div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-3 text-slate-500">
 						<button
 							onClick={() => onLike(post.id)}
-							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${post.isLiked
+							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${post.likedByMe
 								? 'text-pink-600 dark:text-pink-400'
 								: 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
 								}`}
 						>
-							<Heart className={`h-5 w-5 ${post.isLiked ? 'fill-current' : ''}`} />
-							{post.likes}
+							<Heart className={`h-5 w-5 ${post.likedByMe ? 'fill-current' : ''}`} />
+							{post.likeCount}
 						</button>
 						<button
 							onClick={() => onToggleComments(post.id)}
@@ -101,14 +125,14 @@ function PostCard({ post, onAddComment, onLike, onCommentLike, onToggleComments,
 									: "text-slate-500 dark:text-slate-400 hover:text-[#4a78b5] dark:hover:text-[#6e93c4]"
 								}`}						>
 							<MessageSquare className="h-5 w-5" />
-							<span className="font-medium">{post.countComments ?? post.comments?.length ?? 0}</span>
+							<span className="font-medium">{post.commentCount ?? post.comments?.length ?? 0}</span>
 						</button>
 					</div>
 				</div>
 			</div>
 				{activeCommentsPostId === post.id && (
 					<div className="px-4 pb-4">
-						<CommentCard post={post} onAddComment={onAddComment} onCommentLike={onCommentLike} />
+						<CommentCard postId={post.id} incrementCommentCount={incrementCommentCount}/>
 					</div>
 				)}
 		</div>

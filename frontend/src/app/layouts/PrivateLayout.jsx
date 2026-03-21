@@ -6,9 +6,9 @@ import { BottomSidebar } from '@/app/layouts/BottomSidebar'
 export function PrivateLayout() {
 
     return (
-        <div className="flex">
+        <div className="flex h-dvh">
             <LeftSidebar />
-            <main className="flex-1 pb-20 lg:pb-0">
+            <main className="relative flex-1 pb-20 lg:pb-0 h-full overflow-y-auto">
                 <Outlet />
             </main>
             <div className="lg:hidden">

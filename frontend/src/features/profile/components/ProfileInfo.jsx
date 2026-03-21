@@ -1,12 +1,28 @@
 import React from 'react'
 import { MapPin, Link, Calendar } from 'lucide-react';
+import { formatJoinDate } from '../utils/formatJoinDate';
+import { Button } from '@/design-system/primitives/Button';
+
+// {
+//   "id": 0,
+//   "avatarUrl": "string",
+//   "bannerImgUrl": "string",
+//   "username": "string",
+//   "name": "string",
+//   "followers": 0,
+//   "following": 0,
+//   "registerDate": "2022-03-10T12:15:50-04:00"
+// }
 
 
-export const ProfileInfo = ({ name, username, bio, location, website, joinDate, followers, following }) => {
+export const ProfileInfo = ({ name, username, bio, location, website, registerDate, followers, following, onFollowersClick, onFollowingClick }) => {
+  
   return (
     <div className="">
       <h1 className={`text-xl font-bold text-foreground`}>{name}</h1>
-      <p className="text-muted-foreground text-sm">@{username}</p>
+      { username && 
+        <p className="text-muted-foreground text-sm">@{username}</p>
+      }
       {bio && (
         <p className="mt-3 text-sm text-foreground">
             {bio}
@@ -43,24 +59,28 @@ export const ProfileInfo = ({ name, username, bio, location, website, joinDate, 
         )}
 
         {/* Só aparece se "joinDate" não for nulo/vazio */}
-        {joinDate && (
+        {registerDate && (
           <span className="flex items-center gap-1">
             {/* Ícone de Calendário */}
             <Calendar className="h-4 w-4" />
-            Entrou em {joinDate}
+            Entrou em {formatJoinDate(registerDate)}
           </span>
         )}
       </div>
       {/* Seguidores e Seguindo */}
       <div className="flex gap-4 mt-3 text-sm">
-        <p>
-          <span className={`font-bold text-foreground`}>{following}</span>{' '}
-          <span className="text-muted-foreground">Seguindo</span>
-        </p>
-        <p>
-          <span className={`font-bold text-foreground`}>{followers}</span>{' '}
-          <span className="text-muted-foreground">Seguidores</span>
-        </p>
+        <Button size='sm' variant='link' onClick={onFollowingClick}>
+          <span className='hover:underline'>
+            <span className={`font-bold text-foreground`}>{following ?? 0}</span>{' '}
+            <span className="text-muted-foreground">Seguindo</span>
+          </span>
+        </Button>
+        <Button size='sm' variant='link' onClick={onFollowersClick}>
+          <span className='hover:underline'>
+            <span className={`font-bold text-foreground`}>{followers ?? 0}</span>{' '}
+            <span className="text-muted-foreground">Seguidores</span>
+          </span>
+        </Button>
       </div>
     </div>
   )

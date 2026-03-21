@@ -1,17 +1,38 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Label } from "@/design-system/primitives/Label";
 import { Input } from "@/design-system/primitives/Input";
 import { Button } from "@/design-system/primitives/Button";
 
-export function EditProfileForm({ onCancel, onSaved }) {
+export function EditProfileForm({ onCancel, onSaved , userData}) {
+
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
     location: "",
     website: ""
   });
+
+  // {
+//   "id": 0,
+//   "avatarUrl": "string",
+//   "bannerImgUrl": "string",
+//   "username": "string",
+//   "name": "string",
+//   "followers": 0,
+//   "following": 0,
+//   "registerDate": "2022-03-10T12:15:50-04:00"
+// }
+
+  useEffect(() => {
+    setFormData({
+      name: userData?.name || '',
+      bio: userData?.bio || '',
+      location: userData?.location || '',
+      website: userData?.website || ''
+    })
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -26,8 +47,8 @@ export function EditProfileForm({ onCancel, onSaved }) {
 
   const inputs = [
     { id: "name", label: "Nome", type: "text", value: formData.name, placeholder: "Digite seu nome", onChange: e => updateField("name", e.target.value) },
-    { id: "bio", label: "Biografia", type: "text", value: formData.bio, placeholder: "Apaixonado por tecnologia inovadora", onChange: e => updateField("bio", e.target.value), maxLength: 160 },
-    { id: "location", label: "Localização", type: "text", value: formData.location, placeholder: "São Paulo, Brasil", onChange: e => updateField("location", e.target.value) },
+    { id: "bio", label: "Biografia", type: "text", value: formData.bio, placeholder: "", onChange: e => updateField("bio", e.target.value), maxLength: 160 },
+    { id: "location", label: "Localização", type: "text", value: formData.location, placeholder: "", onChange: e => updateField("location", e.target.value) },
     { id: "website", label: "Website", type: "url", value: formData.website, placeholder: "https://exemplo.com", onChange: e => updateField("website", e.target.value) }
   ];
 

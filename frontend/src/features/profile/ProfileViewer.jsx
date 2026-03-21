@@ -1,8 +1,17 @@
-import React from 'react'
-import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs'
-import { MediaGrid } from '@/design-system/components/MediaGrid'
-import PostList from '../feed/components/PostList';
+import Loading from '@/design-system/components/Loading';
+import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
+
+import { MediaGrid } from '@/features/profile/components/MediaGrid'
+import { ProfilePostList } from './components/ProfilePostList';
+import { LikedPostList } from './components/LikedPostList';
+
+import { useAuth } from '@/app/providers/AuthProvider';
+import { getUserInfo } from './services/profileService';
 
 const mockMedia = [
   { id: 1, url: "https://images.unsplash.com/photo-1504805572947-34fad45aed93", alt: "do something great" },
@@ -15,9 +24,57 @@ const mockMedia = [
 ];
 
 export function ProfileViewer() {
+
+  const [loadHeader, setLoadHeader] = useState(true);
+  const [notFounded, setNotFounded] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const { user } = useAuth();
+  const { username } = useParams();
+
+  const profileUsername = username ?? user.username;
+
+  useEffect(() => {
+
+		const getProfileInfo = async () => {
+
+			try {
+				const resp = await getUserInfo(profileUsername);
+				setUserData(resp);
+				setNotFounded(false);
+			} catch (err) {
+				console.log(err);
+        setNotFounded(true);
+				toast.error('Fail to get profile info');
+			} finally {
+        setLoadHeader(false);
+			}
+		}
+
+		getProfileInfo();
+	},[username]);
+
+
+
+  	if (loadHeader) {
+		return (
+      <Loading size='lg' full={true}/>
+		);
+	}
+
+  if (notFounded){
+
+    return (
+      <div className='flex flex-1 items-center justify-center h-full'>
+        <p className='text-muted-foreground text-3xl text-center'>
+          Perfil não encontrado
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className={`bg-background min-h-screen`}>
-      <ProfileHeader />
+      <ProfileHeader userData={userData}/>
       <div className='max-w-4xl mx-auto px-4 pb-10'>
         <Tabs defaultValue="posts" className={`max-w-4xl`} >
           <TabsList className='mb-4'>
@@ -27,14 +84,13 @@ export function ProfileViewer() {
           </TabsList>
 
           <TabsContent value="posts">
-            {/* <PostList /> */}
-            <h1>Posts</h1>
+            <ProfilePostList userId={userData.id} />
           </TabsContent>
           <TabsContent value="media">
             <MediaGrid  items={mockMedia}/>
           </TabsContent>
           <TabsContent value="likes">
-            <h1>Likes</h1>
+            <LikedPostList userId={userData.id}/>
           </TabsContent>
         </Tabs>
       </div>

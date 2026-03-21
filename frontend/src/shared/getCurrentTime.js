@@ -1,8 +1,10 @@
 
 
 export function getCurrentTime(date_time) {
+
 		const now = Date.now();
-		const diff = now - date_time;
+		const created = new Date(date_time).getTime();
+		const diff = now - created;
 
 		const seconds = Math.floor(diff / 1000);
 		const minutes = Math.floor(seconds / 60);
