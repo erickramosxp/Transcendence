@@ -9,34 +9,250 @@ import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 public class UserResourceTest extends BaseApiTest {
-
     @Test
     public void testGetUserPage() {
+        UserTestContext user = createUser();
 
-        String username = "user" + System.currentTimeMillis();
-        String email = "test" + System.currentTimeMillis() + "@example.com";
-
-        // cria usuário
         given()
+                .header("Authorization", "Bearer " + user.token)
+                .when()
+                .get("/user/" + user.username)
+                .then()
+                .statusCode(200)
+                .body("username", Matchers.equalTo(user.username));
+    }
+
+    @Test
+    public void testUpdateUserProfile() {
+        UserTestContext user = createUser();
+
+        String newName = "Novo Nome";
+        String newBio = "Minha bio";
+        String newLocation = "Rio de Janeiro";
+        String newWebsite = "https://meusite.com";
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
                 .contentType("application/json")
                 .body("""
-        {
-          "email": "%s",
-          "username": "%s",
-          "name": "Post Test",
-          "password": "123456"
-        }
-        """.formatted(email, username))
-                .post("/auth/register")
+                        {
+                          "name": "%s",
+                          "biography": "%s",
+                          "location": "%s",
+                          "websiteUrl": "%s"
+                        }
+                        """.formatted(newName, newBio, newLocation, newWebsite))
+                .when()
+                .patch("/user/profile")
+                .then()
+                .statusCode(200)
+                .body("name", Matchers.equalTo(newName))
+                .body("biography", Matchers.equalTo(newBio))
+                .body("location", Matchers.equalTo(newLocation))
+                .body("websiteUrl", Matchers.equalTo(newWebsite));
+    }
+
+    @Test
+    public void testUpdateAvatarProfile() {
+        UserTestContext user = createUser();
+
+        String newAvatarUrl = "https://imgs.search.brave.com/P2uLl-BVn49fNM_CZllrda4s90AJ0N6bpbAphp7e1zc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi90ZXN0/ZS1kZS1lc2NvbGhh/LW0tbHRpcGxhLWNs/b3NlLXVwLXVtLXB3/bmNpbC1lLWV4YW1l/LW0lQzMlQkFsdGlw/bGEtY29tLXRleHRv/LWRvLTE1NDQyMjA2/My5qcGc";
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .body("""
+                                        {
+                                            "avatarUrl": "%s"
+                                        }
+                        """.formatted(newAvatarUrl))
+                .when()
+                .patch("/user/avatar")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void testUpdateBannerProfile() {
+        UserTestContext user = createUser();
+
+        String newBannerUrl = "https://imgs.search.brave.com/P2uLl-BVn49fNM_CZllrda4s90AJ0N6bpbAphp7e1zc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi90ZXN0/ZS1kZS1lc2NvbGhh/LW0tbHRpcGxhLWNs/b3NlLXVwLXVtLXB3/bmNpbC1lLWV4YW1l/LW0lQzMlQkFsdGlw/bGEtY29tLXRleHRv/LWRvLTE1NDQyMjA2/My5qcGc";
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .body("""
+                                        {
+                                            "bannerUrl": "%s"
+                                        }
+                        """.formatted(newBannerUrl))
+                .when()
+                .patch("/user/banner")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void testGetPostsLikedByUser() {
+        UserTestContext user = createUser();
+
+        long postId = ((Number) given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .body("""
+                {
+                  "text": "Post para like",
+                  "mediaUrl": null
+                }
+            """)
+                .when()
+                .post("/posts")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("id")).longValue();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .when()
+                .post("/posts/" + postId + "/like")
                 .then()
                 .statusCode(200);
 
         given()
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + user.token)
                 .when()
-                .get("/user/" + username)
+                .get("/user/{username}/likes", user.username)
                 .then()
                 .statusCode(200)
-                .body("username", Matchers.equalTo(username));
+                .body("items.size()", Matchers.greaterThan(0));
+    }
+
+    @Test
+    public void testGetUserPosts() {
+        UserTestContext user = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .body("""
+                {
+                  "text": "Post do usuário",
+                  "mediaUrl": null
+                }
+            """)
+                .when()
+                .post("/posts")
+                .then()
+                .statusCode(200);
+
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .when()
+                .get("/user/{username}/posts", user.username)
+                .then()
+                .statusCode(200)
+                .body("items.size()", Matchers.greaterThan(0));
+    }
+
+    @Test
+    public void testGetUserMedia() {
+        UserTestContext user = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .contentType("application/json")
+                .body("""
+                {
+                  "text": null,
+                  "mediaUrl": "https://teste.com/image.png"
+                }
+            """)
+                .when()
+                .post("/posts")
+                .then()
+                .statusCode(200);
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .when()
+                .get("/user/{username}/media", user.username)
+                .then()
+                .statusCode(200)
+                .body("items.size()", Matchers.greaterThan(0));
+    }
+
+    @Test
+    public void testFollowUser() {
+        UserTestContext user1 = createUser();
+        UserTestContext user2 = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .contentType("application/json")
+                .when()
+                .post("/user/{username}/follow", user2.username)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testUnfollowUser() {
+        UserTestContext user1 = createUser();
+        UserTestContext user2 = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .contentType("application/json")
+                .post("/user/{username}/follow", user2.username);
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .contentType("application/json")
+                .when()
+                .post("/user/{username}/unfollow", user2.username)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testGetFollowers() {
+        UserTestContext user1 = createUser();
+        UserTestContext user2 = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user2.token)
+                .contentType("application/json")
+                .post("/user/{username}/follow", user1.username);
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .when()
+                .get("/user/{username}/followers", user1.username)
+                .then()
+                .statusCode(200)
+                .body("items.size()", Matchers.greaterThan(0));
+    }
+
+    @Test
+    public void testGetFollowing() {
+        UserTestContext user1 = createUser();
+        UserTestContext user2 = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .contentType("application/json")
+                .post("/user/{username}/follow", user2.username);
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .contentType("application/json")
+                .when()
+                .get("/user/{username}/following", user1.username)
+                .then()
+                .statusCode(200)
+                .body("items.size()", Matchers.greaterThan(0));
     }
 }
