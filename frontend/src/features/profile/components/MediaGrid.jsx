@@ -11,7 +11,7 @@ export function MediaGrid({ username }) {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { posts, loadInitial, handleLike, toggleComments, activeCommentsPostId, incrementCommentCount,...handlers } = usePostList(
+  const { posts, loadInitial, handleLike, toggleComments, activeCommentsPostId, incrementCommentCount, ...handlers } = usePostList(
   (page, size) => getUserMediaPosts(username, page, size)
 );
 
@@ -54,7 +54,7 @@ export function MediaGrid({ username }) {
             onClick={() => setSelected(posts.find((p) => p.id === item.id))}
           >
             <img
-              src={item.url}
+              src={item.mediaUrl}
               alt={item.alt ?? "mídia"}
               width={300} height={300}
               className="h-full w-full object-cover"
@@ -76,18 +76,7 @@ export function MediaGrid({ username }) {
             activeCommentsPostId={activeCommentsPostId}
             incrementCommentCount={incrementCommentCount}
           className="p-0! shadow-none! border-none! rounded-none!"
-          post={{
-            id: selected.id,
-            avatarUrl: selected.author.avatar,
-            name: selected.author.name,
-            userName: selected.author.username,
-            created_at: selected.date_time,
-            contents: selected.content,
-            media: selected.url,
-            likedByMe: selected.isLiked,
-            likeCount: selected.likes,
-            commentCount: selected.countComments,
-          }}
+          post={selected}
           />
         )}
       </Modal>
