@@ -13,16 +13,6 @@ import { LikedPostList } from './components/LikedPostList';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { getUserInfo } from './services/profileService';
 
-const mockMedia = [
-  { id: 1, url: "https://images.unsplash.com/photo-1504805572947-34fad45aed93", alt: "do something great" },
-  { id: 2, url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c", alt: "pessoas trabalhando" },
-  { id: 3, url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "código no monitor" },
-  { id: 4, url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085", alt: "notebook aberto" },
-  { id: 5, url: "https://images.unsplash.com/photo-1555099962-4199c345e5dd", alt: "teclado mecânico" },
-  { id: 6, url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5", alt: "matrix code" },
-  { id: 7, url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1", alt: "laptop cinza" },
-];
-
 export function ProfileViewer() {
 
   const [loadHeader, setLoadHeader] = useState(true);
@@ -84,13 +74,13 @@ export function ProfileViewer() {
           </TabsList>
 
           <TabsContent value="posts">
-            <ProfilePostList userId={userData.id} />
+            <ProfilePostList username={userData.username} />
           </TabsContent>
           <TabsContent value="media">
-            <MediaGrid  items={mockMedia}/>
+            <MediaGrid  username={userData.username}/>
           </TabsContent>
           <TabsContent value="likes">
-            <LikedPostList userId={userData.id}/>
+            <LikedPostList username={userData.username}/>
           </TabsContent>
         </Tabs>
       </div>

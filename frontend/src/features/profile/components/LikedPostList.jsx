@@ -4,11 +4,11 @@ import { PostListUI } from "../PostListUI";
 import { usePostList } from "../hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
 
-export function LikedPostList({ userId }) {
+export function LikedPostList({ username }) {
 
   const [loading, setLoading] = useState(true);
   const { posts, loadInitial, ...handlers } = usePostList(
-    (page, size) => getLikedPosts(userId, page, size)
+    (page, size) => getLikedPosts(username, page, size)
   );
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function LikedPostList({ userId }) {
     }
 
     getUserLikedPosts();
-  }, [userId]);
+  }, [username]);
 
 
   if (loading)

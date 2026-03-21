@@ -12,23 +12,6 @@ import { Modal } from "@/design-system/components/Modal";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { Avatar } from "@/design-system/primitives/Avatar";
 
-const userData = {
-	name: "Morty",
-	username: "morty",
-	bio: "Apaixonado por tecnologia e inovação 💻",
-
-	location: "São Paulo, Brasil",
-	website: "example.com",
-	joinDate: "Janeiro 2024",
-
-	followers: "1.2k",
-	following: "256",
-	// Teste colocar uma URL de imagem aqui depois, ex: "https://images.unsplash.com/photo-1504805572947-34fad45aed93"
-	coverUrl: "https://images.unsplash.com/photo-1504805572947-34fad45aed93",
-	// "https://github.com/shadcn.png"
-	avatarUrl: "https://github.com/shadcn.png",
-};
-
 // {
 //   "id": 0,
 //   "avatarUrl": "string",

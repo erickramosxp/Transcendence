@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Label } from "@/design-system/primitives/Label";
 import { Input } from "@/design-system/primitives/Input";
 import { Button } from "@/design-system/primitives/Button";
+import { updateProfileInfo } from "@/features/profile/services/profileService";
+import {toast} from 'react-toastify'
 
 export function EditProfileForm({ onCancel, onSaved , userData}) {
 
@@ -36,8 +38,21 @@ export function EditProfileForm({ onCancel, onSaved , userData}) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    // TODO: integra com profileService.js
-    // await updateProfile(formData);
+
+    if (formData.name.length < 3) {
+      toast.error("Necessário pelo menos 3 letras no nome!");
+      return;
+    }
+    if (formData.bio.length > 160) {
+      toast.error("Bio só pode ter 160 caracteres!");
+      return;
+    }
+    try {
+      await updateProfileInfo(formData);
+    } catch(err) {
+      console.log(err);
+      toast.error("Falha ao atualizar perfil");
+    }
     onSaved?.();
   };
 

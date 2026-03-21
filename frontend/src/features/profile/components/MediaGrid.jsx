@@ -5,7 +5,7 @@ import { usePostList } from "../hooks/usePostList";
 import { getUserMediaPosts } from '../services/profileService'
 import Loading from "@/design-system/components/Loading";
 
-export function MediaGrid({ username, items = [] }) {
+export function MediaGrid({ username }) {
 
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);

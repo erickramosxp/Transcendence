@@ -5,11 +5,11 @@ import { usePostList } from "../hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
 
 
-export function ProfilePostList({ userId }) {
+export function ProfilePostList({ username }) {
 
 
   const { posts, loadInitial, ...handlers } = usePostList(
-    (page, size) => getUserPosts(userId, page, size)
+    (page, size) => getUserPosts(username, page, size)
   );
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,7 @@ export function ProfilePostList({ userId }) {
       }
 
       getUserPosts();
-    }, [userId]);
+    }, [username]);
 
     if(loading)
       return <Loading size="md" className="py-10"/>
