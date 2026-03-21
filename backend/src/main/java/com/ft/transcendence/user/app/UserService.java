@@ -30,7 +30,7 @@ public class UserService {
         resp.name = user.name;
         resp.avatarUrl = user.avatarUrl;
         resp.bannerImgUrl = user.bannerImgUrl;
-        resp.biography = user.biography;
+        resp.bio = user.biography;
         resp.websiteUrl = user.websiteUrl;
         resp.location = user.location;
         resp.registerDate = user.createdAt;
@@ -53,7 +53,7 @@ public class UserService {
 
         if (req.name != null && !req.name.isBlank())
             user.name = req.name;
-        user.biography = normalize(req.biography);
+        user.biography = normalize(req.bio);
         user.location = normalize(req.location);
         user.websiteUrl = normalize(req.websiteUrl);
 
