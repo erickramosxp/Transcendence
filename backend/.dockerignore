@@ -1,0 +1,12 @@
+target/
+.quarkus/
+.git
+.gitignore
+*.md
+.env
+.env.*
+.idea/
+.vscode
+*.iml
+Dockerfile.dev
+*.log
