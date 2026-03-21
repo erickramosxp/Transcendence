@@ -37,7 +37,7 @@ public class UserResourceTest extends BaseApiTest {
                 .body("""
                         {
                           "name": "%s",
-                          "biography": "%s",
+                          "bio": "%s",
                           "location": "%s",
                           "websiteUrl": "%s"
                         }
@@ -47,7 +47,7 @@ public class UserResourceTest extends BaseApiTest {
                 .then()
                 .statusCode(200)
                 .body("name", Matchers.equalTo(newName))
-                .body("biography", Matchers.equalTo(newBio))
+                .body("bio", Matchers.equalTo(newBio))
                 .body("location", Matchers.equalTo(newLocation))
                 .body("websiteUrl", Matchers.equalTo(newWebsite));
     }
