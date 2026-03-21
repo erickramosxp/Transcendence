@@ -1,10 +1,12 @@
-import { useCreatePost } from "./useCreatePost";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import Textarea from "@/components/ui/Textarea";
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-import FileUploadButton from "@/components/ui/FileUploadButton";
+
+import { useCreatePost } from "./useCreatePost";
+
+import { Button } from "@/design-system/primitives/Button";
+import { Card, CardContent } from "@/design-system/primitives/Card";
+import Textarea from "@/design-system/primitives/Textarea";
+import FileUploadButton from "@/design-system/primitives/FileUploadButton";
 
 
 function CreateVideoPost({ onAddPost, onClose }) {
