@@ -34,6 +34,15 @@ public class User extends PanacheEntityBase {
     @Column(nullable = false)
     public boolean active = true;
 
+    @Column(name = "biography")
+    public String biography;
+
+    @Column(name = "website_url")
+    public String websiteUrl;
+
+    @Column(name = "location")
+    public String location;
+
     @Column(name = "created_at", nullable = false)
     public OffsetDateTime createdAt;
 
