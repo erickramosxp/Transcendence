@@ -45,7 +45,7 @@ public class PostResource {
     public Response like(@PathParam("postId") Long postId) {
         long userId = currentUser.id();
         likeService.likePost(userId, postId);
-        return Response.noContent().build();
+        return Response.status(200).build();
     }
 
     @POST
@@ -54,6 +54,6 @@ public class PostResource {
     public Response unlike(@PathParam("postId") Long postId) {
         long userId = currentUser.id();
         likeService.unlikePost(userId, postId);
-        return Response.noContent().build();
+        return Response.status(200).build();
     }
 }

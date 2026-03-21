@@ -17,7 +17,7 @@ public class Post extends PanacheEntityBase {
     @JoinColumn(name = "user_id", nullable = false)
     public User user;
 
-    @Column(name = "text", nullable = false)
+    @Column(name = "text")
     public String text;
 
     @Column(name = "media_url")
