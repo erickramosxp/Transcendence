@@ -23,6 +23,11 @@ COPY --from=build /workspace/target/quarkus-app/*.jar ./
 COPY --from=build /workspace/target/quarkus-app/app/ ./app/
 COPY --from=build /workspace/target/quarkus-app/quarkus/ ./quarkus/
 
+# curl para healthcheck do Docker Compose (/q/health/live)
+USER root
+RUN microdnf install -y curl-minimal && microdnf clean all
+USER 185
+
 EXPOSE 8080
 
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"

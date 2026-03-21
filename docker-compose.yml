@@ -17,6 +17,13 @@ services:
       QUARKUS_DATASOURCE_WEB_ID_GOOGLE: ${WEB_CLIENT_ID_GOOGLE}
       QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+    # Só “healthy” quando o Quarkus responde (evita o browser bater na API antes do back estar pronto)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/q/health/live >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
 
   frontend:
     build:
@@ -29,5 +36,6 @@ services:
       - "80:80"
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
