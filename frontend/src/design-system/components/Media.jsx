@@ -31,42 +31,40 @@ function Media({ url, mimeType }) {
         };
     }, [url, mimeType]);
 
-    // 🚫 Se não tiver URL → não renderiza nada
+    // se não tiver URL
     if (!url) return null;
 
-    // 🔄 loading
+    // loading
     if (!mediaType) {
         return (
             <div className="animate-pulse bg-gray-300 h-64 w-full rounded-lg" />
         );
     }
 
-    // 🖼 imagem
     if (mediaType === 'image') {
         return (
             <img
                 src={url}
                 alt=""
-                // className="w-full rounded-lg object-cover"
+                className="rounded-lg"
                 style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
             />
         );
     }
 
-    // 🎥 vídeo
     if (mediaType === 'video') {
         return (
             <video
                 src={url}
                 controls
-                className="w-full rounded-lg"
-                style={{ maxWidth: '80%', maxHeight: '400px', marginTop: '10px' }}
+                className="rounded-lg sm:max-w-lg mt-3"
+                style={{maxHeight: '400px'}}
                 ref={videoRef}
             />
         );
     }
 
-    // ❌ não suportado → não renderiza nada
+    // não renderiza nada
     return null;
 }
 
