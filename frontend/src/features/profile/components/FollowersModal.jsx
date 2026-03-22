@@ -81,8 +81,9 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
         >
           <button onClick={() => onClose?.()}>
             <Avatar 
-              src={user.avatarUrl}
+              src={user?.avatarUrl ?? null}
               alt={user.name}
+              name={user.name}
               username={user.username}
               size='md'
             />
