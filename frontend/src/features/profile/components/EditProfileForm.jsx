@@ -13,7 +13,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
     name: "",
     bio: "",
     location: "",
-    website: ""
+    websiteUrl: ""
   });
 
   // {
@@ -67,7 +67,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
     { id: "name", label: "Nome", type: "text", value: formData.name, placeholder: "Digite seu nome", onChange: e => updateField("name", e.target.value) },
     { id: "bio", label: "Biografia", type: "text", value: formData.bio, placeholder: "", onChange: e => updateField("bio", e.target.value), maxLength: 160 },
     { id: "location", label: "Localização", type: "text", value: formData.location, placeholder: "", onChange: e => updateField("location", e.target.value) },
-    { id: "website", label: "Website", type: "url", value: formData.websiteUrl, placeholder: "https://exemplo.com", onChange: e => updateField("website", e.target.value) }
+    { id: "websiteUrl", label: "Website", type: "url", value: formData.websiteUrl, placeholder: "https://exemplo.com", onChange: e => updateField("websiteUrl", e.target.value) }
   ];
 
   return (
