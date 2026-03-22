@@ -56,7 +56,7 @@ export const ProfileHeader = ({userData, changeFields}) => {
 		onClose={closeConnections}
 		defaultTab={connectionsModal.tab}
 		userId={userData?.id}
-		username={user?.username}
+		username={userData?.username}
 		currentUserId={user?.id}
 		/>
   	<div className={`pb-5`}>

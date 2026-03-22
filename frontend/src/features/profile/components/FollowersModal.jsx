@@ -126,7 +126,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
         setLoadingFollowers(true);
         try {
             const res  = await getFollowersList(username);
-            setFollowers(res);
+            setFollowers(res.items);
         } finally {
             setLoadingFollowers(false);
         }
@@ -137,7 +137,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
         setLoadingFollowing(true);
         try {
             const res  = await getFollowingList(username);
-            setFollowing(res);
+            setFollowing(res.items);
         } finally {
             setLoadingFollowing(false);
         }
