@@ -102,8 +102,14 @@ public class UserService {
         if (hasMore)
             posts = posts.subList(0, size);
 
+        List<Long> postIds = posts.stream().map(p -> p.id).toList();
+
+        List<Like> likes = Like.find("user.id = ?1 and post.id in ?2", userId, postIds).list();
+
+        var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
+
         UserPostsResponse resp = new UserPostsResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
+        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
