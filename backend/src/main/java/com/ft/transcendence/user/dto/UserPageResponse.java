@@ -1,5 +1,7 @@
 package com.ft.transcendence.user.dto;
 
+import com.ft.transcendence.user.domain.User;
+
 import java.time.OffsetDateTime;
 
 public class UserPageResponse {
@@ -13,5 +15,23 @@ public class UserPageResponse {
     public String location;
     public Long followers;
     public Long following;
+    public boolean isFollowing;
     public OffsetDateTime registerDate;
+
+    public static UserPageResponse of(User user, Long followers, Long following, boolean isFollowing) {
+        UserPageResponse resp = new UserPageResponse();
+        resp.id = user.id;
+        resp.username = user.username;
+        resp.name = user.name;
+        resp.avatarUrl = user.avatarUrl;
+        resp.bannerImgUrl = user.bannerImgUrl;
+        resp.bio = user.biography;
+        resp.websiteUrl = user.websiteUrl;
+        resp.location = user.location;
+        resp.registerDate = user.createdAt;
+        resp.followers = followers;
+        resp.following = following;
+        resp.isFollowing = isFollowing;
+        return resp;
+    }
 }

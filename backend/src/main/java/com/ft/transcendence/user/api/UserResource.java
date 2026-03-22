@@ -25,7 +25,11 @@ public class UserResource {
     @Path("/{username}")
     @Authenticated
     public UserPageResponse getUser(@PathParam("username") String username) {
-        return userService.getUserPage(username);
+        User user = User.findByEmailOrUsername(username);
+        if (user == null)
+            throw new NotFoundException("User not found");
+        Long currentUserId = currentUser.id();
+        return userService.getUserPage(user, currentUserId);
     }
 
     @PATCH
