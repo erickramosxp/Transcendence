@@ -78,7 +78,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
           className="flex items-center gap-3 px-4 py-3 hover:bg-accent transition-colors"
         >
           <Avatar 
-            src={user.avatarUrl ?? '/default-avatar.png'}
+            src={user.avatarUrl ?? ''}
             alt={user.name}
             username={user.username}
             size='md'
