@@ -7,6 +7,7 @@ import { getCurrentTime } from "@/shared/getCurrentTime";
 import  CommentCard  from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";
 import { Link } from 'react-router-dom'
+import Media from "@/design-system/components/Media";
 
 //     {
 //   "items": [
@@ -91,22 +92,10 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 							</div>
 						</a>
 					)}
-
-					{post.media && (
-						post.fileType === "video" ? (
-							<video
-								src={post.media}
-								controls
-								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-							/>
-						) : (
-							<img
-								src={post.media}
-								alt="Post attachment"
-								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-							/>
-						)
-					)}
+					<Media 
+						url={post.media} 
+    					mimeType={post.mimeType} 
+					/>
 					<div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-3 text-slate-500">
 						<button
 							onClick={() => onLike(post.id)}
