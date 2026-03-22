@@ -51,6 +51,18 @@ export function ProfileViewer() {
     }));
   }
 
+  const changeFollowCount = (type) => {
+
+    // type = follow (+1) || type = unfollow (-1)
+    setUserData((prev) => ({
+      ...prev,
+      followers:
+        type === 'follow'
+          ? prev.followers + 1
+          : prev.followers - 1,
+    }))
+  }
+
 
   	if (loadHeader) {
 		return (
@@ -71,7 +83,7 @@ export function ProfileViewer() {
 
   return (
     <div className={`bg-background min-h-screen`}>
-      <ProfileHeader userData={userData} changeFields={changeFields}/>
+      <ProfileHeader userData={userData} changeFields={changeFields} changeFollowCount={changeFollowCount}/>
       <div className='max-w-4xl mx-auto px-4 pb-10'>
         <Tabs defaultValue="posts" className={`max-w-4xl`} >
           <TabsList className='mb-4'>

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import Scroll from '@/design-system/primitives/Scroll';
 import { followUser, unfollowUser } from "../services/profileService";
 
-function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
+function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 
   const navigate = useNavigate();
 
@@ -24,6 +24,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
     try {
       await followUser(username);
       toggleFollow(username);
+      changeFollowCount('follow');
     } catch (err) {
       console.error(err)
     } finally {
@@ -36,6 +37,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
     try {
       await unfollowUser(username);
       toggleFollow(username);
+      changeFollowCount('unfollow');
     } catch (err) {
       console.error(err)
     } finally {
@@ -120,7 +122,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
   );
 }
 
-export function FollowersModal({ open, onClose, defaultTab = 'followers', userId, currentUserId, username }) {
+export function FollowersModal({ open, onClose, defaultTab = 'followers', userId, currentUserId, username, changeFollowCount }) {
 
     const [followers, setFollowers] = useState([]);
     const [following, setFollowing] = useState([]);
@@ -197,6 +199,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
                 currentUserId={currentUserId}
                 onClose={onClose}
                 toggleFollow={toggleFollow}
+                changeFollowCount={changeFollowCount}
             />
             </TabsContent>
             <TabsContent value="followers">
@@ -206,6 +209,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
                 currentUserId={currentUserId}
                 onClose={onClose}
                 toggleFollow={toggleFollow}
+                changeFollowCount={changeFollowCount}
             />
             </TabsContent>
 
