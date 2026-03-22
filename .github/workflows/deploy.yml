@@ -1,15 +1,8 @@
 name: Deploy
 
 on:
-  # --- Produção (main) ---
-  # Quando estiver pronta, descomente o bloco abaixo para deploy automático a cada push na main:
-  # push:
-  #   branches: [main]
-
-  # --- Testes ---
-  # Execute manualmente em Actions → Deploy → Run workflow
-  # (escolha a branch em que você está; o servidor faz deploy dessa mesma branch)
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -25,20 +18,17 @@ jobs:
 
     steps:
       - name: Deploy via SSH
-        env:
-          DEPLOY_BRANCH: ${{ github.ref_name }}
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: DEPLOY_BRANCH
           command_timeout: 25m
           script_stop: true
           script: |
             set -euo pipefail
             cd ${{ secrets.DEPLOY_PATH }}
-            git fetch origin "$DEPLOY_BRANCH"
-            git checkout "$DEPLOY_BRANCH"
-            git reset --hard "origin/$DEPLOY_BRANCH"
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
             make build
