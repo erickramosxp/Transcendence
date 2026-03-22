@@ -44,7 +44,11 @@ export function ProfileViewer() {
 	},[username]);
 
   const changeFields = (data) => {
-    setUserData(data);
+
+    setUserData((prev) => ({
+      ...prev,
+      ...data
+    }));
   }
 
 
