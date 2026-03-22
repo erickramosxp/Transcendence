@@ -54,7 +54,7 @@ export function MediaGrid({ username }) {
             onClick={() => setSelected(posts.find((p) => p.id === item.id))}
           >
             <img
-              src={item.mediaUrl}
+              src={item?.mediaUrl || null}
               alt={item.alt ?? "mídia"}
               width={300} height={300}
               className="h-full w-full object-cover"
