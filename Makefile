@@ -47,7 +47,7 @@ help:
 
 env:
 	@cp -n .env.example .env || true
-	@echo ".env pronto. Edite DATABASE_NAME/DATABASE_USER/DATABASE_PASSWORD."
+	@echo ".env pronto. Edite as variáveis de ambiente conforme necessário."
 
 build:
 	$(COMPOSE) up --build -d
