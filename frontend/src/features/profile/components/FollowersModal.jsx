@@ -77,12 +77,14 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
           key={`${user.id}-${index}`}
           className="flex items-center gap-3 px-4 py-3 hover:bg-accent transition-colors"
         >
-          <Avatar 
-            src={user.avatarUrl ?? ''}
-            alt={user.name}
-            username={user.username}
-            size='md'
-          />
+          <button onClick={() => onClose?.()}>
+            <Avatar 
+              src={user.avatarUrl}
+              alt={user.name}
+              username={user.username}
+              size='md'
+            />
+          </button>
           <div className="flex flex-col flex-1 min-w-0">
             <Link
               to={`/profile/${user.username}`}
@@ -97,15 +99,21 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow }) {
             </span>
           </div>
 
-          {user.id !== currentUserId && (
-            <Button
-              variant={user.isFollowing ? "secondary" : "primary"}
-              size="follow"
-              onClick={() => handleUserFollowrs(user.username, user.isFollowing)}
-            >
-              {user.isFollowing ? 'Seguindo' : 'Seguir'}
-            </Button>
-          )}
+          {user?.isFollowing &&
+          <>
+            {
+              user.id !== currentUserId && (
+                <Button
+                  variant={user.isFollowing ? "secondary" : "primary"}
+                  size="follow"
+                  onClick={() => handleUserFollowrs(user.username, user.isFollowing)}
+                >
+                  {user.isFollowing ? 'Seguindo' : 'Seguir'}
+                </Button>
+              )
+            }
+          </>
+          } 
         </span>
       ))}
     </Scroll>
