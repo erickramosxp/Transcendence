@@ -1,0 +1,9 @@
+.git
+**/.env
+**/.env.*
+backend/target
+backend/.quarkus
+frontend/node_modules
+frontend/dist
+frontend/.vite
+frontend/coverage

@@ -1,7 +1,29 @@
 import axios from 'axios';
 
+function resolveBaseURL() {
+  const raw = import.meta.env.VITE_BACKEND_URL;
+  const hasExplicit = raw !== undefined && raw !== '';
+
+  if (hasExplicit) {
+    if (
+      import.meta.env.PROD &&
+      (String(raw).includes('localhost:8080') || String(raw).includes('127.0.0.1:8080'))
+    ) {
+      console.warn(
+        '[api] VITE_BACKEND_URL aponta para :8080 num build de produção; a usar /api (Nginx). Corrige o .env e rebuild.'
+      );
+      return '/api';
+    }
+    return raw;
+  }
+
+  return import.meta.env.PROD ? '/api' : 'http://localhost:8080';
+}
+
+const baseURL = resolveBaseURL();
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080',
+  baseURL,
 });
 
 api.interceptors.request.use((config) => {

@@ -18,7 +18,7 @@ help:
 	@echo "🐳 Containers:"
 	@echo "  make backend       # Backend (Java/Quarkus) + Database(supabase)"
 	@echo "  make backend_dev   # Backend (Java/Quarkus) + Database(local) ambiente de desenvolvimento"
-	@echo "  make frontend      # Frontend (React/Vite)"
+	@echo "  make frontend      # Nginx + SPA estática (prod; build em nginx/)"
 	@echo "  make db            # Apenas Database (PostgreSQL)"
 	@echo "  make ps            # Listar containers rodando"
 	@echo ""
@@ -41,7 +41,7 @@ help:
 	@echo "  make re_dev        # Rebuild completo (fclean + build) em ambiente dev"
 	@echo ""
 	@echo "📋 URLs (dependem do ambiente):"
-	@echo "  make build / up     → prod: Frontend http://localhost (porta 80), Backend :8080"
+	@echo "  make build / up     → prod: site :80/:443, API só em /api (backend sem porta pública)"
 	@echo "  make build_dev      → dev:  Frontend http://localhost:5173 (Vite), Backend :8080"
 	@echo "  Database (prod): Supabase pooler (ver .env)"
 
@@ -91,7 +91,7 @@ backend-clean:
 	sudo rm -rf backend/target backend/.quarkus
 
 frontend:
-	$(COMPOSE) up --build -d frontend
+	$(COMPOSE) up --build -d nginx
 
 stop:
 	$(COMPOSE) stop

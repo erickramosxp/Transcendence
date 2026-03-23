@@ -83,7 +83,7 @@ jobs:
             git checkout main
             git reset --hard origin/main
             make build
-            echo "Smoke: backend live probe"
-            curl -fsS http://127.0.0.1:8080/q/health/live >/dev/null
+            echo "Smoke: API via Nginx (/api → Quarkus health)"
+            curl -fsS http://127.0.0.1/api/q/health/live >/dev/null
             echo "Smoke: frontend HTTP"
             curl -fsS -o /dev/null http://127.0.0.1/
