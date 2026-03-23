@@ -33,7 +33,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    # Produção (Let's Encrypt no host): montar fullchain + privkey para os mesmos paths
     # volumes:
     #   - /etc/letsencrypt/live/SEU_DOMINIO/fullchain.pem:/etc/nginx/certs/nginx.crt:ro
     #   - /etc/letsencrypt/live/SEU_DOMINIO/privkey.pem:/etc/nginx/certs/nginx.key:ro

@@ -1,4 +1,3 @@
-# Build do Vite no contexto da raiz do repositório (docker-compose: context: .)
 FROM node:22-alpine AS build
 
 WORKDIR /app
