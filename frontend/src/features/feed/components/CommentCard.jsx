@@ -132,16 +132,16 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                         size="MD"
                                     />
                                     <div className="flex-1">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className={yaleBlue.text.hover}>
+                                        <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
+                                            <span className={`${yaleBlue.text.hover} truncate min-w-10 sm:truncate-none`}>
                                                 {comment.name}
                                             </span>
 
-                                            <span className="text-slate-500">
+                                            <span className="text-slate-500 truncate sm:truncate-none">
                                                 @{comment.userName}
                                             </span>
 
-                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400">
+                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400 truncate sm:truncate-none">
                                                 {getCurrentTime(comment.created_at)}
                                             </span>
                                         </div>

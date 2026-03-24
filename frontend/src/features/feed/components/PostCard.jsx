@@ -48,14 +48,14 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 				<div className="flex-1 min-w-0">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
 						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>
-							<Link to={`/${post.userName}`}>
+							<Link className='truncate' to={`/${post.userName}`}>
 								{post.name}
 							</Link>
 						</span>
 						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.userName}`}>
 							@{post.userName}
 						</span>
-						<span title={new Date(post.created_at).toLocaleString()} className="text-slate-400 shrink-0">
+						<span title={new Date(post.created_at).toLocaleString()} className="text-slate-400 shrink-0 truncate">
 							{getCurrentTime(post.created_at)}
 						</span>
 					</div>

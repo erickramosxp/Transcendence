@@ -12,6 +12,11 @@ export async function getUserPosts(username, page, size) {
   return response.data;
 }
 
+export async function getPostUserDetails(id) {
+  const response = await api.get(`/posts/${id}`);
+  return response.data;
+}
+
 export async function getLikedPosts(username, page, size) {
   const response = await api.get(`/user/${username}/likes`, {
     params: { page, size }
