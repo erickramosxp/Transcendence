@@ -6,6 +6,7 @@ import com.ft.transcendence.post.app.PostService;
 import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
+import com.ft.transcendence.user.domain.User;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -29,6 +30,14 @@ public class PostResource {
     public PostResponse post(PostRequest req) {
         long userId = currentUser.id();
         return postService.create(userId, req);
+    }
+
+    @GET
+    @Path("/{postId}")
+    @Authenticated
+    public PostResponse postById(@PathParam("postId") Long postId) {
+        Long currentUserId = currentUser.id();
+        return postService.getPostById(postId, currentUserId);
     }
 
     @GET

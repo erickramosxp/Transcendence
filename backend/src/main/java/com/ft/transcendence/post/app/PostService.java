@@ -37,6 +37,13 @@ public class PostService {
         return PostResponse.of(post, false);
     }
 
+    public PostResponse getPostById(Long postId, Long currentUserId) {
+        Post post = Post.findById(postId);
+        boolean likedByMe = Like.find("user.id = ?1 and post.id = ?2", currentUserId, postId).firstResultOptional().isPresent();
+
+        return PostResponse.of(post, likedByMe);
+    }
+
     public FeedResponse feed(int page, int size, long userId) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
