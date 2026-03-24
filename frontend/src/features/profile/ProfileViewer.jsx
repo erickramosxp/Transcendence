@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useLayoutEffect, useRef} from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -15,17 +15,29 @@ import { getUserInfo } from './services/profileService';
 
 export function ProfileViewer() {
 
+  const topRef = useRef(null);
   const [loadHeader, setLoadHeader] = useState(true);
   const [notFounded, setNotFounded] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [activeTab, setActiveTab] = useState('posts');
   const { user } = useAuth();
   const { username } = useParams();
 
   const profileUsername = username ?? user.username;
 
+  useLayoutEffect(() => {
+    setActiveTab('posts');
+    topRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [profileUsername]);
+
   useEffect(() => {
 
 		const getProfileInfo = async () => {
+
+      setLoadHeader(true);
 
 			try {
 				const resp = await getUserInfo(profileUsername);
@@ -41,7 +53,7 @@ export function ProfileViewer() {
 		}
 
 		getProfileInfo();
-	},[username]);
+	},[profileUsername]);
 
   const changeFields = (data) => {
 
@@ -83,9 +95,10 @@ export function ProfileViewer() {
 
   return (
     <div className={`bg-background min-h-screen`}>
+      <div ref={topRef} />
       <ProfileHeader userData={userData} changeFields={changeFields} changeFollowCount={changeFollowCount}/>
       <div className='max-w-4xl mx-auto px-4 pb-10'>
-        <Tabs defaultValue="posts" className={`max-w-4xl`} >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
           <TabsList className='mb-4'>
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="media">Mídia</TabsTrigger>

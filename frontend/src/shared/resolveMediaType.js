@@ -25,6 +25,7 @@ export async function resolveMediaType(url, mimeTypeFromBackend) {
     if (contentType?.startsWith('image/')) return 'image';
     if (contentType?.startsWith('video/')) return 'video';
   } catch (err) {
+    return;
     console.warn('Erro ao detectar tipo via HEAD:', err);
   }
 
