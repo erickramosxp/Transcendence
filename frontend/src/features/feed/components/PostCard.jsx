@@ -38,13 +38,15 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 			"bg-card rounded-2xl shadow-md p-3 sm:p-4",
 			className)}>
 			<div className="flex gap-3 sm:gap-4 min-w-0">
-				<Avatar
-					src={post.avatarUrl}
-					name={post.name}
-					username={post.userName}
-					size="lg"
-					className="shrink-0"
-				/>
+				<div>
+					<Avatar
+						src={post.avatarUrl}
+						name={post.name}
+						username={post.userName}
+						size="lg"
+						className="shrink-0"
+					/>
+				</div>
 				<div className="flex-1 min-w-0">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
 						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>

@@ -15,6 +15,7 @@ import { yaleBlue } from "@/design-system/tokens/colors";
 
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
+import { Link } from 'react-router-dom'
 
 // {
 //   "items": [
@@ -125,16 +126,20 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                         {comments.map((comment) => (
                             <div key={comment.id ?? comment.user_id + comment.created_at} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
                                 <div className="flex gap-3">
-
-                                    <Avatar
-                                        src={comment.avatarUrl}
-                                        name={comment.name}
-                                        size="MD"
-                                    />
+                                    <div>
+                                        <Avatar
+                                            src={comment.avatarUrl}
+                                            username={comment.userName}
+                                            name={comment.name}
+                                            size="MD"
+                                        />
+                                    </div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
                                             <span className={`${yaleBlue.text.hover} truncate min-w-10 sm:truncate-none`}>
-                                                {comment.name}
+                                                <Link className='truncate' to={`/${comment.userName}`}>
+                                                    {comment.name}
+                                                </Link>
                                             </span>
 
                                             <span className="text-slate-500 truncate sm:truncate-none">
