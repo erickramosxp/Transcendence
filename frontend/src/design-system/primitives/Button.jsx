@@ -25,7 +25,7 @@
           icon:    "h-9 w-9 rounded-lg",
           full:    "h-11 sm:h-12 w-full px-4 rounded-md",
           nav:     "h-10 w-full px-3 rounded-lg justify-start",
-          rounded: "size-18 rounded-full",
+          rounded: "size-17 sm:size-18 rounded-full",
           follow: "h-8 px-3 text-sm rounded-lg min-w-[90px]"
         },
       },
