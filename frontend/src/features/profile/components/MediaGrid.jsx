@@ -5,6 +5,7 @@ import { usePostList } from "../hooks/usePostList";
 import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { resolveMediaType } from "@/shared/resolveMediaType";
 
 export function MediaGrid({ username }) {
 
@@ -64,13 +65,23 @@ export function MediaGrid({ username }) {
             className="aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => getPostDetails(item.postId)}
           >
-            <img
-              src={item?.mediaUrl || null}
-              alt={item.alt ?? "mídia"}
-              width={300} height={300}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            { resolveMediaType(item?.mediaUrl, null) === 'video' ?
+              <video 
+                src={item.mediaUrl}
+                className="h-full w-full object-cover"
+                muted
+                preload="metadata"
+              >
+              </video>
+            :
+              <img
+                src={item?.mediaUrl || null}
+                alt={item.alt ?? "mídia"}
+                width={300} height={300}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            }
           </div>
         ))}
       </div>

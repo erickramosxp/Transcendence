@@ -57,7 +57,7 @@ function Media({ url, mimeType }) {
             <video
                 src={url}
                 controls
-                className="rounded-lg sm:max-w-lg mt-3"
+                className="rounded-lg lx:max-w-lg mt-3"
                 style={{maxHeight: '400px'}}
                 ref={videoRef}
             />
