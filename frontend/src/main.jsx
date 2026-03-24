@@ -4,11 +4,11 @@ import './styles/index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './app/providers/AuthProvider.jsx'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css' 
+import 'react-toastify/dist/ReactToastify.css'
 import App from './app/App.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID;
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')).render(
             <GoogleOAuthProvider clientId={clientId}>
               <AuthProvider>
                 <App />
-                <ToastContainer 
+                <ToastContainer
                   position='bottom-right'
                   draggable
                 />
@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')).render(
           (
             <AuthProvider>
               <App />
-              <ToastContainer 
+              <ToastContainer
                 position='bottom-right'
                 draggable
               />

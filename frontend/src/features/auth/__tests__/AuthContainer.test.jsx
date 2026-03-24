@@ -11,5 +11,5 @@ test("renders auth container", () => {
             </AuthProvider>
         </MemoryRouter>
     );
-  expect(screen.getByText(/Entrar/i)).toBeInTheDocument();
+  expect(screen.getByRole("tab", { name: /Entrar/i })).toBeInTheDocument();
 });

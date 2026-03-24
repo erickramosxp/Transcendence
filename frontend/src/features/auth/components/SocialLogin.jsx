@@ -10,7 +10,7 @@ export function SocialLogin({buttonTitle}) {
 
     const handleGoogleLogin = () => {
 
-      if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      if (!import.meta.env.GOOGLE_WEB_CLIENT_ID) {
         toast.error('Login com Google indisponível');
         return ;
       }

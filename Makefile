@@ -18,7 +18,7 @@ help:
 	@echo "🐳 Containers:"
 	@echo "  make backend       # Backend (Java/Quarkus) + Database(supabase)"
 	@echo "  make backend_dev   # Backend (Java/Quarkus) + Database(local) ambiente de desenvolvimento"
-	@echo "  make frontend      # Frontend (React/Vite)"
+	@echo "  make frontend      # Nginx + SPA estática (prod; build em nginx/)"
 	@echo "  make db            # Apenas Database (PostgreSQL)"
 	@echo "  make ps            # Listar containers rodando"
 	@echo ""
@@ -28,7 +28,7 @@ help:
 	@echo "  make stop          # Pausar serviços (mantém containers)"
 	@echo "  make stop_dev      # Pauser serviços de dev"
 	@echo "  make restart       # Reiniciar todos os serviços"
-	@echo "  mkae restart_dev   # Reiniciar todos os serviços no ambiente dev"
+	@echo "  make restart_dev   # Reiniciar todos os serviços no ambiente dev"
 	@echo "  make logs          # Ver logs em tempo real"
 	@echo "  make logs_dev      # Ver logs do ambiente de desenvolvimento"
 	@echo ""
@@ -40,14 +40,14 @@ help:
 	@echo "  make re            # Rebuild completo (fclean + build)"
 	@echo "  make re_dev        # Rebuild completo (fclean + build) em ambiente dev"
 	@echo ""
-	@echo "📋 URLs:"
-	@echo "  Backend:  http://localhost:8080"
-	@echo "  Frontend: http://localhost:5173"
-	@echo "  Database: aws-1-us-east-1.pooler.supabase.com:5432"
+	@echo "📋 URLs (dependem do ambiente):"
+	@echo "  make build / up     → prod: site :80/:443, API só em /api (backend sem porta pública)"
+	@echo "  make build_dev      → dev:  Frontend http://localhost:5173 (Vite), Backend :8080"
+	@echo "  Database (prod): Supabase pooler (ver .env)"
 
 env:
 	@cp -n .env.example .env || true
-	@echo ".env pronto. Edite DATABASE_NAME/DATABASE_USER/DATABASE_PASSWORD."
+	@echo ".env pronto. Edite as variáveis de ambiente conforme necessário."
 
 build:
 	$(COMPOSE) up --build -d
@@ -58,7 +58,7 @@ build_dev:
 up:
 	$(COMPOSE) up -d
 
-uo_dev:
+up_dev:
 	$(COMPOSE_DEV) up -d
 
 down:
@@ -91,7 +91,7 @@ backend-clean:
 	sudo rm -rf backend/target backend/.quarkus
 
 frontend:
-	$(COMPOSE) up --build -d frontend
+	$(COMPOSE) up --build -d nginx
 
 stop:
 	$(COMPOSE) stop
@@ -118,6 +118,10 @@ re: fclean build
 re_dev: fclean_dev build_dev
 
 ps:
-	@docker ps --filter "label=com.docker.compose.project=transcendence" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+	@echo "=== Produção (name: transcendence-prod) ==="
+	@$(COMPOSE) ps -a
+	@echo ""
+	@echo "=== Desenvolvimento (docker-compose_dev.yml; projeto = pasta) ==="
+	@$(COMPOSE_DEV) ps -a
 
-.PHONY: help env up down restart logs backend frontend db stop clean fclean re build ps re build ps
+.PHONY: help env build build_dev up up_dev down down_dev restart restart_dev logs logs_dev backend backend_dev frontend stop stop_dev clean clean_dev fclean fclean_dev re re_dev ps env
