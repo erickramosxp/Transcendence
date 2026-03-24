@@ -17,7 +17,7 @@ services:
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
       QUARKUS_HTTP_PROXY_PROXY_ADDRESS_FORWARDING: "true"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://${BACKEND_SERVER_NAME}/q/health/live >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
