@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
 const AuthContext = createContext(null);
 
-const clientId = import.meta.env.WEB_CLIENT_ID_GOOGLE;
+const clientId = import.meta.env.GOOGLE_WEB_CLIENT_ID;
 
 export function AuthProvider({children}) {
 

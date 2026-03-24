@@ -9,10 +9,19 @@ RUN npm ci
 COPY frontend/ .
 
 ARG VITE_BACKEND_URL
-ARG WEB_CLIENT_ID_GOOGLE
+ARG VITE_GOOGLE_WEB_CLIENT_ID
+ARG FRONTEND_SERVER_NAME
+ARG BACKEND_SERVER_NAME
 
 ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
-ENV WEB_CLIENT_ID_GOOGLE=${WEB_CLIENT_ID_GOOGLE}
+ENV VITE_GOOGLE_WEB_CLIENT_ID=${VITE_GOOGLE_WEB_CLIENT_ID}
+ENV FRONTEND_SERVER_NAME=${FRONTEND_SERVER_NAME}
+ENV BACKEND_SERVER_NAME=${BACKEND_SERVER_NAME}
+
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+RUN sed -i "s/FRONTEND_SERVER_NAME/${FRONTEND_SERVER_NAME}/g" /etc/nginx/nginx.conf
+RUN sed -i "s/BACKEND_SERVER_NAME/${BACKEND_SERVER_NAME}/g" /etc/nginx/nginx.conf
 
 RUN npm run build
 
@@ -20,7 +29,7 @@ FROM nginx:1.27-alpine
 
 RUN rm -f /etc/nginx/conf.d/default.conf
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/spa-locations.conf /etc/nginx/spa-locations.conf
 
 # Certificados de fallback (localhost) para o contentor arrancar sem volume; em produção monta Let's Encrypt por cima.
