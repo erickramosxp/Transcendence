@@ -6,6 +6,7 @@ import { Card } from "@/design-system/primitives/Card";
 import { getFeed } from "@/features/feed/feedService";
 import { toast } from 'react-toastify';
 import { likePost, unlikePost } from "@/features/feed/feedService";
+import Loading from "@/design-system/components/Loading";
 
 //     {
 //   "items": [
@@ -31,6 +32,7 @@ function PostList({posts, setPosts}) {
 
     const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [isLoadingInitialFeed, setLoadingFeed] = useState(true);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(false);
     const sentinelRef = useRef(null);
@@ -46,6 +48,8 @@ function PostList({posts, setPosts}) {
                 setHasMore(resp.hasMore);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setLoadingFeed(false);
             }
         }
         
@@ -147,7 +151,11 @@ function PostList({posts, setPosts}) {
 		)
 	}
 
-
+    if(isLoadingInitialFeed) {
+        return (
+            <Loading  className="py-10"/>
+        );
+    }
 
 	return (
 		<div className="space-y-8">

@@ -2,6 +2,7 @@
  * size="sm | md | lg" online={true} src="..." fallback="MS"
  */
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function getInitials(name = ""){
 	const names = name.trim().split(" ");
@@ -13,7 +14,7 @@ function getInitials(name = ""){
 	).toUpperCase();
 }
 
-function Avatar ({src, name, size="md", className=""}){
+function Avatar ({src, name, username, size="md", className=""}){
 	const [hasError, setHasError] = useState(false);
 
 	const sizes = {
@@ -21,32 +22,48 @@ function Avatar ({src, name, size="md", className=""}){
 		md: "h-10 w-10 text-sm",
 		lg: "h-14 w-14 text-lg",
 		xl: "h-20 w-20 text-xl",
+		xxl: "h-32 w-32 text-4xl"
 	};
 
 	const dimension = sizes[size] || sizes.md;
 
-	return(
+	const ModalAvatar = (
 		<div
-			className={`relative inline-flex items-center justify-center
+			className={`relative flex items-center justify-center border
 			rounded-full text-
 			bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091]  shadow-[#4a78b5]/50 h-9
 			font-medium overflow-hidden
 			${dimension}
 			${className}
 			`}
-		>
+			>
 			{src && !hasError ? (
 				<img
 					src={src}
 					alt={name}
 					onError={() => setHasError(true)}
-					className="h-full w-full object-cover"
+					className="h-full w-full object-cover block"
 				/>
 			):(
 				<span>{src || getInitials(name)}</span>
 			)}
 		</div>
-	);
+	)
+
+	if (username) {
+		return(
+			<Link to={`/${username}`}>
+				{ModalAvatar}
+			</Link>
+		);
+	} else {
+		return(
+			<>
+				{ModalAvatar}
+			</>
+		);
+	}
+
 }
 
 

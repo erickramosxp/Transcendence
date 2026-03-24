@@ -44,6 +44,8 @@ function App() {
         <Route path='/feed' element={<Feed/>}/> 
         <Route path='/search' element={<Search />}/>
         <Route path='/profile' element={<Profile />}/>
+        <Route path='/profile/:username' element={<Profile />}/>
+        <Route path='/:username' element={<Profile />}/>
         <Route path='/editProfile' element={<EditProfile />}/>
         <Route path='/chat' element={<Chat />}/>
         <Route path='/notifications' element={<Notifications />}/>

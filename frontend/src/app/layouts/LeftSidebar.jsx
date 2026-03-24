@@ -9,7 +9,7 @@ export function LeftSidebar() {
 
     return (
         <>
-            <nav className="sticky top-0 h-screen flex flex-col gap-2 underline p-4 border-r w-48 shrink-0 hidden lg:flex">
+            <nav className="sticky top-0 h-screen flex flex-col gap-2 underline p-4 border-r w-48 shrink-0 hidden lg:flex stick">
                 <Link to={"/"}>Home</Link>
                 <Link to={"/feed"}>Feed</Link>
                 <Link to={"/chat"}>Chat</Link>

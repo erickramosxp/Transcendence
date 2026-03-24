@@ -5,6 +5,9 @@ import { Avatar } from "@/design-system/primitives/Avatar"
 import { TextWithLink } from "@/design-system/primitives/TextWithLink";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import  CommentCard  from "@/features/feed/components/CommentCard";
+import { cn } from "@/design-system/tokens/colors";
+import { Link } from 'react-router-dom'
+import Media from "@/design-system/components/Media";
 
 //     {
 //   "items": [
@@ -26,23 +29,28 @@ import  CommentCard  from "@/features/feed/components/CommentCard";
 //   "hasMore": true
 // }
 
-function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount }) {
+function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount, className }) {
 
 
 	return (
 
-		<div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-3 sm:p-4">
+		<div className={cn(
+			"bg-card rounded-2xl shadow-md p-3 sm:p-4",
+			className)}>
 			<div className="flex gap-3 sm:gap-4 min-w-0">
 				<Avatar
 					src={post.avatarUrl}
 					name={post.name}
+					username={post.userName}
 					size="lg"
 					className="shrink-0"
 				/>
 				<div className="flex-1 min-w-0">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
 						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>
-							{post.name}
+							<Link to={`/${post.userName}`}>
+								{post.name}
+							</Link>
 						</span>
 						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.userName}`}>
 							@{post.userName}
@@ -84,22 +92,10 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 							</div>
 						</a>
 					)}
-
-					{post.media && (
-						post.fileType === "video" ? (
-							<video
-								src={post.media}
-								controls
-								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-							/>
-						) : (
-							<img
-								src={post.media}
-								alt="Post attachment"
-								style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
-							/>
-						)
-					)}
+					<Media 
+						url={post.media} 
+    					mimeType={post.mimeType} 
+					/>
 					<div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-3 text-slate-500">
 						<button
 							onClick={() => onLike(post.id)}
