@@ -49,7 +49,8 @@ public class UserResource {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
-        return userService.getPostsLikedByUser(user.id, page, size);
+        long currentUserId = currentUser.id();
+        return userService.getPostsLikedByUser(user.id, currentUserId, page, size);
     }
 
     @GET

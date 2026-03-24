@@ -47,7 +47,7 @@ public class UserService {
         return UpdateUserProfileResponse.of(user);
     }
 
-    public UserPostsResponse getPostsLikedByUser(long userId, int page, int size) {
+    public UserPostsResponse getPostsLikedByUser(long userId, long currentUserId, int page, int size) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
 
@@ -66,8 +66,12 @@ public class UserService {
                 .map(l -> l.post)
                 .toList();
 
+        List<Long> postIds = posts.stream().map(p -> p.id).toList();
+        List<Like> likesByMe = Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
+        var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
+
         UserPostsResponse resp = new UserPostsResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, true)).toList();
+        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
