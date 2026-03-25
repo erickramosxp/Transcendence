@@ -4,7 +4,7 @@ import { Heart, Send } from "lucide-react";
 import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 
-import { Button, Textarea, Avatar, TextWithLink, Separator, Scroll } from "@/design-system";
+import { Button, Textarea, Avatar, TextWithLink, Separator, Scroll, Loading } from "@/design-system";
 import { yaleBlue } from "@/design-system/tokens/colors";
 
 // {
@@ -27,6 +27,7 @@ import { yaleBlue } from "@/design-system/tokens/colors";
 export default function CommentCard({ postId, incrementCommentCount }) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
+    const [loadComments, setLoading] = useState(true);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -56,14 +57,17 @@ export default function CommentCard({ postId, incrementCommentCount }) {
     useEffect(() => {
 
         const requestComments = async () => {
-            try {
 
+            setLoading(true);
+            try {
                 const data = await getComments(postId);
                 const resp = data.data;
                 setComments(resp.items);
 
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -103,10 +107,12 @@ export default function CommentCard({ postId, incrementCommentCount }) {
         }
     };
 
+
     return (
         <div className="pt-2 space-y-3">
             <Separator />
-            {comments.length === 0 ? (
+            {loadComments ? <Loading size="sm" className="min-h-15"/> : (
+            comments.length === 0 ? (
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                     Sem comentários
                 </div>
@@ -162,7 +168,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                         ))}
                     </div>
                 </Scroll>
-            )}
+            ))}
             <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="flex items-center justify-end gap-2">
                     <Textarea
