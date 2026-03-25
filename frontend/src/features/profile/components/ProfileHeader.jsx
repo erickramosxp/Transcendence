@@ -110,7 +110,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 							<div className="-mt-16 rounded-full p-1 relative z-10 border-background bg-background">
 
 								<Avatar
-									size="xxl"
+									size="xl3"
 									name={userData?.name}
 									src={
 										userData?.avatarUrl

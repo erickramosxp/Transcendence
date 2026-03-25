@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom'
 import { Heart, Send } from "lucide-react";
 import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 
 import { Button, Textarea, Avatar, TextWithLink, Separator, Scroll } from "@/design-system";
 import { yaleBlue } from "@/design-system/tokens/colors";
-
 
 // {
 //   "items": [
@@ -116,23 +116,27 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                         {comments.map((comment) => (
                             <div key={comment.id ?? comment.user_id + comment.created_at} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
                                 <div className="flex gap-3">
-
-                                    <Avatar
-                                        src={comment.avatarUrl}
-                                        name={comment.name}
-                                        size="MD"
-                                    />
+                                    <div>
+                                        <Avatar
+                                            src={comment.avatarUrl}
+                                            username={comment.userName}
+                                            name={comment.name}
+                                            size="MD"
+                                        />
+                                    </div>
                                     <div className="flex-1">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className={yaleBlue.text.hover}>
-                                                {comment.name}
+                                        <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
+                                            <span className={`${yaleBlue.text.hover} truncate min-w-10 sm:truncate-none`}>
+                                                <Link className='truncate' to={`/${comment.userName}`}>
+                                                    {comment.name}
+                                                </Link>
                                             </span>
 
-                                            <span className="text-slate-500">
+                                            <span className="text-slate-500 truncate sm:truncate-none">
                                                 @{comment.userName}
                                             </span>
 
-                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400">
+                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400 truncate sm:truncate-none">
                                                 {getCurrentTime(comment.created_at)}
                                             </span>
                                         </div>
