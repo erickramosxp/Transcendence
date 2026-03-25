@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Modal } from "@/design-system/components/Modal";
 import  PostCard  from "@/features/feed/components/PostCard";
 import { usePostList } from "../hooks/usePostList";
-import { getUserMediaPosts } from '../services/profileService'
+import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { resolveMediaType } from "@/shared/resolveMediaType";
 
 export function MediaGrid({ username }) {
 
@@ -32,6 +33,17 @@ export function MediaGrid({ username }) {
     getUserMediaPosts();
   }, [username]);
 
+  const getPostDetails = async (postId) => {
+
+    try {
+      const resp = await getPostUserDetails(postId);
+      setSelected(resp);
+    } catch (err) {
+      console.error(err);
+      toast.error("Falha ao obter informações do post");
+    }
+  }
+
 
   if (loading)
     return <Loading size="md" className="py-10" />
@@ -49,17 +61,27 @@ export function MediaGrid({ username }) {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((item, index) => (
           <div
-            key={`${item.id}-${index}`}
+            key={`${item.postId}-${index}`}
             className="aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => setSelected(posts.find((p) => p.id === item.id))}
+            onClick={() => getPostDetails(item.postId)}
           >
-            <img
-              src={item?.mediaUrl || null}
-              alt={item.alt ?? "mídia"}
-              width={300} height={300}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            { resolveMediaType(item?.mediaUrl, null) === 'video' ?
+              <video 
+                src={item.mediaUrl}
+                className="h-full w-full object-cover"
+                muted
+                preload="metadata"
+              >
+              </video>
+            :
+              <img
+                src={item?.mediaUrl || null}
+                alt={item.alt ?? "mídia"}
+                width={300} height={300}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            }
           </div>
         ))}
       </div>

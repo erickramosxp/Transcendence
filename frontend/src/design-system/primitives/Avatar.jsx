@@ -22,6 +22,8 @@ function Avatar ({src, name, username, size="md", className=""}){
 		md: "h-10 w-10 text-sm",
 		lg: "h-14 w-14 text-lg",
 		xl: "h-20 w-20 text-xl",
+		xl2: "h-24 w-24 text-2xl",
+		xl3: "h-28 w-28 text-3xl",
 		xxl: "h-32 w-32 text-4xl"
 	};
 
