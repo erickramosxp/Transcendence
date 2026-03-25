@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Modal } from "@/design-system/components/Modal";
-import  PostCard  from "@/features/feed/components/PostCard";
-import { usePostList } from "../hooks/usePostList";
-import { getUserMediaPosts } from '../services/profileService'
-import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { usePostList } from "../hooks/usePostList";
+import  PostCard  from "@/features/feed/components/PostCard";
+import { getUserMediaPosts } from '../services/profileService';
+
+import { Modal, Loading } from "@/design-system";
 
 export function MediaGrid({ username }) {
 

@@ -1,10 +1,8 @@
 import { Send } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-
 import { useCreatePost } from "./useCreatePost";
-import Textarea from "@/design-system/primitives/Textarea";
-import { Button } from "@/design-system/primitives/Button";
-import { Card, CardContent } from "@/design-system/primitives/Card";
+
+import { Button, Textarea, Card, CardContent } from "@/design-system";
 
 function CreateTextPost({ onAddPost, onClose }) {
 

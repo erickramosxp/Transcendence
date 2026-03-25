@@ -1,10 +1,8 @@
 import { useCreatePost } from "./useCreatePost";
-import { Button } from "@/design-system/primitives/Button";
-import { Card, CardContent } from "@/design-system/primitives/Card";
-import Textarea from "@/design-system/primitives/Textarea";
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-import FileUploadButton from "@/design-system/primitives/FileUploadButton";
+
+import { Card, CardContent, Textarea, Button, FileUploadButton } from "@/design-system";
 
 
 function CreatePhotoPost({onAddPost, onClose}){

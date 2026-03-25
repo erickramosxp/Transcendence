@@ -1,12 +1,8 @@
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-
 import { useCreatePost } from "./useCreatePost";
 
-import { Button } from "@/design-system/primitives/Button";
-import { Card, CardContent } from "@/design-system/primitives/Card";
-import Textarea from "@/design-system/primitives/Textarea";
-import FileUploadButton from "@/design-system/primitives/FileUploadButton";
+import { Button, Card, CardContent, Textarea, FileUploadButton} from "@/design-system";
 
 
 function CreateVideoPost({ onAddPost, onClose }) {

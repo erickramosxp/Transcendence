@@ -2,8 +2,7 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
-import { Card, CardContent } from "@/design-system/primitives/Card";
-import { Tabs, TabsList, TabsTrigger } from "@/design-system/primitives/Tabs";
+import { Tabs, TabsList, TabsTrigger, Card, CardContent } from "@/design-system";
 
 export function AuthContainer() {
 

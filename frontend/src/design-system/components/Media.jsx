@@ -2,7 +2,7 @@ import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useEffect, useState, useRef } from "react";
 
 
-function Media({ url, mimeType }) {
+export function Media({ url, mimeType }) {
     const [mediaType, setMediaType] = useState(null);
 
     const videoRef = useRef(null);
@@ -67,5 +67,3 @@ function Media({ url, mimeType }) {
     // não renderiza nada
     return null;
 }
-
-export default Media;

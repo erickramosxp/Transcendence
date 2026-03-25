@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import PostCard from "@/features/feed/components/PostCard";
-import { Card } from "@/design-system/primitives/Card";
-
 import { getFeed } from "@/features/feed/feedService";
 import { toast } from 'react-toastify';
 import { likePost, unlikePost } from "@/features/feed/feedService";
-import Loading from "@/design-system/components/Loading";
+
+import { Card, Loading } from "@/design-system";
 
 //     {
 //   "items": [

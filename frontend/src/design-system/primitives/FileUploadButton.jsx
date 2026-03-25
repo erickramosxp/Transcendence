@@ -3,7 +3,7 @@ import { Upload } from "lucide-react";
 import { useRef } from "react";
 
 
-function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg"}){
+export function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg"}){
 
 	const inputRef = useRef(null);
 
@@ -41,5 +41,3 @@ function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,image/gi
 	)
 
 }
-
-export default FileUploadButton;

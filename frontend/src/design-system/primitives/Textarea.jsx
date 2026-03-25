@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/design-system/tokens/colors";
 
-export default function Textarea({className, maxLength, ...props}) {
+export function Textarea({className, maxLength, ...props}) {
 	return (
 		<textarea
 			data-slot="textarea"

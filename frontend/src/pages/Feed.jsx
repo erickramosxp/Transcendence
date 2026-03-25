@@ -6,10 +6,7 @@ import { createPost } from "@/features/feed/feedService";
 export function Feed() {
 
     const [posts, setPosts] = useState([]);
-    // {
-    //      "text": "string",
-    //      "mediaUrl": "string"
-    // }
+
     async function addPost(postData){
 
         const newPost = {

@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Heart, Send } from "lucide-react";
+import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
+import { getCurrentTime } from "@/shared/getCurrentTime";
 
-
-import Textarea from "@/design-system/primitives/Textarea";
-
-import { Button } from "@/design-system/primitives/Button";
-import { Avatar } from "@/design-system/primitives/Avatar";
-import { TextWithLink } from "@/design-system/primitives/TextWithLink";
-
-import { Separator } from "@/design-system/primitives/Separator";
-
-import { Scroll } from "@/design-system/primitives/Scroll";
+import { Button, Textarea, Avatar, TextWithLink, Separator, Scroll } from "@/design-system";
 import { yaleBlue } from "@/design-system/tokens/colors";
 
-import { getCurrentTime } from "@/shared/getCurrentTime";
-import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
 
 // {
 //   "items": [

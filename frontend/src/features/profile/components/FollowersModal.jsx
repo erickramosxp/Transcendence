@@ -1,14 +1,9 @@
 // components/FollowersModal.jsx
 import { useEffect, useState } from 'react';
-import { Modal } from '@/design-system/components/Modal';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs';
-import { getFollowersList, getFollowingList } from '../services/profileService';
-import { Button } from '@/design-system/primitives/Button';
-import { Avatar } from '@/design-system/primitives/Avatar';
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
-import Scroll from '@/design-system/primitives/Scroll';
-import { followUser, unfollowUser } from "../services/profileService";
+import { useNavigate, Link } from 'react-router-dom';
+import { followUser, unfollowUser, getFollowersList, getFollowingList } from "../services/profileService";
+
+import { Button, Scroll, Avatar, Tabs, TabsList, TabsTrigger, TabsContent, Modal } from '@/design-system';
 
 function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 

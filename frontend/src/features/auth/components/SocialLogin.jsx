@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { GoogleIcon } from "./GoogleIcon";
 import { toast } from "react-toastify";
+import { GoogleIcon } from "./GoogleIcon";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { Button } from "@/design-system";
 
 export function SocialLogin({buttonTitle}) {
 

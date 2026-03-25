@@ -1,13 +1,12 @@
 import React from "react";
+import { Link } from 'react-router-dom'
 import { Heart, MessageSquare } from "lucide-react";
-import { yaleBlue } from "@/design-system/tokens/colors";
-import { Avatar } from "@/design-system/primitives/Avatar"
-import { TextWithLink } from "@/design-system/primitives/TextWithLink";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import  CommentCard  from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";
-import { Link } from 'react-router-dom'
-import Media from "@/design-system/components/Media";
+import { yaleBlue } from "@/design-system/tokens/colors";
+
+import { Avatar, TextWithLink, Media } from "@/design-system"
 
 //     {
 //   "items": [

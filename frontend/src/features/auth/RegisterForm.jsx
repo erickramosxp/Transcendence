@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { TabsContent } from "@/design-system/primitives/Tabs"
-import { Label } from "@/design-system/primitives/Label";
-import { Input } from "@/design-system/primitives//Input";
-import { Separator } from "@/design-system/primitives/Separator";
 import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
-import { SocialLogin } from "@/features/auth/components/SocialLogin" 
 import { toast } from 'react-toastify'
+import { SocialLogin } from "@/features/auth/components/SocialLogin";
+
+import { Button, TabsContent, Label, Input, Separator} from "@/design-system";
 
 
 export function RegisterForm({ onSubmit }) {
