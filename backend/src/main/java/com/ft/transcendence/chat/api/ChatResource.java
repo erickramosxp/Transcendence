@@ -3,6 +3,7 @@ package com.ft.transcendence.chat.api;
 import com.ft.transcendence.chat.app.ChatService;
 import com.ft.transcendence.chat.dto.ChatResponse;
 import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
+import com.ft.transcendence.chat.dto.ListChatResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.security.Authenticated;
@@ -21,6 +22,12 @@ public class ChatResource {
     ChatService chatService;
     @Inject
     CurrentUser currentUser;
+
+    @GET
+    @Authenticated
+    public ListChatResponse listMyChats() {
+        return chatService.listUserChats(currentUser.id());
+    }
 
     @POST
     @Path("/direct")
