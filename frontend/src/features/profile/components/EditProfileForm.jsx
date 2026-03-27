@@ -32,7 +32,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
       location: userData?.location || '',
       websiteUrl: userData?.websiteUrl || ''
     })
-  }, []);
+  }, [userData]);
 
   const onSubmit = async (e) => {
     e.preventDefault();

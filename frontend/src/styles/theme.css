@@ -114,6 +114,9 @@
     --gradient-background: linear-gradient(135deg, #edf2f8 0%, #dbe4f0 50%, #b7c9e1 100%);
     --gradient-dark: linear-gradient(135deg, #0a1119 0%, #0f1824 50%, #1e3048 100%);
     --gradient-icon: linear-gradient(135deg, #6e93c4 0%, #92aed3 100%);
+
+  --like: var(--color-pink-600);
+  --like-hover: #c93d79;
 }
 
 .dark {
@@ -169,6 +172,9 @@
   --divider: hsl(var(--border));
 
   --input-background: #151f30; 
+
+  --like: var(--color-pink-400);
+  --like-hover: #ff8fba;
 }
 
 @theme inline {
@@ -240,6 +246,9 @@
   --color-unread: var(--color-unread);
 
   --color-input-background: var(--input-background);
+
+  --color-like: var(--like);
+  --color-like-hover: var(--like-hover);
 }
 
 @layer base {
@@ -251,6 +260,24 @@
     @apply bg-background text-foreground;
   }
 
+  .ds-surface-glass {
+     /* border-border bg-card/90 backdrop-blur-xl */
+    @apply border-border bg-card/90 backdrop-blur-xl shadow-xl;
+  }
+
+  .like-button {
+    @apply text-muted-foreground transition-all hover:scale-105;
+  }
+
+  .like-button:hover {
+    color: var(--color-like);
+  }
+
+  .like-button--active {
+    color: var(--color-like);
+  }
+
+  
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).
   * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.

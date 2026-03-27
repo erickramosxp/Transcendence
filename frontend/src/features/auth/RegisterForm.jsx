@@ -15,18 +15,20 @@ export function RegisterForm({ onSubmit }) {
     const [disableButton, setDisableButton] = useState(false);
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setDisableButton(true);
         if (!email || !username || !name || !password) {
             toast.error('Preencha todos os campos');
-            setDisableButton(false);
             return;
         }
 
-        onSubmit({name, username, email, password});
-        setDisableButton(false);
+        try {
+          setDisableButton(true);
+          await onSubmit({name, username, email, password});
+        } finally {
+          setDisableButton(false);
+        }
     }
 
 
@@ -129,7 +131,7 @@ export function RegisterForm({ onSubmit }) {
             ou
           </span>
         </div>
-        <SocialLogin buttonTitle={"Cadastrar com Google"}/>
+        <SocialLogin buttonTitle="Cadastrar com Google"/>
       </form>
     </TabsContent>
   );

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { followUser, unfollowUser, getFollowersList, getFollowingList } from "../services/profileService";
 
-import { Button, Scroll, Avatar, Tabs, TabsList, TabsTrigger, TabsContent, Modal } from '@/design-system';
+import { Button, Scroll, Avatar, Tabs, TabsList, TabsTrigger, TabsContent, Modal, Loading } from '@/design-system';
 
 function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 
@@ -11,7 +11,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
 
   function handleNavigate(username) {
     onClose?.();                          
-    navigate(`/profile/${username}`); 
+    navigate(`/${username}`); 
   }
 
     const handleFollowUser = async (username) => {
@@ -53,8 +53,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
   if (loading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <div className="h-6 w-6 rounded-full border-2
-                        border-primary border-t-transparent animate-spin" />
+        <Loading />
       </div>
     );
   }
@@ -85,7 +84,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
           </button>
           <div className="flex flex-col flex-1 min-w-0">
             <Link
-              to={`/profile/${user.username}`}
+              to={`/${user.username}`}
               onClick={() => handleNavigate(user.username)}
               className="text-sm font-medium text-foreground
                          hover:text-primary transition-colors truncate"
