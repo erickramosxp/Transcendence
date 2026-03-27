@@ -3,6 +3,7 @@ package com.ft.transcendence.chat.api;
 import com.ft.transcendence.chat.app.ChatService;
 import com.ft.transcendence.chat.dto.ChatResponse;
 import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
+import com.ft.transcendence.chat.dto.CreateGroupChatRequest;
 import com.ft.transcendence.chat.dto.ListChatResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.user.domain.User;
@@ -33,9 +34,24 @@ public class ChatResource {
     @Path("/direct")
     @Authenticated
     public Response createDirectChat(CreateDirectChatRequest req) {
-        if (req.currentUserId == null || req.directUserId == null)
-            throw new IllegalArgumentException("currentUserId and directUserId must not be null");
-        ChatResponse chat = chatService.createDirectChat(req);
+        Long currentUserId = currentUser.id();
+        if (req.directUserId == null)
+            throw new IllegalArgumentException("directUserId must not be null");
+        ChatResponse chat = chatService.createDirectChat(currentUserId, req);
+        return Response.status(Response.Status.CREATED).entity(chat).build();
+    }
+
+    @POST
+    @Path("/group")
+    @Authenticated
+    public Response createGroupChat(CreateGroupChatRequest req) {
+        if (req.chatName.isBlank())
+            throw new IllegalArgumentException("Groups chats need a name");
+
+        if (req.participantIds.isEmpty())
+            throw new IllegalArgumentException("List of participants cannot be empty");
+
+        ChatResponse chat = chatService.createGroupChat(currentUser.id(), req);
         return Response.status(Response.Status.CREATED).entity(chat).build();
     }
 }

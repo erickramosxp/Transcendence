@@ -27,7 +27,7 @@ public class ChatParticipant extends PanacheEntityBase {
     public User user;
 
     @Column(name = "role")
-    public String role; // 'admin', 'member', etc.
+    public String role;
 
     @Column(name = "joined_at", nullable = false, updatable = false)
     public OffsetDateTime joinedAt;

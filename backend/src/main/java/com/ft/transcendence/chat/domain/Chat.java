@@ -40,10 +40,10 @@ public class Chat extends PanacheEntityBase {
         return chat;
     }
 
-    public static Chat createGroupChat() {
+    public static Chat createGroupChat(String chatName) {
         Chat chat = new Chat();
         chat.type = "group";
-        chat.chatName = null;
+        chat.chatName = chatName;
         chat.createdAt = OffsetDateTime.now();
         chat.updatedAt = OffsetDateTime.now();
         chat.persist();

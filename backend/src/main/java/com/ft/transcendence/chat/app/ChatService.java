@@ -4,6 +4,7 @@ import com.ft.transcendence.chat.domain.Chat;
 import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.dto.ChatResponse;
 import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
+import com.ft.transcendence.chat.dto.CreateGroupChatRequest;
 import com.ft.transcendence.chat.dto.ListChatResponse;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
@@ -13,8 +14,10 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @ApplicationScoped
 public class ChatService {
@@ -29,18 +32,17 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatResponse createDirectChat(CreateDirectChatRequest req) {
-        Long userAId = req.currentUserId;
+    public ChatResponse createDirectChat(Long currentUserId, CreateDirectChatRequest req) {
         Long userBId = req.directUserId;
 
-        if (userAId.equals(userBId))
+        if (currentUserId.equals(userBId))
             throw new BadRequestException("Can't create chat with yourself");
 
-        Optional<Chat> existing = ChatParticipant.findDirectChatId(userAId, userBId);
+        Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent())
             return ChatResponse.of(existing.get());
 
-        User userA = User.findById(userAId);
+        User userA = User.findById(currentUserId);
         User userB = User.findById(userBId);
         if (userA == null || userB == null)
             throw new NotFoundException("User not found");
@@ -53,5 +55,23 @@ public class ChatService {
         return ChatResponse.of(chat);
     }
 
+    @Transactional
+    public ChatResponse createGroupChat(Long currentUserId, CreateGroupChatRequest req) {
+        if (req.participantIds.contains(currentUserId))
+            throw new IllegalArgumentException("You cannot add yourself in group creation");
 
+        Chat chat = Chat.createGroupChat(req.chatName);
+
+        User currentUser = User.findById(currentUserId);
+        ChatParticipant.create(chat, currentUser, "admin");
+
+        for (Long userId : req.participantIds) {
+            User user = User.findById(userId);
+            if (user == null)
+                throw new NotFoundException("User whit id=" + userId + " not found");
+            ChatParticipant.create(chat, user, "member");
+        }
+
+        return ChatResponse.of(chat);
+    }
 }
