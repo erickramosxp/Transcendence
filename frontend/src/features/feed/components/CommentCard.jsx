@@ -17,6 +17,7 @@ import {
     Separator,
     Scroll,
     Loading,
+    LikeButton
 } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 
@@ -157,22 +158,11 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                         </div>
 
                                         <div className="mt-3 flex items-center gap-6 text-muted-foreground">
-                                            <button
+                                            <LikeButton 
                                                 onClick={() => handleToggleLike(comment.id)}
-                                                className={cn(
-                                                    "like-button flex items-center gap-2 text-sm",
-                                                    comment.likedByMe
-                                                    && "like-button--active"
-                                                )}
-                                            >
-                                                <Heart
-                                                    className={cn(
-                                                        "h-5 w-5",
-                                                        comment.likedByMe && "fill-current"
-                                                    )}
-                                                />
-                                                {comment.likeCount}
-                                            </button>
+                                                liked={comment.likedByMe}
+                                                count={comment.likeCount}
+                                            />
                                         </div>
                                     </div>
                                 </div>

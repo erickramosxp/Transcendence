@@ -11,3 +11,4 @@ export * from './SidebarNav';
 export * from './ThemeToggle';
 export * from './TopBar';
 export * from './UserListItem';
+export * from './LikeButton';

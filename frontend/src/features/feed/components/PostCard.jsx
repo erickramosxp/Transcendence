@@ -5,7 +5,7 @@ import { getCurrentTime } from "@/shared/getCurrentTime";
 import CommentCard from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";
 
-import { Avatar, TextWithLink, Media } from "@/design-system";
+import { Avatar, TextWithLink, Media, LikeButton } from "@/design-system";
 
 function PostCard({
 	post,
@@ -91,18 +91,11 @@ function PostCard({
 					<Media url={post.media} mimeType={post.mimeType} />
 
 					<div className="mt-3 flex flex-wrap items-center gap-4 text-muted-foreground sm:gap-6">
-						<button
+						<LikeButton
 							onClick={() => onLike(post.id)}
-							className={cn(
-								"like-button flex items-center gap-2 text-sm",
-								post.likedByMe
-									&& "like-button--active"
-							)}
-						>
-							<Heart className={cn("h-5 w-5", post.likedByMe && "fill-current")} />
-							{post.likeCount}
-						</button>
-
+							liked={post.likedByMe}
+							count={post.likeCount}
+						/>
 						<button
 							onClick={() => onToggleComments(post.id)}
 							className={cn(
