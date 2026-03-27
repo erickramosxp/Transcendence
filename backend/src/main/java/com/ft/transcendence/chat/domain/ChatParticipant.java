@@ -47,11 +47,11 @@ public class ChatParticipant extends PanacheEntityBase {
         return cp;
     }
 
-    public static Optional<ChatParticipant> findDirectChatId(Long user1Id, Long user2Id) {
+    public static Optional<Chat> findDirectChatId(Long user1Id, Long user2Id) {
         return find("""
-            SELECT cp.chat.id
+            SELECT cp.chat
             FROM ChatParticipant cp
-            GROUP BY cp.chat.id
+            GROUP BY cp.chat
             HAVING
                 COUNT(cp.user.id) = 2
                 AND SUM(CASE WHEN cp.user.id IN (?1, ?2) THEN 1 ELSE 0 END) = 2

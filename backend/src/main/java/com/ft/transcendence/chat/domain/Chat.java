@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "chats")
 public class Chat extends PanacheEntityBase {
 
     @Id
@@ -47,5 +48,9 @@ public class Chat extends PanacheEntityBase {
         chat.updatedAt = OffsetDateTime.now();
         chat.persist();
         return chat;
+    }
+
+    public String getType() {
+        return this.type;
     }
 }

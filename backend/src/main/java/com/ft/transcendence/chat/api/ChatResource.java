@@ -32,7 +32,9 @@ public class ChatResource {
     @POST
     @Path("/direct")
     @Authenticated
-    public Response createDirectChat(@Valid CreateDirectChatRequest req) {
+    public Response createDirectChat(CreateDirectChatRequest req) {
+        if (req.currentUserId == null || req.directUserId == null)
+            throw new IllegalArgumentException("currentUserId and directUserId must not be null");
         ChatResponse chat = chatService.createDirectChat(req);
         return Response.status(Response.Status.CREATED).entity(chat).build();
     }

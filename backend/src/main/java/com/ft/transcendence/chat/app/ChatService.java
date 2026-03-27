@@ -7,6 +7,7 @@ import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
 import com.ft.transcendence.chat.dto.ListChatResponse;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
@@ -35,9 +36,9 @@ public class ChatService {
         if (userAId.equals(userBId))
             throw new BadRequestException("Can't create chat with yourself");
 
-        Optional<ChatParticipant> existing = ChatParticipant.findDirectChatId(userAId, userBId);
+        Optional<Chat> existing = ChatParticipant.findDirectChatId(userAId, userBId);
         if (existing.isPresent())
-            return ChatResponse.of(existing.get().chat);
+            return ChatResponse.of(existing.get());
 
         User userA = User.findById(userAId);
         User userB = User.findById(userBId);
