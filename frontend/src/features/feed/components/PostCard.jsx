@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Heart, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import CommentCard from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";

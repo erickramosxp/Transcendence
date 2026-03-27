@@ -6,7 +6,6 @@ export * from './Loading';
 export * from './Media';
 export * from './Modal';
 export * from './NotificationItem';
-export * from './PostCard';
 export * from './SidebarNav';
 export * from './ThemeToggle';
 export * from './TopBar';

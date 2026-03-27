@@ -37,7 +37,7 @@ export function Media({ url, mimeType }) {
     // loading
     if (!mediaType) {
         return (
-            <div className="animate-pulse bg-gray-300 h-64 w-full rounded-lg" />
+            <div className="animate-pulse bg-muted-foreground h-64 w-full rounded-lg" />
         );
     }
 
@@ -46,8 +46,7 @@ export function Media({ url, mimeType }) {
             <img
                 src={url}
                 alt=""
-                className="rounded-lg"
-                style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
+                className="mt-3 max-h-[400px] max-w-full rounded-lg object-contain"
             />
         );
     }
@@ -58,7 +57,6 @@ export function Media({ url, mimeType }) {
                 src={url}
                 controls
                 className="rounded-lg lx:max-w-lg mt-3 max-w-xl w-full"
-                // style={{maxWidth: '100%'}}
                 ref={videoRef}
             />
         );
