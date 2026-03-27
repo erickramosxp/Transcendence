@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "@/design-system/primitives/Button";
+import { X } from "lucide-react";
 
 export function Modal({
   open,
@@ -67,7 +68,7 @@ export function Modal({
             onClick={onClose}
             aria-label="Fechar"
           >
-            x
+            <X className="h-4 w-4" />
           </Button>
         </div>
 

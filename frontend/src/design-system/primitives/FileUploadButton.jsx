@@ -1,21 +1,33 @@
-import { Button } from "./Button"
+import { Button } from "@/design-system";
 import { Upload } from "lucide-react";
 import { useRef } from "react";
 
-
-export function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg"}){
-
+export function FileUploadButton({
+	onFileSelect,
+	accept = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/ogg",
+}) {
 	const inputRef = useRef(null);
 
 	function handleChange(e) {
 		const file = e.target.files[0];
+
 		if (file) {
-			const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/ogg'];
+			const allowedTypes = [
+				"image/jpeg",
+				"image/png",
+				"image/gif",
+				"image/webp",
+				"video/mp4",
+				"video/webm",
+				"video/ogg",
+			];
+
 			if (allowedTypes.includes(file.type)) {
 				onFileSelect(file);
+				e.target.value = "";
 			} else {
-				alert('Apenas fotos (PNG, JPG, GIF, WebP) e vídeos (MP4, WebM, OGG) são permitidos');
-				e.target.value = '';
+				alert("Apenas fotos (PNG, JPG, GIF, WebP) e vídeos (MP4, WebM, OGG) são permitidos");
+				e.target.value = "";
 			}
 		}
 	}
@@ -23,21 +35,22 @@ export function FileUploadButton({onFileSelect, accept = "image/jpeg,image/png,i
 	return (
 		<>
 			<input
-			type="file"
-			ref={inputRef}
-			className="hidden"
-			onChange={handleChange}
-			accept={accept}
+				type="file"
+				ref={inputRef}
+				className="hidden"
+				onChange={handleChange}
+				accept={accept}
 			/>
+
 			<Button
-			variant="ghost"
-			size="sm"
-			className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-			onClick={() => inputRef.current.click()}
+				type="button"
+				variant="ghost"
+				size="sm"
+				className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+				onClick={() => inputRef.current?.click()}
 			>
-				<Upload className="h-4 w-4 sm:h-5 sm:w-5 text-[#4a78b5]"/>
+				<Upload className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
 			</Button>
 		</>
-	)
-
+	);
 }
