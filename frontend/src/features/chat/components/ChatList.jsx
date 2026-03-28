@@ -1,25 +1,18 @@
-import { useState } from "react";
+import ChatItem from "@/features/chat/components/ChatItem";
 
-export default function ChatList() {
+export default function ChatList({friendsChat, setSelectedChat}) {
 
 	return (
 		<div style={{display: "flex", height: "100vh"}}>
 			<div style={{width: "300px"}}>
-				<h1>Menssagens</h1>
-				<dir>
-					<div>
-						<p><strong>User:</strong> Hello, how are you?</p>
-					</div>
-					<div>
-						<p><strong>User:</strong> Hello, how are you?</p>
-					</div>
-					<div>
-						<p><strong>User:</strong> Hello, how are you?</p>
-					</div>
-					<div>
-						<p><strong>User:</strong> Hello, how are you?</p>
-					</div>
-				</dir>
+				<h2>Menssagens</h2>
+
+				<input type="text" placeholder="Search" />
+				<div>
+					{friendsChat.map((friend) => (
+						<ChatItem key={friend.id} chat={friend} onCLick={() => setSelectedChat(friend)}/>
+					))}
+				</div>
 			</div>
 		</div>
 	)
