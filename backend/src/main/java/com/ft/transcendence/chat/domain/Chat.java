@@ -1,11 +1,9 @@
 package com.ft.transcendence.chat.domain;
 
-import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "chats")

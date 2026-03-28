@@ -1,8 +1,6 @@
 package com.ft.transcendence.chat.dto;
 
 import com.ft.transcendence.chat.domain.Chat;
-import com.ft.transcendence.post.dto.PostResponse;
-import com.ft.transcendence.user.dto.UserPostsResponse;
 
 import java.util.List;
 

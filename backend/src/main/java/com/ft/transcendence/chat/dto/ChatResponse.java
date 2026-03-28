@@ -1,7 +1,6 @@
 package com.ft.transcendence.chat.dto;
 
 import com.ft.transcendence.chat.domain.Chat;
-import jakarta.persistence.Column;
 
 import java.time.OffsetDateTime;
 

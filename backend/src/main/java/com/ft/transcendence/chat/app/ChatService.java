@@ -6,18 +6,14 @@ import com.ft.transcendence.chat.dto.ChatResponse;
 import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
 import com.ft.transcendence.chat.dto.CreateGroupChatRequest;
 import com.ft.transcendence.chat.dto.ListChatResponse;
-import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @ApplicationScoped
 public class ChatService {
