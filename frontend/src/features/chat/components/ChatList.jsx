@@ -8,7 +8,7 @@ export default function ChatList({friendsChat, setSelectedChat}) {
 				<h2>Menssagens</h2>
 
 				<input type="text" placeholder="Search" />
-				<div>
+				<div >
 					{friendsChat.map((friend) => (
 						<ChatItem key={friend.id} chat={friend} onCLick={() => setSelectedChat(friend)}/>
 					))}

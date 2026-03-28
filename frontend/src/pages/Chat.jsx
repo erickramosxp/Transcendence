@@ -17,7 +17,7 @@ export function Chat() {
                 friendsChat={friendsChat}
                 setSelectedChat={setSelectedChat}
             />
-            <ChatWindow  currentChat={selectedChat}/>
+            <ChatWindow friendsChat={friendsChat} currentChat={selectedChat}/>
         </div>
     )
 }

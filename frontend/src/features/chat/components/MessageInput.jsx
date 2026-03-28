@@ -13,14 +13,24 @@ export default function MessageInput({ onSendMessage }) {
 	}
 
 	return (
-		<form onSubmit={handleSendMessage}>
+		<form
+			onSubmit={handleSendMessage}
+			style={{
+				display: "flex",
+				alignItems: "center",
+				marginBottom: 16,
+				paddingTop: 8
+			}}
+		>
 			<Input
 				value={text}
 				onChange={(e) => setText(e.target.value)}
+				style={{ flex: 1, marginRight: 8 }}
 			/>
 			<Button
 				onClick={handleSendMessage}
 				size="sm"
+				type="submit"
 			>
 				<Send className="h-4 w-4" />
 			</Button>
