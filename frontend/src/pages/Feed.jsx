@@ -31,7 +31,7 @@ export function Feed() {
     }
 
     return (
-        <div className="feed-background">
+        <div className="">
             <div className="container">
                 <div className="feed-grid">
                     <div className="space-y-6 min-w-0 max-w-full overflow-hidden">

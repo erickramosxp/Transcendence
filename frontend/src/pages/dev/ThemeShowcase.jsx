@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import './style.css'
 import {
   Sparkles,
   Users,
@@ -1205,6 +1206,236 @@ export function ThemeShowcase() {
             ))}
           </div>
         </section>
+      <section class="showcase-section">
+        <header class="showcase-section__header">
+          <h2>Semantic color tokens</h2>
+          <p>
+            Tokens base do design system para superfícies, texto, ações e separação visual.
+            Cada item abaixo mostra o propósito do token, classes relacionadas e um exemplo visual de uso.
+          </p>
+        </header>
+
+        <div class="token-docs">
+
+          {/* <!-- background --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>background</code>
+              </div>
+              <h3>Fundo da página</h3>
+              <p>
+                Usado como fundo principal da aplicação ou página. É a superfície mais externa e neutra do sistema.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> body, app wrapper, layout root, páginas.</li>
+                <li><strong>Classe sugerida:</strong> <code>bg-background</code></li>
+                <li><strong>Efeito:</strong> define a base visual geral da interface.</li>
+              </ul>
+
+              <pre><code>&lt;main class="bg-background text-foreground"&gt;
+                ...
+                &lt;/main&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-background border rounded-lg p-4">
+              <div class="border rounded-md p-4">
+                <p class="text-sm text-muted-foreground">Preview</p>
+                <h4 class="text-foreground">Área principal da aplicação</h4>
+                <p class="text-muted-foreground">
+                  Esse bloco representa a superfície externa da página.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          {/* <!-- card --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>card</code>
+              </div>
+              <h3>Fundo de componentes</h3>
+              <p>
+                Usado para superfícies internas destacadas, como cards, painéis, modais e blocos de conteúdo.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> cards, sections internas, painéis, dropdowns, modais.</li>
+                <li><strong>Classe sugerida:</strong> <code>bg-card</code></li>
+                <li><strong>Efeito:</strong> separa visualmente o componente do fundo geral.</li>
+              </ul>
+
+              <pre><code>&lt;section class="bg-card border rounded-lg p-4"&gt;
+                ...
+                &lt;/section&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview">
+              <div class="bg-card border rounded-lg p-4">
+                <p class="text-sm text-muted-foreground">Preview</p>
+                <h4 class="text-foreground">Card container</h4>
+                <p class="text-muted-foreground">
+                  Exemplo de superfície para componentes agrupados.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          {/* <!-- foreground --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>foreground</code>
+              </div>
+              <h3>Texto principal</h3>
+              <p>
+                Usado para conteúdo textual prioritário, como títulos, corpo principal e ícones importantes.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> headings, body text, labels principais.</li>
+                <li><strong>Classe sugerida:</strong> <code>text-foreground</code></li>
+                <li><strong>Efeito:</strong> garante máxima legibilidade e hierarquia principal.</li>
+              </ul>
+
+              <pre><code>&lt;h3 class="text-foreground"&gt;Título do card&lt;/h3&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-card border rounded-lg p-4">
+              <p class="text-sm text-muted-foreground">Preview</p>
+              <h4 class="text-foreground">Título principal</h4>
+              <p class="text-foreground">
+                Esse texto usa foreground como conteúdo de maior prioridade.
+              </p>
+            </div>
+          </article>
+
+          {/* <!-- muted-foreground --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>muted-foreground</code>
+              </div>
+              <h3>Texto secundário</h3>
+              <p>
+                Usado para descrições, metadata, placeholders e conteúdo de apoio com menor prioridade visual.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> subtítulos, timestamps, placeholders, descrição de suporte.</li>
+                <li><strong>Classe sugerida:</strong> <code>text-muted-foreground</code></li>
+                <li><strong>Efeito:</strong> reduz ênfase sem perder leitura.</li>
+              </ul>
+
+              <pre><code>&lt;p class="text-muted-foreground"&gt;
+                Última atualização há 2 horas
+                &lt;/p&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-card border rounded-lg p-4">
+              <p class="text-sm text-muted-foreground">Preview</p>
+              <h4 class="text-foreground">Título do conteúdo</h4>
+              <p class="text-muted-foreground">
+                Esse texto funciona como apoio, descrição ou metadata.
+              </p>
+            </div>
+          </article>
+
+          {/* <!-- primary --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>primary</code>
+              </div>
+              <h3>Ação principal</h3>
+              <p>
+                Usado para a principal ação da tela, elementos ativos e destaque funcional da marca.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> CTA, botão principal, tab ativa, foco, links importantes.</li>
+                <li><strong>Classes sugeridas:</strong> <code>bg-primary</code>, <code>text-primary-foreground</code></li>
+                <li><strong>Efeito:</strong> direciona a atenção para a ação mais importante.</li>
+              </ul>
+
+              <pre><code>&lt;button class="bg-primary text-primary-foreground"&gt;
+                Salvar alterações
+                &lt;/button&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-card border rounded-lg p-4">
+              <p class="text-sm text-muted-foreground">Preview</p>
+              <button class="bg-primary text-primary-foreground rounded-md px-4 py-2">
+                Salvar alterações
+              </button>
+            </div>
+          </article>
+
+          {/* <!-- accent --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>accent</code>
+              </div>
+              <h3>Hover e destaque</h3>
+              <p>
+                Usado para hover, foco leve, estados selecionados suaves e realces contextuais.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> hover de item, seleção leve, chips suaves, realce contextual.</li>
+                <li><strong>Classes sugeridas:</strong> <code>bg-accent</code>, <code>text-accent-foreground</code></li>
+                <li><strong>Efeito:</strong> fornece feedback visual sem competir com a ação principal.</li>
+              </ul>
+
+              <pre><code>&lt;div class="bg-accent text-accent-foreground rounded-md p-3"&gt;
+                Item em destaque
+                &lt;/div&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-card border rounded-lg p-4">
+              <p class="text-sm text-muted-foreground">Preview</p>
+              <div class="bg-accent text-accent-foreground rounded-md p-3">
+                Estado destacado / hover / seleção leve
+              </div>
+            </div>
+          </article>
+
+          {/* <!-- border --> */}
+          <article class="token-doc card">
+            <div class="token-doc__content">
+              <div class="token-doc__meta">
+                <span class="token-doc__label">Token</span>
+                <code>border</code>
+              </div>
+              <h3>Borda e separação</h3>
+              <p>
+                Usado para delimitar áreas, separar blocos e estruturar componentes sem roubar atenção do conteúdo.
+              </p>
+              <ul>
+                <li><strong>Onde usar:</strong> cards, inputs, divisores, tabelas, linhas de separação.</li>
+                <li><strong>Classe sugerida:</strong> <code>border</code> ou <code>border-border</code></li>
+                <li><strong>Efeito:</strong> adiciona estrutura visual e organiza a interface.</li>
+              </ul>
+
+              <pre><code>&lt;div class="border rounded-lg p-4"&gt;
+                Conteúdo com delimitação visual
+                &lt;/div&gt;</code></pre>
+            </div>
+
+            <div class="token-doc__preview bg-card rounded-lg p-4">
+              <p class="text-sm text-muted-foreground">Preview</p>
+              <div class="border rounded-md p-4">
+                <p class="text-foreground">Container com borda</p>
+                <p class="text-muted-foreground">Exemplo de separação visual sutil.</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </section>
       </main>
 
       <Modal

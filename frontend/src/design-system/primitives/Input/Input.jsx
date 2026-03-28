@@ -11,15 +11,24 @@ const Input = React.forwardRef(({ className, type, icon, ...props }, ref) => {
 
   if (icon) {
     return (
-      <input
-        ref={ref}
-        type={type}
-        data-slot="input"
-        className={cn(inputBase, "pl-9",
-          className,
+      <div className="relative w-full">
+        {icon && (
+          <span className="absolute left-3 top-1/2 -translate-y-1/2">
+            {icon}
+          </span>
         )}
-        {...props}
-      />
+        <input
+          ref={ref}
+          type={type}
+          data-slot="input"
+          className={cn(
+            inputBase,
+            icon && "pl-9",
+            className
+          )}
+          {...props}
+        />
+      </div>
     );
   }
 

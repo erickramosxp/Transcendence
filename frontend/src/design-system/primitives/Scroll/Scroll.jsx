@@ -1,5 +1,5 @@
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import { cn } from "../tokens/colors";
+import { cn } from "@/design-system/tokens/colors";
 
 export function Scroll({ children, className, ...props }) {
   return (
