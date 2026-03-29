@@ -7,7 +7,7 @@ export function Chat() {
     const [selectedChat, setSelectedChat] = useState(null);
 
     const friendsChat = [
-        {id: 1, name: "Maria da Silva", lastMessage: "Hello, how are you?", lastMessageTime: "12:00"},
+        {id: 1, name: "Maria da Silva", lastMessage: "Quais são as novidades?", lastMessageTime: "12:00"},
         {id:2, name: "João Castro", lastMessage: "What are you doing?", lastMessageTime: "13:00"}
     ]
 
@@ -17,7 +17,7 @@ export function Chat() {
                 friendsChat={friendsChat}
                 setSelectedChat={setSelectedChat}
             />
-            <ChatWindow friendsChat={friendsChat} currentChat={selectedChat}/>
+            <ChatWindow currentChat={selectedChat}/>
         </div>
     )
 }
