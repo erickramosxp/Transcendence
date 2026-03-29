@@ -5,7 +5,7 @@ export default function ChatList({friendsChat, setSelectedChat}) {
 	return (
 		<div style={{display: "flex", height: "100vh"}}>
 			<div style={{width: "300px"}}>
-				<h2>Menssagens</h2>
+				<h2>Mensagens</h2>
 
 				<input type="text" placeholder="Search" />
 				<div >
