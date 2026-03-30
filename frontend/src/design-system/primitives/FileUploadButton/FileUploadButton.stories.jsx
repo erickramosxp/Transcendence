@@ -4,6 +4,7 @@ import { useState } from 'react'
 export default {
     title: 'Primitives/FileUploadButton',
     component: FileUploadButton,
+    tags: ['autodocs'],
     parameters: {
         layout: 'centered',
     },

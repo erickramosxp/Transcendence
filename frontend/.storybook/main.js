@@ -13,6 +13,10 @@ const config = {
     "@storybook/addon-docs",
     "@storybook/addon-onboarding"
   ],
-  "framework": "@storybook/react-vite"
+  "framework": "@storybook/react-vite",
+  "mdx5": true,
+  "docs": {
+    "autodocs": 'tag',
+  },
 };
 export default config;

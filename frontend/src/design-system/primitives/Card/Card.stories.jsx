@@ -12,6 +12,7 @@ import { Button } from '../Button/Button'
 
 export default {
     title: 'Primitives/Card',
+    tags: ['autodocs'],
     component: Card,
     parameters: {
         layout: 'centered',

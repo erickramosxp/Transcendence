@@ -1,0 +1,366 @@
+import React from 'react';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Fundação/Paleta de Cores" />
+
+<style>{`
+  .palette-section {
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1a1a1a;
+  }
+  
+  .palette-section h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+  }
+  
+  .palette-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem 0;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+  
+  .palette-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.75rem 0;
+  }
+  
+  .palette-section p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  .palette-section strong {
+    font-weight: 600;
+  }
+  
+  .palette-section code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+  
+  .palette-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+  }
+  
+  .palette-table th,
+  .palette-table td {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    text-align: left;
+  }
+  
+  .palette-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+  
+  .palette-swatch {
+    display: inline-block;
+    width: 2.5rem;
+    height: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 0.75rem;
+    vertical-align: middle;
+  }
+  
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    background: #fafbfc;
+    margin: 2rem 0;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .palette-grid-button {
+    background: #4a78b5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .palette-grid-button:hover {
+    background: #3b6091;
+  }
+  
+  .palette-grid-button-text {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .palette-grid-button-label {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.9;
+  }
+  
+  .palette-grid-card {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 6px;
+    padding: 1.5rem;
+  }
+  
+  .palette-grid-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .palette-grid-card p {
+    margin: 0 0 0.75rem 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .palette-grid-card-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+  }
+  
+  .palette-grid-error {
+    background: #d4183d;
+    color: white;
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  
+  .palette-grid-error-text {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .palette-grid-error-label {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.9;
+  }
+  
+  .palette-grid-status {
+    background: #22c55e;
+    color: white;
+    border-radius: 9999px;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .palette-grid-status-text {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .palette-grid-status-label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+  
+  .palette-scale {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f5f5f9;
+    border-radius: 8px;
+  }
+  
+  .palette-scale-item {
+    display: inline-block;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .palette-scale-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .palette-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 1.5rem 0;
+  }
+  
+  .palette-list li {
+    padding: 0.5rem 0;
+    margin-left: 0;
+    line-height: 1.6;
+  }
+  
+  .palette-list li code {
+    background: #f0f4f8;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+`}</style>
+
+<div className="palette-section">
+
+<h1>Paleta de Cores - Design System</h1>
+
+<p>A paleta usa <strong>azul Yale</strong> como identidade principal + neutros frios para superfícies e contraste.</p>
+
+<h2>Light vs Dark - Tokens Principais</h2>
+
+<table className="palette-table">
+    <thead>
+      <tr>
+      <th>Token</th>
+      <th>Light Mode</th>
+      <th>Dark Mode</th>
+      <th>Uso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>--background</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--background)'}}></div><code>#F0F2F7</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--background)'}}></div><code>#0A1222</code></td>
+        <td>Fundo da página</td>
+      </tr>
+      <tr>
+        <td><code>--primary</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--primary)'}}></div><code>#4a78b5</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--primary)'}}></div><code>#4a78b5</code></td>
+        <td>Botões principais</td>
+      </tr>
+      <tr>
+        <td><code>--card</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--card)'}}></div><code>#ffffff</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--card)'}}></div><code>#121a2c</code></td>
+        <td>Cards e superfícies</td>
+      </tr>
+      <tr>
+        <td><code>--accent</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--accent)'}}></div><code>#e9ebef</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--accent)'}}></div><code>#475569</code></td>
+        <td>Hover/destaques</td>
+      </tr>
+      <tr>
+        <td><code>--destructive</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--destructive)'}}></div><code>#d4183d</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--destructive)'}}></div><code>#ef4444</code></td>
+        <td>Erros/alertas</td>
+      </tr>
+      <tr>
+        <td><code>--color-online</code></td>
+        <td><div className="palette-swatch" style={{background:'var(--color-online)'}}></div><code>#22c55e</code></td>
+        <td><div className="palette-swatch dark" style={{background:'var(--color-online)'}}></div><code>#22c55e</code></td>
+        <td>Status online</td>
+      </tr>
+  </tbody>
+</table>
+
+<h2>Exemplo de uso na interface</h2>
+
+<div className="palette-grid">
+  <button className="palette-grid-button">
+  <span className="palette-grid-button-text">Botão primário</span>
+  <span className="palette-grid-button-label">--primary</span>
+</button>
+
+<div className="palette-grid-card">
+<h4>Card</h4>
+<p>Conteúdo do card</p>
+<span className="palette-grid-card-label">--card + --card-foreground</span>
+</div>
+
+<div className="palette-grid-error">
+<span className="palette-grid-error-text">Erro crítico</span>
+<span className="palette-grid-error-label">--destructive</span>
+</div>
+
+<div className="palette-grid-status">
+<span className="palette-grid-status-text">Online</span>
+<span className="palette-grid-status-label">--color-online</span>
+</div>
+</div>
+
+<h2>Escala Yale Blue (50 → 950)</h2>
+
+<div className="palette-scale">
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-50)'}} title="--yale-blue-50"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-100)'}} title="--yale-blue-100"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-200)'}} title="--yale-blue-200"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-300)'}} title="--yale-blue-300"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-400)'}} title="--yale-blue-400"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-500)'}} title="--yale-blue-500"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-600)'}} title="--yale-blue-600"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-700)'}} title="--yale-blue-700"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-800)'}} title="--yale-blue-800"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-900)'}} title="--yale-blue-900"></div>
+  <div className="palette-scale-item" style={{background:'var(--yale-blue-950)'}} title="--yale-blue-950"></div>
+</div>
+
+<h2>HOME GRADIENTS</h2>
+
+<div className="palette-scale">
+  <div className="palette-scale-item" style={{background:'var(--gradient-main)'}} title="--gradient-main"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-anim-center)'}} title="--gradient-anim-center"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-anim-light)'}} title="--gradient-anim-light"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-btn-primary)'}} title="--gradient-btn-primary"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-btn-primary-hover)'}} title="--gradient-btn-primary-hover"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-sparkle)'}} title="--gradient-sparkle"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-title)'}} title="--gradient-title"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-connect)'}} title="--gradient-connect"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-chat)'}} title="--gradient-chat"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-share)'}} title="--gradient-share"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-secure)'}} title="--gradient-secure"></div>
+</div>
+
+<h2>GRADIENTS</h2>
+
+<div className="palette-scale">
+  <div className="palette-scale-item" style={{background:'var(--gradient-background)'}} title="--gradient-background"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-icon)'}} title="--gradient-icon"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-primary)'}} title="--gradient-primary"></div>
+  <div className="palette-scale-item" style={{background:'var(--gradient-dark)'}} title="--gradient-dark"></div>
+</div>
+
+<h2>Diretrizes rápidas</h2>
+
+<h3>Cores semânticas:</h3>
+
+<ul className="palette-list">
+<li><code>--primary</code> → ações principais (botões CTA)</li>
+<li><code>--card</code> → superfícies de conteúdo</li>
+<li><code>--destructive</code> → erros, exclusões</li>
+<li><code>--accent</code> → hover, seleção leve</li>
+</ul>
+
+<h3>Escala Yale Blue:</h3>
+
+<ul className="palette-list">
+  <li>50-200: fundos, gradientes suaves</li>
+  <li>300-500: destaque, ícones, botões</li>
+  <li>600-800: estados fortes</li>
+  <li>900-950: dark mode</li>
+</ul>
+
+</div>

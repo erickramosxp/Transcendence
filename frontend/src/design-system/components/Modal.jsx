@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button } from "@/design-system/primitives/Button";
+import { Button } from "@/design-system";
 import { X } from "lucide-react";
 
 export function Modal({

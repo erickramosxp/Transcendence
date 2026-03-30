@@ -6,7 +6,7 @@ import { cn } from "@/design-system/tokens/colors";
 
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-ring",
   {
     variants: {
       variant: {
@@ -36,7 +36,7 @@ const buttonVariants = cva(
   }
 );
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef(({ className, variant, size, asChild = false, disabled, ...props }, ref) => {
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -44,6 +44,8 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
       ref={ref}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={!asChild ? disabled : undefined}
+      aria-disabled={disabled ? 'true' : undefined}
       {...props}
     />
   );

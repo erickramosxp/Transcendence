@@ -14,6 +14,5 @@ We implemented a custom design system including:
 - Semantic color tokens
 - Spacing scale
 - Typography system
-- 12 reusable components
 - Centralized design tokens
 - Dark mode ready structure

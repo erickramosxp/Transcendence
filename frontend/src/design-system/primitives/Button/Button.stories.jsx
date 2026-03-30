@@ -1,10 +1,15 @@
 import { Button } from './Button'
+import { expect, fn } from 'storybook/test';
 
 export default {
     title: 'Primitives/Button',
     component: Button,
+    tags: ['autodocs'],
     parameters: {
         layout: 'centered',
+    },
+    args: {
+        onClick: fn(),
     },
     argTypes: {
         variant: {
@@ -34,6 +39,25 @@ export default {
         },
     },
 }
+
+
+export const Disabled = {
+    args: {
+        disabled: true,
+        label: 'Button',
+        children: 'Button',
+    },
+    play: async function ({ args, canvas, userEvent }) {
+        const button = canvas.getByRole('button', { name: /Button/i });
+
+        // 👇 Simulate behavior
+        await userEvent.click(button);
+
+        // 👇 Make assertions
+        await expect(button).toHaveAttribute('aria-disabled', 'true');
+        await expect(args.onClick).not.toHaveBeenCalled();
+    }
+};
 
 export const Primary = {
     args: {

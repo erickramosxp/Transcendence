@@ -1,0 +1,257 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Typography" />
+
+<style>{`
+  .typo-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .typo-section {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .typo-card {
+    background: var(--card, #fff);
+    color: var(--card-foreground, #111);
+    border: 1px solid var(--border, rgba(0,0,0,.1));
+    border-radius: var(--radius, 1rem);
+    padding: 1rem;
+  }
+
+  .typo-token {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground, #717182);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .typo-stack {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .typo-preview {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: calc(var(--radius, 1rem) - 4px);
+    background: var(--secondary, #eceef2);
+  }
+
+  .typo-grid-2 {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .typo-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .typo-note {
+    color: var(--muted-foreground, #717182);
+  }
+
+  .typo-dark {
+    background: var(--card, #121a2c);
+    color: var(--card-foreground, #fafafa);
+    border: 1px solid var(--border, rgba(255,255,255,.12));
+    border-radius: var(--radius, 1rem);
+    padding: 1rem;
+  }
+
+  .typo-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .typo-table th,
+  .typo-table td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,.1));
+    vertical-align: top;
+  }
+
+  .typo-table th {
+    color: var(--muted-foreground, #717182);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+`}</style>
+
+# Typography
+
+A tipografia do design system é definida por tokens globais no `theme.css`, estilos semânticos em `@layer base` e utilitários Tailwind que podem sobrescrever esses defaults.
+
+## Fundamentos
+
+<div className="typo-card">
+  <div className="typo-stack">
+    <div><strong>Font size base:</strong> 16px (`--font-size`)</div>
+    <div><strong>Weight normal:</strong> 400 (`--font-weight-normal`)</div>
+    <div><strong>Weight medium:</strong> 500 (`--font-weight-medium`)</div>
+    <div className="typo-note">
+      Os elementos HTML já recebem estilos padrão no layer base. Quando necessário, use utilities como `text-sm`, `text-lg`, `font-normal` e `font-medium` para sobrescrever.
+    </div>
+  </div>
+</div>
+
+## Defaults semânticos
+
+<div className="typo-grid-2">
+  <div className="typo-card">
+    <span className="typo-token">h1 → text-2xl + font-weight-medium</span>
+    <div className="typo-preview">
+      <h1>Heading level 1</h1>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">h2 → text-xl + font-weight-medium</span>
+    <div className="typo-preview">
+      <h2>Heading level 2</h2>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">h3 → text-lg + font-weight-medium</span>
+    <div className="typo-preview">
+      <h3>Heading level 3</h3>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">h4 → text-base + font-weight-medium</span>
+    <div className="typo-preview">
+      <h4>Heading level 4</h4>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">label → text-base + font-weight-medium</span>
+    <div className="typo-preview">
+      <label htmlFor="example-label">Label example</label>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">button → text-base + font-weight-medium</span>
+    <div className="typo-preview">
+      <button type="button">Button label</button>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">input → text-base + font-weight-normal</span>
+    <div className="typo-preview">
+      <input
+        defaultValue="Input value"
+        style={{
+          width: '100%',
+          padding: '0.75rem 1rem',
+          borderRadius: '0.75rem',
+          border: '1px solid var(--border)',
+          background: 'var(--input-background)',
+          color: 'var(--foreground)',
+        }}
+      />
+    </div>
+  </div>
+</div>
+
+## Utilities
+
+<div className="typo-section">
+  <div className="typo-card">
+    <span className="typo-token">Escala de texto</span>
+    <div className="typo-preview">
+      <div className="text-sm">text-sm — suporte e metadata</div>
+      <div className="text-base">text-base — conteúdo padrão</div>
+      <div className="text-lg">text-lg — subtítulo</div>
+      <div className="text-xl">text-xl — heading</div>
+      <div className="text-2xl">text-2xl — heading principal</div>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">Pesos</span>
+    <div className="typo-preview">
+      <div className="font-normal">font-normal — peso 400</div>
+      <div className="font-medium">font-medium — peso 500</div>
+      <div className="font-semibold">font-semibold</div>
+      <div className="font-bold">font-bold</div>
+    </div>
+  </div>
+</div>
+
+## Overrides
+
+<div className="typo-grid-2">
+  <div className="typo-card">
+    <span className="typo-token">Default do h2</span>
+    <div className="typo-preview">
+      <h2>Esse h2 usa o estilo semântico base</h2>
+    </div>
+  </div>
+
+  <div className="typo-card">
+    <span className="typo-token">h2 com override</span>
+    <div className="typo-preview">
+      <h2 className="text-sm font-normal">
+        Esse h2 foi sobrescrito com text-sm font-normal
+      </h2>
+    </div>
+  </div>
+</div>
+
+## Combinações de uso
+
+<div className="typo-card">
+  <table className="typo-table">
+    <thead>
+      <tr>
+        <th>Contexto</th>
+        <th>Recomendação</th>
+        <th>Preview</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Título de página</td>
+        <td><code>h1</code> ou <code>text-2xl font-medium</code></td>
+        <td><span className="text-2xl font-medium">Page title</span></td>
+      </tr>
+      <tr>
+        <td>Título de seção</td>
+        <td><code>h2</code> ou <code>text-xl font-medium</code></td>
+        <td><span className="text-xl font-medium">Section title</span></td>
+      </tr>
+      <tr>
+        <td>Subseção</td>
+        <td><code>h3</code> ou <code>text-lg font-medium</code></td>
+        <td><span className="text-lg font-medium">Subsection title</span></td>
+      </tr>
+      <tr>
+        <td>Texto padrão</td>
+        <td><code>text-base</code></td>
+        <td><span className="text-base">Body content</span></td>
+      </tr>
+      <tr>
+        <td>Texto auxiliar</td>
+        <td><code>text-sm text-muted-foreground</code></td>
+        <td><span className="text-sm text-muted-foreground">Supporting text</span></td>
+      </tr>
+      <tr>
+        <td>Label</td>
+        <td><code>label</code> ou <code>text-base font-medium</code></td>
+        <td><span className="text-base font-medium">Email</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

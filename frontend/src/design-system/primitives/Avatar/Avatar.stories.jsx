@@ -3,6 +3,7 @@ import { Avatar, AvatarWithStatus } from './Avatar'
 export default {
     title: 'Primitives/Avatar',
     component: Avatar,
+    tags: ['autodocs'],
     parameters: {
         layout: 'centered',
     },

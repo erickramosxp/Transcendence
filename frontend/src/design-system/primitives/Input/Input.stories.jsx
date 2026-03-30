@@ -4,6 +4,7 @@ import { Mail, Lock } from 'lucide-react'
 export default {
     title: 'Primitives/Input',
     component: Input,
+    tags: ['autodocs'],
     parameters: {
         layout: 'centered',
     },

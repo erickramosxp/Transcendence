@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { useAuth } from "@/app/providers/AuthProvider"
-import { Button } from "@/design-system/primitives/Button";
-import { ThemeToggle } from "@/design-system/components/ThemeToggle";
+import { Button } from "@/design-system";
+import { ThemeToggle } from "@/design-system";
 
 export function LeftSidebar() {
 

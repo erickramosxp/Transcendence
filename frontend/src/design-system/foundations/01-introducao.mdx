@@ -1,0 +1,45 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Introdução" />
+
+# Introdução do Design System
+
+Este design system foi estruturado a partir do arquivo `theme.css`, usando tokens CSS como fonte de verdade para cor, superfícies, estados, raios, sombras, gradientes e comportamentos visuais.
+
+## Objetivo
+
+Ele existe para garantir consistência visual e de uso entre telas, componentes e experiências. Em vez de escolher estilos “na mão” a cada componente, o time passa a reutilizar decisões já definidas no tema.
+
+## Como usar
+
+- Consuma os tokens CSS (`var(--token)`) como base de implementação.
+- Evite hardcode de cor, radius ou espaçamento quando já existir um token.
+- Use as cores semânticas pelo papel delas, não apenas pela aparência.
+- Trate este arquivo como a camada de fundação do Storybook.
+
+## Onde usar
+
+- Componentes base: botão, input, badge, card, modal.
+- Layouts: sidebar, feed, containers e grids.
+- Estados de interface: hover, foco, erro, destaque, leitura e status online.
+- Telas institucionais e home, especialmente onde os gradientes Yale Blue aparecem.
+
+## Princípio de aplicação
+
+A melhor prática aqui é sempre mapear **intenção** para **token**. Exemplo: se algo é ação principal, use `--primary`; se é superfície de apoio, use `--secondary` ou `--card`; se é informação de baixa ênfase, use `--muted` e `--muted-foreground`.
+
+## Estrutura sugerida no Storybook
+
+Este material foi separado por uso:
+
+- Fundação visual e princípios.
+- Paleta de cores.
+- Tokens semânticos.
+- Dark mode.
+- Gradientes.
+- Radius e superfícies.
+- Layout e containers.
+- Estados e feedback.
+- Sidebar.
+- Charts.
+- Classes utilitárias encontradas no CSS.

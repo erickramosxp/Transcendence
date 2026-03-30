@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/design-system/primitives/Card";
+import { Card, CardContent } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 /**
  * 

@@ -3,6 +3,7 @@ import { Input } from '../Input/Input'
 
 export default {
     title: 'Primitives/Label',
+    tags: ['autodocs'],
     component: Label,
     parameters: {
         layout: 'centered',
