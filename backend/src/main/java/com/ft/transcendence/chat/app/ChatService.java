@@ -2,10 +2,7 @@ package com.ft.transcendence.chat.app;
 
 import com.ft.transcendence.chat.domain.Chat;
 import com.ft.transcendence.chat.domain.ChatParticipant;
-import com.ft.transcendence.chat.dto.ChatResponse;
-import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
-import com.ft.transcendence.chat.dto.CreateGroupChatRequest;
-import com.ft.transcendence.chat.dto.ListChatResponse;
+import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -69,5 +66,10 @@ public class ChatService {
         }
 
         return ChatResponse.of(chat);
+    }
+
+    @Transactional
+    public ChatMessageRequest createMessage(Long currentUserId, ChatMessageRequest req) {
+
     }
 }

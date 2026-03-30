@@ -1,10 +1,7 @@
 package com.ft.transcendence.chat.api;
 
 import com.ft.transcendence.chat.app.ChatService;
-import com.ft.transcendence.chat.dto.ChatResponse;
-import com.ft.transcendence.chat.dto.CreateDirectChatRequest;
-import com.ft.transcendence.chat.dto.CreateGroupChatRequest;
-import com.ft.transcendence.chat.dto.ListChatResponse;
+import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.common.security.CurrentUser;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
@@ -51,5 +48,16 @@ public class ChatResource {
 
         ChatResponse chat = chatService.createGroupChat(currentUser.id(), req);
         return Response.status(Response.Status.CREATED).entity(chat).build();
+    }
+
+    @POST
+    @Path("/{chatId}/message")
+    @Authenticated
+    public Response sendMessage(@PathParam("chatId") Long chatId, ChatMessageRequest req) {
+        if ((req.text == null || req.text.isBlank()) && (req.mediaUrl == null || req.mediaUrl.isBlank()))
+            throw new BadRequestException("Message must contain text or images");
+
+        ChatMessageResponse message = chatService.createMessage(currentUser.id(), req);
+        return Response.status(Response.Status.CREATED).entity(message).build();
     }
 }
