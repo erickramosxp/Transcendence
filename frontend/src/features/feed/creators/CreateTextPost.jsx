@@ -5,6 +5,7 @@ import { useCreatePost } from "./useCreatePost";
 import Textarea from "@/design-system/primitives/Textarea";
 import { Button } from "@/design-system/primitives/Button";
 import { Card, CardContent } from "@/design-system/primitives/Card";
+import { useTranslation } from "react-i18next";
 
 function CreateTextPost({ onAddPost, onClose }) {
 
@@ -19,6 +20,7 @@ function CreateTextPost({ onAddPost, onClose }) {
 		linkPreviewLoading,
 		linkPreviewError,
 	} = useCreatePost(onAddPost, onClose, "text");
+	const { t } = useTranslation('feed');
 
 	return (
 		<Card className="max-w-[520px] w-full mx-auto border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
@@ -35,7 +37,7 @@ function CreateTextPost({ onAddPost, onClose }) {
 									handleSubmit();
 								}
 							}}
-							placeholder="O que você está pensando?"
+							placeholder={t('createPost.text.placeholder')}
 							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
 						/>
 						{linkPreview && (
@@ -65,7 +67,7 @@ function CreateTextPost({ onAddPost, onClose }) {
 									className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
 								>
 									<Send className="h-4 w-4 mr-2 " />
-									Postar
+									{t('createPost.text.submit')}
 								</Button>
 							</div>
 						</div>

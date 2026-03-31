@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { useAuth } from "@/app/providers/AuthProvider"
 import { Button } from "@/design-system/primitives/Button";
 import { ThemeToggle } from "@/design-system/components/ThemeToggle";
+import { LanguageSwitcher } from "@/design-system/components/LanguageSwitcher";
 
 export function LeftSidebar() {
 
@@ -17,6 +18,7 @@ export function LeftSidebar() {
                 <Link to={"/profile"}>Profile</Link>
                 <Link to={"/editProfile"}>Edit Profile</Link>
                 <ThemeToggle />
+                <LanguageSwitcher />
                 <Button onClick={logout}>Logout</Button>
             </nav>
         </>

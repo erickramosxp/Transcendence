@@ -2,6 +2,7 @@ import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
+import { useTranslation } from "react-i18next";
 
 export function Feed() {
 
@@ -10,6 +11,7 @@ export function Feed() {
     //      "text": "string",
     //      "mediaUrl": "string"
     // }
+    const { t } = useTranslation('feed');
     async function addPost(postData){
 
         const newPost = {
@@ -37,10 +39,10 @@ export function Feed() {
                     </div>
                     <div className="feed-sidebar space-y-6">
                         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">
-                            <h2 className="text-lg font-semibold mb-4">Amigos Online</h2>
+                            <h2 className="text-lg font-semibold mb-4">{t('sections.onlineFriends')}</h2>
                         </div>
                         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-lg p-4 border border-slate-200/50 dark:border-slate-800/50">
-                            <h2 className="text-lg font-semibold mb-4">Em Alta</h2>
+                            <h2 className="text-lg font-semibold mb-4">{t('sections.trending')}</h2>
                         </div>
                     </div>
                 </div>

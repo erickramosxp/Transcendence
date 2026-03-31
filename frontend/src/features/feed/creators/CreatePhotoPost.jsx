@@ -5,6 +5,7 @@ import Textarea from "@/design-system/primitives/Textarea";
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import FileUploadButton from "@/design-system/primitives/FileUploadButton";
+import { useTranslation } from "react-i18next";
 
 
 function CreatePhotoPost({onAddPost, onClose}){
@@ -16,6 +17,8 @@ function CreatePhotoPost({onAddPost, onClose}){
 		handleChange,
 		handleEmojiSelect
 	} = useCreatePost(onAddPost, onClose, "photo");
+
+	const { t } = useTranslation('feed');
 
 	return (
 
@@ -33,7 +36,7 @@ function CreatePhotoPost({onAddPost, onClose}){
 									handleSubmit();
 								}
 							}}
-							placeholder="Conte a história por trás da imagem"
+							placeholder={t('createPost.photo.placeholder')}
 							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
 						/>
 						<p className="text-sm text-muted-foreground text-right">
@@ -50,7 +53,7 @@ function CreatePhotoPost({onAddPost, onClose}){
 										<ImageIcon className="h-5 w-5 text-[#4a78b5]" />
 									<span className="text-sm truncate"></span>
 									<span className="text-xs text-slate-500">
-										Uma imagem vale mais que mil palavras
+										{t('createPost.photo.emptyHint')}
 									</span>
 								</div>
 							</div>
@@ -89,7 +92,7 @@ function CreatePhotoPost({onAddPost, onClose}){
 									className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
 								>
 									<Send className="h-4 w-4 mr-2 " />
-									Postar Foto
+									{t('createPost.photo.submit')}
 								</Button>
 							</div>
 						</div>

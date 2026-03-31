@@ -2,10 +2,13 @@ import React from "react";
 import { X } from "lucide-react";
 import { Button } from "@/design-system/primitives/Button";
 import { Separator } from "@/design-system/primitives/Separator"
+import { useTranslation } from "react-i18next";
 
 
 function Popup({ open, onClose, children }) {
 	if (!open) return null;
+
+	const { t } = useTranslation('feed');
 
 	return (
 		<div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50" onClick={onClose}>
@@ -25,10 +28,10 @@ function Popup({ open, onClose, children }) {
 				</div>
 				<div>
 					<h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-						Criar publicação
+						{t('popup.title')}
 					</h2>
 					<p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-						Compartilhe algo com sua comunidade
+						{t('popup.description')}
 					</p>
 					<div className="relative my-5 sm:my-6">
 						<Separator />

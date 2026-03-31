@@ -1,1 +1,43 @@
-{}
+{
+    "menu": {
+        "notImplemented": "A implementar"
+    },
+    "popup": {
+        "title": "Criar publicação",
+        "description": "Compartilhe algo com sua comunidade"
+    },
+    "createPost": {
+        "text": {
+            "placeholder": "O que você está pensando?",
+            "submit": "Postar",
+            "charCount": "{{count}}/500"
+        },
+        "photo": {
+            "placeholder": "Conte a história por trás da imagem",
+            "emptyHint": "Uma imagem vale mais que mil palavras",
+            "submit": "Postar foto",
+            "charCount": "{{count}}/500"
+        },
+        "video": {
+            "placeholder": "O que está acontecendo aqui?",
+            "emptyHint": "Grave, envie e compartilhe!",
+            "submit": "Postar vídeo",
+            "charCount": "{{count}}/500"
+        }
+    },
+    "comments": {
+        "empty": "Sem comentários",
+        "placeholder": "Escreva um comentário..."
+    },
+    "list": {
+        "loadMore": "Carregando mais…",
+        "end": "Você chegou ao fim do feed",
+        "empty": "Nada por aqui ainda.",
+        "emptyCta": "Seja o primeiro a compartilhar algo ✨",
+        "loadError": "Falha ao carregar os posts"
+    },
+    "sections": {
+        "onlineFriends": "Amigos Online",
+        "trending": "Em Alta"
+    }
+}

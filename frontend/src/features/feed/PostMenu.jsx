@@ -5,10 +5,12 @@ import { Button } from "@/design-system/primitives/Button";
 import  Popup  from "@/features/feed/components/Popup";
 import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "@/features/feed/creators";
 import { Camera, Video, Music, ALargeSmall} from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function PostMenu({onAddPost}) {
 	const [open, setOpen] = useState(false);
 	const [type, setType] = useState(null);
+	const { t } = useTranslation('feed');
 
 	function handleOpen(postType)
 	{
@@ -58,7 +60,7 @@ function PostMenu({onAddPost}) {
 							/>
 						)}
 						{type === "music" &&(
-							<div>A implementar</div>
+							<div>{t('menu.notImplemented')}</div>
 							// <CreateMusicPost
 							// onAddPost={onAddPost}
 							// onClose={handleClose}

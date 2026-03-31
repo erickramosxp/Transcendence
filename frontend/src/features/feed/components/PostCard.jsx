@@ -8,6 +8,7 @@ import  CommentCard  from "@/features/feed/components/CommentCard";
 import { cn } from "@/design-system/tokens/colors";
 import { Link } from 'react-router-dom'
 import Media from "@/design-system/components/Media";
+import { useLanguage } from "@/hooks/useLanguage";
 
 //     {
 //   "items": [
@@ -30,6 +31,8 @@ import Media from "@/design-system/components/Media";
 // }
 
 function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount, className }) {
+
+	const { currentLanguage } = useLanguage();
 
 
 	return (
@@ -58,7 +61,7 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 							@{post.userName}
 						</span>
 						<span title={new Date(post.created_at).toLocaleString()} className="text-slate-400 shrink-0 truncate">
-							{getCurrentTime(post.created_at)}
+							{getCurrentTime(post.created_at, currentLanguage)}
 						</span>
 					</div>
 

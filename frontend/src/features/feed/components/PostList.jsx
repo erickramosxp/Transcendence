@@ -7,6 +7,7 @@ import { getFeed } from "@/features/feed/feedService";
 import { toast } from 'react-toastify';
 import { likePost, unlikePost } from "@/features/feed/feedService";
 import Loading from "@/design-system/components/Loading";
+import { useTranslation } from "react-i18next";
 
 //     {
 //   "items": [
@@ -36,6 +37,8 @@ function PostList({posts, setPosts}) {
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(false);
     const sentinelRef = useRef(null);
+
+    const { t } = useTranslation('feed');
 
     useEffect(() => {
 
@@ -76,7 +79,7 @@ function PostList({posts, setPosts}) {
 
         } catch (err) {
             console.error(err);
-            toast.error('Falha ao carregar os posts');
+            toast.error(t('list.loadError'));
         } finally {
             setIsLoadingMore(false);
         }
@@ -161,8 +164,8 @@ function PostList({posts, setPosts}) {
 		<div className="space-y-8">
 			{posts && posts.length === 0 ? (
 				<div className="text-center text-gray-500 dark:text-gray-400 py-8">
-					Nada por aqui ainda.<br/>
-					Seja o primeiro a compartilhar algo ✨
+					{t('list.empty')}<br/>
+					{t('list.emptyCta')}
 				</div>
 			) : (
 				<>
@@ -182,13 +185,13 @@ function PostList({posts, setPosts}) {
 					))}
 					<div ref={sentinelRef} className="h-4" aria-hidden />
 					{isLoadingMore && (
-						<div className="text-center text-slate-500 dark:text-slate-400 py-4">
-							Carregando mais…
+                        <div className="text-center text-slate-500 dark:text-slate-400 py-4">
+                            {t('list.loadMore')}
 						</div>
 					)}
 					{!hasMore && (
-						<div className="text-center text-slate-400 dark:text-slate-500 py-4 text-sm">
-							Você chegou ao fim do feed
+                        <div className="text-center text-slate-400 dark:text-slate-500 py-4 text-sm">
+                            {t('list.end')}
 						</div>
 					)}
 				</>

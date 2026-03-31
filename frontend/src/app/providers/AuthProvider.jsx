@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "@/features/auth/authService";
 import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useTranslation } from "react-i18next";
 const AuthContext = createContext(null);
 
 const clientId = import.meta.env.GOOGLE_WEB_CLIENT_ID;
@@ -14,6 +15,7 @@ export function AuthProvider({children}) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     let navigate = useNavigate();
+    const { t } = useTranslation('authProvider');
 
 
     useEffect(() => {
@@ -41,12 +43,12 @@ export function AuthProvider({children}) {
             setUser(user);
             setIsAuthenticated(true);
 
-            toast.success('Login realizado com sucesso!');
+            toast.success(t('login.success'));
             setTimeout(() => navigate('/feed'), 1000);
 
         } catch (err){
             console.log(err);
-            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            const errorMsg = err.response?.data?.message || t('login.error');
             console.log(errorMsg);
             toast.error(errorMsg);
         }
@@ -60,7 +62,7 @@ export function AuthProvider({children}) {
 
             const { token, user } = resp.data;
 
-            toast.success("Registro efetuado com sucesso");
+            toast.success(t('register.success'));
 
             localStorage.setItem('@trascendence:token', token);
             localStorage.setItem('@trascendence:user', JSON.stringify(user));
@@ -69,12 +71,12 @@ export function AuthProvider({children}) {
             setIsAuthenticated(true);
 
             setTimeout(() => {
-                toast.success('Redirecionado para página inicial');
+                toast.success(t('register.redirect'));
                 navigate('/feed');
             }, 2000);
 
         } catch (err) {
-            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            const errorMsg = err.response?.data?.message || t('register.error');
             console.log(errorMsg);
             toast.error(errorMsg);
         }
@@ -105,18 +107,18 @@ export function AuthProvider({children}) {
                     setIsAuthenticated(true);
 
                     setTimeout(() => {
-                    toast.success('Redirecionado para página inicial');
+                    toast.success(t('socialLogin.success'));
                     navigate('/feed');
                     }, 2000);
 
                 } catch (err) {
 
-                    const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+                    const errorMsg = err.response?.data?.message || t('socialLogin.error');
                     console.log(errorMsg);
                     toast.error(errorMsg);
                 }
             },
-            onError: () => toast.error("Falha no login com Google"),
+            onError: () => toast.error(t('socialLogin.googleError')),
         })
     ) : (
         null

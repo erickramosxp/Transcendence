@@ -6,18 +6,21 @@ import enFeed from "./locales/en/feed.json";
 import enProfile from "./locales/en/profile.json";
 import enCommon from "./locales/en/common.json";
 import enHome from "./locales/en/home.json";
+import enAuthProvider from "./locales/en/authProvider.json";
 
 import ptAuth from "./locales/pt/auth.json";
 import ptFeed from "./locales/pt/feed.json";
 import ptProfile from "./locales/pt/profile.json";
 import ptCommon from "./locales/pt/common.json";
 import ptHome from "./locales/pt/home.json";
+import ptAuthProvider from "./locales/pt/authProvider.json";
 
 import esAuth from "./locales/es/auth.json";
 import esFeed from "./locales/es/feed.json";
 import esProfile from "./locales/es/profile.json";
 import esCommon from "./locales/es/common.json";
 import esHome from "./locales/es/home.json";
+import esAuthProvider from "./locales/es/authProvider.json";
 
 const resources = {
     en: {
@@ -25,21 +28,24 @@ const resources = {
         feed: enFeed,
         profile: enProfile,
         common: enCommon,
-        home: enHome
+        home: enHome,
+        authProvider: enAuthProvider
     },
     pt: {
         auth: ptAuth,
         feed: ptFeed,
         profile: ptProfile,
         common: ptCommon,
-        home: ptHome
+        home: ptHome,
+        authProvider: ptAuthProvider
     },
     es: {
         auth: esAuth,
         feed: esFeed,
         profile: esProfile,
         common: esCommon,
-        home: esHome
+        home: esHome,
+        authProvider: esAuthProvider
     }
 }
 
@@ -47,7 +53,7 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        ns: ["common", "profile", "auth", "feed", "home"],
+        ns: ["common", "profile", "auth", "feed", "home", "authProvider"],
         defaultNS: "common",
         fallbackLng: "pt",
         lng: localStorage.getItem("lang") || "pt",

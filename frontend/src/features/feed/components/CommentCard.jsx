@@ -16,6 +16,8 @@ import { yaleBlue } from "@/design-system/tokens/colors";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
 import { Link } from 'react-router-dom'
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 
 // {
 //   "items": [
@@ -37,6 +39,10 @@ import { Link } from 'react-router-dom'
 export default function CommentCard({ postId, incrementCommentCount }) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
+
+    const { currentLanguage } = useLanguage();
+
+    const { t } = useTranslation('feed');
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -118,7 +124,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
             <Separator />
             {comments.length === 0 ? (
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Sem comentários
+                    {t('comments.empty')}
                 </div>
             ) : (
                 <Scroll className="max-h-50">
@@ -147,7 +153,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                             </span>
 
                                             <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400 truncate sm:truncate-none">
-                                                {getCurrentTime(comment.created_at)}
+                                                {getCurrentTime(comment.created_at, currentLanguage)}
                                             </span>
                                         </div>
                                         <div className="mt-2 leading-relaxed">
@@ -185,7 +191,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                 handleSubmit(e);
                             }
                         }}
-                        placeholder="Escreva um comentário..."
+                        placeholder={t('comments.placeholder')}
                         className="min-h-[40px] resize-none"
                     />
                     <div>
