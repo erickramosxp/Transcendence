@@ -85,6 +85,7 @@ export function mapApiMessageToUi(apiMsg, currentUserId, peerName) {
 	return {
 		id: apiMsg.id,
 		text: apiMsg.text,
+		senderId: apiMsg.senderId,
 		sender: isMe ? "me" : peerName,
 		timestamp: apiMsg.createdAt,
 	}

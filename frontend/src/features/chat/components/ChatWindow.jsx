@@ -2,7 +2,11 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Message from "@/features/chat/components/Message";
 import MessageInput from "@/features/chat/components/MessageInput";
 import { getMessages, sendMessages, mapApiMessageToUi } from "@/features/chat/chatService";
-
+import { MessageCircle } from "lucide-react";
+import { AvatarWithStatus } from "@/design-system/primitives/Avatar";
+import { Separator } from "@/design-system/primitives/Separator";
+import { Button } from "@/design-system/primitives/Button";
+import { Phone, Video } from "lucide-react";
 function readCurrentUserId() {
 	try {
 		const raw = localStorage.getItem('@trascendence:user');
@@ -108,18 +112,64 @@ export default function ChatWindow({ currentChat }) {
 
 	if (!currentChat) {
 		return (
-			<div>
-				<h3>Suas Mensagens</h3>
-				<p>Selecione uma conversa para começar a enviar mensagens</p>
+			<div style={{ flex: 1, display: "flex", height: "100%" }}>
+				<div style={{
+					margin: "auto",
+					textAlign: "center",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center"
+				}}>
+					<MessageCircle className="size-10 text-gray-500" />
+					<h3 className="text-2xl font-bold">Suas Mensagens</h3>
+					<p className="text-sm text-gray-500">
+						Selecione uma conversa para começar a enviar mensagens
+					</p>
+				</div>
 			</div>
 		);
 	}
 
 	return (
 		<div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-			<div>
-				<h3>{currentChat.name}</h3>
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+					gap: 16,
+					padding: "24px 24px 12px 24px",
+				}}
+			>
+				<AvatarWithStatus
+					src={currentChat.avatar}
+					name={currentChat.name}
+					status="online" // online | offline
+					size="lg"
+				/>
+				<div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+					<h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600 }}>{currentChat.name}</h3>
+					<span
+						style={{
+							color: "green",
+							fontSize: "13px",
+							marginTop: 2,
+							whiteSpace: "nowrap",
+						}}
+					>
+						Online agora
+					</span>
+				</div>
+				<div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+					<Button variant="ghost" size="icon">
+						<Phone />
+					</Button>
+					<Button variant="ghost" size="icon">
+						<Video />
+					</Button>
+				</div>
 			</div>
+			<Separator />
 			{error && <p style={{ color: "crimson" }}>{error}</p>}
 			{loading && <p>Carregando...</p>}
 			<div
@@ -130,7 +180,7 @@ export default function ChatWindow({ currentChat }) {
 			{loadingOlder && <p style={{ textAlign: "center" }}>Carregando mais mensagens...</p>}
 			{ messages.length > 0 ? (
 					messages.map((msg) => (
-						<Message key={msg.id}message={msg} />
+						<Message key={msg.id} currentUserId={currentUserId} message={msg} />
 					))
 				) : (
 					<p style={{ color: "#888", textAlign: "center", marginTop: 32 }}>
