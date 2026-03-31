@@ -10,34 +10,36 @@ import { AuthContainer } from "@/features/auth/AuthContainer"
 import { BgAnimated } from '@/design-system/components/BgAnimated'
 import { BrandHeader } from "@/design-system/components/BrandHeader"
 import { TopBar } from "@/design-system/components/TopBar"
+import { useTranslation } from "react-i18next"
 
 export function Home() {
-    // const navigate = useNavigate();
+
+    const { t } = useTranslation('home');
 
 
     const features = [
         {
             icon: Users,
-            title: 'Conecte-se',
-            description: 'Faça amigos e expanda sua rede social',
+            title: t('features.connect.title'),
+            description: t('features.connect.description'),
             gradient: "bg-gradient-connect",
         },
         {
             icon: MessageCircle,
-            title: 'Converse',
-            description: 'Chat em tempo real com chamadas de voz',
+            title: t('features.chat.title'),
+            description: t('features.chat.description'),
             gradient: "bg-gradient-chat",
         },
         {
             icon: Heart,
-            title: 'Compartilhe',
-            description: 'Publique momentos e interaja com amigos',
+            title: t('features.share.title'),
+            description: t('features.share.description'),
             gradient: "bg-gradient-share",
         },
         {
             icon: Shield,
-            title: 'Seguro',
-            description: 'Seus dados sempre protegidos',
+            title: t('features.secure.title'),
+            description: t('features.secure.description'),
             gradient: "bg-gradient-secure",
         },
     ];
@@ -56,7 +58,7 @@ export function Home() {
 
                         {/* Apresentação do Lado Esquerdo */}
                         <div className="flex flex-col justify-center space-y-8 lg:space-y-12">
-                            <BrandHeader size="lg" slogan={"Conectando ideias, rede social sabor twitter."}/>
+                            <BrandHeader size="lg" slogan={t('brand.slogan')}/>
                             {/* Cards */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {features.map((feature, index) => (

@@ -7,6 +7,7 @@ import { Input } from "@/design-system/primitives/Input";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { SocialLogin } from "@/features/auth/components/SocialLogin"
 import { toast } from 'react-toastify'
+import { useTranslation } from "react-i18next";
 
 
 export function LoginForm({onSubmit}) {
@@ -14,11 +15,13 @@ export function LoginForm({onSubmit}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const { t } = useTranslation('auth');
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!username || !password) {
-            toast.error('Preencha todos os campos');
+            toast.error(t('errors.fillAllFields'));
             return;
         }
         
@@ -31,10 +34,10 @@ export function LoginForm({onSubmit}) {
               <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div className="text-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-                    Bem-vindo de volta!
+                    {t('login.title')}
                   </h2>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Entre na sua conta para continuar.
+                    {t('login.subtitle')}
                   </p>
                 </div>
 
@@ -44,12 +47,12 @@ export function LoginForm({onSubmit}) {
                       htmlFor="login-email"
                     >
                       <Mail className="h-4 w-4" />
-                      Email
+                      {t('login.email')}
                     </Label>
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="Digite seu email"
+                      placeholder={t('login.emailPlaceholder')}
                       value={username}
                       onChange={(e) => {
                         setUsername(e.target.value);
@@ -61,12 +64,12 @@ export function LoginForm({onSubmit}) {
                       htmlFor="login-password"
                     >
                       <Lock className="h-4 w-4" />
-                      Senha
+                      {t('login.password')}
                     </Label>
                     <Input
                       id="login-password"
                       type="password"
-                      placeholder="Digite sua senha"
+                      placeholder={t('login.passwordPlaceholder')}
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
@@ -79,7 +82,7 @@ export function LoginForm({onSubmit}) {
                   variant="primary"
                   size="full"
                 >
-                  Entrar
+                  {t('login.button')}
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
                 {/* Separador */}
@@ -90,10 +93,10 @@ export function LoginForm({onSubmit}) {
                     bg-card px-3 sm:px-4
                     text-xs sm:text-sm text-muted-foreground
                   ">
-                    ou
+                    {t('login.or')}
                   </span>
                 </div>
-                <SocialLogin buttonTitle="Continuar com Google"/>
+                <SocialLogin buttonTitle={t('login.social')}/>
               </form>
         </TabsContent>
     );

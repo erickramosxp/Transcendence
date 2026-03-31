@@ -7,7 +7,7 @@ import { Separator } from "@/design-system/primitives/Separator";
 import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
 import { SocialLogin } from "@/features/auth/components/SocialLogin" 
 import { toast } from 'react-toastify'
-
+import { useTranslation } from "react-i18next";
 
 export function RegisterForm({ onSubmit }) {
 
@@ -16,6 +16,7 @@ export function RegisterForm({ onSubmit }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [disableButton, setDisableButton] = useState(false);
+    const { t } = useTranslation('auth');
 
 
     const handleSubmit = (e) => {
@@ -23,7 +24,7 @@ export function RegisterForm({ onSubmit }) {
 
         setDisableButton(true);
         if (!email || !username || !name || !password) {
-            toast.error('Preencha todos os campos');
+            toast.error(t('errors.fillAllFields'));
             setDisableButton(false);
             return;
         }
@@ -38,10 +39,10 @@ export function RegisterForm({ onSubmit }) {
       <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
         <div className="text-center mb-4 sm:mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-            Crie sua conta
+            {t('register.title')}
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Junte-se à nossa comunidade
+            {t('register.subtitle')}
           </p>
         </div>
 
@@ -52,12 +53,12 @@ export function RegisterForm({ onSubmit }) {
 
             >
               <User className="h-4 w-4" />
-              Nome
+              {t('register.name')}
             </Label>
             <Input
               id="signup-name"
               type="text"
-              placeholder="Seu nome completo"
+              placeholder={t('register.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -69,12 +70,12 @@ export function RegisterForm({ onSubmit }) {
             htmlFor="signup-username"
           >
             <AtSign className="h-4 w-4" />
-            Username
+            {t('register.username')}
           </Label>
           <Input
             id="signup-username"
             type="text"
-            placeholder="Nome de usuário"
+            placeholder={t('register.usernamePlaceholder')}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="h-10 sm:h-11"
@@ -85,12 +86,12 @@ export function RegisterForm({ onSubmit }) {
             htmlFor="signup-email"
           >
             <Mail className="h-4 w-4" />
-            Email
+            {t('register.email')}
           </Label>
           <Input
             id="signup-email"
             type="email"
-            placeholder="seu@email.com"
+            placeholder={t('register.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -100,12 +101,12 @@ export function RegisterForm({ onSubmit }) {
             htmlFor="signup-password"
           >
             <Lock className="h-4 w-4" />
-            Senha
+            {t('register.password')}
           </Label>
           <Input
             id="signup-password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t('register.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -117,7 +118,7 @@ export function RegisterForm({ onSubmit }) {
           disabled={disableButton}
           type="submit"
         >
-          Criar Conta
+          {t('register.button')}
           <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
 
@@ -129,10 +130,10 @@ export function RegisterForm({ onSubmit }) {
             bg-card px-3 sm:px-4
             text-xs sm:text-sm text-muted-foreground"
           >
-            ou
+            {t('register.or')}
           </span>
         </div>
-        <SocialLogin buttonTitle={"Cadastrar com Google"}/>
+        <SocialLogin buttonTitle={t('register.googleSignup')}/>
       </form>
     </TabsContent>
   );

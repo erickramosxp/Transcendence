@@ -1,1 +1,23 @@
-{}
+{
+    "brand": {
+        "slogan": "Conectando ideas, una red social con estilo de Twitter."
+    },
+    "features": {
+        "connect": {
+            "title": "Conéctate",
+            "description": "Haz amigos y amplía tu red social"
+        },
+        "chat": {
+            "title": "Conversa",
+            "description": "Chat en tiempo real con llamadas de voz"
+        },
+        "share": {
+            "title": "Comparte",
+            "description": "Publica momentos e interactúa con amigos"
+        },
+        "secure": {
+            "title": "Seguro",
+            "description": "Tus datos siempre protegidos"
+        }
+    }
+}
