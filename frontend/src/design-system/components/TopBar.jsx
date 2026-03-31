@@ -5,7 +5,7 @@ import { cn } from "@/design-system/tokens/colors";
 export function TopBar({ className }) {
   return (
     <div className={cn(
-      "fixed top-4 right-4 sm:top-6 sm:right-6 z-[100]",
+      "fixed top-4 right-4 sm:top-6 sm:right-6 z-[50]",
       className
     )}>
       <div className="

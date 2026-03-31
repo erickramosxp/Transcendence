@@ -13,7 +13,7 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { Avatar } from "@/design-system/primitives/Avatar";
 import { followUser, unfollowUser } from "../services/profileService";
 import { useTranslation } from "react-i18next";
-import { useLanguage } from "@/hooks/useLanguage";
+import { SettingsContent } from "./SettingsContent";
 
 // {
 //   "id": 0,
@@ -31,6 +31,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 	const [connectionsModal, setConnectionsModal] = useState({ open: false, tab: 'followers' });
 
 	const [editOpen, setEditOpen] = useState(false);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 	const { user } = useAuth();
 	const { t } = useTranslation('profile');
 
@@ -74,6 +75,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 	const openFollowers = () => setConnectionsModal({ open: true, tab: 'followers' });
 	const openFollowing = () => setConnectionsModal({ open: true, tab: 'following' });
 	const closeConnections = () => setConnectionsModal({ open: false, tab: 'followers' });
+	const isMobile = window.innerWidth < 768;
 
 
 	return (
@@ -100,6 +102,31 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 				currentUserId={user?.id}
 				changeFollowCount={changeFollowCount}
 			/>
+			{!isMobile && settingsOpen && (
+				<Modal
+					open={settingsOpen}
+					onClose={() => setSettingsOpen(false)}
+					title={'Settings'}
+				>
+					<SettingsContent />
+				</Modal>
+			)}
+			{isMobile && settingsOpen && (
+				<div className="fixed inset-0 bg-background z-50">
+					
+					<div className="h-full flex flex-col">
+						<div className="p-4 flex items-center justify-between border-b">
+							<h2>Configurações</h2>
+							<button onClick={() => setSettingsOpen(false)}>✕</button>
+						</div>
+
+						<div className="flex-1 overflow-y-auto">
+							<SettingsContent />
+						</div>
+					</div>
+				</div>
+			)}
+
 			<div className={`pb-5`}>
 				<div className="w-full max-w-4xl mx-auto">
 					<CoverPhoto className='overflow-hidden'
@@ -136,7 +163,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 												<SquarePen />
 												{t('header.editProfile')}
 											</Button>
-											<Button variant='outline' className='rounded-full cursor-pointer'>
+											<Button variant='outline' className='rounded-full cursor-pointer' onClick={() => setSettingsOpen(true)}>
 												<Settings />
 											</Button>
 										</>

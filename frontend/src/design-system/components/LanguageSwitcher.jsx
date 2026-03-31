@@ -3,6 +3,7 @@ import { Button } from "@/design-system/primitives/Button";
 import { Languages, Check } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
+import { createPortal } from "react-dom";
 
 const languages = [
   { code: "pt", label: "Português", flag: "🇧🇷", icon: <Brazil /> },
@@ -13,15 +14,41 @@ const languages = [
 export function LanguageSwitcher() {
 
   const [isOpen, setIsOpen] = useState(false);
-  // const [currentLanguage, setCurrentLanguage] = useState("pt");
   const wrapperRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [position, setPosition] = useState(null);
   const { changeLanguage, currentLanguage } = useLanguage();
 
 
   const current = languages.find((lang) => lang.code === currentLanguage) || languages[0];
 
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+
+      const dropdownWidth = 160; // ou estimativa
+      const padding = 8;
+
+      let left = rect.left + window.scrollX;
+
+      // 👉 se ultrapassar a direita da tela
+      if (left + dropdownWidth > window.innerWidth) {
+        left = rect.right - dropdownWidth;
+      }
+
+      // 👉 se ultrapassar a esquerda
+      if (left < padding) {
+        left = padding;
+      }
+
+      setPosition({
+        top: rect.bottom + window.scrollY,
+        left,
+      });
+    }
+  }, [isOpen]);
+
   function handleSelectLanguage(code) {
-    // setCurrentLanguage(code);
     setIsOpen(false);
 
     changeLanguage(code);
@@ -29,7 +56,9 @@ export function LanguageSwitcher() {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      if (wrapperRef.current &&
+        !wrapperRef.current.contains(event.target) &&
+        !dropdownRef.current?.contains(event.target)) {
         setIsOpen(false);
       }
     }
@@ -52,6 +81,7 @@ export function LanguageSwitcher() {
         aria-expanded={isOpen}
         aria-label={`Idioma atual: ${current.label}`}
         title={current.label}
+        ref={buttonRef}
       >
         <Languages className="h-5 w-5" />
         <span className="absolute -top-1 -right-1 text-xs leading-none">
@@ -62,8 +92,13 @@ export function LanguageSwitcher() {
         </span>
       </Button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 min-w-[140px] rounded-md border bg-background p-1 shadow-md">
+      {isOpen && position && createPortal(
+        <div style={{
+          position: "absolute",
+          top: position.top,
+          left: position.left,
+        }}
+          className="z-80 min-w-[140px] rounded-md border bg-background p-1 shadow-md">
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -81,7 +116,8 @@ export function LanguageSwitcher() {
               )}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
