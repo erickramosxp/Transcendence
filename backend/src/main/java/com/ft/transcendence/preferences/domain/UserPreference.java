@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "user_preferences")
-public class UserPreferences extends PanacheEntityBase {
+public class UserPreference extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -30,8 +30,8 @@ public class UserPreferences extends PanacheEntityBase {
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
 
-    public static UserPreferences createDefaultPreferences(User user, OffsetDateTime now) {
-        var prefs = new UserPreferences();
+    public static UserPreference createDefaultPreferences(User user, OffsetDateTime now) {
+        var prefs = new UserPreference();
         prefs.user = user;
         prefs.theme = "light";
         prefs.language = "pt-BR";

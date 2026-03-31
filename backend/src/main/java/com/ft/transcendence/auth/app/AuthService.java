@@ -16,7 +16,7 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
 
 import static com.ft.transcendence.auth.domain.AuthProvider.createAuthProviderLocal;
-import static com.ft.transcendence.preferences.domain.UserPreferences.createDefaultPreferences;
+import static com.ft.transcendence.preferences.domain.UserPreference.createDefaultPreferences;
 
 @ApplicationScoped
 public class AuthService {

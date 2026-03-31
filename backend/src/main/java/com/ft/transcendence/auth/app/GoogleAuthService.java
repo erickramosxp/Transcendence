@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.text.Normalizer;
 import java.util.Locale;
 
-import static com.ft.transcendence.preferences.domain.UserPreferences.createDefaultPreferences;
+import static com.ft.transcendence.preferences.domain.UserPreference.createDefaultPreferences;
 
 @ApplicationScoped
 public class GoogleAuthService {
