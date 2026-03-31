@@ -1,7 +1,8 @@
 import React from 'react'
 import { MapPin, Link, Calendar } from 'lucide-react';
 import { formatJoinDate } from '../utils/formatJoinDate';
-import { Button } from '@/design-system/primitives/Button';
+
+import { Button } from '@/design-system';
 
 // {
 //   "id": 0,

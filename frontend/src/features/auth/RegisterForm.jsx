@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { TabsContent } from "@/design-system/primitives/Tabs"
-import { Label } from "@/design-system/primitives/Label";
-import { Input } from "@/design-system/primitives//Input";
-import { Separator } from "@/design-system/primitives/Separator";
 import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
-import { SocialLogin } from "@/features/auth/components/SocialLogin" 
 import { toast } from 'react-toastify'
+import { SocialLogin } from "@/features/auth/components/SocialLogin";
+
+import { Button, TabsContent, Label, Input, Separator} from "@/design-system";
 
 
 export function RegisterForm({ onSubmit }) {
@@ -18,18 +15,20 @@ export function RegisterForm({ onSubmit }) {
     const [disableButton, setDisableButton] = useState(false);
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setDisableButton(true);
         if (!email || !username || !name || !password) {
             toast.error('Preencha todos os campos');
-            setDisableButton(false);
             return;
         }
 
-        onSubmit({name, username, email, password});
-        setDisableButton(false);
+        try {
+          setDisableButton(true);
+          await onSubmit({name, username, email, password});
+        } finally {
+          setDisableButton(false);
+        }
     }
 
 
@@ -132,7 +131,7 @@ export function RegisterForm({ onSubmit }) {
             ou
           </span>
         </div>
-        <SocialLogin buttonTitle={"Cadastrar com Google"}/>
+        <SocialLogin buttonTitle="Cadastrar com Google"/>
       </form>
     </TabsContent>
   );

@@ -1,4 +1,4 @@
-import { Button } from "@/design-system/primitives/Button"
+import { Button } from "@/design-system"
 import { Languages } from 'lucide-react';
 
 export function LanguageSwitcher() {

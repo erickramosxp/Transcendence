@@ -1,0 +1,422 @@
+import * as React from 'react';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Fundação/Colors/Yale Blue" />
+
+export const YALE_BLUE_SCALE = [
+  { step: '50', token: '--yale-blue-50', value: 'var(--yale-blue-50, #eef4fb)', onColor: '#0f172a' },
+  { step: '100', token: '--yale-blue-100', value: 'var(--yale-blue-100, #dce7f5)', onColor: '#0f172a' },
+  { step: '200', token: '--yale-blue-200', value: 'var(--yale-blue-200, #c7d8ee)', onColor: '#0f172a' },
+  { step: '300', token: '--yale-blue-300', value: 'var(--yale-blue-300, #a9c0e1)', onColor: '#0f172a' },
+  { step: '400', token: '--yale-blue-400', value: 'var(--yale-blue-400, #86a4cf)', onColor: '#0f172a' },
+  { step: '500', token: '--yale-blue-500', value: 'var(--yale-blue-500, #5f84b8)', onColor: '#ffffff' },
+  { step: '600', token: '--yale-blue-600', value: 'var(--yale-blue-600, #4b6fa0)', onColor: '#ffffff' },
+  { step: '700', token: '--yale-blue-700', value: 'var(--yale-blue-700, #395984)', onColor: '#ffffff' },
+  { step: '800', token: '--yale-blue-800', value: 'var(--yale-blue-800, #2d4769)', onColor: '#ffffff' },
+  { step: '900', token: '--yale-blue-900', value: 'var(--yale-blue-900, #1f324c)', onColor: '#ffffff' },
+  { step: '950', token: '--yale-blue-950', value: 'var(--yale-blue-950, #0d1624)', onColor: '#ffffff' },
+];
+
+export const YaleBlueShowcase = () => {
+  const [active, setActive] = React.useState(YALE_BLUE_SCALE[5]);
+
+  return (
+    <div className="yb-doc">
+      <style>{`
+        .yb-doc {
+          display: grid;
+          gap: 1.5rem;
+        }
+
+        .yb-intro {
+          display: grid;
+          gap: 0.75rem;
+        }
+
+        .yb-muted {
+          margin: 0;
+          color: #5b6472;
+          line-height: 1.6;
+          max-width: 72ch;
+        }
+
+        .yb-layout {
+          display: grid;
+          grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
+          gap: 1.5rem;
+          align-items: start;
+        }
+
+        @media (max-width: 980px) {
+          .yb-layout {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .yb-panel {
+          border: 1px solid rgba(15, 23, 42, 0.08);
+          border-radius: 16px;
+          background: #ffffff;
+          padding: 1.25rem;
+          box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        }
+
+        .yb-scale-wrap {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .palette-scale {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin: 0;
+          padding: 1.5rem;
+          background: #f5f5f9;
+          border-radius: 12px;
+          border: 1px solid rgba(15, 23, 42, 0.05);
+        }
+
+        .palette-scale-item {
+          display: inline-flex;
+          width: 2.75rem;
+          height: 2.75rem;
+          border: 1px solid rgba(15, 23, 42, 0.10);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+          appearance: none;
+          padding: 0;
+        }
+
+        .palette-scale-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .palette-scale-item.is-active {
+          transform: translateY(-2px);
+          border-color: #0f172a;
+          box-shadow: 0 12px 22px rgba(15, 23, 42, 0.14);
+        }
+
+        .yb-token-row {
+          display: grid;
+          grid-template-columns: 88px 1fr;
+          gap: 1rem;
+          align-items: center;
+        }
+
+        .yb-token-swatch {
+          width: 100%;
+          height: 72px;
+          border-radius: 12px;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .yb-kicker {
+          margin: 0 0 0.35rem;
+          font-size: 0.75rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #64748b;
+          font-weight: 700;
+        }
+
+        .yb-token-title {
+          margin: 0;
+          font-size: 1rem;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .yb-token-value {
+          margin: 0.35rem 0 0;
+          font-size: 0.9rem;
+          color: #475569;
+        }
+
+        .yb-code {
+          margin-top: 1rem;
+          padding: 0.875rem 1rem;
+          border-radius: 12px;
+          background: #0f172a;
+          color: #e2e8f0;
+          overflow-x: auto;
+          font-size: 0.85rem;
+        }
+
+        .yb-preview {
+          display: grid;
+          gap: 1rem;
+          padding: 1rem;
+          border-radius: 16px;
+          background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+          border: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .yb-preview-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .yb-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.4rem 0.75rem;
+          border-radius: 999px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          letter-spacing: 0.01em;
+        }
+
+        .yb-card {
+          display: grid;
+          gap: 0.875rem;
+          padding: 1rem;
+          border-radius: 14px;
+          background: #ffffff;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .yb-card h4 {
+          margin: 0;
+          font-size: 1rem;
+          color: #0f172a;
+        }
+
+        .yb-card p {
+          margin: 0;
+          font-size: 0.92rem;
+          line-height: 1.6;
+          color: #475569;
+        }
+
+        .yb-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+
+        .yb-btn-primary,
+        .yb-btn-secondary {
+          appearance: none;
+          border: 0;
+          border-radius: 12px;
+          padding: 0.75rem 1rem;
+          font-size: 0.92rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .yb-btn-primary:hover,
+        .yb-btn-secondary:hover {
+          transform: translateY(-1px);
+        }
+
+        .yb-btn-secondary {
+          background: #eef2f7;
+          color: #0f172a;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .yb-note {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          padding: 0.95rem 1rem;
+          border-radius: 14px;
+          background: #f8fafc;
+          border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .yb-note-dot {
+          width: 0.85rem;
+          height: 0.85rem;
+          border-radius: 999px;
+          margin-top: 0.2rem;
+          flex: 0 0 auto;
+        }
+
+        .yb-note strong {
+          display: block;
+          margin-bottom: 0.2rem;
+          color: #0f172a;
+          font-size: 0.92rem;
+        }
+
+        .yb-note span {
+          display: block;
+          color: #475569;
+          font-size: 0.88rem;
+          line-height: 1.5;
+        }
+
+        .yb-usage-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .yb-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 0.45rem 0.7rem;
+          border-radius: 999px;
+          font-size: 0.82rem;
+          color: #334155;
+          background: #f1f5f9;
+          border: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .yb-chip-dot {
+          width: 0.55rem;
+          height: 0.55rem;
+          border-radius: 999px;
+          display: inline-block;
+        }
+      `}</style>
+
+      <div className="yb-intro">
+        <h1>Escala Yale Blue (50 → 950)</h1>
+        <p className="yb-muted">
+          Esta é a escala principal da marca. Ela organiza a família Yale Blue em níveis
+          progressivos de intensidade, permitindo aplicar a mesma identidade visual em
+          fundos suaves, estados intermediários, destaques e contrastes fortes.
+        </p>
+      </div>
+
+      <div className="yb-layout">
+        <div className="yb-panel yb-scale-wrap">
+          <div>
+            <p className="yb-kicker">Paleta</p>
+            <h3 className="yb-token-title">Selecione um tom para visualizar o uso</h3>
+          </div>
+
+          <div className="palette-scale">
+            {YALE_BLUE_SCALE.map((item) => (
+              <button
+                key={item.token}
+                type="button"
+                className={`palette-scale-item ${active.token === item.token ? 'is-active' : ''}`}
+                style={{ background: item.value }}
+                title={item.token}
+                aria-label={item.token}
+                aria-pressed={active.token === item.token}
+                onClick={() => setActive(item)}
+              />
+            ))}
+          </div>
+
+          <div className="yb-token-row">
+            <div className="yb-token-swatch" style={{ background: active.value }} />
+            <div>
+              <p className="yb-kicker">Token selecionado</p>
+              <h3 className="yb-token-title">{active.token}</h3>
+              <p className="yb-token-value">
+                Escala: {active.step} · Uso recomendado: cor de apoio, destaque, contraste ou profundidade.
+              </p>
+            </div>
+          </div>
+
+          <div className="yb-code">
+            <code>{`background: var(${active.token});`}</code>
+            <br />
+            <code>{`color: ${active.onColor};`}</code>
+          </div>
+        </div>
+
+        <div className="yb-panel">
+          <p className="yb-kicker">Em ação</p>
+
+          <div className="yb-preview">
+            <div className="yb-preview-top">
+              <div>
+                <h3 className="yb-token-title" style={{ marginBottom: '0.25rem' }}>
+                  Aplicação real do token
+                </h3>
+                <p className="yb-token-value" style={{ margin: 0 }}>
+                  Exemplo prático com badge, botão e destaque visual.
+                </p>
+              </div>
+
+              <span
+                className="yb-badge"
+                style={{
+                  background: active.value,
+                  color: active.onColor,
+                }}
+              >
+                {active.token}
+              </span>
+            </div>
+
+            <div className="yb-card">
+              <h4>Componente com acento Yale Blue</h4>
+              <p>
+                Este preview mostra como o tom selecionado pode sair da paleta e virar
+                interface real, mantendo consistência entre identidade visual e uso prático.
+              </p>
+
+              <div className="yb-actions">
+                <button
+                  type="button"
+                  className="yb-btn-primary"
+                  style={{
+                    background: active.value,
+                    color: active.onColor,
+                    boxShadow: '0 10px 18px rgba(15, 23, 42, 0.10)',
+                  }}
+                >
+                  Ação principal
+                </button>
+
+                <button type="button" className="yb-btn-secondary">
+                  Ação secundária
+                </button>
+              </div>
+            </div>
+
+            <div className="yb-note">
+              <span className="yb-note-dot" style={{ background: active.value }} />
+              <div>
+                <strong>Como usar este tom</strong>
+                <span>
+                  Tons claros funcionam bem em fundos e superfícies suaves. Tons médios
+                  funcionam como cor principal da marca. Tons escuros funcionam melhor
+                  em contraste, sidebar, títulos fortes e contexto dark.
+                </span>
+              </div>
+            </div>
+
+            <div className="yb-usage-list">
+              <span className="yb-chip">
+                <span className="yb-chip-dot" style={{ background: active.value }} />
+                Button
+              </span>
+              <span className="yb-chip">
+                <span className="yb-chip-dot" style={{ background: active.value }} />
+                Badge
+              </span>
+              <span className="yb-chip">
+                <span className="yb-chip-dot" style={{ background: active.value }} />
+                Highlight
+              </span>
+              <span className="yb-chip">
+                <span className="yb-chip-dot" style={{ background: active.value }} />
+                Brand Accent
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+<YaleBlueShowcase />

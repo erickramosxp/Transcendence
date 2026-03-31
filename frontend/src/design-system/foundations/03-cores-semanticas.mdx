@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Fundação/Cores Semânticas" />
+
+# Cores semânticas
+
+As cores semânticas organizam a interface pelo papel funcional de cada token. Isso evita decisões visuais inconsistentes e facilita a manutenção do sistema.
+
+## Background e foreground
+
+- `--background`: fundo principal da aplicação.
+- `--foreground`: cor principal de texto e conteúdo prioritário.
+- Use essa dupla como base de contraste da página.
+
+## Primary
+
+- `--primary`: ação principal, CTA, botão primário, links de maior importância e estados ativos.
+- `--primary-foreground`: texto e ícone sobre o fundo primário.
+- Use quando a interface precisar indicar o caminho principal de ação.
+
+## Secondary e muted
+
+- `--secondary`: superfícies alternativas, botões secundários e áreas de apoio.
+- `--muted`: regiões de baixa ênfase, placeholders visuais, containers secundários.
+- `--muted-foreground`: textos auxiliares, descrições, timestamps e metadados.
+
+## Card e popover
+
+- `--card`: superfície de cards e blocos destacados.
+- `--popover`: dropdowns, menus flutuantes, tooltips e áreas sobrepostas.
+- Use para criar hierarquia de profundidade sem depender apenas de borda.
+
+## Accent e destructive
+
+- `--accent`: hover, seleção leve, realce contextual e estados de interação discreta.
+- `--destructive`: erro, exclusão, ação irreversível, alerta crítico.
+- Nunca use `--destructive` para informação neutra ou decorativa.
+
+## Apoio de interface
+
+- `--border`: bordas gerais e divisões.
+- `--ring`: foco e acessibilidade visual em navegação por teclado.
+- `--input-background` e `--switch-background`: superfícies específicas de formulário e switch.

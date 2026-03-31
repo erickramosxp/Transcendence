@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
+import { useAuth } from "@/app/providers/AuthProvider";
+import { followUser, unfollowUser } from "../services/profileService";
 import { toast } from 'react-toastify'
 
-// import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
 import { EditProfileForm } from "./EditProfileForm";
 import { FollowersModal } from "./FollowersModal";
-import { Button } from "@/design-system/primitives/Button";
-import { Modal } from "@/design-system/components/Modal";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { Avatar } from "@/design-system/primitives/Avatar";
-import { followUser, unfollowUser } from "../services/profileService";
+
+import { Button, Modal, Avatar } from "@/design-system";
 
 // {
 //   "id": 0,
@@ -38,12 +36,13 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFields({ isFollowing: true });
 			changeFollowCount('follow');
 		} catch (err) {
-			console.error(err)
+			console.error(err);
+			toast.error("Falha ao seguir")
 		} finally {
-
+			
 		}
 	}
-
+	
 	const handleUnfollowUser = async (username) => {
 
 		try {
@@ -52,6 +51,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFollowCount('unfollow');
 		} catch (err) {
 			console.error(err)
+			toast.error("Falha ao deixar de seguir")
 		} finally {
 
 		}
