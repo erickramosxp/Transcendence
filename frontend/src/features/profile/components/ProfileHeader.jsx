@@ -12,6 +12,8 @@ import { Modal } from "@/design-system/components/Modal";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { Avatar } from "@/design-system/primitives/Avatar";
 import { followUser, unfollowUser } from "../services/profileService";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 
 // {
 //   "id": 0,
@@ -30,6 +32,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 
 	const [editOpen, setEditOpen] = useState(false);
 	const { user } = useAuth();
+	const { t } = useTranslation('profile');
 
 	const handleFollowUser = async (username) => {
 
@@ -77,7 +80,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 		<>
 			<Modal
 				open={editOpen}
-				title="Editar Perfil"
+				title={t('header.editProfile')}
 				onClose={() => setEditOpen(false)}
 				scrollable={false}
 			>
@@ -124,14 +127,14 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 									{user?.id != userData?.id ?
 										(
 											<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
-												{userData?.isFollowing ? 'Seguindo' : 'Seguir'}
+												{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
 											</Button>
 										)
 										:
 										<>
 											<Button variant='outline' className="rounded-full cursor-pointer" onClick={() => setEditOpen(true)}>
 												<SquarePen />
-												Editar Perfil
+												{t('header.editProfile')}
 											</Button>
 											<Button variant='outline' className='rounded-full cursor-pointer'>
 												<Settings />

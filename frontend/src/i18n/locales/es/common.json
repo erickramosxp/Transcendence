@@ -1,1 +1,7 @@
-{}
+{
+    "postsUI": {
+        "empty": "Nada por aquí aún.",
+        "loadMore": "Cargando más…",
+        "end": "Has llegado al final"
+    }
+}

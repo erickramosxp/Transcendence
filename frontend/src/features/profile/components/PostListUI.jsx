@@ -1,15 +1,20 @@
 import React from "react";
 import PostCard from "@/features/feed/components/PostCard";
 import { Card } from "@/design-system/primitives/Card";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 
 
 export function PostListUI({ posts, hasMore, isLoadingMore, sentinelRef, activeCommentsPostId, handleLike, toggleComments, incrementCommentCount }) {
+
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
 
   return (
     <div className="space-y-8">
       {posts?.length === 0 ? (
         <div className="text-center text-muted-foreground py-12 text-sm">
-          Nada por aqui ainda.<br />
+          {t('postsUI.empty')}<br />
           {/* Seja o primeiro a compartilhar algo ✨ */}
         </div>
       ) : (
@@ -27,10 +32,10 @@ export function PostListUI({ posts, hasMore, isLoadingMore, sentinelRef, activeC
           ))}
           <div ref={sentinelRef} className="h-4" aria-hidden />
           {isLoadingMore && (
-            <div className="text-center text-muted-foreground py-4">Carregando mais…</div>
+            <div className="text-center text-muted-foreground py-4">{t('postsUI.loadMore')}</div>
           )}
           {!hasMore && posts?.length > 0 && (
-            <div className="text-center text-muted-foreground py-4 text-sm">Você chegou ao fim</div>
+            <div className="text-center text-muted-foreground py-4 text-sm">{t('postsUI.end')}</div>
           )}
         </>
       )}

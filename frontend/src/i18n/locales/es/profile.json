@@ -1,1 +1,56 @@
-{}
+{
+    "viewer": {
+        "notFounded": "Usuario no encontrado",
+        "posts": "Publicaciones",
+        "media": "Multimedia",
+        "likes": "Me gusta"
+    },
+    "header" : {
+        "editProfile": "Editar perfil",
+        "settings": "Configuración",
+        "follow": "Seguir",
+        "unfollow": "Dejar de seguir",
+        "editProfileModal": {
+            "title": "Editar perfil",
+            "name": "Nombre",
+            "namePlaceholder": "Ingresa tu nombre",
+            "bio": "Biografía",
+            "bioPlaceholder": "Cuéntanos sobre ti",
+            "bioMaxLength": "Máx. 160 caracteres",
+            "location": "Ubicación",
+            "locationPlaceholder": "¿De dónde eres?",
+            "website": "Sitio web",
+            "websitePlaceholder": "https://ejemplo.com",
+            "birthday": "Cumpleaños",
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "errorBioLength": "La biografía debe tener menos de 160 caracteres",
+            "errorNameLength": "El nombre debe tener al menos 3 caracteres",
+            "success": "Perfil actualizado correctamente",
+            "error": "Error al actualizar el perfil"
+        }
+    },
+    "info": {
+        "joined": "Se unió",
+        "location": "Ubicación",
+        "website": "Sitio web",
+        "birthday": "Cumpleaños",
+        "followers": "Seguidores",
+        "following": "Siguiendo",
+        "followersModal": {
+            "title": "Conexiones",
+            "empty": "Sin seguidores aún"
+        }
+    },
+    "likedPosts": {
+        "error": "Error al cargar posts que le gustan"
+    },
+    "mediaGrid": {
+        "getMidaError": "Error al buscar mídias do usuário",
+        "getPostError": "Error al obter informações do post",
+        "empty": "Sin multimedia aún."
+    },
+    "postList": {
+        "error": "Error al obtener publicaciones del usuario"
+    }
+}

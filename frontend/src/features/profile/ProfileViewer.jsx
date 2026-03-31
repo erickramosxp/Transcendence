@@ -12,6 +12,7 @@ import { LikedPostList } from './components/LikedPostList';
 
 import { useAuth } from '@/app/providers/AuthProvider';
 import { getUserInfo } from './services/profileService';
+import { useTranslation } from 'react-i18next';
 
 export function ProfileViewer() {
 
@@ -22,6 +23,7 @@ export function ProfileViewer() {
   const [activeTab, setActiveTab] = useState('posts');
   const { user } = useAuth();
   const { username } = useParams();
+  const { t } = useTranslation('profile');
 
   const profileUsername = username ?? user.username;
 
@@ -87,7 +89,7 @@ export function ProfileViewer() {
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
         <p className='text-muted-foreground text-3xl text-center'>
-          Perfil não encontrado
+          {t('viewer.notFounded')}
         </p>
       </div>
     )
@@ -100,9 +102,9 @@ export function ProfileViewer() {
       <div className='max-w-4xl mx-auto px-4 pb-10'>
         <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
           <TabsList className='mb-4'>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="media">Mídia</TabsTrigger>
-            <TabsTrigger value="likes">Curtidas</TabsTrigger>
+            <TabsTrigger value="posts">{t('viewer.posts')}</TabsTrigger>
+            <TabsTrigger value="media">{t('viewer.media')}</TabsTrigger>
+            <TabsTrigger value="likes">{t('viewer.likes')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts">

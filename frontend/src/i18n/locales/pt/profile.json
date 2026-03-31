@@ -1,1 +1,56 @@
-{}
+{
+    "viewer": {
+        "notFounded": "Usuário não encontrado",
+        "posts": "Posts",
+        "media": "Mídia",
+        "likes": "Curtidas"
+    },
+    "header" : {
+        "editProfile": "Editar Perfil",
+        "settings": "Configurações",
+        "follow": "Seguir",
+        "unfollow": "Deixar de Seguir",
+        "editProfileModal": {
+            "title": "Editar Perfil",
+            "name": "Nome",
+            "namePlaceholder": "Digite seu nome",
+            "bio": "Biografia",
+            "bioPlaceholder": "Fale-nos sobre você",
+            "bioMaxLength": "Máx. 160 caracteres",
+            "location": "Localização",
+            "locationPlaceholder": "De onde você é?",
+            "website": "Site",
+            "websitePlaceholder": "https://exemplo.com",
+            "birthday": "Data de Nascimento",
+            "save": "Salvar",
+            "cancel": "Cancelar",
+            "errorBioLength": "A biografia deve ter menos de 160 caracteres",
+            "errorNameLength": "O nome deve ter pelo menos 3 caracteres",
+            "success": "Perfil atualizado com sucesso",
+            "error": "Falha ao atualizar o perfil"
+        }
+    },
+    "info": {
+        "joined": "Entrou em",
+        "location": "Localização",
+        "website": "Site",
+        "birthday": "Data de Nascimento",
+        "followers": "Seguidores",
+        "following": "Seguindo",
+        "followersModal": {
+            "title": "Conexões",
+            "empty": "Sem seguidores ainda"
+        }
+    },
+    "likedPosts": {
+        "error": "Falha ao carregar posts curtidos pelo usuário"
+    },
+    "mediaGrid": {
+        "getMidaError": "Falha ao buscar mídias do usuário",
+        "getPostError": "Falha ao obter informações do post",
+        "empty": "Nenhuma mídia ainda."
+    },
+    "postList": {
+        "error": "Falha ao buscar posts do usuário"
+    }
+}
