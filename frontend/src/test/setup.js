@@ -1,14 +1,27 @@
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+const storage = {
+  lang: "pt",
 };
 
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-});
+const localStorageMock = {
+  getItem: vi.fn((key) => storage[key] ?? null),
+  setItem: vi.fn((key, value) => {
+    storage[key] = String(value);
+  }),
+  removeItem: vi.fn((key) => {
+    delete storage[key];
+  }),
+  clear: vi.fn(() => {
+    Object.keys(storage).forEach((key) => delete storage[key]);
+    storage.lang = "pt";
+  }),
+};
 
-import "@/i18n";
+vi.stubGlobal("localStorage", localStorageMock);
+// vi.stubGlobal("window", { localStorage: localStorageMock });
+
+beforeAll(async () => {
+  await import("@/i18n");
+});
