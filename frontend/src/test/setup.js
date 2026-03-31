@@ -10,3 +10,5 @@ const localStorageMock = {
 Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
 });
+
+import "@/i18n";
