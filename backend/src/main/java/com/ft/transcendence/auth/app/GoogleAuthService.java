@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.text.Normalizer;
 import java.util.Locale;
 
+import static com.ft.transcendence.preferences.domain.UserPreferences.createDefaultPreferences;
+
 @ApplicationScoped
 public class GoogleAuthService {
 
@@ -142,6 +144,8 @@ public class GoogleAuthService {
                 user.createdAt = now;
                 user.updatedAt = now;
                 user.persist();
+
+                createDefaultPreferences(user, now);
             }
             linkGoogleProvider(user, sub, now);
         }
