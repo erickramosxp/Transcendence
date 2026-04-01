@@ -37,12 +37,12 @@ export function LanguageSwitcher() {
 
       let left = rect.left + window.scrollX;
 
-      // 👉 se ultrapassar a direita da tela
+      // se ultrapassar a direita da tela
       if (left + dropdownWidth > window.innerWidth) {
         left = rect.right - dropdownWidth;
       }
 
-      // 👉 se ultrapassar a esquerda
+      // se ultrapassar a esquerda
       if (left < padding) {
         left = padding;
       }

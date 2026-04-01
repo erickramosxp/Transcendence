@@ -55,7 +55,7 @@ i18n
         resources,
         ns: ["common", "profile", "auth", "feed", "home", "authProvider"],
         defaultNS: "common",
-        fallbackLng: "pt",
+        fallbackLng: "pt-BR",
         lng: localStorage.getItem("lang") || "pt-BR",
         interpolation: {
             escapeValue: false
