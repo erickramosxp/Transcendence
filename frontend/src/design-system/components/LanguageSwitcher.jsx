@@ -10,9 +10,9 @@ import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
 
 
 const languages = [
-  { code: "pt", label: "Português", flag: "🇧🇷", icon: <Brazil /> },
-  { code: "en", label: "English", flag: "🇺🇸", icon: <UnitedStates /> },
-  { code: "es", label: "Español", flag: "🇪🇸", icon: <Spain /> },
+  { code: "pt-BR", label: "Português", flag: "🇧🇷", icon: <Brazil /> },
+  { code: "en-US", label: "English", flag: "🇺🇸", icon: <UnitedStates /> },
+  { code: "es-ES", label: "Español", flag: "🇪🇸", icon: <Spain /> },
 ];
 
 
@@ -21,6 +21,7 @@ export function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
   const buttonRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [position, setPosition] = useState(null);
   const { changeLanguage, currentLanguage } = useLanguage();
 
@@ -55,7 +56,6 @@ export function LanguageSwitcher() {
 
   function handleSelectLanguage(code) {
     setIsOpen(false);
-
     changeLanguage(code);
   }
 
@@ -103,6 +103,7 @@ export function LanguageSwitcher() {
           top: position.top,
           left: position.left,
         }}
+          ref={dropdownRef}
           className="z-80 min-w-[140px] rounded-md border bg-background p-1 shadow-md">
           {languages.map((lang) => (
             <button

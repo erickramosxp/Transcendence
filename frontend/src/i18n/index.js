@@ -23,7 +23,7 @@ import esHome from "./locales/es/home.json";
 import esAuthProvider from "./locales/es/authProvider.json";
 
 const resources = {
-    en: {
+    "en-US": {
         auth: enAuth,
         feed: enFeed,
         profile: enProfile,
@@ -31,7 +31,7 @@ const resources = {
         home: enHome,
         authProvider: enAuthProvider
     },
-    pt: {
+    "pt-BR": {
         auth: ptAuth,
         feed: ptFeed,
         profile: ptProfile,
@@ -39,7 +39,7 @@ const resources = {
         home: ptHome,
         authProvider: ptAuthProvider
     },
-    es: {
+    "es-ES": {
         auth: esAuth,
         feed: esFeed,
         profile: esProfile,
@@ -56,7 +56,7 @@ i18n
         ns: ["common", "profile", "auth", "feed", "home", "authProvider"],
         defaultNS: "common",
         fallbackLng: "pt",
-        lng: localStorage.getItem("lang") || "pt",
+        lng: localStorage.getItem("lang") || "pt-BR",
         interpolation: {
             escapeValue: false
         }
