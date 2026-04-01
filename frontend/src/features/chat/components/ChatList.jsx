@@ -1,5 +1,5 @@
 import ChatItem from "@/features/chat/components/ChatItem";
-import { Separator } from "@/design-system/primitives/Separator";
+import { Separator } from "@/design-system";
 import { Search } from "lucide-react";
 
 export default function ChatList({friendsChat, setSelectedChat}) {
