@@ -1,15 +1,10 @@
 // components/FollowersModal.jsx
 import { useEffect, useState } from 'react';
-import { Modal } from '@/design-system/components/Modal';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs';
-import { getFollowersList, getFollowingList } from '../services/profileService';
-import { Button } from '@/design-system/primitives/Button';
-import { Avatar } from '@/design-system/primitives/Avatar';
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
-import Scroll from '@/design-system/primitives/Scroll';
-import { followUser, unfollowUser } from "../services/profileService";
 import { useTranslation } from 'react-i18next';
+import { useNavigate, Link } from 'react-router-dom';
+import { followUser, unfollowUser, getFollowersList, getFollowingList } from "../services/profileService";
+
+import { Button, Scroll, Avatar, Tabs, TabsList, TabsTrigger, TabsContent, Modal, Loading } from '@/design-system';
 
 function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 
@@ -17,7 +12,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
 
   function handleNavigate(username) {
     onClose?.();                          
-    navigate(`/profile/${username}`); 
+    navigate(`/${username}`); 
   }
 
     const handleFollowUser = async (username) => {
@@ -59,8 +54,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
   if (loading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <div className="h-6 w-6 rounded-full border-2
-                        border-primary border-t-transparent animate-spin" />
+        <Loading />
       </div>
     );
   }
@@ -91,7 +85,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
           </button>
           <div className="flex flex-col flex-1 min-w-0">
             <Link
-              to={`/profile/${user.username}`}
+              to={`/${user.username}`}
               onClick={() => handleNavigate(user.username)}
               className="text-sm font-medium text-foreground
                          hover:text-primary transition-colors truncate"

@@ -4,18 +4,13 @@ import {
     Heart,
     Shield,
 } from "lucide-react"
-
-import { FeatureCard } from '@/design-system/components/FeatureCard'
+import { FeatureCard, BgAnimated, BrandHeader, TopBar} from '@/design-system'
 import { AuthContainer } from "@/features/auth/AuthContainer"
-import { BgAnimated } from '@/design-system/components/BgAnimated'
-import { BrandHeader } from "@/design-system/components/BrandHeader"
-import { TopBar } from "@/design-system/components/TopBar"
 import { useTranslation } from "react-i18next"
 
 export function Home() {
 
     const { t } = useTranslation('home');
-
 
     const features = [
         {
@@ -53,8 +48,8 @@ export function Home() {
             <BgAnimated />
 
             <div className="relative min-h-screen">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8" >
-                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center py-20 sm:py-24 lg:py-12">
+                <div className="container mx-auto " >
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 min-h-screen items-center py-20 sm:py-0">
 
                         {/* Apresentação do Lado Esquerdo */}
                         <div className="flex flex-col justify-center space-y-8 lg:space-y-12">

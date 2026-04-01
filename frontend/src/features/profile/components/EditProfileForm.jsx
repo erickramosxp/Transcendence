@@ -1,12 +1,10 @@
 
 import { useEffect, useState } from "react";
-
-import { Label } from "@/design-system/primitives/Label";
-import { Input } from "@/design-system/primitives/Input";
-import { Button } from "@/design-system/primitives/Button";
 import { updateProfileInfo } from "@/features/profile/services/profileService";
 import {toast} from 'react-toastify'
 import { useTranslation } from "react-i18next";
+
+import { Button, Input, Label } from "@/design-system";
 
 export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
 
@@ -36,7 +34,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
       location: userData?.location || '',
       websiteUrl: userData?.websiteUrl || ''
     })
-  }, []);
+  }, [userData]);
 
   t('header.editProfileModal')
 

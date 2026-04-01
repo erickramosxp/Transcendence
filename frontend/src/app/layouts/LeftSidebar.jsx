@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom"
 import { useAuth } from "@/app/providers/AuthProvider"
-import { Button } from "@/design-system/primitives/Button";
-import { ThemeToggle } from "@/design-system/components/ThemeToggle";
-import { LanguageSwitcher } from "@/design-system/components/LanguageSwitcher";
+
+import { Button, LanguageSwitcher, ThemeToggle } from "@/design-system";
 
 export function LeftSidebar() {
 

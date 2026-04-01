@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { PostListUI } from "./PostListUI";
 import { getUserPosts } from "../services/profileService";
 import { usePostList } from "../hooks/usePostList";
-import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
+
+import { Loading } from "@/design-system";
 
 export function ProfilePostList({ username }) {
 

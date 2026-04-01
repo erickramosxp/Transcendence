@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Modal } from "@/design-system/components/Modal";
-import  PostCard  from "@/features/feed/components/PostCard";
-import { usePostList } from "../hooks/usePostList";
-import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
-import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { usePostList } from "../hooks/usePostList";
+import  PostCard  from "@/features/feed/components/PostCard";
+import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
+
+import { Modal, Loading } from "@/design-system";
 import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useTranslation } from "react-i18next";
 

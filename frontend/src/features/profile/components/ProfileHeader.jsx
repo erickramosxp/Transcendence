@@ -1,30 +1,18 @@
 import React, { useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
+import { useAuth } from "@/app/providers/AuthProvider";
+import { followUser, unfollowUser } from "../services/profileService";
 import { toast } from 'react-toastify'
 
-// import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
 import { EditProfileForm } from "./EditProfileForm";
 import { FollowersModal } from "./FollowersModal";
-import { Button } from "@/design-system/primitives/Button";
-import { Modal } from "@/design-system/components/Modal";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { Avatar } from "@/design-system/primitives/Avatar";
-import { followUser, unfollowUser } from "../services/profileService";
+
 import { useTranslation } from "react-i18next";
 import { SettingsContent } from "./SettingsContent";
 
-// {
-//   "id": 0,
-//   "avatarUrl": "string",
-//   "bannerImgUrl": "string",
-//   "username": "string",
-//   "name": "string",
-//   "followers": 0,
-//   "following": 0,
-//   "registerDate": "2022-03-10T12:15:50-04:00"
-// }
+import { Button, Modal, Avatar } from "@/design-system";
 
 export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => {
 
@@ -42,12 +30,13 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFields({ isFollowing: true });
 			changeFollowCount('follow');
 		} catch (err) {
-			console.error(err)
+			console.error(err);
+			toast.error("Falha ao seguir")
 		} finally {
-
+			
 		}
 	}
-
+	
 	const handleUnfollowUser = async (username) => {
 
 		try {
@@ -56,6 +45,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFollowCount('unfollow');
 		} catch (err) {
 			console.error(err)
+			toast.error("Falha ao deixar de seguir")
 		} finally {
 
 		}

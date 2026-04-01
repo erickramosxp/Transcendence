@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { TabsContent } from "@/design-system/primitives/Tabs"
-import { Label } from "@/design-system/primitives/Label";
-import { Input } from "@/design-system/primitives//Input";
-import { Separator } from "@/design-system/primitives/Separator";
 import { User, Mail, Lock, ArrowRight, AtSign } from "lucide-react";
-import { SocialLogin } from "@/features/auth/components/SocialLogin" 
 import { toast } from 'react-toastify'
 import { useTranslation } from "react-i18next";
+import { SocialLogin } from "@/features/auth/components/SocialLogin";
+
+import { Button, TabsContent, Label, Input, Separator} from "@/design-system";
+
 
 export function RegisterForm({ onSubmit }) {
 
@@ -19,18 +17,21 @@ export function RegisterForm({ onSubmit }) {
     const { t } = useTranslation('auth');
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setDisableButton(true);
         if (!email || !username || !name || !password) {
             toast.error(t('errors.fillAllFields'));
             setDisableButton(false);
             return;
         }
 
-        onSubmit({name, username, email, password});
-        setDisableButton(false);
+        try {
+          setDisableButton(true);
+          await onSubmit({name, username, email, password});
+        } finally {
+          setDisableButton(false);
+        }
     }
 
 

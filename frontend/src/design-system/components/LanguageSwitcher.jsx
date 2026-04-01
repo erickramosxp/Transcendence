@@ -1,15 +1,20 @@
+
+
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/design-system/primitives/Button";
 import { Languages, Check } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
 import { createPortal } from "react-dom";
+
+import { Button } from "@/design-system"
+import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
+
 
 const languages = [
   { code: "pt", label: "Português", flag: "🇧🇷", icon: <Brazil /> },
   { code: "en", label: "English", flag: "🇺🇸", icon: <UnitedStates /> },
   { code: "es", label: "Español", flag: "🇪🇸", icon: <Spain /> },
 ];
+
 
 export function LanguageSwitcher() {
 

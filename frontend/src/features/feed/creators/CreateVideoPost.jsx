@@ -1,16 +1,16 @@
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
-
 import { useCreatePost } from "./useCreatePost";
+import { createPortal } from "react-dom";
+import { useFloatingEmojiPicker } from "../hooks/useFloatingEmojiPicker";
 
-import { Button } from "@/design-system/primitives/Button";
-import { Card, CardContent } from "@/design-system/primitives/Card";
-import Textarea from "@/design-system/primitives/Textarea";
-import FileUploadButton from "@/design-system/primitives/FileUploadButton";
+import { Button, Card, CardContent, Textarea, FileUploadButton } from "@/design-system";
+
 import { useTranslation } from "react-i18next";
 
 
 function CreateVideoPost({ onAddPost, onClose }) {
+	
 	const {
 		text,
 		file, setFile,
@@ -19,10 +19,13 @@ function CreateVideoPost({ onAddPost, onClose }) {
 		handleChange,
 		handleEmojiSelect
 	} = useCreatePost(onAddPost, onClose, "video");
+
 	const { t } = useTranslation('feed');
 
+	const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
+
 	return (
-		<Card className=" border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+		<Card className="border-border bg-card/90 backdrop-blur-xl shadow-xl">
 			<CardContent className="p-4 sm:p-6">
 				<div className="flex gap-3 sm:gap-4">
 					<div className="flex-1 space-y-3 sm:space-y-4 min-w-0 relative">
@@ -37,36 +40,45 @@ function CreateVideoPost({ onAddPost, onClose }) {
 								}
 							}}
 							placeholder={t('createPost.video.placeholder')}
-							className="min-h-[80px] sm:min-h-[100px] resize-none border-slate-700 focus:border-dark:border-slate-700 focus:border-[#4a78b5] focus:ring-[#4a78b5]/20"
-						/>
+							className="min-h-[80px] resize-none sm:min-h-[100px]"
+							/>
+						<div ref={anchorRef} />
 						<p className="text-sm text-muted-foreground text-right">
 							{text.length}/500
 						</p>
-						{showEmojiPicker && (
-							<div className="absolute">
-								<EmojiPicker onEmojiClick={handleEmojiSelect} />
-							</div>
-						)}
 						{!file && (
-							<div className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
+							<div className="flex items-center gap-2 rounded-md bg-muted p-3">
 								<div className="flex-1 flex items-center gap-2">
-									<span className="text-[#4a78b5]">🎥</span>
-									<span className="text-xs text-slate-500">
+									<span className="text-primary">🎥</span>
+									<span className="text-xs text-muted-foreground">
 										{t('createPost.video.emptyHint')}
 									</span>
 								</div>
 							</div>
 						)}
+						{showEmojiPicker &&
+							createPortal(
+								<div
+									className="fixed z-[100]"
+									style={{
+										top: `${pickerStyle.top}px`,
+										left: `${pickerStyle.left}px`,
+									}}
+								>
+									<EmojiPicker onEmojiClick={handleEmojiSelect} />
+								</div>,
+								document.body
+							)}
 						{file && (
-							<div className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
-								<div className="flex-1 flex items-center gap-2">
+							<div className="flex items-center gap-2 rounded-md bg-muted p-3">
+								<div className="flex flex-1 items-center gap-2 min-w-0">
 									{file.type.startsWith('image/') ? (
-										<ImageIcon className="h-5 w-5 text-[#4a78b5]" />
+										<ImageIcon className="h-5 w-5 text-primary" />
 									) : (
-										<span className="text-[#4a78b5]">🎥</span>
+										<span className="shrink-0 text-primary">🎥</span>
 									)}
-									<span className="text-sm truncate">{file.name}</span>
-									<span className="text-xs text-slate-500">
+									<span className="truncate text-sm text-foreground">{file.name}</span>
+									<span className="shrink-0 text-xs text-muted-foreground">
 										({(file.size / 1024 / 1024).toFixed(2)} MB)
 									</span>
 								</div>
@@ -87,8 +99,9 @@ function CreateVideoPost({ onAddPost, onClose }) {
 							<div>
 								<Button
 									onClick={handleSubmit}
+									variant="primary"
 									size="sm"
-									className="bg-gradient-to-r from-[#6e93c4] via-[#4a78b5] to-[#3b6091] hover:from-[#4a78b5] hover:via-[#3b6091] hover: to[#2c486d] shadow-lg shadow-[#4a78b5]/50 h-9"
+									className="h-9"
 								>
 									<Send className="h-4 w-4 mr-2 " />
 									{t('createPost.video.submit')}

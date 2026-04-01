@@ -6,44 +6,60 @@
   --font-weight-medium: 500;
   --font-weight-normal: 400;
 
-  --background:  #F0F2F7; /* Fundo páginas */
-  --foreground: #0a0a0a; /* Textos principais */
+  --background: #F0F2F7;
+  /* Fundo páginas */
+  --foreground: #0a0a0a;
+  /* Textos principais */
 
-  --primary: #4a78b5; /* Botões principais */
-  --primary-foreground: #f0f4fa; /* Cor do texto do botão principal*/
+  --primary: #4a78b5;
+  /* Botões principais */
+  --primary-foreground: #f0f4fa;
+  /* Cor do texto do botão principal*/
 
-  --secondary: #eceef2; /* Botões alternativos */
+  --secondary: #eceef2;
+  /* Botões alternativos */
   --secondary-foreground: #030213;
 
-  --muted: #ececf0; /* Baixa ênfase */
+  --muted: #ececf0;
+  /* Baixa ênfase */
   --muted-foreground: #717182;
 
-  --card: #ffffff; /* Cards */
+  --card: #ffffff;
+  /* Cards */
   --card-foreground: oklch(0.145 0 0);
 
-  --popover: oklch(1 0 0); /* Popovers */
+  --popover: oklch(1 0 0);
+  /* Popovers */
   --popover-foreground: oklch(0.145 0 0);
 
-  --accent: #e9ebef; /* Hover/destaques */
+  --accent: #e9ebef;
+  /* Hover/destaques */
   --accent-foreground: #030213;
 
-  --destructive: #d4183d; /* Erros/vermelho */
+  --destructive: #d4183d;
+  /* Erros/vermelho */
   --destructive-foreground: #ffffff;
 
-  --border: rgba(0, 0, 0, 0.1); /* Bordas gerais */
+  --border: rgba(0, 0, 0, 0.1);
+  /* Bordas gerais */
 
   --input: transparent;
 
   --input-background: #f3f3f5;
   --switch-background: #cbced4;
 
-  --ring: oklch(0.708 0 0); /* Foco */
+  --ring: oklch(0.708 0 0);
+  /* Foco */
 
   /*  Escala de radius (Bordas)*/
-  --radius-sm: 0.5rem;    /* 8px — inputs, badges */
-  --radius-md: 0.75rem;   /* 12px — botões */
-  --radius: 1rem;         /* 16px — cards de post, cards de amigo */
-  --radius-xl: 1.25rem;   /* 20px — card de login, perfil hero */
+  --radius-sm: 0.5rem;
+  /* 8px — inputs, badges */
+  --radius-md: 0.75rem;
+  /* 12px — botões */
+  --radius: 1rem;
+  /* 16px — cards de post, cards de amigo */
+  --radius-xl: 1.25rem;
+  /* 20px — card de login, perfil hero */
 
   /* status online e unread */
   --color-online: #22c55e;
@@ -67,12 +83,16 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* container */
-  --container-max-width: 80rem; /* 1280px */
-  --container-padding-x: 1rem;  /* 16px */
-  --container-padding-y: 1.5rem; /* 24px */
-  --grid-gap: 1.5rem; /* 24px */
-  
-  
+  --container-max-width: 80rem;
+  /* 1280px */
+  --container-padding-x: 1rem;
+  /* 16px */
+  --container-padding-y: 1.5rem;
+  /* 24px */
+  --grid-gap: 1.5rem;
+  /* 24px */
+
+
   /* === YALE BLUE SCALE (Home) === */
   /* Yale Blue Custom Colors */
   --yale-blue-50: #edf2f8;
@@ -89,14 +109,14 @@
 
   /* === HOME GRADIENTS === */
   --gradient-main: linear-gradient(to bottom right, var(--yale-blue-50) 0%, var(--yale-blue-100) 50%, var(--yale-blue-200) 100%);
+  --gradient-anim-light: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-300) 100%);
+  --gradient-anim-center: linear-gradient(to bottom right, var(--yale-blue-300) 10%, var(--yale-blue-400) 100%);
+  --gradient-connect: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 100%);
   --gradient-sparkle: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 50%, var(--yale-blue-600) 100%);
   --gradient-title: linear-gradient(to right, var(--yale-blue-500) 0%, var(--yale-blue-600) 50%, var(--yale-blue-700) 100%);
-  --gradient-connect: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 100%);
   --gradient-chat: linear-gradient(to bottom right, var(--yale-blue-500) 0%, var(--yale-blue-600) 100%);
   --gradient-share: linear-gradient(to bottom right, var(--yale-blue-600) 0%, var(--yale-blue-700) 100%);
   --gradient-secure: linear-gradient(to bottom right, var(--yale-blue-700) 0%, var(--yale-blue-800) 100%);
-  --gradient-anim-light: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-300) 100%);
-  --gradient-anim-center: linear-gradient(to bottom right, var(--yale-blue-300) 10%, var(--yale-blue-400) 100%);
 
   --gradient-btn-primary: linear-gradient(to right, var(--yale-blue-400), var(--yale-blue-500), var(--yale-blue-600));
   --gradient-btn-primary-hover: linear-gradient(to right, var(--yale-blue-500), var(--yale-blue-600), var(--yale-blue-700));
@@ -109,11 +129,14 @@
   --glass-card: 0.9;
   --glass-border: 0.5;
   --divider: var(--border);
-		/* Gradients */
-    --gradient-primary: linear-gradient(90deg, #6e93c4 0%, #4a78b5 50%, #3b6091 100%);
-    --gradient-background: linear-gradient(135deg, #edf2f8 0%, #dbe4f0 50%, #b7c9e1 100%);
-    --gradient-dark: linear-gradient(135deg, #0a1119 0%, #0f1824 50%, #1e3048 100%);
-    --gradient-icon: linear-gradient(135deg, #6e93c4 0%, #92aed3 100%);
+  /* Gradients */
+  --gradient-primary: linear-gradient(90deg, #6e93c4 0%, #4a78b5 50%, #3b6091 100%);
+  --gradient-background: linear-gradient(135deg, #edf2f8 0%, #dbe4f0 50%, #b7c9e1 100%);
+  --gradient-dark: linear-gradient(135deg, #0a1119 0%, #0f1824 50%, #1e3048 100%);
+  --gradient-icon: linear-gradient(135deg, #6e93c4 0%, #92aed3 100%);
+
+  --like: var(--color-pink-600);
+  --like-hover: #c93d79;
 }
 
 .dark {
@@ -121,8 +144,10 @@
   --background: #0A1222;
   --foreground: #FAFAFA;
 
-  --primary: #4a78b5;;
-  --primary-foreground: #ffffff;;
+  --primary: #4a78b5;
+  ;
+  --primary-foreground: #ffffff;
+  ;
 
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -135,7 +160,7 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --destructive-foreground: #ffffff;
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
   --ring: oklch(0.439 0 0);
@@ -148,7 +173,8 @@
   --chart-5: oklch(0.645 0.246 16.439);
 
   /* Sidebar dark */
-  --sidebar: #0D1628;;
+  --sidebar: #0D1628;
+  ;
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -159,7 +185,8 @@
 
   /* === DARK GRADIENTS & GLASS === */
   --gradient-main: linear-gradient(to bottom right, var(--yale-blue-950) 0%, var(--yale-blue-900) 50%, var(--yale-blue-800) 100%);
-  --gradient-sparkle: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 50%, var(--yale-blue-600) 100%); /* Mantém vibrante */
+  --gradient-sparkle: linear-gradient(to bottom right, var(--yale-blue-400) 0%, var(--yale-blue-500) 50%, var(--yale-blue-600) 100%);
+  /* Mantém vibrante */
 
   /* ... outros gradients iguais ou ajuste */
   --shadow-primary: 0 25px 50px -12px hsl(var(--primary) / 0.4);
@@ -168,7 +195,10 @@
   --glass-border: 0.5;
   --divider: hsl(var(--border));
 
-  --input-background: #151f30; 
+  --input-background: #151f30;
+
+  --like: var(--color-pink-400);
+  --like-hover: #ff8fba;
 }
 
 @theme inline {
@@ -219,11 +249,12 @@
   --background-image-gradient-secure: var(--gradient-secure);
   --background-image-gradient-anim-light: var(--gradient-anim-light);
   --background-image-gradient-anim-center: var(--gradient-anim-center);
+  --background-image-gradient-dark: var(--gradient-dark);
 
-  --background-image-gradient-btn-primary:       var(--gradient-btn-primary);
+  --background-image-gradient-btn-primary: var(--gradient-btn-primary);
   --background-image-gradient-btn-primary-hover: var(--gradient-btn-primary-hover);
   --shadow-btn-primary: 0 10px 25px -5px rgb(74 120 181 / 0.4);
-  
+
   --shadow-primary: var(--shadow-primary);
   --shadow-primary-strong: var(--shadow-primary-strong);
   --color-glass-bg: hsl(var(--background) / var(--glass-bg));
@@ -231,7 +262,7 @@
   --color-glass-border: hsla(var(--border), var(--glass-border));
   --color-divider: var(--divider);
   --color-yale-blue-400: var(--yale-blue-400);
-  
+
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -240,6 +271,9 @@
   --color-unread: var(--color-unread);
 
   --color-input-background: var(--input-background);
+
+  --color-like: var(--like);
+  --color-like-hover: var(--like-hover);
 }
 
 @layer base {
@@ -250,6 +284,24 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .ds-surface-glass {
+    /* border-border bg-card/90 backdrop-blur-xl */
+    @apply border-border bg-card/90 backdrop-blur-xl shadow-xl;
+  }
+
+  .like-button {
+    @apply text-muted-foreground transition-all hover:scale-105;
+  }
+
+  .like-button:hover {
+    color: var(--color-like);
+  }
+
+  .like-button--active {
+    color: var(--color-like);
+  }
+
 
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).
@@ -262,44 +314,44 @@
 
   h1 {
     font-size: var(--text-2xl);
-    
+
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
   h2 {
     font-size: var(--text-xl);
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
   h3 {
     font-size: var(--text-lg);
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
   h4 {
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
   label {
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
   button {
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
-    
+
     line-height: 1.5;
   }
 
@@ -311,16 +363,14 @@
 }
 
 .feed-background {
-  background: linear-gradient(
-    135deg,
-    var(--color-background) 0%,
-    var(--color-secondary) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-background) 0%,
+      var(--color-secondary) 100%);
   min-height: 100vh;
 }
 
 .feed-background {
-  background:  var(--gradient-background);
+  background: var(--gradient-background);
   min-height: 100vh;
 }
 
@@ -348,6 +398,7 @@
   grid-template-columns: 1fr;
   gap: var(--grid-gap);
   align-items: start;
+
   @media (min-width: 1024px) {
     grid-template-columns: 2fr 1fr;
   }
@@ -359,8 +410,8 @@
   top: var(--container-padding-y);
   align-self: start;
   display: none;
+
   @media (min-width: 1024px) {
     display: block;
   }
 }
-

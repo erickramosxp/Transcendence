@@ -1,0 +1,459 @@
+import * as React from 'react';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+export const MainDesignTokensPage = () => (
+  <div style={{ display: 'grid', gap: '16px' }}>
+    <style>{`
+      .ds-doc-card {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        padding: 16px;
+        background: white;
+      }
+
+      .ds-doc-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      @media (min-width: 960px) {
+        .ds-doc-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .ds-preview {
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 12px;
+      }
+
+      .ds-code {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+
+      .ds-code code {
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      .ds-inline-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .ds-inline-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .ds-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .ds-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .ds-radius-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .ds-radius-box {
+        width: 72px;
+        height: 72px;
+        background: var(--primary);
+        color: var(--primary-foreground);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .ds-shadow-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      @media (min-width: 720px) {
+        .ds-shadow-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .ds-shadow-card {
+        background: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .ds-gradient-box {
+        min-height: 96px;
+        border-radius: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        display: flex;
+        align-items: end;
+        padding: 12px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .ds-input {
+        width: 100%;
+        border-radius: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: var(--input-background);
+        color: var(--foreground);
+        box-sizing: border-box;
+      }
+    `}</style>
+
+    <div className="ds-doc-card">
+      <h1>Design Tokens</h1>
+      <p style={{ marginTop: '12px', lineHeight: 1.7, color: '#475569' }}>
+        Esta página mostra os tokens principais do design system com o
+        <strong> className aplicado</strong> e funcionando visualmente.
+      </p>
+    </div>
+
+    <div className="ds-doc-grid">
+      <div className="ds-doc-card">
+        <h2>Background</h2>
+        <p>Fundo principal da aplicação.</p>
+        <div className="ds-preview bg-background text-foreground border border-border">
+          Preview real usando <code className="bg-black/10 px-2 rounded-xl">bg-background text-foreground border border-border</code>
+        </div>
+        <div className="ds-preview bg-background text-foreground border border-border dark">
+          Preview real usando <code className="bg-black/80 px-2 rounded">bg-background text-foreground border border-border</code> no modo dark
+        </div>
+        <div className="ds-code">
+          <code>className="bg-background text-foreground border border-border"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Card</h2>
+        <p>Container de conteúdo e agrupamento de informação.</p>
+        <div className="ds-preview bg-card text-card-foreground border border-border shadow-sm">
+          Preview real usando <code>bg-card text-card-foreground border border-border shadow-sm</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-card text-card-foreground border border-border shadow-sm"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Popover</h2>
+        <p>Menus, dropdowns e overlays leves.</p>
+        <div className="ds-preview bg-popover text-popover-foreground border border-border">
+          Preview real usando <code>bg-popover text-popover-foreground border border-border</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-popover text-popover-foreground border border-border"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Primary</h2>
+        <p>Ação principal e destaque de marca.</p>
+        <div className="ds-preview bg-primary text-primary-foreground">
+          Preview real usando <code>bg-primary text-primary-foreground</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-primary text-primary-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Secondary</h2>
+        <p>Ação secundária e contraste moderado.</p>
+        <div className="ds-preview bg-secondary text-secondary-foreground">
+          Preview real usando <code>bg-secondary text-secondary-foreground</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-secondary text-secondary-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Muted</h2>
+        <p>Baixa ênfase e conteúdo auxiliar.</p>
+        <div className="ds-preview bg-muted text-muted-foreground">
+          Preview real usando <code>bg-muted text-muted-foreground</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-muted text-muted-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Accent</h2>
+        <p>Destaque contextual e hover.</p>
+        <div className="ds-preview bg-accent text-accent-foreground">
+          Preview real usando <code>bg-accent text-accent-foreground</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-accent text-accent-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Destructive</h2>
+        <p>Erro, exclusão e ações irreversíveis.</p>
+        <div className="ds-preview bg-destructive text-destructive-foreground">
+          Preview real usando <code>bg-destructive text-destructive-foreground</code>
+        </div>
+        <div className="ds-code">
+          <code>className="bg-destructive text-destructive-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Border</h2>
+        <p>Separação estrutural entre superfícies.</p>
+        <div className="ds-preview bg-card text-card-foreground border border-border">
+          Preview real usando <code>border border-border</code>
+        </div>
+        <div className="ds-code">
+          <code>className="border border-border"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Input Background</h2>
+        <p>Fundo específico para campos de formulário.</p>
+        <div className="ds-preview bg-background text-foreground border border-border">
+          <input
+            className="w-full rounded-xl bg-[var(--input-background)] border border-border px-3 py-3 text-foreground"
+            placeholder="Preview real com classe aplicada"
+            readOnly
+          />
+        </div>
+        <div className="ds-code">
+          <code>className="w-full rounded-xl bg-[var(--input-background)] border border-border px-3 py-3 text-foreground"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Ring</h2>
+        <p>Feedback visual de foco.</p>
+        <div className="ds-preview bg-background text-foreground border border-border">
+          <input
+            className="w-full rounded-xl bg-[var(--input-background)] border border-border px-3 py-3 text-foreground ring-2 ring-[var(--ring)]"
+            value="Preview real com ring aplicado"
+            readOnly
+          />
+        </div>
+        <div className="ds-code">
+          <code>className="w-full rounded-xl bg-[var(--input-background)] border border-border px-3 py-3 text-foreground ring-2 ring-[var(--ring)]"</code>
+        </div>
+      </div>
+    </div>
+
+    <div className="ds-doc-card">
+      <h2>Sidebar</h2>
+      <p style={{ marginTop: '12px' }}>
+        Exemplo real com classes arbitrárias usando os tokens da sidebar.
+      </p>
+
+      <div className="ds-preview bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-[var(--sidebar-border)]">
+        <div className="ds-inline-grid">
+          <div className="rounded-xl px-3 py-3 bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)]">
+            Item principal
+          </div>
+          <div className="rounded-xl px-3 py-3 bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]">
+            Item em destaque
+          </div>
+        </div>
+      </div>
+
+      <div className="ds-code">
+        <code>className="bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border border-[var(--sidebar-border)]"</code><br />
+        <code>className="bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)]"</code><br />
+        <code>className="bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"</code>
+      </div>
+    </div>
+
+    <div className="ds-doc-grid">
+      <div className="ds-doc-card">
+        <h2>Status</h2>
+        <p style={{ marginTop: '12px' }}>
+          Tokens auxiliares aplicados visualmente.
+        </p>
+
+        <div className="ds-preview bg-background text-foreground border border-border">
+          <div className="ds-inline-row">
+            <div className="ds-pill text-[var(--foreground)] bg-[rgba(34,197,94,0.12)]">
+              <span className="ds-dot bg-[var(--color-online)]"></span>
+              Online
+            </div>
+
+            <div className="ds-pill text-white bg-[var(--color-unread)]">
+              <span className="ds-dot bg-white"></span>
+              Unread
+            </div>
+
+            <div className="ds-pill text-[var(--color-like)] bg-[rgba(212,24,61,0.12)]">
+              ❤ Like
+            </div>
+          </div>
+        </div>
+
+        <div className="ds-code">
+          <code>className="text-[var(--foreground)] bg-[rgba(34,197,94,0.12)]"</code><br />
+          <code>className="bg-[var(--color-unread)] text-white"</code><br />
+          <code>className="text-[var(--color-like)] bg-[rgba(212,24,61,0.12)]"</code>
+        </div>
+      </div>
+
+      <div className="ds-doc-card">
+        <h2>Radius</h2>
+        <p style={{ marginTop: '12px' }}>
+          Escala de borda aplicada em caixas reais.
+        </p>
+
+        <div className="ds-preview bg-background text-foreground border border-border">
+          <div className="ds-radius-row">
+            <div className="ds-radius-box rounded-[var(--radius-sm)]">sm</div>
+            <div className="ds-radius-box rounded-[var(--radius-md)]">md</div>
+            <div className="ds-radius-box rounded-[var(--radius)]">base</div>
+            <div className="ds-radius-box rounded-[var(--radius-xl)]">xl</div>
+          </div>
+        </div>
+
+        <div className="ds-code">
+          <code>className="rounded-[var(--radius-sm)]"</code><br />
+          <code>className="rounded-[var(--radius-md)]"</code><br />
+          <code>className="rounded-[var(--radius)]"</code><br />
+          <code>className="rounded-[var(--radius-xl)]"</code>
+        </div>
+      </div>
+    </div>
+
+    <div className="ds-doc-card">
+      <h2>Sombras</h2>
+      <p style={{ marginTop: '12px' }}>
+        Exemplo de cards com as sombras do sistema aplicadas por className.
+      </p>
+
+      <div className="ds-shadow-grid" style={{ marginTop: '12px' }}>
+        <div className="ds-shadow-card shadow-primary">
+          <strong>Shadow Primary</strong>
+          <p style={{ marginTop: '8px' }}>
+            Card com <code>shadow-primary</code>
+          </p>
+        </div>
+
+        <div className="ds-shadow-card shadow-primary-strong">
+          <strong>Shadow Primary Strong</strong>
+          <p style={{ marginTop: '8px' }}>
+            Card com <code>shadow-primary-strong</code>
+          </p>
+        </div>
+
+        <div className="ds-shadow-card ds-surface-glass">
+          <strong>Glass Surface</strong>
+          <p style={{ marginTop: '8px' }}>
+            Card com a classe real <code>ds-surface-glass</code>
+          </p>
+        </div>
+
+        <div className="ds-shadow-card shadow-sm">
+          <strong>Shadow neutra</strong>
+          <p style={{ marginTop: '8px' }}>
+            Card com <code>shadow-sm</code> para elevação discreta
+          </p>
+        </div>
+      </div>
+
+      <div className="ds-code">
+        <code>className="shadow-primary"</code><br />
+        <code>className="shadow-primary-strong"</code><br />
+        <code>className="ds-surface-glass"</code><br />
+        <code>className="shadow-sm"</code>
+      </div>
+    </div>
+
+    <div className="ds-doc-card">
+      <h2>Gradients</h2>
+      <p style={{ marginTop: '12px' }}>
+        Gradientes aplicados visualmente por className.
+      </p>
+
+      <div className="ds-doc-grid" style={{ marginTop: '12px' }}>
+        <div style={{ color: 'black' }} className="ds-gradient-box bg-gradient-main text-black">
+          bg-gradient-main
+        </div>
+        <div className="ds-gradient-box bg-gradient-title">
+            bg-gradient-title
+        </div>
+        <div className="ds-gradient-box bg-gradient-btn-primary">
+          bg-gradient-btn-primary
+        </div>
+        <div className="ds-gradient-box bg-gradient-dark">
+          bg-gradient-dark
+        </div>
+      </div>
+
+      <div className="ds-code">
+        <code>className="bg-gradient-main"</code><br />
+        <code>className="bg-gradient-title"</code><br />
+        <code>className="bg-gradient-btn-primary"</code><br />
+        <code>className="bg-gradient-dark"</code>
+      </div>
+    </div>
+
+    <div className="ds-doc-card">
+      <h2>Charts</h2>
+      <p style={{ marginTop: '12px' }}>
+        Paleta de chart aplicada em pills reais.
+      </p>
+
+      <div className="ds-preview bg-background text-foreground border border-border">
+        <div className="ds-inline-row">
+          <div className="ds-pill bg-chart-1 text-white">chart-1</div>
+          <div className="ds-pill bg-chart-2 text-white">chart-2</div>
+          <div className="ds-pill bg-chart-3 text-white">chart-3</div>
+          <div className="ds-pill bg-chart-4 text-black">chart-4</div>
+          <div className="ds-pill bg-chart-5 text-black">chart-5</div>
+        </div>
+      </div>
+
+      <div className="ds-code">
+        <code>className="bg-chart-1 text-white"</code><br />
+        <code>className="bg-chart-2 text-white"</code><br />
+        <code>className="bg-chart-3 text-white"</code><br />
+        <code>className="bg-chart-4 text-black"</code><br />
+        <code>className="bg-chart-5 text-black"</code>
+      </div>
+    </div>
+  </div>
+);
+
+<Meta title="Design System/Implementação/Tokens Principais" />
+
+<MainDesignTokensPage />
