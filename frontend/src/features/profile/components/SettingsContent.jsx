@@ -1,10 +1,15 @@
 import React from 'react'
-import { Tabs, TabsContent, TabsTrigger, TabsList } from '@/design-system/primitives/Tabs'
-import { Input } from '@/design-system/primitives/Input'
-import { Label } from '@/design-system/primitives/Label'
-import { Button } from '@/design-system/primitives/Button'
-import { LanguageSwitcher } from '@/design-system/components/LanguageSwitcher'
-import { ThemeToggle } from '@/design-system/components/ThemeToggle'
+import { 
+    Tabs, 
+    TabsContent, 
+    TabsTrigger, 
+    TabsList,
+    Input,
+    Label,
+    Button,
+    LanguageSwitcher,
+    ThemeToggle
+} from '@/design-system'
 import { useAuth } from '@/app/providers/AuthProvider'
 
 export const SettingsContent = () => {
