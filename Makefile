@@ -53,12 +53,14 @@ build:
 	$(COMPOSE) up --build -d
 
 build_dev:
+	mkdir -p ~/minio/data
 	$(COMPOSE_DEV) up --build -d
 
 up:
 	$(COMPOSE) up -d
 
 up_dev:
+	mkdir -p ~/minio/data
 	$(COMPOSE_DEV) up -d
 
 down:
