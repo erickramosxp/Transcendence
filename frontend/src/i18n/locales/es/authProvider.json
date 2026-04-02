@@ -1,0 +1,19 @@
+{
+    "login": {
+        "success": "¡Inicio de sesión realizado con éxito!",
+        "error": "Ocurrió un error inesperado"
+    },
+    "register": {
+        "success": "Registro realizado con éxito",
+        "error": "Ocurrió un error inesperado",
+        "redirect": "Redirigido a la página de inicio"
+    },
+    "logout": {
+
+    },
+    "socialLogin": {
+        "success": "Redirigido a la página de inicio",
+        "error": "Ocurrió un error inesperado",
+        "googleError": "Error al iniciar sesión con Google"
+    }
+}

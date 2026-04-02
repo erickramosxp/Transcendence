@@ -1,0 +1,56 @@
+{
+    "viewer": {
+        "notFounded": "User not found",
+        "posts": "Posts",
+        "media": "Media",
+        "likes": "Likes"
+    },
+    "header" : {
+        "editProfile": "Edit Profile",
+        "settings": "Settings",
+        "follow": "Follow",
+        "unfollow": "Unfollow",
+        "editProfileModal": {
+            "title": "Edit Profile",
+            "name": "Name",
+            "namePlaceholder": "Enter your name",
+            "bio": "Bio",
+            "bioPlaceholder": "Tell us about yourself",
+            "bioMaxLength": "Max. 160 characters",
+            "location": "Location",
+            "locationPlaceholder": "Where are you from?",
+            "website": "Website",
+            "websitePlaceholder": "https://example.com",
+            "birthday": "Birthday",
+            "save": "Save",
+            "cancel": "Cancel",
+            "errorBioLength": "Bio must be less than 160 characters",
+            "errorNameLength": "Name must be at least 3 characters long",
+            "success": "Profile updated successfully",
+            "error": "Failed to update profile"
+        }
+    },
+    "info": {
+        "joined": "Joined",
+        "location": "Location",
+        "website": "Website",
+        "birthday": "Birthday",
+        "followers": "Followers",
+        "following": "Following",
+        "followersModal": {
+            "title": "Connections",
+            "empty": "No followers yet"
+        }
+    },
+    "likedPosts": {
+        "error": "Failed to load liked posts"
+    },
+    "mediaGrid": {
+        "getMidaError": "Failed to fetch user media",
+        "getPostError": "Failed to fetch post information",
+        "empty": "No media yet."
+    },
+    "postList": {
+        "error": "Failed to fetch user posts"
+    }
+}

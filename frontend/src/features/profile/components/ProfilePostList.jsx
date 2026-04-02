@@ -3,6 +3,7 @@ import { PostListUI } from "./PostListUI";
 import { getUserPosts } from "../services/profileService";
 import { usePostList } from "../hooks/usePostList";
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 import { Loading } from "@/design-system";
 
@@ -13,6 +14,7 @@ export function ProfilePostList({ username }) {
     (page, size) => getUserPosts(username, page, size)
   );
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('profile');
 
     useEffect(() => {
       
@@ -23,7 +25,7 @@ export function ProfilePostList({ username }) {
         } catch(err) {
 
           console.error(err);
-          toast.error("Falha ao buscar posts do usuário");
+          toast.error(t('postList.error'));
         } finally {
           setLoading(false);
         }

@@ -1,5 +1,6 @@
 // components/FollowersModal.jsx
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { followUser, unfollowUser, getFollowersList, getFollowingList } from "../services/profileService";
 
@@ -123,6 +124,7 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
     const [following, setFollowing] = useState([]);
     const [loadingFollowers, setLoadingFollowers] = useState(false);
     const [loadingFollowing, setLoadingFollowing] = useState(false);
+    const { t } = useTranslation('profile');
 
     useEffect(() => {
         if (!open || !userId) return;
@@ -176,14 +178,14 @@ export function FollowersModal({ open, onClose, defaultTab = 'followers', userId
     };
 
     return (
-        <Modal open={open} onClose={onClose} title="Conexões" size="md" scrollable={false}>
+        <Modal open={open} onClose={onClose} title={t('info.followersModal.title')} size="md" scrollable={false}>
         <Tabs defaultValue={defaultTab} className="-mt-2">
             <TabsList className="w-full mb-2">
             <TabsTrigger value="following" className="flex-1">
-                Seguindo
+                {t('info.following')}
             </TabsTrigger>
             <TabsTrigger value="followers" className="flex-1">
-                Seguidores
+                {t('info.followers')}
             </TabsTrigger>
             </TabsList>
 

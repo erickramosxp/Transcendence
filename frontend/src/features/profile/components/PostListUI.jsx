@@ -1,5 +1,7 @@
 import React from "react";
 import PostCard from "@/features/feed/components/PostCard";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Card } from "@/design-system";
 
 export function PostListUI({
@@ -13,11 +15,14 @@ export function PostListUI({
   incrementCommentCount,
 }) {
 
-return (
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  
+  return (
     <div className="space-y-6">
       {posts?.length === 0 ? (
         <div className="py-12 text-center text-sm text-muted-foreground">
-          Nada por aqui ainda.
+          {t('postsUI.empty')}<br />
         </div>
       ) : (
         <>
@@ -40,13 +45,13 @@ return (
 
           {isLoadingMore && (
             <div className="py-4 text-center text-muted-foreground">
-              Carregando mais…
+              {t('postsUI.loadMore')}
             </div>
           )}
 
           {!hasMore && posts?.length > 0 && (
             <div className="py-4 text-center text-sm text-muted-foreground">
-              Você chegou ao fim
+              {t('postsUI.end')}
             </div>
           )}
         </>

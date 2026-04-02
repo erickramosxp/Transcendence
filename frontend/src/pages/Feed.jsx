@@ -2,6 +2,8 @@ import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
+
+import { useTranslation } from "react-i18next";
 import { 
     Card,
     CardHeader,
@@ -12,6 +14,8 @@ import {
 export function Feed() {
 
     const [posts, setPosts] = useState([]);
+
+    const { t } = useTranslation('feed');
 
     async function addPost(postData) {
 
@@ -41,14 +45,14 @@ export function Feed() {
                     <aside className="feed-sidebar space-y-6">
                         <Card className="bg-card/90 backdrop-blur-xl border-border">
                             <CardHeader className="pb-0">
-                                <CardTitle>Amigos Online</CardTitle>
+                                <CardTitle>{t('sections.onlineFriends')}</CardTitle>
                             </CardHeader>
                             <CardContent />
                         </Card>
 
                         <Card className="bg-card/90 backdrop-blur-xl border-border">
                             <CardHeader className="pb-0">
-                                <CardTitle>Em Alta</CardTitle>
+                                <CardTitle>{t('sections.trending')}</CardTitle>
                             </CardHeader>
                             <CardContent />
                         </Card>

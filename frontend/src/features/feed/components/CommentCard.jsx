@@ -8,6 +8,8 @@ import {
     createComment,
 } from "../feedService";
 import { getCurrentTime } from "@/shared/getCurrentTime";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 
 import {
     Button,
@@ -19,12 +21,15 @@ import {
     Loading,
     LikeButton
 } from "@/design-system";
-import { cn } from "@/design-system/tokens/colors";
 
 export default function CommentCard({ postId, incrementCommentCount }) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
     const [loadingComments, setLoadingComments] = useState(true);
+
+    const { currentLanguage } = useLanguage();
+
+    const { t } = useTranslation('feed');
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -108,12 +113,11 @@ export default function CommentCard({ postId, incrementCommentCount }) {
     return (
         <div className="space-y-3 pt-2">
             <Separator />
-
             {loadingComments ? (
                 <Loading size="sm" className="min-h-15" />
             ) : comments.length === 0 ? (
                 <div className="text-sm text-muted-foreground">
-                    Sem comentários
+                    {t('comments.empty')}
                 </div>
             ) : (
                 <Scroll className="max-h-[20rem]">
@@ -144,12 +148,11 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                             <span className="truncate text-muted-foreground sm:truncate-none">
                                                 @{comment.userName}
                                             </span>
-
                                             <span
                                                 title={new Date(comment.created_at).toLocaleString()}
                                                 className="truncate text-muted-foreground sm:truncate-none"
                                             >
-                                                {getCurrentTime(comment.created_at)}
+                                                {getCurrentTime(comment.created_at, currentLanguage)}
                                             </span>
                                         </div>
 
@@ -184,7 +187,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                 handleSubmit(e);
                             }
                         }}
-                        placeholder="Escreva um comentário..."
+                        placeholder={t('comments.placeholder')}
                         className="min-h-[40px] resize-none"
                     />
 

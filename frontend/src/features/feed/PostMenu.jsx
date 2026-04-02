@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { Camera, Video, Music, ALargeSmall} from "lucide-react";
+
+import { useTranslation } from "react-i18next";
+
 import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "@/features/feed/creators";
 import  Popup  from "@/features/feed/components/Popup";
+
 import { Card, Button } from "@/design-system";
 
 function PostMenu({onAddPost}) {
 	const [open, setOpen] = useState(false);
 	const [type, setType] = useState(null);
+	const { t } = useTranslation('feed');
 
 	function handleOpen(postType)
 	{
@@ -57,7 +62,7 @@ function PostMenu({onAddPost}) {
 							/>
 						)}
 						{type === "music" &&(
-							<div>A implementar</div>
+							<div>{t('menu.notImplemented')}</div>
 							// <CreateMusicPost
 							// onAddPost={onAddPost}
 							// onClose={handleClose}

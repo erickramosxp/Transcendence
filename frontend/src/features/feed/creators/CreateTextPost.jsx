@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 import { createPortal } from "react-dom";
 import EmojiPicker from "emoji-picker-react";
 import { useCreatePost } from "./useCreatePost";
+import { useTranslation } from "react-i18next";
 import { useFloatingEmojiPicker } from "@/features/feed/hooks/useFloatingEmojiPicker";
 
 import { Button, Textarea, Card, CardContent } from "@/design-system";
@@ -20,6 +21,7 @@ function CreateTextPost({ onAddPost, onClose }) {
   } = useCreatePost(onAddPost, onClose, "text");
 
   const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
+  const { t } = useTranslation('feed');
 
   return (
     <Card className="mx-auto w-full max-w-[520px] border-border bg-card/90 backdrop-blur-xl shadow-xl">
@@ -38,7 +40,7 @@ function CreateTextPost({ onAddPost, onClose }) {
                   handleSubmit();
                 }
               }}
-              placeholder="O que você está pensando?"
+              placeholder={t('createPost.text.placeholder')}
               className="min-h-[80px] resize-none sm:min-h-[100px]"
               />
               </div>
@@ -87,7 +89,7 @@ function CreateTextPost({ onAddPost, onClose }) {
             <div className="flex items-center justify-end gap-2">
               <Button onClick={handleSubmit} variant="primary" size="sm">
                 <Send className="mr-2 h-4 w-4" />
-                Postar
+                {t('createPost.text.submit')}
               </Button>
             </div>
           </div>

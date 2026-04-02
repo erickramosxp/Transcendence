@@ -1,12 +1,14 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
+import { useTranslation } from "react-i18next";
 
 import { Tabs, TabsList, TabsTrigger, Card, CardContent } from "@/design-system";
 
 export function AuthContainer() {
 
   const { login, register } = useAuth();
+  const { t } = useTranslation('auth');
 
   const handleLogin = async (credentials) => {
     await login(credentials);
@@ -26,10 +28,10 @@ export function AuthContainer() {
           <Tabs defaultValue="login" className="w-full">
             <TabsList variant="filled" className="grid w-full grid-cols-2 mb-6 sm:mb-8">
               <TabsTrigger value="login" className="text-sm sm:text-base">
-                Entrar
+                {t('tabs.login')}
               </TabsTrigger>
               <TabsTrigger value="signup" className="text-sm sm:text-base">
-                Cadastrar
+                {t('tabs.register')}
               </TabsTrigger>
             </TabsList>
             {/* Formulario Login */}

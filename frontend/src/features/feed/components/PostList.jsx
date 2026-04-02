@@ -8,9 +8,12 @@ import {
 } from "@/features/feed/feedService";
 import { toast } from "react-toastify";
 
+import { useTranslation } from "react-i18next";
 import { Card, Loading } from "@/design-system";
 
+
 function PostList({ posts, setPosts }) {
+
     const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isLoadingInitialFeed, setLoadingFeed] = useState(true);
@@ -18,7 +21,10 @@ function PostList({ posts, setPosts }) {
     const [hasMore, setHasMore] = useState(false);
     const sentinelRef = useRef(null);
 
+    const { t } = useTranslation('feed');
+
     useEffect(() => {
+        
         async function loadInitialFeed() {
             try {
                 const data = await getFeed(0, 10);
@@ -29,7 +35,7 @@ function PostList({ posts, setPosts }) {
                 setHasMore(!!resp.hasMore);
             } catch (err) {
                 console.error(err);
-                toast.error("Falha ao carregar o feed");
+                toast.error(t('list.loadError'));
             } finally {
                 setLoadingFeed(false);
             }
@@ -58,7 +64,7 @@ function PostList({ posts, setPosts }) {
             setHasMore(!!resp.hasMore);
         } catch (err) {
             console.error(err);
-            toast.error("Falha ao carregar os posts");
+            toast.error(t('list.loadError'));
         } finally {
             setIsLoadingMore(false);
         }
@@ -133,9 +139,9 @@ function PostList({ posts, setPosts }) {
         <div className="space-y-8">
             {posts && posts.length === 0 ? (
                 <div className="py-8 text-center text-muted-foreground">
-                    Nada por aqui ainda.
+                    {t('list.empty')}
                     <br />
-                    Seja o primeiro a compartilhar algo ✨
+                    {t('list.emptyCta')}
                 </div>
             ) : (
                 <>
@@ -159,13 +165,13 @@ function PostList({ posts, setPosts }) {
 
                     {isLoadingMore && (
                         <div className="py-4 text-center text-muted-foreground">
-                            Carregando mais…
+                            {t('list.loadMore')}
                         </div>
                     )}
 
                     {!hasMore && posts?.length > 0 && (
                         <div className="py-4 text-center text-sm text-muted-foreground">
-                            Você chegou ao fim do feed
+                            {t('list.end')}
                         </div>
                     )}
                 </>

@@ -1,6 +1,8 @@
 import { useCreatePost } from "./useCreatePost";
 import { ImageIcon, Send, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+
+import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import { useFloatingEmojiPicker } from "../hooks/useFloatingEmojiPicker";
 
@@ -23,7 +25,9 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 		handleEmojiSelect,
 	} = useCreatePost(onAddPost, onClose, "photo");
 
+	const { t } = useTranslation('feed');
 	const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
+
 
 	return (
 		<Card className="border-border bg-card/90 backdrop-blur-xl shadow-xl">
@@ -40,7 +44,7 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 									handleSubmit();
 								}
 							}}
-							placeholder="Conte a história por trás da imagem"
+							placeholder={t('createPost.photo.placeholder')}
 							className="min-h-[80px] resize-none sm:min-h-[100px]"
 						/>
 						<div ref={anchorRef} />
@@ -67,7 +71,7 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 								<div className="flex flex-1 items-center gap-2">
 									<ImageIcon className="h-5 w-5 text-primary" />
 									<span className="text-xs text-muted-foreground">
-										Uma imagem vale mais que mil palavras
+										{t('createPost.photo.emptyHint')}
 									</span>
 								</div>
 							</div>
@@ -112,7 +116,7 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 
 							<Button onClick={handleSubmit} variant="primary" size="sm">
 								<Send className="mr-2 h-4 w-4" />
-								Postar foto
+								{t('createPost.photo.submit')}
 							</Button>
 						</div>
 					</div>

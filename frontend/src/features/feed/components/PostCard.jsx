@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { MessageSquare } from "lucide-react";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import CommentCard from "@/features/feed/components/CommentCard";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/design-system/tokens/colors";
 
 import { Avatar, TextWithLink, Media, LikeButton } from "@/design-system";
+
 
 function PostCard({
 	post,
@@ -15,6 +17,8 @@ function PostCard({
 	incrementCommentCount,
 	className,
 }) {
+
+	const { currentLanguage } = useLanguage();
 	const commentsOpen = activeCommentsPostId === post.id;
 
 	return (
@@ -44,12 +48,11 @@ function PostCard({
 						>
 							@{post.userName}
 						</span>
-
 						<span
 							title={new Date(post.created_at).toLocaleString()}
 							className="shrink-0 truncate text-muted-foreground"
 						>
-							{getCurrentTime(post.created_at)}
+							{getCurrentTime(post.created_at, currentLanguage)}
 						</span>
 					</div>
 
@@ -57,36 +60,38 @@ function PostCard({
 						<TextWithLink text={post.contents} />
 					</div>
 
-					{post.linkPreview && (
-						<a
-							href={post.linkPreview.url}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="mt-2 block overflow-hidden rounded-lg border border-border transition-colors hover:bg-accent/40"
-						>
-							<div className="flex gap-3 p-3">
-								{post.linkPreview.image && (
-									<img
-										src={post.linkPreview.image}
-										alt={post.linkPreview.title}
-										className="h-20 w-20 shrink-0 rounded-md object-cover"
-									/>
-								)}
-
-								<div className="min-w-0 flex-1">
-									<h3 className="line-clamp-2 text-sm font-medium text-foreground">
-										{post.linkPreview.title}
-									</h3>
-
-									{post.linkPreview.description && (
-										<p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
-											{post.linkPreview.description}
-										</p>
+					{
+						post.linkPreview && (
+							<a
+								href={post.linkPreview.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="mt-2 block overflow-hidden rounded-lg border border-border transition-colors hover:bg-accent/40"
+							>
+								<div className="flex gap-3 p-3">
+									{post.linkPreview.image && (
+										<img
+											src={post.linkPreview.image}
+											alt={post.linkPreview.title}
+											className="h-20 w-20 shrink-0 rounded-md object-cover"
+										/>
 									)}
+
+									<div className="min-w-0 flex-1">
+										<h3 className="line-clamp-2 text-sm font-medium text-foreground">
+											{post.linkPreview.title}
+										</h3>
+
+										{post.linkPreview.description && (
+											<p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+												{post.linkPreview.description}
+											</p>
+										)}
+									</div>
 								</div>
-							</div>
-						</a>
-					)}
+							</a>
+						)
+					}
 
 					<Media url={post.media} mimeType={post.mimeType} />
 
@@ -111,8 +116,8 @@ function PostCard({
 							</span>
 						</button>
 					</div>
-				</div>
-			</div>
+				</div >
+			</div >
 
 			{commentsOpen && (
 				<div className="px-4 pb-4">
@@ -121,8 +126,9 @@ function PostCard({
 						incrementCommentCount={incrementCommentCount}
 					/>
 				</div>
-			)}
-		</div>
+			)
+			}
+		</div >
 	);
 }
 

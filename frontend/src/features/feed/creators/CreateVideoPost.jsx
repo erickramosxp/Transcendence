@@ -6,8 +6,11 @@ import { useFloatingEmojiPicker } from "../hooks/useFloatingEmojiPicker";
 
 import { Button, Card, CardContent, Textarea, FileUploadButton } from "@/design-system";
 
+import { useTranslation } from "react-i18next";
+
 
 function CreateVideoPost({ onAddPost, onClose }) {
+	
 	const {
 		text,
 		file, setFile,
@@ -16,6 +19,8 @@ function CreateVideoPost({ onAddPost, onClose }) {
 		handleChange,
 		handleEmojiSelect
 	} = useCreatePost(onAddPost, onClose, "video");
+
+	const { t } = useTranslation('feed');
 
 	const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
 
@@ -34,7 +39,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 									handleSubmit();
 								}
 							}}
-							placeholder="O que está acontecendo aqui?"
+							placeholder={t('createPost.video.placeholder')}
 							className="min-h-[80px] resize-none sm:min-h-[100px]"
 							/>
 						<div ref={anchorRef} />
@@ -46,7 +51,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 								<div className="flex-1 flex items-center gap-2">
 									<span className="text-primary">🎥</span>
 									<span className="text-xs text-muted-foreground">
-										Grave, envie e compartilhe!
+										{t('createPost.video.emptyHint')}
 									</span>
 								</div>
 							</div>
@@ -99,7 +104,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 									className="h-9"
 								>
 									<Send className="h-4 w-4 mr-2 " />
-									Postar Video
+									{t('createPost.video.submit')}
 								</Button>
 							</div>
 						</div>

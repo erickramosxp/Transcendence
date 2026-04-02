@@ -1,6 +1,8 @@
 import React from 'react'
 import { MapPin, Link, Calendar } from 'lucide-react';
 import { formatJoinDate } from '../utils/formatJoinDate';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '@/hooks/useLanguage';
 
 import { Button } from '@/design-system';
 
@@ -17,6 +19,9 @@ import { Button } from '@/design-system';
 
 
 export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registerDate, followers, following, onFollowersClick, onFollowingClick }) => {
+
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation('profile');
   
   return (
     <div className="">
@@ -36,7 +41,7 @@ export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registe
         
         {/* Renderização Condicional: Só aparece se "location" não for nulo/vazio */}
         {location && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1" title={t('info.location')}>
             {/* Ícone de Pin */}
             <MapPin className="h-4 w-4"/>
             {location}
@@ -45,12 +50,12 @@ export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registe
 
         {/* Só aparece se "website" não for nulo/vazio */}
         {websiteUrl && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1" title={t('info.website')}>
             {/* Ícone de Link */}
             <Link className="h-4 w-4"/>
             {/* Adicionando a tag <a> para tornar o link clicável */}
             <a 
-              href={`https://${websiteUrl}`}
+              href={`${websiteUrl}`}
               target="_blank" 
               rel="noopener noreferrer" 
               className={`text-primary hover:underline`}>
@@ -64,7 +69,7 @@ export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registe
           <span className="flex items-center gap-1">
             {/* Ícone de Calendário */}
             <Calendar className="h-4 w-4" />
-            Entrou em {formatJoinDate(registerDate)}
+            {t('info.joined')} {formatJoinDate(registerDate, currentLanguage)}
           </span>
         )}
       </div>
@@ -73,13 +78,13 @@ export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registe
         <Button size='sm' variant='link' onClick={onFollowingClick}>
           <span className='hover:underline'>
             <span className={`font-bold text-foreground`}>{following ?? 0}</span>{' '}
-            <span className="text-muted-foreground">Seguindo</span>
+            <span className="text-muted-foreground">{t('info.following')}</span>
           </span>
         </Button>
         <Button size='sm' variant='link' onClick={onFollowersClick}>
           <span className='hover:underline'>
             <span className={`font-bold text-foreground`}>{followers ?? 0}</span>{' '}
-            <span className="text-muted-foreground">Seguidores</span>
+            <span className="text-muted-foreground">{t('info.followers')}</span>
           </span>
         </Button>
       </div>

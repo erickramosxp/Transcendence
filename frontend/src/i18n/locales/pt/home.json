@@ -1,0 +1,23 @@
+{
+    "brand": {
+        "slogan": "Conectando ideias, rede social sabor twitter."
+    },
+    "features": {
+        "connect": {
+            "title": "Conecte-se",
+            "description": "Faça amigos e expanda sua rede social"
+        },
+        "chat": {
+            "title": "Converse",
+            "description": "Chat em tempo real com chamadas de voz"
+        },
+        "share": {
+            "title": "Compartilhe",
+            "description": "Publique momentos e interaja com amigos"
+        },
+        "secure": {
+            "title": "Seguro",
+            "description": "Seus dados sempre protegidos"
+        }
+    }
+}
