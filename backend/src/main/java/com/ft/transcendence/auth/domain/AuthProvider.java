@@ -2,7 +2,9 @@ package com.ft.transcendence.auth.domain;
 
 import java.time.OffsetDateTime;
 
+import com.ft.transcendence.auth.dto.RegisterRequest;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.persistence.*;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -42,5 +44,15 @@ public class AuthProvider extends PanacheEntityBase {
 
     public static AuthProvider findLocalByUserId(Long userId) {
         return find("user.id = ?1 AND providerType = ?2", userId, AuthProviderType.LOCAL).firstResult();
+    }
+
+    public static AuthProvider createAuthProviderLocal(User user, RegisterRequest req, OffsetDateTime now) {
+        AuthProvider ap = new AuthProvider();
+        ap.user = user;
+        ap.providerType = AuthProviderType.LOCAL;
+        ap.passwordHash = BcryptUtil.bcryptHash(req.password);
+        ap.createdAt = now;
+        ap.persist();
+        return ap;
     }
 }
