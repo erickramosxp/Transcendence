@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { PostListUI } from "./PostListUI";
-import { getUserPosts } from "../services/profileService";
-import { usePostList } from "../hooks/usePostList";
+import { PostListUI } from "@/features/profile/components/lists/PostListUI";
+import { getUserPosts } from "@/features/profile/services/profileService";
+import { usePostList } from "@/features/profile/hooks/usePostList";
+import { useProfile } from "@/features/profile/context/ProfileContext";
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
-import { useProfile } from "../hooks/ProfileContext";
 
 export function ProfilePostList({ username }) {
 

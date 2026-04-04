@@ -4,15 +4,15 @@ import { toast } from 'react-toastify'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs'
 import Loading from '@/design-system/components/Loading';
-import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
+import { ProfileHeader } from '@/features/profile/components/ui/ProfileHeader'
 
-import { MediaGrid } from '@/features/profile/components/MediaGrid'
-import { ProfilePostList } from './components/ProfilePostList';
-import { LikedPostList } from './components/LikedPostList';
+import { MediaGrid } from '@/features/profile/components/ui/MediaGrid'
+import { ProfilePostList } from '@/features/profile/components/lists/ProfilePostList';
+import { LikedPostList } from '@/features/profile/components/lists/LikedPostList';
 
 import { useAuth } from '@/app/providers/AuthProvider';
-import { getUserInfo } from './services/profileService';
-import { ProfileContext } from './hooks/ProfileContext';
+import { getUserInfo } from '@/features/profile/services/profileService';
+import { ProfileContext } from '@/features/profile/context/ProfileContext';
 
 export function ProfileViewer() {
 

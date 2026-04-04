@@ -2,19 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
 import { toast } from 'react-toastify'
 
-// import { Avatar } from "./Avatar";
-import { CoverPhoto } from "./CoverPhoto";
-import { ProfileInfo } from "./ProfileInfo";
-import { EditProfileForm } from "./EditProfileForm";
-import { FollowersModal } from "./FollowersModal";
+import { CoverPhoto } from "@/features/profile/components/ui/CoverPhoto";
+import { ProfileInfo } from "@/features/profile/components/ui/ProfileInfo";
+import { EditProfileForm } from "@/features/profile/components/forms/EditProfileForm";
+import { FollowersModal } from "@/features/profile/components/modals/FollowersModal";
 import { Button } from "@/design-system/primitives/Button";
 import { Modal } from "@/design-system/components/Modal";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { Avatar } from "@/design-system/primitives/Avatar";
-import { followUser, unfollowUser } from "../services/profileService";
-import { CroppedImage } from "./CroppedImage";
-import { useProfile } from "../hooks/ProfileContext";
-import { ImageCropModal } from "./ImageCropModal";
+import { followUser, unfollowUser } from "@/features/profile/services/profileService";
+import { CroppedImage } from "@/features/profile/components/image/CroppedImage";
+import { useProfile } from "@/features/profile/context/ProfileContext";
+import { ImageCropModal } from "@/features/profile/components/modals/ImageCropModal";
 
 // {
 //   "id": 0,

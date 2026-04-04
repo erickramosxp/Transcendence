@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react';
 import { Modal } from '@/design-system/components/Modal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs';
-import { getFollowersList, getFollowingList } from '../services/profileService';
 import { Button } from '@/design-system/primitives/Button';
 import { Avatar } from '@/design-system/primitives/Avatar';
+import { getFollowersList, getFollowingList } from '@/features/profile/services/profileService';
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import Scroll from '@/design-system/primitives/Scroll';
-import { followUser, unfollowUser } from "../services/profileService";
+import { followUser, unfollowUser } from "@/features/profile/services/profileService";
 
 function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 

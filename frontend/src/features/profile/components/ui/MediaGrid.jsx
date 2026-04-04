@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Modal } from "@/design-system/components/Modal";
 import  PostCard  from "@/features/feed/components/PostCard";
-import { usePostList } from "../hooks/usePostList";
-import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
+import { usePostList } from "@/features/profile/hooks/usePostList";
+import { getUserMediaPosts, getPostUserDetails } from '@/features/profile/services/profileService'
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
 import { resolveMediaType } from "@/shared/resolveMediaType";

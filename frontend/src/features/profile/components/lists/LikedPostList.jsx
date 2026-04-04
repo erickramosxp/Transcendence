@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getLikedPosts } from "../services/profileService";
-import { PostListUI } from "./PostListUI";
-import { usePostList } from "../hooks/usePostList";
+import { getLikedPosts } from "@/features/profile/services/profileService";
+import { PostListUI } from "@/features/profile/components/lists/PostListUI";
+import { usePostList } from "@/features/profile/hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
+import { useProfile } from "@/features/profile/context/ProfileContext";
 import { toast } from 'react-toastify';
-import { useProfile } from "../hooks/ProfileContext";
 
 export function LikedPostList({ username }) {
 
