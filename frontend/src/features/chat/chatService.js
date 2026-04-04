@@ -1,7 +1,13 @@
 
-
 const mockChats = {
 	1: [
+	  {
+		id: "m-101-0",
+		conversationId: 1,
+		text: "Bom dia!",
+		senderId: 2,
+		createdAt: "2026-03-27T14:00:00.000Z",
+	  },
 	  {
 		id: "m-101-a",
 		conversationId: 1,
@@ -80,13 +86,16 @@ export async function sendMessages(conversationId, text, senderId) {
 //Converte o formato API para o usado no front <Message/>
 
 export function mapApiMessageToUi(apiMsg, currentUserId, peerName) {
-	const isMe = String(apiMsg.senderId) === String(currentUserId);
+	const sid = apiMsg.senderId ?? apiMsg.sender_id;
+	const isMe = String(sid) === String(currentUserId);
 
+	const created =
+		apiMsg.createdAt ?? apiMsg.created_at ?? apiMsg.sentAt ?? apiMsg.sent_at;
 	return {
 		id: apiMsg.id,
-		text: apiMsg.text,
-		senderId: apiMsg.senderId,
+		text: apiMsg.text ?? apiMsg.content,
+		senderId: sid,
 		sender: isMe ? "me" : peerName,
-		timestamp: apiMsg.createdAt,
-	}
+		timestamp: created,
+	};
 }

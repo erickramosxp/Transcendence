@@ -1,7 +1,11 @@
 import React from "react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { formatChatBubbleTime } from "@/features/chat/utils/formatChatDates";
 import { cn } from "@/design-system/tokens/colors";
 
 export default function Message({ currentUserId, message }) {
+	const { currentLanguage } = useLanguage();
+	const timeLabel = formatChatBubbleTime(message.timestamp, currentLanguage);
 	const isMine =
 		String(message.senderId) === String(currentUserId) || message.sender === "me";
 	return (
@@ -29,7 +33,12 @@ export default function Message({ currentUserId, message }) {
 						isMine ? "text-primary-foreground/80" : "text-muted-foreground",
 					)}
 				>
-					<span className="text-[11px] sm:text-xs">{message.timestamp}</span>
+					<time
+						className="text-[11px] sm:text-xs tabular-nums"
+						dateTime={message.timestamp}
+					>
+						{timeLabel}
+					</time>
 					{isMine && (
 						<span className="text-xs" aria-hidden>
 							&#10003;&#10003;

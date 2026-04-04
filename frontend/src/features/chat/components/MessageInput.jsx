@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system";
 import { Input } from "@/design-system";
 import { Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 
 export default function MessageInput({ onSendMessage }) {
+	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -29,7 +31,6 @@ export default function MessageInput({ onSendMessage }) {
 				size="icon"
 				type="button"
 				className="size-9 shrink-0 sm:size-10"
-				aria-label="Anexar arquivo"
 			>
 				<Paperclip className="size-4 sm:size-5" />
 			</Button>
@@ -40,7 +41,7 @@ export default function MessageInput({ onSendMessage }) {
 					onChange={(e) => setText(e.target.value)}
 					onFocus={() => setShowEmojiPicker(false)}
 					className="h-9 rounded-lg pr-10 sm:h-10"
-					placeholder="Digite sua mensagem..."
+					placeholder={t("input.placeholder")}
 				/>
 				<Button
 					type="button"
@@ -48,7 +49,6 @@ export default function MessageInput({ onSendMessage }) {
 					size="icon"
 					className="absolute right-1 top-1/2 z-[2] size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
 					tabIndex={-1}
-					aria-label="Abrir emojis"
 					onClick={() => {
 						setShowEmojiPicker(!showEmojiPicker);
 					}}
@@ -67,7 +67,6 @@ export default function MessageInput({ onSendMessage }) {
 				size="icon"
 				type="submit"
 				className="size-9 shrink-0 sm:size-10"
-				aria-label="Enviar mensagem"
 			>
 				<Send className="size-4 sm:size-5" />
 			</Button>

@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { AvatarWithStatus } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 
 export default function ChatItem({ chat, isSelected, onClick }) {
+    const { t } = useTranslation("chat");
     const unread = chat.unreadCount > 0 ? chat.unreadCount : null;
 
     return (
@@ -47,7 +49,6 @@ export default function ChatItem({ chat, isSelected, onClick }) {
             {unread != null && (
                 <span
                     className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-unread)] text-[10px] font-semibold text-primary-foreground"
-                    aria-label={`${unread} não lidas`}
                 >
                     {unread > 9 ? "9+" : unread}
                 </span>

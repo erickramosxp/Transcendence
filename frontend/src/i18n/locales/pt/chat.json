@@ -1,1 +1,34 @@
-{}
+{
+  "day": {
+    "today": "Hoje",
+    "yesterday": "Ontem"
+  },
+  "list": {
+    "title": "Mensagens",
+    "searchPlaceholder": "Buscar conversas...",
+    "searchAriaLabel": "Buscar conversas"
+  },
+  "empty": {
+    "title": "Suas Mensagens",
+    "hint": "Selecione uma conversa para começar a enviar mensagens"
+  },
+  "status": {
+    "online": "Online agora",
+    "offline": "Offline"
+  },
+  "peerFallback": "Contato",
+  "errors": {
+    "load": "Erro ao carregar",
+    "send": "Erro ao enviar mensagem"
+  },
+  "loading": {
+    "messages": "Carregando...",
+    "older": "Carregando mais mensagens..."
+  },
+  "thread": {
+    "empty": "Nenhuma mensagem nesta conversa ainda."
+  },
+  "input": {
+    "placeholder": "Digite sua mensagem..."
+  }
+}

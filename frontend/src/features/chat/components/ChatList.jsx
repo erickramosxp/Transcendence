@@ -1,10 +1,13 @@
 import ChatItem from "@/features/chat/components/ChatItem";
 import { Separator, Input } from "@/design-system";
 import { Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/design-system/tokens/colors";
 
 export default function ChatList({ friendsChat, selectedId, onSelectChat }) {
+    const { t } = useTranslation("chat");
+
     return (
         <div
             className={cn(
@@ -18,16 +21,15 @@ export default function ChatList({ friendsChat, selectedId, onSelectChat }) {
                         "bg-gradient-title bg-clip-text text-transparent",
                     )}
                 >
-                    Mensagens
+                    {t("list.title")}
                 </h2>
             </header>
             <div className="mt-5 shrink-0">
                 <Input
                     type="search"
                     icon={<Search className="size-4 text-muted-foreground" />}
-                    placeholder="Buscar conversas..."
+                    placeholder={t("list.searchPlaceholder")}
                     className="h-10 rounded-xl bg-input-background text-sm sm:h-11"
-                    aria-label="Buscar conversas"
                 />
             </div>
             <Separator className="mt-6 shrink-0" />

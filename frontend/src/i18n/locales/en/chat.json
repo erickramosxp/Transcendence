@@ -1,1 +1,34 @@
-{}
+{
+  "day": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "list": {
+    "title": "Messages",
+    "searchPlaceholder": "Search conversations...",
+    "searchAriaLabel": "Search conversations"
+  },
+  "empty": {
+    "title": "Your messages",
+    "hint": "Select a conversation to start messaging"
+  },
+  "status": {
+    "online": "Online now",
+    "offline": "Offline"
+  },
+  "peerFallback": "Contact",
+  "errors": {
+    "load": "Could not load messages",
+    "send": "Could not send message"
+  },
+  "loading": {
+    "messages": "Loading...",
+    "older": "Loading older messages..."
+  },
+  "thread": {
+    "empty": "No messages in this conversation yet."
+  },
+  "input": {
+    "placeholder": "Type a message..."
+  }
+}

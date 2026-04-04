@@ -1,5 +1,8 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { Fragment, useEffect, useState, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 import Message from "@/features/chat/components/Message";
+import ChatDaySeparator from "@/features/chat/components/ChatDaySeparator";
 import MessageInput from "@/features/chat/components/MessageInput";
 import { getMessages, sendMessages, mapApiMessageToUi } from "@/features/chat/chatService";
 import { MessageCircle, ChevronLeft, Phone, Video } from "lucide-react";
@@ -7,6 +10,10 @@ import { AvatarWithStatus } from "@/design-system";
 import { Separator } from "@/design-system";
 import { Button } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
+import {
+	formatChatDaySeparatorLabel,
+	isSameChatDay,
+} from "@/features/chat/utils/formatChatDates";
 
 function readCurrentUserId() {
 	try {
@@ -28,7 +35,9 @@ export default function ChatWindow({ currentChat, onBack }) {
 	const listRef = useRef(null);
 
 	const currentUserId = readCurrentUserId();
-	const peerName = currentChat?.name ?? "Contato";
+	const { t } = useTranslation("chat");
+	const peerName = currentChat?.name ?? t("peerFallback");
+	const { currentLanguage } = useLanguage();
 
 	useEffect(() => {
 
@@ -55,7 +64,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 				setMessages(ui);
 				setNextCursor(data.nextCursor ?? null);
 			} catch (e) {
-				if (!cancelled) setError(e?.message ?? "Erro ao carregar");
+				if (!cancelled) setError(e?.message ?? t("errors.load"));
 			} finally {
 				if (!cancelled) setLoading(false);
 			}
@@ -64,7 +73,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 		return () => {
 			cancelled = true;
 		};
-	},[currentChat?.id, currentUserId, peerName]);
+	}, [currentChat?.id, currentUserId, peerName]);
 
 	const loadOlder = useCallback(async () =>{
 		if (!currentChat || !nextCursor || loadingOlder) return;
@@ -107,7 +116,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 					listRef.current.scrollTop = listRef.current.scrollHeight;
 			});
 		} catch (e) {
-			setError(e?.message ?? "Erro ao enviar mensagem");
+			setError(e?.message ?? t("errors.send"));
 		}
 	}
 
@@ -129,10 +138,10 @@ export default function ChatWindow({ currentChat, onBack }) {
 					<MessageCircle className="size-8" strokeWidth={1.75} />
 				</div>
 				<h3 className="text-center text-xl font-bold leading-tight tracking-tight text-foreground sm:text-2xl">
-					Suas Mensagens
+					{t("empty.title")}
 				</h3>
 				<p className="mt-3 max-w-sm text-center text-sm leading-relaxed text-muted-foreground">
-					Selecione uma conversa para começar a enviar mensagens
+					{t("empty.hint")}
 				</p>
 			</div>
 		);
@@ -153,7 +162,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 						size="icon"
 						className="shrink-0 md:hidden"
 						onClick={onBack}
-						aria-label="Voltar à lista de conversas"
+						aria-label={t("a11y.back")}
 					>
 						<ChevronLeft className="size-5" />
 					</Button>
@@ -177,15 +186,15 @@ export default function ChatWindow({ currentChat, onBack }) {
 						)}
 					>
 						{(currentChat.status ?? "online") === "online"
-							? "Online agora"
-							: "Offline"}
+							? t("status.online")
+							: t("status.offline")}
 					</span>
 				</div>
 				<div className="flex shrink-0 gap-1 sm:gap-2">
-					<Button variant="ghost" size="icon" aria-label="Ligar">
+					<Button variant="ghost" size="icon" aria-label={t("a11y.call")}>
 						<Phone className="size-[1.15rem] sm:size-5" />
 					</Button>
-					<Button variant="ghost" size="icon" aria-label="Vídeo">
+					<Button variant="ghost" size="icon" aria-label={t("a11y.video")}>
 						<Video className="size-[1.15rem] sm:size-5" />
 					</Button>
 				</div>
@@ -198,7 +207,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 			)}
 			{loading && (
 				<p className="shrink-0 px-4 py-2 text-sm text-muted-foreground sm:px-6">
-					Carregando...
+					{t("loading.messages")}
 				</p>
 			)}
 			<div
@@ -208,16 +217,32 @@ export default function ChatWindow({ currentChat, onBack }) {
 			>
 				{loadingOlder && (
 					<p className="py-2 text-center text-xs text-muted-foreground">
-						Carregando mais mensagens...
+						{t("loading.older")}
 					</p>
 				)}
 				{messages.length > 0 ? (
-					messages.map((msg) => (
-						<Message key={msg.id} currentUserId={currentUserId} message={msg} />
-					))
+					messages.map((msg, idx) => {
+						const prev = messages[idx - 1];
+						const showDay =
+							idx === 0 ||
+							!prev ||
+							!isSameChatDay(msg.timestamp, prev.timestamp);
+						const dayLabel = showDay
+							? formatChatDaySeparatorLabel(msg.timestamp, currentLanguage, {
+									today: t("day.today"),
+									yesterday: t("day.yesterday"),
+								})
+							: null;
+						return (
+							<Fragment key={msg.id}>
+								{showDay && <ChatDaySeparator label={dayLabel} />}
+								<Message currentUserId={currentUserId} message={msg} />
+							</Fragment>
+						);
+					})
 				) : (
 					<p className="mt-8 text-center text-sm text-muted-foreground">
-						Nenhuma mensagem nesta conversa ainda.
+						{t("thread.empty")}
 					</p>
 				)}
 			</div>

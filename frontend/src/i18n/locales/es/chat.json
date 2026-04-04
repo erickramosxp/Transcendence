@@ -1,1 +1,34 @@
-{}
+{
+  "day": {
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "list": {
+    "title": "Mensajes",
+    "searchPlaceholder": "Buscar conversaciones...",
+    "searchAriaLabel": "Buscar conversaciones"
+  },
+  "empty": {
+    "title": "Tus mensajes",
+    "hint": "Selecciona una conversación para empezar a chatear"
+  },
+  "status": {
+    "online": "En línea",
+    "offline": "Desconectado"
+  },
+  "peerFallback": "Contacto",
+  "errors": {
+    "load": "Error al cargar",
+    "send": "Error al enviar el mensaje"
+  },
+  "loading": {
+    "messages": "Cargando...",
+    "older": "Cargando mensajes anteriores..."
+  },
+  "thread": {
+    "empty": "Aún no hay mensajes en esta conversación."
+  },
+  "input": {
+    "placeholder": "Escribe un mensaje..."
+  }
+}
