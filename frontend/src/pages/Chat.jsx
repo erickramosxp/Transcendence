@@ -14,8 +14,8 @@ export function Chat() {
     return (
         <div
             className={cn(
-                "flex h-[100dvh] w-full flex-col overflow-hidden bg-background",
-                "md:flex-row md:min-h-0",
+                "flex h-full min-h-0 w-full flex-col overflow-hidden bg-background",
+                "md:flex-row",
             )}
         >
             <aside

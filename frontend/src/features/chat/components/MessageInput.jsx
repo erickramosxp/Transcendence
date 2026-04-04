@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system";
 import { Input } from "@/design-system";
@@ -9,6 +9,16 @@ export default function MessageInput({ onSendMessage }) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(min-width: 1024px)");
+		const closePickerIfNarrow = () => {
+			if (!mq.matches) setShowEmojiPicker(false);
+		};
+		closePickerIfNarrow();
+		mq.addEventListener("change", closePickerIfNarrow);
+		return () => mq.removeEventListener("change", closePickerIfNarrow);
+	}, []);
 
 	function handleSendMessage(e) {
 		e.preventDefault();
@@ -40,14 +50,14 @@ export default function MessageInput({ onSendMessage }) {
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 					onFocus={() => setShowEmojiPicker(false)}
-					className="h-9 rounded-lg pr-10 sm:h-10"
+					className="h-9 rounded-lg pr-3 sm:h-10 lg:pr-10"
 					placeholder={t("input.placeholder")}
 				/>
 				<Button
 					type="button"
 					variant="ghost"
 					size="icon"
-					className="absolute right-1 top-1/2 z-[2] size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+					className="absolute right-1 top-1/2 z-[2] hidden size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground lg:inline-flex"
 					tabIndex={-1}
 					onClick={() => {
 						setShowEmojiPicker(!showEmojiPicker);
