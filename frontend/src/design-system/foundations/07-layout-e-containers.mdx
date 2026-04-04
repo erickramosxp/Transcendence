@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Layout/Containers e Grid" />
+
+# Containers e grid
+
+O CSS define tokens de container e espaçamento estrutural que servem como base de layout para páginas, feeds e regiões laterais.
+
+## Tokens encontrados
+
+- `--container-max-width`: 1280px.
+- `--container-padding-x`: 16px.
+- `--container-padding-y`: 24px.
+- `--grid-gap`: 24px.
+
+## Onde usar
+
+- `container`: limite de largura e respiro lateral da página.
+- `feed-grid`: composição principal de conteúdo.
+- `feed-sidebar`: área lateral sticky em telas maiores.
+
+## Como esse layout se comporta
+
+No mobile, o grid parte de uma coluna. Em `min-width: 1024px`, ele passa para `2fr 1fr`, priorizando o conteúdo principal e mantendo uma sidebar de apoio.
+
+## Motivo de uso
+
+Esse padrão funciona bem para feed social, dashboard híbrido e páginas de conteúdo com painel lateral, porque preserva foco no conteúdo principal sem perder contexto secundário.

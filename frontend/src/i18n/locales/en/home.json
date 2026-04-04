@@ -1,0 +1,23 @@
+{
+    "brand": {
+        "slogan": "Connecting ideas, a social network with a Twitter-like vibe."
+    },
+    "features": {
+        "connect": {
+            "title": "Connect",
+            "description": "Make friends and grow your social network"
+        },
+        "chat": {
+            "title": "Chat",
+            "description": "Real-time chat with voice calls"
+        },
+        "share": {
+            "title": "Share",
+            "description": "Post moments and interact with friends"
+        },
+        "secure": {
+            "title": "Secure",
+            "description": "Your data is always protected"
+        }
+    }
+}

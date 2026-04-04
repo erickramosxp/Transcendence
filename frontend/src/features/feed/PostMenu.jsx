@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { Card } from "@/design-system/primitives/Card";
-import { Button } from "@/design-system/primitives/Button";
-import  Popup  from "@/features/feed/components/Popup";
-import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "@/features/feed/creators";
 import { Camera, Video, Music, ALargeSmall} from "lucide-react";
+
+import { useTranslation } from "react-i18next";
+
+import { CreateTextPost, CreatePhotoPost, CreateVideoPost } from "@/features/feed/creators";
+import  Popup  from "@/features/feed/components/Popup";
+
+import { Card, Button } from "@/design-system";
 
 function PostMenu({onAddPost}) {
 	const [open, setOpen] = useState(false);
 	const [type, setType] = useState(null);
+	const { t } = useTranslation('feed');
 
 	function handleOpen(postType)
 	{
@@ -21,20 +25,20 @@ function PostMenu({onAddPost}) {
 		setType(null);
 	}
 	return (
-		<Card className=" border-slate-200/50 dark:border-slate-800/50 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+		<Card className="border-border bg-card/90 backdrop-blur-xl">
 			<div className="flex flex-wrap items-center justify-center gap-2 p-3 sm:p-4 sm:gap-3">
 				<Button onClick={() => handleOpen("text")} size="rounded" variant="secondary" >
-					<ALargeSmall size={0} className=" size-6 text-[#4a78b5]" />
+					<ALargeSmall className=" size-6 text-primary"/>
 				</Button>
 				<Button  onClick={() => handleOpen("photo")} size="rounded" variant="secondary" >
-					<Camera size={0} className=" size-6 text-[#4a78b5]" />
+					<Camera className=" size-6 text-primary"/>
 				</Button>
 				<Button onClick={() => handleOpen("video")} size="rounded" variant="secondary" >
-					<Video size={0} className=" size-6 text-[#4a78b5]" />
+					<Video className=" size-6 text-primary"/>
 				</Button>
 
 				<Button onClick={() => handleOpen("music")}  size="rounded" variant="secondary" >
-					<Music size={0} className=" size-6 text-[#4a78b5]" />
+					<Music className=" size-6 text-primary"/>
 				</Button>
 			</div>
 			{open && createPortal(
@@ -58,7 +62,7 @@ function PostMenu({onAddPost}) {
 							/>
 						)}
 						{type === "music" &&(
-							<div>A implementar</div>
+							<div>{t('menu.notImplemented')}</div>
 							// <CreateMusicPost
 							// onAddPost={onAddPost}
 							// onClose={handleClose}

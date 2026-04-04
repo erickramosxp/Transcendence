@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Cropper from 'react-easy-crop'
-import { Button } from '@/design-system/primitives/Button'
+import { Button } from '@/design-system'
 import { getCroppedImage } from '@/features/profile/utils/imageCrop'
 
 // // Avatar — círculo, 1:1

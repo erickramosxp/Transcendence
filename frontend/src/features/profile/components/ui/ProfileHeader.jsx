@@ -1,30 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
+import { useAuth } from "@/app/providers/AuthProvider";
 import { toast } from 'react-toastify'
 
 import { CoverPhoto } from "@/features/profile/components/ui/CoverPhoto";
 import { ProfileInfo } from "@/features/profile/components/ui/ProfileInfo";
 import { EditProfileForm } from "@/features/profile/components/forms/EditProfileForm";
 import { FollowersModal } from "@/features/profile/components/modals/FollowersModal";
-import { Button } from "@/design-system/primitives/Button";
-import { Modal } from "@/design-system/components/Modal";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { Avatar } from "@/design-system/primitives/Avatar";
 import { followUser, unfollowUser } from "@/features/profile/services/profileService";
 import { CroppedImage } from "@/features/profile/components/image/CroppedImage";
 import { useProfile } from "@/features/profile/context/ProfileContext";
 import { ImageCropModal } from "@/features/profile/components/modals/ImageCropModal";
 
-// {
-//   "id": 0,
-//   "avatarUrl": "string",
-//   "bannerImgUrl": "string",
-//   "username": "string",
-//   "name": "string",
-//   "followers": 0,
-//   "following": 0,
-//   "registerDate": "2022-03-10T12:15:50-04:00"
-// }
+
+import { useTranslation } from "react-i18next";
+import { SettingsContent } from "../SettingsContent";
+
+import { Button, Modal, Avatar } from "@/design-system";
 
 export const ProfileHeader = () => {
 
@@ -33,7 +25,10 @@ export const ProfileHeader = () => {
 	const [editOpen, setEditOpen] = useState(false);
 	const [newImage, setNewImage] = useState(null);
 	const { userData, changeFields, changeFollowCount } = useProfile();
+
+	const [settingsOpen, setSettingsOpen] = useState(false);
 	const { user } = useAuth();
+	const { t } = useTranslation('profile');
 
 	const handleFollowUser = async (username) => {
 
@@ -42,7 +37,8 @@ export const ProfileHeader = () => {
 			changeFields({ isFollowing: true });
 			changeFollowCount('follow');
 		} catch (err) {
-			console.error(err)
+			console.error(err);
+			toast.error("Falha ao seguir")
 		} finally {
 
 		}
@@ -56,6 +52,7 @@ export const ProfileHeader = () => {
 			changeFollowCount('unfollow');
 		} catch (err) {
 			console.error(err)
+			toast.error("Falha ao deixar de seguir")
 		} finally {
 
 		}
@@ -91,13 +88,14 @@ export const ProfileHeader = () => {
 	const openFollowers = () => setConnectionsModal({ open: true, tab: 'followers' });
 	const openFollowing = () => setConnectionsModal({ open: true, tab: 'following' });
 	const closeConnections = () => setConnectionsModal({ open: false, tab: 'followers' });
+	const isMobile = window.innerWidth < 768;
 
 
 	return (
 		<>
 			<Modal
 				open={editOpen}
-				title="Editar Perfil"
+				title={t('header.editProfile')}
 				onClose={() => setEditOpen(false)}
 				scrollable={false}
 			>
@@ -120,95 +118,102 @@ export const ProfileHeader = () => {
 			<div className={`pb-5 relative`}>
 				{newImage &&
 					<ImageCropModal onClose={() => setNewImage(null)}>
-						<CroppedImage 
-								image={newImage}
-								setNewImage={setNewUrlImage}
-								onClose={setNewImage}
-								cropShape="round"
-								aspect={1 / 1}
-							/>
+						<CroppedImage
+							image={newImage}
+							setNewImage={setNewUrlImage}
+							onClose={setNewImage}
+							cropShape="round"
+							aspect={1 / 1}
+						/>
 					</ImageCropModal>
-			// 		<div className="fixed inset-0 z-50
-            // flex items-center justify-center p-1 sm:p-4
-            // bg-back/40
-            // backdrop-blur-sm" onClick={() => setNewImage(null)}>
-			// 			<div className="fixed inset-x-1/12 inset-y-1/6 sm:inset-1/6 z-10" onClick={(e) => e.stopPropagation()}>
-			// 				<CroppedImage 
-			// 					image={newImage}
-			// 					setNewImage={setNewUrlImage}
-			// 					onClose={setNewImage}
-			// 					cropShape="round"
-			// 					aspect={1 / 1}
-			// 				/>
-			// 			<button
-			// 				onClick={() => setNewImage(null)}
-			// 				className="absolute top-4 right-4 z-50 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black/70 cursor-pointer"
-			// 			>
-			// 				X
-			// 			</button>
-			// 			</div>
-			// 		</div>
 				}
-				<div className="w-full max-w-4xl mx-auto">
-					<CoverPhoto className='overflow-hidden'
-						coverUrl={userData?.bannerImgUrl}
-					/>
+				{!isMobile && settingsOpen && (
+					<Modal
+						open={settingsOpen}
+						onClose={() => setSettingsOpen(false)}
+						title={'Settings'}
+					>
+						<SettingsContent />
+					</Modal>
+				)}
+				{isMobile && settingsOpen && (
+					<div className="fixed inset-0 bg-background z-50">
 
-					<div className="px-4 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
-
-						<div className="flex justify-between items-start relative">
-
-							<div className="-mt-16 rounded-full p-1 relative z-5 border-background bg-background">
-								<label className="relative group">
-									<Avatar
-										size="xl3"
-										id={userData?.userName}
-										name={userData?.name}
-										src={
-											userData?.avatarUrl
-										}
-										className="group-hover:brightness-75"
-									/>
-
-									<div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-										<span className="text text-xs font-bold bg-black/50 px-2 py-1 rounded">Trocar</span>
-									</div>
-									<input onChange={updateImage} className=" hidden" type="file" accept=".jpg, .png" />
-
-								</label>
-
+						<div className="h-full flex flex-col">
+							<div className="p-4 flex items-center justify-between border-b">
+								<h2>Configurações</h2>
+								<button onClick={() => setSettingsOpen(false)}>✕</button>
 							</div>
 
-							<div>
-								<div className="flex justify-center items-center gap-2.5 mt-4">
-									{user?.id != userData?.id ?
-										(
-											<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
-												{userData?.isFollowing ? 'Seguindo' : 'Seguir'}
-											</Button>
-										)
-										:
-										<>
-											<Button variant='outline' className="rounded-full cursor-pointer" onClick={() => setEditOpen(true)}>
-												<SquarePen />
-												Editar Perfil
-											</Button>
-											<Button variant='outline' className='rounded-full cursor-pointer'>
-												<Settings />
-											</Button>
-										</>
-									}
-								</div>
+							<div className="flex-1 overflow-y-auto">
+								<SettingsContent />
 							</div>
 						</div>
-						<ProfileInfo
-							{...userData}
-							onFollowersClick={openFollowers}
-							onFollowingClick={openFollowing}
+					</div>
+				)}
+
+				<div className={`pb-5`}>
+					<div className="w-full max-w-4xl mx-auto">
+						<CoverPhoto className='overflow-hidden'
+							coverUrl={userData?.bannerImgUrl}
 						/>
+
+						<div className="px-4 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
+
+							<div className="flex justify-between items-start relative">
+
+								<div className="-mt-16 rounded-full p-1 relative z-5 border-background bg-background">
+									<label className="relative group">
+										<Avatar
+											size="xl3"
+											id={userData?.userName}
+											name={userData?.name}
+											src={
+												userData?.avatarUrl
+											}
+											className="group-hover:brightness-75"
+										/>
+
+										<div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+											<span className="text text-xs font-bold bg-black/50 px-2 py-1 rounded">Trocar</span>
+										</div>
+										<input onChange={updateImage} className=" hidden" type="file" accept=".jpg, .png" />
+
+									</label>
+
+								</div>
+
+								<div>
+									<div className="flex justify-center items-center gap-2.5 mt-4">
+										{user?.id != userData?.id ?
+											(
+												<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
+													{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
+												</Button>
+											)
+											:
+											<>
+												<Button variant='outline' className="rounded-full cursor-pointer" onClick={() => setEditOpen(true)}>
+													<SquarePen />
+													{t('header.editProfile')}
+												</Button>
+												<Button variant='outline' className='rounded-full cursor-pointer' onClick={() => setSettingsOpen(true)}>
+													<Settings />
+												</Button>
+											</>
+										}
+									</div>
+								</div>
+							</div>
+							<ProfileInfo
+								{...userData}
+								onFollowersClick={openFollowers}
+								onFollowingClick={openFollowing}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
 		</>
-	);
-};
+		);
+}

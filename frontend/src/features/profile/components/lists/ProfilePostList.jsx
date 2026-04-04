@@ -3,7 +3,7 @@ import { PostListUI } from "@/features/profile/components/lists/PostListUI";
 import { getUserPosts } from "@/features/profile/services/profileService";
 import { usePostList } from "@/features/profile/hooks/usePostList";
 import { useProfile } from "@/features/profile/context/ProfileContext";
-import Loading from "@/design-system/components/Loading";
+import { Loading } from "@/design-system";
 import { toast } from 'react-toastify';
 
 export function ProfilePostList({ username }) {

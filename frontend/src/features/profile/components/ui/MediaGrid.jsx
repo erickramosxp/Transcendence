@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { Modal } from "@/design-system/components/Modal";
 import  PostCard  from "@/features/feed/components/PostCard";
 import { usePostList } from "@/features/profile/hooks/usePostList";
 import { getUserMediaPosts, getPostUserDetails } from '@/features/profile/services/profileService'
-import Loading from "@/design-system/components/Loading";
-import { toast } from 'react-toastify';
+import { Modal, Loading } from "@/design-system";
 import { resolveMediaType } from "@/shared/resolveMediaType";
+import { useTranslation } from "react-i18next";
+import { toast } from 'react-toastify';
 
 export function MediaGrid({ username }) {
 
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('profile');
 
   const { posts, loadInitial, handleLike, toggleComments, activeCommentsPostId, incrementCommentCount, ...handlers } = usePostList(
   (page, size) => getUserMediaPosts(username, page, size)
@@ -24,7 +25,7 @@ export function MediaGrid({ username }) {
 
       } catch (err) {
         console.error(err);
-        toast.error("Falha ao buscar mídias do usuário");
+        toast.error(t('mediaGrid.getMidaError'));
       } finally {
         setLoading(false);
       }
@@ -40,7 +41,7 @@ export function MediaGrid({ username }) {
       setSelected(resp);
     } catch (err) {
       console.error(err);
-      toast.error("Falha ao obter informações do post");
+      toast.error(t('mediaGrid.getPostError'));
     }
   }
 
@@ -51,7 +52,7 @@ export function MediaGrid({ username }) {
   if (posts.length === 0) {
     return (
       <p className="text-center text-muted-foreground py-12 text-sm">
-        Nenhuma mídia ainda.
+        {t('mediaGrid.empty')}
       </p>
     );
   }
