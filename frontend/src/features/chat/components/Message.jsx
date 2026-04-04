@@ -1,55 +1,37 @@
 import React from "react";
+import { cn } from "@/design-system/tokens/colors";
 
 export default function Message({ currentUserId, message }) {
 	const isMine =
 		String(message.senderId) === String(currentUserId) || message.sender === "me";
 	return (
 		<div
-			style={{
-				display: "flex",
-				justifyContent: isMine ? "flex-end" : "flex-start",
-				marginBottom: 10,
-				padding: 15,
-			}}
+			className={cn(
+				"mb-2 flex px-2 py-1 sm:px-3 sm:py-1.5",
+				isMine ? "justify-end" : "justify-start",
+			)}
 		>
 			<div
-				style={{
-					maxWidth: "60%",
-					background: isMine ? "#f1f0f0" : "#f1f0f0",
-					color: isMine ? "#323232" : "#323232",
-					borderRadius: 18,
-					padding: "10px 18px",
-					borderTopLeftRadius: isMine ? 18 : 8,
-					borderTopRightRadius: isMine ? 8 : 18,
-					boxShadow: "0 1px 7px 0 rgba(0,0,0,0.10)",
-					position: "relative",
-					textAlign: "left",
-					alignSelf: isMine ? "flex-end" : "flex-start",
-				}}
+				className={cn(
+					"relative max-w-[min(85%,28rem)] text-left shadow-sm",
+					"rounded-[1.125rem] px-4 py-2.5 sm:py-3",
+					isMine
+						? "rounded-tr-md bg-primary text-primary-foreground"
+						: "rounded-tl-md bg-card text-card-foreground ring-1 ring-border",
+				)}
 			>
-				<div style={{ whiteSpace: "pre-wrap", fontSize: 15 }}>
+				<div className="whitespace-pre-wrap text-sm leading-[1.5]">
 					{message.text}
 				</div>
 				<div
-					style={{
-						display: "flex",
-						justifyContent: "flex-end",
-						alignItems: "center",
-						marginTop: 5,
-						gap: 4,
-					}}
+					className={cn(
+						"mt-1 flex items-center justify-end gap-1",
+						isMine ? "text-primary-foreground/80" : "text-muted-foreground",
+					)}
 				>
-					<span
-						style={{
-							fontSize: 12,
-							color: isMine ? "#8fa4c5" : "#8fa4c5"
-						}}
-					>
-						{message.timestamp}
-					</span>
-					{/* Show checkmark if sent by user */}
+					<span className="text-[11px] sm:text-xs">{message.timestamp}</span>
 					{isMine && (
-						<span style={{ color: "#8fa4c5", fontSize: 14, marginLeft: 2 }}>
+						<span className="text-xs" aria-hidden>
 							&#10003;&#10003;
 						</span>
 					)}

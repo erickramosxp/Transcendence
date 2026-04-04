@@ -65,6 +65,18 @@
   --color-online: #22c55e;
   --color-unread: #4a78b5;
 
+  /* Chat list (sidebar) — hover mais claro que seleção; alinhado à escala Yale / neutros */
+  --chat-list-item-hover: #f1f4f9;
+  --chat-list-item-selected: #dee4ee;
+
+  /* Painel principal do chat (vazio + conversa): light usa brilho suave; dark fica uniforme */
+  --chat-window-surface: radial-gradient(
+    ellipse 100% 72% at 50% 0%,
+    var(--yale-blue-50) 0%,
+    var(--background) 52%,
+    var(--background) 100%
+  );
+
   /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -197,6 +209,12 @@
 
   --input-background: #151f30;
 
+  --chat-list-item-hover: #1e293b;
+  --chat-list-item-selected: #243049;
+
+  /* Sem spotlight claro: fundo sólido alinhado ao app (tokens Yale escuros) */
+  --chat-window-surface: var(--background);
+
   --like: var(--color-pink-400);
   --like-hover: #ff8fba;
 }
@@ -269,6 +287,9 @@
   --radius-xl: var(--radius-xl);
   --color-online: var(--color-online);
   --color-unread: var(--color-unread);
+
+  --color-chat-list-item-hover: var(--chat-list-item-hover);
+  --color-chat-list-item-selected: var(--chat-list-item-selected);
 
   --color-input-background: var(--input-background);
 

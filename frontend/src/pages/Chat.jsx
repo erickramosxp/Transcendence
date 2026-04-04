@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
+import { cn } from "@/design-system/tokens/colors";
 
 export function Chat() {
-
     const [selectedChat, setSelectedChat] = useState(null);
 
     const friendsChat = [
@@ -12,12 +12,32 @@ export function Chat() {
     ]
 
     return (
-        <div style={{ display: "flex", height: "100vh" }}>
-            <ChatList
-                friendsChat={friendsChat}
-                setSelectedChat={setSelectedChat}
-            />
-            <ChatWindow currentChat={selectedChat}/>
+        <div
+            className={cn(
+                "flex h-[100dvh] w-full flex-col overflow-hidden bg-background",
+                "md:flex-row md:min-h-0",
+            )}
+        >
+            <aside
+                className={cn(
+                    "flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%,20rem)] md:max-w-[380px] md:shrink-0 md:border-r",
+                    selectedChat && "hidden md:flex",
+                )}
+            >
+                <ChatList
+                    friendsChat={friendsChat}
+                    selectedId={selectedChat?.id ?? null}
+                    onSelectChat={setSelectedChat}
+                />
+            </aside>
+            <main
+                className={cn(
+                    "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+                    !selectedChat && "hidden md:flex",
+                )}
+            >
+                <ChatWindow currentChat={selectedChat} onBack={() => setSelectedChat(null)} />
+            </main>
         </div>
-    )
+    );
 }
