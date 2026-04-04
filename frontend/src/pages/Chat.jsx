@@ -12,15 +12,10 @@ export function Chat() {
     ]
 
     return (
-        <div
-            className={cn(
-                "flex h-full min-h-0 w-full flex-col overflow-hidden bg-background",
-                "md:flex-row",
-            )}
-        >
+        <div className="ds-chat-layout">
             <aside
                 className={cn(
-                    "flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%,20rem)] md:max-w-[380px] md:shrink-0 md:border-r",
+                    "ds-chat-sidebar",
                     selectedChat && "hidden md:flex",
                 )}
             >
@@ -32,7 +27,7 @@ export function Chat() {
             </aside>
             <main
                 className={cn(
-                    "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+                    "ds-chat-main",
                     !selectedChat && "hidden md:flex",
                 )}
             >

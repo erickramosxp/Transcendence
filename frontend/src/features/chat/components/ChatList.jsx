@@ -3,40 +3,24 @@ import { Separator, Input } from "@/design-system";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { cn } from "@/design-system/tokens/colors";
-
 export default function ChatList({ friendsChat, selectedId, onSelectChat }) {
     const { t } = useTranslation("chat");
 
     return (
-        <div
-            className={cn(
-                "flex h-full min-h-0 flex-col px-4 pb-4 pt-6 sm:px-5",
-            )}
-        >
-            <header className="shrink-0 space-y-1">
-                <h2
-                    className={cn(
-                        "text-xl font-bold leading-tight tracking-tight sm:text-[1.375rem]",
-                        "bg-gradient-title bg-clip-text text-transparent",
-                    )}
-                >
-                    {t("list.title")}
-                </h2>
+        <div className="ds-chat-list-shell">
+            <header className="ds-chat-list-head">
+                <h2 className="ds-chat-list-title">{t("list.title")}</h2>
             </header>
-            <div className="mt-5 shrink-0">
+            <div className="ds-chat-list-search">
                 <Input
                     type="search"
                     icon={<Search className="size-4 text-muted-foreground" />}
                     placeholder={t("list.searchPlaceholder")}
-                    className="h-10 rounded-xl bg-input-background text-sm sm:h-11"
+                    className="ds-chat-search-field"
                 />
             </div>
             <Separator className="mt-6 shrink-0" />
-            <ul
-                className="mt-4 flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:thin]"
-                role="list"
-            >
+            <ul className="ds-chat-list-scroll" role="list">
                 {friendsChat.map((friend) => (
                     <li key={friend.id}>
                         <ChatItem

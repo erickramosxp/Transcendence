@@ -32,17 +32,14 @@ export default function MessageInput({ onSendMessage }) {
 	}
 
 	return (
-		<form
-			onSubmit={handleSendMessage}
-			className="relative m-0 flex items-center gap-2 rounded-xl py-1 sm:gap-2.5"
-		>
+		<form onSubmit={handleSendMessage} className="ds-chat-input-form">
 			<Button
 				variant="outline"
 				size="icon"
 				type="button"
-				className="size-9 shrink-0 sm:size-10"
+				className="ds-chat-input-icon-btn"
 			>
-				<Paperclip className="size-4 sm:size-5" />
+				<Paperclip className="ds-chat-icon-input" />
 			</Button>
 
 			<div className="relative min-w-0 flex-1">
@@ -50,14 +47,14 @@ export default function MessageInput({ onSendMessage }) {
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 					onFocus={() => setShowEmojiPicker(false)}
-					className="h-9 rounded-lg pr-3 sm:h-10 lg:pr-10"
+					className="ds-chat-input-field"
 					placeholder={t("input.placeholder")}
 				/>
 				<Button
 					type="button"
 					variant="ghost"
 					size="icon"
-					className="absolute right-1 top-1/2 z-[2] hidden size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground lg:inline-flex"
+					className="ds-chat-input-emoji-btn"
 					tabIndex={-1}
 					onClick={() => {
 						setShowEmojiPicker(!showEmojiPicker);
@@ -66,7 +63,7 @@ export default function MessageInput({ onSendMessage }) {
 					<Smile className="size-4" />
 				</Button>
 				{showEmojiPicker && (
-					<div className="absolute bottom-[calc(100%+0.5rem)] right-0 z-10">
+					<div className="ds-chat-input-emoji-pop">
 						<EmojiPicker onEmojiClick={handleEmojiSelect} />
 					</div>
 				)}
@@ -76,9 +73,9 @@ export default function MessageInput({ onSendMessage }) {
 				onClick={handleSendMessage}
 				size="icon"
 				type="submit"
-				className="size-9 shrink-0 sm:size-10"
+				className="ds-chat-input-icon-btn"
 			>
-				<Send className="size-4 sm:size-5" />
+				<Send className="ds-chat-icon-input" />
 			</Button>
 		</form>
 	);

@@ -1,4 +1,3 @@
-import React from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatChatBubbleTime } from "@/features/chat/utils/formatChatDates";
 import { cn } from "@/design-system/tokens/colors";
@@ -11,30 +10,27 @@ export default function Message({ currentUserId, message }) {
 	return (
 		<div
 			className={cn(
-				"mb-2 flex px-2 py-1 sm:px-3 sm:py-1.5",
-				isMine ? "justify-end" : "justify-start",
+				"ds-chat-msg-row",
+				isMine ? "ds-chat-msg-row--mine" : "ds-chat-msg-row--theirs",
 			)}
 		>
 			<div
 				className={cn(
-					"relative max-w-[min(85%,28rem)] text-left shadow-sm",
-					"rounded-[1.125rem] px-4 py-2.5 sm:py-3",
-					isMine
-						? "rounded-tr-md bg-primary text-primary-foreground"
-						: "rounded-tl-md bg-card text-card-foreground ring-1 ring-border",
+					"ds-chat-bubble",
+					isMine ? "ds-chat-bubble--mine" : "ds-chat-bubble--theirs",
 				)}
 			>
-				<div className="whitespace-pre-wrap text-sm leading-[1.5]">
-					{message.text}
-				</div>
+				<div className="ds-chat-bubble-text">{message.text}</div>
 				<div
 					className={cn(
-						"mt-1 flex items-center justify-end gap-1",
-						isMine ? "text-primary-foreground/80" : "text-muted-foreground",
+						"ds-chat-bubble-meta",
+						isMine
+							? "ds-chat-bubble-meta--mine"
+							: "ds-chat-bubble-meta--theirs",
 					)}
 				>
 					<time
-						className="text-[11px] sm:text-xs tabular-nums"
+						className="ds-chat-bubble-time"
 						dateTime={message.timestamp}
 					>
 						{timeLabel}
