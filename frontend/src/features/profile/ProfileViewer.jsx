@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef} from 'react'
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -12,6 +12,7 @@ import { LikedPostList } from './components/LikedPostList';
 
 import { useAuth } from '@/app/providers/AuthProvider';
 import { getUserInfo } from './services/profileService';
+import { ProfileContext } from './hooks/ProfileContext';
 
 export function ProfileViewer() {
 
@@ -35,25 +36,25 @@ export function ProfileViewer() {
 
   useEffect(() => {
 
-		const getProfileInfo = async () => {
+    const getProfileInfo = async () => {
 
       setLoadHeader(true);
 
-			try {
-				const resp = await getUserInfo(profileUsername);
-				setUserData(resp);
-				setNotFounded(false);
-			} catch (err) {
-				console.log(err);
+      try {
+        const resp = await getUserInfo(profileUsername);
+        setUserData(resp);
+        setNotFounded(false);
+      } catch (err) {
+        console.log(err);
         setNotFounded(true);
-				toast.error('Fail to get profile info');
-			} finally {
+        toast.error('Fail to get profile info');
+      } finally {
         setLoadHeader(false);
-			}
-		}
+      }
+    }
 
-		getProfileInfo();
-	},[profileUsername]);
+    getProfileInfo();
+  }, [profileUsername]);
 
   const changeFields = (data) => {
 
@@ -76,13 +77,13 @@ export function ProfileViewer() {
   }
 
 
-  	if (loadHeader) {
-		return (
-      <Loading size='lg' full={true}/>
-		);
-	}
+  if (loadHeader) {
+    return (
+      <Loading size='lg' full={true} />
+    );
+  }
 
-  if (notFounded){
+  if (notFounded) {
 
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
@@ -94,28 +95,32 @@ export function ProfileViewer() {
   }
 
   return (
-    <div className={`bg-background min-h-screen`}>
-      <div ref={topRef} />
-      <ProfileHeader userData={userData} changeFields={changeFields} changeFollowCount={changeFollowCount}/>
-      <div className='max-w-4xl mx-auto px-4 pb-10'>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
-          <TabsList className='mb-4'>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="media">Mídia</TabsTrigger>
-            <TabsTrigger value="likes">Curtidas</TabsTrigger>
-          </TabsList>
+    <ProfileContext.Provider
+      value={{ userData, setUserData, changeFields, changeFollowCount }}
+    >
+      <div className={`bg-background min-h-screen`}>
+        <div ref={topRef} />
+        <ProfileHeader />
+        <div className='max-w-4xl mx-auto px-4 pb-10'>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
+            <TabsList className='mb-4'>
+              <TabsTrigger value="posts">Posts</TabsTrigger>
+              <TabsTrigger value="media">Mídia</TabsTrigger>
+              <TabsTrigger value="likes">Curtidas</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="posts">
-            <ProfilePostList username={userData.username} />
-          </TabsContent>
-          <TabsContent value="media">
-            <MediaGrid  username={userData.username}/>
-          </TabsContent>
-          <TabsContent value="likes">
-            <LikedPostList username={userData.username}/>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="posts">
+              <ProfilePostList username={userData.username} />
+            </TabsContent>
+            <TabsContent value="media">
+              <MediaGrid username={userData.username} />
+            </TabsContent>
+            <TabsContent value="likes">
+              <LikedPostList username={userData.username} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </ProfileContext.Provider>
   )
 }

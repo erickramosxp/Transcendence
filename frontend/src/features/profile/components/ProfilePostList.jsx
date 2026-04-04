@@ -4,34 +4,49 @@ import { getUserPosts } from "../services/profileService";
 import { usePostList } from "../hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { useProfile } from "../hooks/ProfileContext";
 
 export function ProfilePostList({ username }) {
 
 
-  const { posts, loadInitial, ...handlers } = usePostList(
+  const { posts, loadInitial, setPosts, ...handlers } = usePostList(
     (page, size) => getUserPosts(username, page, size)
   );
+  const { userData } = useProfile();
   const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-      
-      const getUserPosts = async () => {
-        try {
-          await loadInitial();
+  useEffect(() => {
 
-        } catch(err) {
+    const getUserPosts = async () => {
+      try {
+        await loadInitial();
 
-          console.error(err);
-          toast.error("Falha ao buscar posts do usuário");
-        } finally {
-          setLoading(false);
-        }
+      } catch (err) {
+
+        console.error(err);
+        toast.error("Falha ao buscar posts do usuário");
+      } finally {
+        setLoading(false);
       }
+    }
 
-      getUserPosts();
-    }, [username]);
+    getUserPosts();
+  }, [username]);
 
-    if(loading)
-      return <Loading size="md" className="py-10"/>
+  useEffect(() => {
+    setPosts(prev =>
+      prev.map(post =>
+        post.userName === userData.username
+          ? {
+            ...post,
+            avatarUrl: userData.avatarUrl 
+          }
+          : post
+      )
+    );
+  }, [userData.avatarUrl]);
+
+  if (loading)
+    return <Loading size="md" className="py-10" />
   return <PostListUI posts={posts} {...handlers} />;
 }

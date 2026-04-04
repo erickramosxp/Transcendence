@@ -14,7 +14,7 @@ function getInitials(name = ""){
 	).toUpperCase();
 }
 
-function Avatar ({src, name, username, size="md", className=""}){
+function Avatar ({src, name, username, size="md", className="", ...props}){
 	const [hasError, setHasError] = useState(false);
 
 	const sizes = {
@@ -45,6 +45,7 @@ function Avatar ({src, name, username, size="md", className=""}){
 					alt={name}
 					onError={() => setHasError(true)}
 					className="h-full w-full object-cover block"
+					{...props}
 				/>
 			):(
 				<span>{src || getInitials(name)}</span>

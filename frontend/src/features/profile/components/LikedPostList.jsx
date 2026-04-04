@@ -4,11 +4,13 @@ import { PostListUI } from "./PostListUI";
 import { usePostList } from "../hooks/usePostList";
 import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { useProfile } from "../hooks/ProfileContext";
 
 export function LikedPostList({ username }) {
 
   const [loading, setLoading] = useState(true);
-  const { posts, loadInitial, ...handlers } = usePostList(
+  const { userData } = useProfile();
+  const { posts, loadInitial, setPosts, ...handlers } = usePostList(
     (page, size) => getLikedPosts(username, page, size)
   );
 
@@ -28,6 +30,19 @@ export function LikedPostList({ username }) {
 
     getUserLikedPosts();
   }, [username]);
+
+  useEffect(() => {
+    setPosts(prev =>
+      prev.map(post =>
+        post.userName === userData.username
+          ? {
+            ...post,
+            avatarUrl: userData.avatarUrl
+          }
+          : post
+      )
+    );
+  }, [userData.avatarUrl]);
 
 
   if (loading)

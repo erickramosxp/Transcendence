@@ -39,7 +39,7 @@ export function Modal({open, title, onClose, children, size = "md", scrollable =
             className="
             fixed inset-0 z-50
             flex items-center justify-center p-1 sm:p-4
-            bg-black/40
+            bg-back/40
             backdrop-blur-sm
             "
             onMouseDown={(e) => {
