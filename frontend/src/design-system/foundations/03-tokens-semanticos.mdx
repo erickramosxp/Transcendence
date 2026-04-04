@@ -1,0 +1,473 @@
+import * as React from 'react';
+import { Meta } from '@storybook/addon-docs/blocks';
+
+export const SemanticTokensPage = () => (
+  <div style={{ display: 'grid', gap: '16px' }}>
+    <style>{`
+      .token-card {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        padding: 16px;
+        background: white;
+      }
+
+      .token-preview {
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 12px;
+      }
+
+      .token-code {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-size: 12px;
+      }
+
+      .token-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      @media (min-width: 900px) {
+        .token-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .mini-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mini-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .radius-demo-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .radius-demo-box {
+        width: 72px;
+        height: 72px;
+        background: var(--primary);
+        color: var(--primary-foreground);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .shadow-demo-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      @media (min-width: 700px) {
+        .shadow-demo-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .shadow-demo-card {
+        background: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .gradient-box {
+        min-height: 96px;
+        border-radius: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        display: flex;
+        align-items: end;
+        padding: 12px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .input-demo {
+        width: 100%;
+        border-radius: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: var(--input-background);
+        color: var(--foreground);
+        box-sizing: border-box;
+      }
+
+      .focus-demo {
+        box-shadow: 0 0 0 3px var(--ring);
+      }
+
+      .sidebar-demo {
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .sidebar-item {
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+    `}</style>
+
+    <div className="token-card">
+      <h1>Tokens semânticos e visuais</h1>
+      <p>
+        Esta página documenta os tokens principais do sistema usando as classes reais
+        do Tailwind derivadas do theme.css, além de mostrar sombras, radius, gradients
+        e tokens auxiliares da interface.
+      </p>
+    </div>
+
+    <div className="token-grid">
+      <div className="token-card">
+        <h2>Background</h2>
+        <p>Fundo principal de páginas e shells.</p>
+        <div className="token-preview bg-background text-foreground border border-border">
+          Exemplo com <code>bg-background text-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-background text-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Card</h2>
+        <p>Container de conteúdo e agrupamento de informação.</p>
+        <div className="token-preview bg-card text-card-foreground border border-border">
+          Exemplo com <code>bg-card text-card-foreground border border-border</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-card text-card-foreground border border-border"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Popover</h2>
+        <p>Camadas flutuantes, menus, dropdowns e tooltips ricos.</p>
+        <div className="token-preview bg-popover text-popover-foreground border border-border">
+          Exemplo com <code>bg-popover text-popover-foreground border border-border</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-popover text-popover-foreground border border-border"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Primary</h2>
+        <p>Ação principal e destaque de marca.</p>
+        <div className="token-preview bg-primary text-primary-foreground">
+          Exemplo com <code>bg-primary text-primary-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-primary text-primary-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Secondary</h2>
+        <p>Ação secundária e apoio visual.</p>
+        <div className="token-preview bg-secondary text-secondary-foreground">
+          Exemplo com <code>bg-secondary text-secondary-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-secondary text-secondary-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Muted</h2>
+        <p>Baixa ênfase e informação auxiliar.</p>
+        <div className="token-preview bg-muted text-muted-foreground">
+          Exemplo com <code>bg-muted text-muted-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-muted text-muted-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Accent</h2>
+        <p>Destaque contextual, seleção e hover.</p>
+        <div className="token-preview bg-accent text-accent-foreground">
+          Exemplo com <code>bg-accent text-accent-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-accent text-accent-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Destructive</h2>
+        <p>Erro, exclusão e ações irreversíveis.</p>
+        <div className="token-preview bg-destructive text-destructive-foreground">
+          Exemplo com <code>bg-destructive text-destructive-foreground</code>
+        </div>
+        <div className="token-code">
+          <code>className="bg-destructive text-destructive-foreground"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Border</h2>
+        <p>Separação estrutural entre blocos, inputs e superfícies.</p>
+        <div className="token-preview bg-card text-card-foreground border border-border">
+          Exemplo com <code>border border-border</code>
+        </div>
+        <div className="token-code">
+          <code>className="border border-border"</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Input</h2>
+        <p>Superfície base de campos de entrada.</p>
+        <div className="token-preview bg-background text-foreground border border-border">
+          <input className="input-demo" placeholder="Digite aqui" readOnly />
+        </div>
+        <div className="token-code">
+          <code>input usa --input, --input-background, --border e --foreground</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Input Background</h2>
+        <p>Fundo específico para campos de formulário.</p>
+        <div className="token-preview bg-background text-foreground border border-border">
+          <div
+            className="input-demo"
+            style={{ background: 'var(--input-background)' }}
+          >
+            Fundo usando <code>--input-background</code>
+          </div>
+        </div>
+        <div className="token-code">
+          <code>background: var(--input-background)</code>
+        </div>
+      </div>
+
+      <div className="token-card">
+        <h2>Ring</h2>
+        <p>Feedback visual de foco e acessibilidade.</p>
+        <div className="token-preview bg-background text-foreground border border-border">
+          <input className="input-demo focus-demo" value="Campo focado" readOnly />
+        </div>
+        <div className="token-code">
+          <code>box-shadow: 0 0 0 3px var(--ring)</code>
+        </div>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Sidebar tokens</h2>
+      <p>Tokens específicos para navegação lateral e áreas persistentes.</p>
+
+      <div className="token-grid">
+        <div className="sidebar-demo" style={{ background: 'var(--sidebar)', color: 'var(--sidebar-foreground)', border: '1px solid var(--sidebar-border)' }}>
+          <div className="mini-stack">
+            <div className="sidebar-item" style={{ background: 'var(--sidebar-primary)', color: 'var(--sidebar-primary-foreground)' }}>
+              Item principal
+            </div>
+            <div className="sidebar-item" style={{ background: 'var(--sidebar-accent)', color: 'var(--sidebar-accent-foreground)' }}>
+              Item em destaque
+            </div>
+          </div>
+        </div>
+
+        <div className="token-code">
+          <code>--sidebar</code><br />
+          <code>--sidebar-foreground</code><br />
+          <code>--sidebar-primary</code><br />
+          <code>--sidebar-primary-foreground</code><br />
+          <code>--sidebar-accent</code><br />
+          <code>--sidebar-accent-foreground</code><br />
+          <code>--sidebar-border</code><br />
+          <code>--sidebar-ring</code>
+        </div>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Status tokens</h2>
+      <p>Tokens auxiliares para presença, leitura e reação.</p>
+
+      <div className="mini-row">
+        <div className="pill" style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--foreground)' }}>
+          <span className="dot" style={{ background: 'var(--color-online)' }}></span>
+          Online
+        </div>
+
+        <div className="pill" style={{ background: 'rgba(74,120,181,0.12)', color: 'var(--foreground)' }}>
+          <span className="dot" style={{ background: 'var(--color-unread)' }}></span>
+          Unread
+        </div>
+
+        <div className="pill" style={{ background: 'rgba(212,24,61,0.12)', color: 'var(--color-like)' }}>
+          ❤ Like
+        </div>
+      </div>
+
+      <div className="token-code">
+        <code>--color-online</code><br />
+        <code>--color-unread</code><br />
+        <code>--like</code><br />
+        <code>--like-hover</code>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Radius</h2>
+      <p>Escala de arredondamento aplicada conforme densidade e importância do componente.</p>
+
+      <div className="radius-demo-row">
+        <div className="radius-demo-box" style={{ borderRadius: 'var(--radius-sm)' }}>sm</div>
+        <div className="radius-demo-box" style={{ borderRadius: 'var(--radius-md)' }}>md</div>
+        <div className="radius-demo-box" style={{ borderRadius: 'var(--radius)' }}>base</div>
+        <div className="radius-demo-box" style={{ borderRadius: 'var(--radius-xl)' }}>xl</div>
+      </div>
+
+      <div className="token-code">
+        <code>--radius-sm</code><br />
+        <code>--radius-md</code><br />
+        <code>--radius</code><br />
+        <code>--radius-xl</code>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Sombras em cards</h2>
+      <p>Sombras para elevar elementos importantes e destacar ações principais.</p>
+
+      <div className="shadow-demo-grid">
+        <div
+          className="shadow-demo-card"
+          style={{ boxShadow: 'var(--shadow-primary)' }}
+        >
+          <strong>Shadow Primary</strong>
+          <p style={{ marginTop: '8px' }}>
+            Boa para CTA, cards destacados e superfícies com ênfase moderada.
+          </p>
+        </div>
+
+        <div
+          className="shadow-demo-card"
+          style={{ boxShadow: 'var(--shadow-primary-strong)' }}
+        >
+          <strong>Shadow Primary Strong</strong>
+          <p style={{ marginTop: '8px' }}>
+            Útil para destaque máximo, hero cards e superfícies promocionais.
+          </p>
+        </div>
+
+        <div
+          className="shadow-demo-card bg-card text-card-foreground border border-border"
+          style={{ boxShadow: '0 8px 24px rgba(15,23,42,0.08)' }}
+        >
+          <strong>Sombra neutra leve</strong>
+          <p style={{ marginTop: '8px' }}>
+            Exemplo de card com sombra suave para conteúdo padrão.
+          </p>
+        </div>
+
+        <div
+          className="shadow-demo-card ds-surface-glass"
+        >
+          <strong>Glass surface</strong>
+          <p style={{ marginTop: '8px' }}>
+            Exemplo com a classe real <code>.ds-surface-glass</code> do seu theme.css.
+          </p>
+        </div>
+      </div>
+
+      <div className="token-code">
+        <code>box-shadow: var(--shadow-primary)</code><br />
+        <code>box-shadow: var(--shadow-primary-strong)</code><br />
+        <code>className="ds-surface-glass"</code>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Gradients</h2>
+      <p>Gradientes usados na home e em destaques de marca.</p>
+
+      <div className="token-grid">
+        <div className="gradient-box" style={{ background: 'var(--gradient-main)', color: '#0f172a' }}>
+          --gradient-main
+        </div>
+        <div className="gradient-box" style={{ background: 'var(--gradient-title)' }}>
+          --gradient-title
+        </div>
+        <div className="gradient-box" style={{ background: 'var(--gradient-btn-primary)' }}>
+          --gradient-btn-primary
+        </div>
+        <div className="gradient-box" style={{ background: 'var(--gradient-dark)' }}>
+          --gradient-dark
+        </div>
+      </div>
+
+      <div className="token-code">
+        <code>--gradient-main</code><br />
+        <code>--gradient-title</code><br />
+        <code>--gradient-btn-primary</code><br />
+        <code>--gradient-dark</code>
+      </div>
+    </div>
+
+    <div className="token-card">
+      <h2>Charts</h2>
+      <p>Paleta reservada para visualização de dados.</p>
+
+      <div className="mini-row">
+        <div className="pill" style={{ background: 'var(--chart-1)', color: '#fff' }}>chart-1</div>
+        <div className="pill" style={{ background: 'var(--chart-2)', color: '#fff' }}>chart-2</div>
+        <div className="pill" style={{ background: 'var(--chart-3)', color: '#fff' }}>chart-3</div>
+        <div className="pill" style={{ background: 'var(--chart-4)', color: '#111' }}>chart-4</div>
+        <div className="pill" style={{ background: 'var(--chart-5)', color: '#111' }}>chart-5</div>
+      </div>
+
+      <div className="token-code">
+        <code>--chart-1</code><br />
+        <code>--chart-2</code><br />
+        <code>--chart-3</code><br />
+        <code>--chart-4</code><br />
+        <code>--chart-5</code>
+      </div>
+    </div>
+  </div>
+);
+
+<Meta title="Design System/Fundação/Tokens Semânticos" />
+
+<SemanticTokensPage />

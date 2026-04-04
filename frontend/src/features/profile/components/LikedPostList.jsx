@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { toast } from 'react-toastify';
 import { getLikedPosts } from "../services/profileService";
 import { PostListUI } from "./PostListUI";
 import { usePostList } from "../hooks/usePostList";
-import Loading from "@/design-system/components/Loading";
-import { toast } from 'react-toastify';
+
+import { useTranslation } from "react-i18next";
+import { Loading } from "@/design-system";
 
 export function LikedPostList({ username }) {
 
@@ -11,6 +13,7 @@ export function LikedPostList({ username }) {
   const { posts, loadInitial, ...handlers } = usePostList(
     (page, size) => getLikedPosts(username, page, size)
   );
+  const { t } = useTranslation('profile');
 
   useEffect(() => {
 
@@ -20,7 +23,7 @@ export function LikedPostList({ username }) {
 
       } catch (err) {
         console.error(err);
-        toast.error("Falha ao buscar posts curtidos pelo usuário");
+        toast.error(t('likedPosts.error'));
       } finally {
         setLoading(false);
       }

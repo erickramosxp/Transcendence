@@ -1,31 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useLayoutEffect, useRef} from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system/primitives/Tabs'
-import Loading from '@/design-system/components/Loading';
-import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
-
-import { MediaGrid } from '@/features/profile/components/MediaGrid'
-import { ProfilePostList } from './components/ProfilePostList';
-import { LikedPostList } from './components/LikedPostList';
 
 import { useAuth } from '@/app/providers/AuthProvider';
 import { getUserInfo } from './services/profileService';
 
+import { MediaGrid } from '@/features/profile/components/MediaGrid'
+import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
+import { ProfilePostList } from './components/ProfilePostList';
+import { LikedPostList } from './components/LikedPostList';
+
+import { useTranslation } from 'react-i18next';
+
+import { Tabs, TabsList, TabsTrigger, TabsContent, Loading } from '@/design-system'
+
+
 export function ProfileViewer() {
 
+  const topRef = useRef(null);
   const [loadHeader, setLoadHeader] = useState(true);
   const [notFounded, setNotFounded] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [activeTab, setActiveTab] = useState('posts');
   const { user } = useAuth();
   const { username } = useParams();
+  const { t } = useTranslation('profile');
 
   const profileUsername = username ?? user.username;
+
+  useLayoutEffect(() => {
+    setActiveTab('posts');
+    topRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [profileUsername]);
 
   useEffect(() => {
 
 		const getProfileInfo = async () => {
+
+      setLoadHeader(true);
 
 			try {
 				const resp = await getUserInfo(profileUsername);
@@ -41,7 +56,7 @@ export function ProfileViewer() {
 		}
 
 		getProfileInfo();
-	},[username]);
+	},[profileUsername]);
 
   const changeFields = (data) => {
 
@@ -75,7 +90,7 @@ export function ProfileViewer() {
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
         <p className='text-muted-foreground text-3xl text-center'>
-          Perfil não encontrado
+          {t('viewer.notFounded')}
         </p>
       </div>
     )
@@ -83,13 +98,14 @@ export function ProfileViewer() {
 
   return (
     <div className={`bg-background min-h-screen`}>
+      <div ref={topRef} />
       <ProfileHeader userData={userData} changeFields={changeFields} changeFollowCount={changeFollowCount}/>
       <div className='max-w-4xl mx-auto px-4 pb-10'>
-        <Tabs defaultValue="posts" className={`max-w-4xl`} >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
           <TabsList className='mb-4'>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="media">Mídia</TabsTrigger>
-            <TabsTrigger value="likes">Curtidas</TabsTrigger>
+            <TabsTrigger value="posts">{t('viewer.posts')}</TabsTrigger>
+            <TabsTrigger value="media">{t('viewer.media')}</TabsTrigger>
+            <TabsTrigger value="likes">{t('viewer.likes')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts">

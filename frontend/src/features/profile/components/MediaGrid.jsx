@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { Modal } from "@/design-system/components/Modal";
-import  PostCard  from "@/features/feed/components/PostCard";
-import { usePostList } from "../hooks/usePostList";
-import { getUserMediaPosts } from '../services/profileService'
-import Loading from "@/design-system/components/Loading";
 import { toast } from 'react-toastify';
+import { usePostList } from "../hooks/usePostList";
+import  PostCard  from "@/features/feed/components/PostCard";
+import { getUserMediaPosts, getPostUserDetails } from '../services/profileService'
+
+import { Modal, Loading } from "@/design-system";
+import { resolveMediaType } from "@/shared/resolveMediaType";
+import { useTranslation } from "react-i18next";
 
 export function MediaGrid({ username }) {
 
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('profile');
 
   const { posts, loadInitial, handleLike, toggleComments, activeCommentsPostId, incrementCommentCount, ...handlers } = usePostList(
   (page, size) => getUserMediaPosts(username, page, size)
@@ -23,7 +26,7 @@ export function MediaGrid({ username }) {
 
       } catch (err) {
         console.error(err);
-        toast.error("Falha ao buscar mídias do usuário");
+        toast.error(t('mediaGrid.getMidaError'));
       } finally {
         setLoading(false);
       }
@@ -32,6 +35,17 @@ export function MediaGrid({ username }) {
     getUserMediaPosts();
   }, [username]);
 
+  const getPostDetails = async (postId) => {
+
+    try {
+      const resp = await getPostUserDetails(postId);
+      setSelected(resp);
+    } catch (err) {
+      console.error(err);
+      toast.error(t('mediaGrid.getPostError'));
+    }
+  }
+
 
   if (loading)
     return <Loading size="md" className="py-10" />
@@ -39,7 +53,7 @@ export function MediaGrid({ username }) {
   if (posts.length === 0) {
     return (
       <p className="text-center text-muted-foreground py-12 text-sm">
-        Nenhuma mídia ainda.
+        {t('mediaGrid.empty')}
       </p>
     );
   }
@@ -49,17 +63,27 @@ export function MediaGrid({ username }) {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((item, index) => (
           <div
-            key={`${item.id}-${index}`}
+            key={`${item.postId}-${index}`}
             className="aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => setSelected(posts.find((p) => p.id === item.id))}
+            onClick={() => getPostDetails(item.postId)}
           >
-            <img
-              src={item?.mediaUrl || null}
-              alt={item.alt ?? "mídia"}
-              width={300} height={300}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            { resolveMediaType(item?.mediaUrl, null) === 'video' ?
+              <video 
+                src={item.mediaUrl}
+                className="h-full w-full object-cover"
+                muted
+                preload="metadata"
+              >
+              </video>
+            :
+              <img
+                src={item?.mediaUrl || null}
+                alt={item.alt ?? "mídia"}
+                width={300} height={300}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            }
           </div>
         ))}
       </div>

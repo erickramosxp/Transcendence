@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Fundação/Dark Mode" />
+
+# Dark mode
+
+O tema escuro mantém a mesma lógica semântica do light mode, mas muda a profundidade das superfícies para um azul marinho escuro, preservando a identidade do sistema.
+
+## Como ele é aplicado
+
+A implementação usa a classe `.dark` para sobrescrever os tokens centrais. Isso é bom porque os componentes continuam apontando para os mesmos nomes semânticos e não precisam mudar sua API.
+
+## Onde usar
+
+- Aplicações com uso prolongado.
+- Interfaces com muita leitura noturna.
+- Ambientes que precisam reduzir brilho sem perder contraste.
+
+## Boas práticas
+
+- Nunca troque diretamente a cor do componente por tema; troque o token.
+- Garanta contraste suficiente entre `--card`, `--background` e `--foreground`.
+- Revise hover, focus ring e borda no dark mode, porque alguns estados ficam mais sutis.
+
+## O que observar neste CSS
+
+- `--background` vai para `#0A1222`.
+- `--card` vai para `#121a2c`.
+- `--primary` permanece na família Yale Blue, preservando reconhecimento de marca.
+- `--input-background` muda para uma superfície mais fechada, adequada ao contexto escuro.

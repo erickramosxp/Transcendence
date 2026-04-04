@@ -1,0 +1,27 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Data Display/Charts" />
+
+# Charts
+
+O tema possui uma paleta própria para visualização de dados, separada da paleta semântica principal. Isso é positivo porque evita conflito entre cor de interface e cor de série de gráfico.
+
+## Tokens
+
+| Token | Light | Dark | Uso |
+|---|---|---|---|
+| `--chart-1` | `oklch(0.646 0.222 41.116)` | `oklch(0.488 0.243 264.376)` | Série de gráfico, comparação e distribuição visual. |
+| `--chart-2` | `oklch(0.6 0.118 184.704)` | `oklch(0.696 0.17 162.48)` | Série de gráfico, comparação e distribuição visual. |
+| `--chart-3` | `oklch(0.398 0.07 227.392)` | `oklch(0.769 0.188 70.08)` | Série de gráfico, comparação e distribuição visual. |
+| `--chart-4` | `oklch(0.828 0.189 84.429)` | `oklch(0.627 0.265 303.9)` | Série de gráfico, comparação e distribuição visual. |
+| `--chart-5` | `oklch(0.769 0.188 70.08)` | `oklch(0.645 0.246 16.439)` | Série de gráfico, comparação e distribuição visual. |
+
+## Como usar
+
+- Use `chart-1` a `chart-5` para séries distintas.
+- Preserve a ordem dos tokens para manter consistência entre telas.
+- Evite reutilizar `primary` como cor de todas as séries.
+
+## Por que usar separado
+
+A interface comunica ação e estado. O gráfico comunica comparação e tendência. Separar essas camadas melhora leitura e reduz ambiguidade visual.

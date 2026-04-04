@@ -1,0 +1,43 @@
+{
+    "menu": {
+        "notImplemented": "Coming soon"
+    },
+    "popup": {
+        "title": "Create post",
+        "description": "Share something with your community"
+    },
+    "createPost": {
+        "text": {
+            "placeholder": "What are you thinking?",
+            "submit": "Post",
+            "charCount": "{{count}}/500"
+        },
+        "photo": {
+            "placeholder": "Tell the story behind the image",
+            "emptyHint": "A picture is worth a thousand words",
+            "submit": "Post photo",
+            "charCount": "{{count}}/500"
+        },
+        "video": {
+            "placeholder": "What’s happening here?",
+            "emptyHint": "Record, upload, and share!",
+            "submit": "Post video",
+            "charCount": "{{count}}/500"
+        }
+    },
+    "comments": {
+        "empty": "No comments yet",
+        "placeholder": "Write a comment..."
+    },
+    "list": {
+        "loadMore": "Loading more…",
+        "end": "You’ve reached the end of the feed",
+        "empty": "Nothing here yet.",
+        "emptyCta": "Be the first to share something ✨",
+        "loadError": "Failed to load posts"
+    },
+    "sections": {
+        "onlineFriends": "Online Friends",
+        "trending": "Trending"
+    }
+}

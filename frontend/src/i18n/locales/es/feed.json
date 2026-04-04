@@ -1,0 +1,43 @@
+{
+    "menu": {
+        "notImplemented": "Próximamente"
+    },
+    "popup": {
+        "title": "Crear publicación",
+        "description": "Comparte algo con tu comunidad"
+    },
+    "createPost": {
+        "text": {
+            "placeholder": "¿Qué estás pensando?",
+            "submit": "Publicar",
+            "charCount": "{{count}}/500"
+        },
+        "photo": {
+            "placeholder": "Cuenta la historia detrás de la imagen",
+            "emptyHint": "Una imagen vale más que mil palabras",
+            "submit": "Publicar foto",
+            "charCount": "{{count}}/500"
+        },
+        "video": {
+            "placeholder": "¿Qué está pasando aquí?",
+            "emptyHint": "¡Graba, sube y comparte!",
+            "submit": "Publicar video",
+            "charCount": "{{count}}/500"
+        }
+    },
+    "comments": {
+        "empty": "Sin comentarios",
+        "placeholder": "Escribe un comentario..."
+    },
+    "list": {
+        "loadMore": "Cargando más…",
+        "end": "Has llegado al final del feed",
+        "empty": "Todavía no hay nada aquí.",
+        "emptyCta": "Sé el primero en compartir algo ✨",
+        "loadError": "Error al cargar las publicaciones"
+    },
+    "sections": {
+        "onlineFriends": "Amigos en línea",
+        "trending": "Tendencias"
+    }
+}

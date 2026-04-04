@@ -2,7 +2,7 @@ import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useEffect, useState, useRef } from "react";
 
 
-function Media({ url, mimeType }) {
+export function Media({ url, mimeType }) {
     const [mediaType, setMediaType] = useState(null);
 
     const videoRef = useRef(null);
@@ -37,7 +37,7 @@ function Media({ url, mimeType }) {
     // loading
     if (!mediaType) {
         return (
-            <div className="animate-pulse bg-gray-300 h-64 w-full rounded-lg" />
+            <div className="animate-pulse bg-muted-foreground h-64 w-full rounded-lg" />
         );
     }
 
@@ -46,8 +46,7 @@ function Media({ url, mimeType }) {
             <img
                 src={url}
                 alt=""
-                className="rounded-lg"
-                style={{ maxWidth: '100%', maxHeight: '400px', marginTop: '10px' }}
+                className="mt-3 max-h-[400px] max-w-full rounded-lg object-contain"
             />
         );
     }
@@ -57,8 +56,7 @@ function Media({ url, mimeType }) {
             <video
                 src={url}
                 controls
-                className="rounded-lg sm:max-w-lg mt-3"
-                style={{maxHeight: '400px'}}
+                className="rounded-lg lx:max-w-lg mt-3 max-w-xl w-full"
                 ref={videoRef}
             />
         );
@@ -67,5 +65,3 @@ function Media({ url, mimeType }) {
     // não renderiza nada
     return null;
 }
-
-export default Media;

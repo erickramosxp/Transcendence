@@ -7,3 +7,5 @@ backend/.idea
 
 **/*private*.pem
 **/*.key
+
+storybook-static/

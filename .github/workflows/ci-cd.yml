@@ -43,6 +43,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -55,6 +58,7 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
+          npx playwright install --with-deps
           npx vitest run
           npm run build
 

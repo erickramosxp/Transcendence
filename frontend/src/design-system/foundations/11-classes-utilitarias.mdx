@@ -1,0 +1,31 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design System/Implementação/Classes Utilitárias" />
+
+# Classes utilitárias encontradas
+
+Além dos tokens, o arquivo também define algumas classes com função direta na interface. Elas ajudam a traduzir o sistema para uso real em componentes.
+
+## Classes identificadas no CSS
+
+- `container`
+- `dark`
+- `ds-surface-glass`
+- `feed-background`
+- `feed-grid`
+- `feed-sidebar`
+- `like-button`
+- `like-button--active`
+
+## Leituras práticas
+
+- `.container`: controla largura máxima e respiro interno.
+- `.feed-background`: aplica fundo principal/gradiente da área de feed.
+- `.feed-grid`: organiza o layout principal responsivo.
+- `.feed-sidebar`: mantém a lateral fixa em desktop.
+- `.ds-surface-glass`: aplica aparência translúcida com blur e sombra.
+- `.like-button` e variações: tratam estado visual de curtida.
+
+## Como usar no Storybook
+
+Essas classes podem aparecer em páginas de documentação, exemplos de composição e stories de layout, mas a recomendação principal é documentar primeiro o token e depois mostrar um exemplo real de classe aplicada.

@@ -1,35 +1,27 @@
 import React, { useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
+import { useAuth } from "@/app/providers/AuthProvider";
+import { followUser, unfollowUser } from "../services/profileService";
 import { toast } from 'react-toastify'
 
-// import { Avatar } from "./Avatar";
 import { CoverPhoto } from "./CoverPhoto";
 import { ProfileInfo } from "./ProfileInfo";
 import { EditProfileForm } from "./EditProfileForm";
 import { FollowersModal } from "./FollowersModal";
-import { Button } from "@/design-system/primitives/Button";
-import { Modal } from "@/design-system/components/Modal";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { Avatar } from "@/design-system/primitives/Avatar";
-import { followUser, unfollowUser } from "../services/profileService";
 
-// {
-//   "id": 0,
-//   "avatarUrl": "string",
-//   "bannerImgUrl": "string",
-//   "username": "string",
-//   "name": "string",
-//   "followers": 0,
-//   "following": 0,
-//   "registerDate": "2022-03-10T12:15:50-04:00"
-// }
+import { useTranslation } from "react-i18next";
+import { SettingsContent } from "./SettingsContent";
+
+import { Button, Modal, Avatar } from "@/design-system";
 
 export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => {
 
 	const [connectionsModal, setConnectionsModal] = useState({ open: false, tab: 'followers' });
 
 	const [editOpen, setEditOpen] = useState(false);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 	const { user } = useAuth();
+	const { t } = useTranslation('profile');
 
 	const handleFollowUser = async (username) => {
 
@@ -38,12 +30,13 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFields({ isFollowing: true });
 			changeFollowCount('follow');
 		} catch (err) {
-			console.error(err)
+			console.error(err);
+			toast.error("Falha ao seguir")
 		} finally {
-
+			
 		}
 	}
-
+	
 	const handleUnfollowUser = async (username) => {
 
 		try {
@@ -52,6 +45,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 			changeFollowCount('unfollow');
 		} catch (err) {
 			console.error(err)
+			toast.error("Falha ao deixar de seguir")
 		} finally {
 
 		}
@@ -71,13 +65,14 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 	const openFollowers = () => setConnectionsModal({ open: true, tab: 'followers' });
 	const openFollowing = () => setConnectionsModal({ open: true, tab: 'following' });
 	const closeConnections = () => setConnectionsModal({ open: false, tab: 'followers' });
+	const isMobile = window.innerWidth < 768;
 
 
 	return (
 		<>
 			<Modal
 				open={editOpen}
-				title="Editar Perfil"
+				title={t('header.editProfile')}
 				onClose={() => setEditOpen(false)}
 				scrollable={false}
 			>
@@ -97,6 +92,31 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 				currentUserId={user?.id}
 				changeFollowCount={changeFollowCount}
 			/>
+			{!isMobile && settingsOpen && (
+				<Modal
+					open={settingsOpen}
+					onClose={() => setSettingsOpen(false)}
+					title={'Settings'}
+				>
+					<SettingsContent />
+				</Modal>
+			)}
+			{isMobile && settingsOpen && (
+				<div className="fixed inset-0 bg-background z-50">
+					
+					<div className="h-full flex flex-col">
+						<div className="p-4 flex items-center justify-between border-b">
+							<h2>Configurações</h2>
+							<button onClick={() => setSettingsOpen(false)}>✕</button>
+						</div>
+
+						<div className="flex-1 overflow-y-auto">
+							<SettingsContent />
+						</div>
+					</div>
+				</div>
+			)}
+
 			<div className={`pb-5`}>
 				<div className="w-full max-w-4xl mx-auto">
 					<CoverPhoto className='overflow-hidden'
@@ -110,7 +130,7 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 							<div className="-mt-16 rounded-full p-1 relative z-10 border-background bg-background">
 
 								<Avatar
-									size="xxl"
+									size="xl3"
 									name={userData?.name}
 									src={
 										userData?.avatarUrl
@@ -124,16 +144,16 @@ export const ProfileHeader = ({ userData, changeFields, changeFollowCount }) => 
 									{user?.id != userData?.id ?
 										(
 											<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
-												{userData?.isFollowing ? 'Seguindo' : 'Seguir'}
+												{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
 											</Button>
 										)
 										:
 										<>
 											<Button variant='outline' className="rounded-full cursor-pointer" onClick={() => setEditOpen(true)}>
 												<SquarePen />
-												Editar Perfil
+												{t('header.editProfile')}
 											</Button>
-											<Button variant='outline' className='rounded-full cursor-pointer'>
+											<Button variant='outline' className='rounded-full cursor-pointer' onClick={() => setSettingsOpen(true)}>
 												<Settings />
 											</Button>
 										</>
