@@ -1,91 +1,79 @@
-import React, { useEffect } from 'react'
-import { Button } from '@/design-system/primitives/Button';
+import React, { useEffect } from "react";
+import { Button } from "@/design-system";
+import { X } from "lucide-react";
 
-export function Modal({open, title, onClose, children, size = "md", scrollable = true}) {
+export function Modal({
+  open,
+  title,
+  onClose,
+  children,
+  size = "md",
+  scrollMode = "content",
+}) {
+  const sizes = {
+    sm: "w-full max-w-sm",
+    md: "w-full max-w-md sm:max-w-lg",
+    lg: "w-full max-w-lg sm:max-w-xl",
+    xl: "w-full max-w-xl sm:max-w-2xl",
+  };
 
-    const sizes = {
-        sm: "w-full max-w-sm",
-        md: "w-full max-w-md sm:max-w-lg",
-        lg: "w-full max-w-lg sm:max-w-xl",
-        xl: "w-full max-w-xl sm:max-w-2xl",
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") onClose?.();
     };
 
-    useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
 
-        if (!open)
-            return;
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
 
-        const onKeyDown = (e) => {
-            if (e.key === "Escape")
-                onClose?.();
-        };
+  if (!open) return null;
 
-        document.addEventListener("keydown", onKeyDown);
-        document.body.style.overflow = "hidden";
+  const contentClass =
+    scrollMode === "content"
+      ? "flex-1 min-h-0 overflow-y-auto px-2 pb-24 sm:pb-6"
+      : scrollMode === "none"
+      ? "flex-1 p-4 sm:p-6 overflow-visible"
+      : "flex-1 p-4 sm:p-6";
 
-        return () => {
-            document.removeEventListener("keydown", onKeyDown);
-            document.body.style.overflow = "";
-        }
+  const dialogClass =
+    scrollMode === "dialog"
+      ? "max-h-[95vh] overflow-y-auto"
+      : "max-h-[95vh] overflow-hidden";
 
-    }, [open, onClose]);
-
-
-    if (!open)
-        return null;
-
-    return (
-        <div
-            className="
-            fixed inset-0 z-50
-            flex items-center justify-center p-1 sm:p-4
-            bg-black/40
-            backdrop-blur-sm
-            "
-            onMouseDown={(e) => {
-                if (e.target === e.currentTarget)
-                        onClose?.();
-            }}>
-            <div 
-                className={`${sizes[size]}
-                    w-full max-w-sm sm:max-w-lg
-                    ${scrollable ? 'max-h-[95vh]' : 'max-h-full'}
-                    bg-card text-foreground
-                    rounded-xl border border-border
-                    shadow-2xl
-                    animate-in slide-in-from-bottom-4 duration-300
-                    flex flex-col
-                    `}
-                role='dialog'
-                aria-modal='true'>
-                    
-                <div className="flex items-center justify-between p-2 sm:px-4 sm:py-3">
-                    <h2 className="text-2xl font-semibold">{title}</h2>
-                    <Button size='sm' variant='destructive' className='cursor-pointer' onClick={onClose} aria-label='Fechar'>
-                        x
-                    </Button>
-                </div>
-                 {scrollable ? (
-                    /* Para PostCard/Mídia - COM SCROLL */
-                    // <div className="flex-1 min-h-0 overflow-hidden">
-                        // {/* <div className="h-full overflow-y-auto px-4 sm:px-6 py-4 pb-20 sm:pb-8 scrollbar-thin"> */}
-                        <div className="flex-1 overflow-y-auto px-2 pb-24 sm:pb-6 ">
-                            {children}
-                        </div>
-                    // {/* </div> */}
-                    ) : (
-                    /* Para Editar/ Seguidores - SEM SCROLL FORÇADO */
-                    <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
-                        {children}
-                    </div>
-                    )}
-
-                {/* <div className="flex-1 overflow-y-auto px-2 pb-24 sm:pb-6">
-                    {children}
-                </div> */}
-            </div>
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-1 backdrop-blur-sm sm:p-4"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose?.();
+      }}
+    >
+      <div
+        className={`${sizes[size]} w-full rounded-xl border border-border bg-card text-foreground shadow-2xl animate-in slide-in-from-bottom-4 duration-300 flex flex-col ${dialogClass}`}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex items-center justify-between p-2 sm:px-4 sm:py-3">
+          <h2 className="text-2xl font-semibold">{title}</h2>
+          <Button
+            size="sm"
+            variant="destructive"
+            className="cursor-pointer"
+            onClick={onClose}
+            aria-label="Fechar"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
-    )
-}
 
-       
+        <div className={contentClass}>{children}</div>
+      </div>
+    </div>
+  );
+}

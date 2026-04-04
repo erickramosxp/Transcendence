@@ -1,4 +1,4 @@
-import { AvatarWithStatus } from "@/design-system/primitives/Avatar";
+import { AvatarWithStatus } from "@/design-system";
 
 export default function ChatItem({chat, onCLick}) {
 

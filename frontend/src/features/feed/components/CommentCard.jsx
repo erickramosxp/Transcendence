@@ -1,170 +1,171 @@
 import React, { useEffect, useState } from "react";
-import { Heart, Send } from "lucide-react";
-
-
-import Textarea from "@/design-system/primitives/Textarea";
-
-import { Button } from "@/design-system/primitives/Button";
-import { Avatar } from "@/design-system/primitives/Avatar";
-import { TextWithLink } from "@/design-system/primitives/TextWithLink";
-
-import { Separator } from "@/design-system/primitives/Separator";
-
-import { Scroll } from "@/design-system/primitives/Scroll";
-import { yaleBlue } from "@/design-system/tokens/colors";
-
+import { Link } from "react-router-dom";
+import { Send } from "lucide-react";
+import {
+    getComments,
+    likeComment,
+    unlikeComment,
+    createComment,
+} from "../feedService";
 import { getCurrentTime } from "@/shared/getCurrentTime";
-import { getComments, likeComment, unlikeComment, createComment } from "../feedService";
-import { Link } from 'react-router-dom'
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/hooks/useLanguage";
 
-// {
-//   "items": [
-//     {
-//       "id": 0,
-//       "name": "string",
-//       "userName": "string",
-//       "contents": "string",
-//       "avatarUrl": "string",
-//       "likedByMe": true,
-//       "likeCount": 0,
-//       "created_at": "2022-03-10T12:15:50-04:00"
-//     }
-//   ]
-// }
-
-// definir commnetCout ao fazer um novo comentario
+import {
+    Button,
+    Textarea,
+    Avatar,
+    TextWithLink,
+    Separator,
+    Scroll,
+    Loading,
+    LikeButton
+} from "@/design-system";
 
 export default function CommentCard({ postId, incrementCommentCount }) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
+    const [loadingComments, setLoadingComments] = useState(true);
 
-    function handleSubmit(e) {
+    const { currentLanguage } = useLanguage();
+
+    const { t } = useTranslation('feed');
+
+    async function handleSubmit(e) {
         e.preventDefault();
+
         const value = commentText.trim();
         if (!value) return;
 
-        handleCreateComment();
-    }
-
-    const handleCreateComment = async () => {
-
-        // trocar para definir no frontend primeiro e depois fazer a requisição
         try {
+            const newComment = await createComment({
+                postId,
+                text: value,
+            });
 
-            const newComment = await createComment({postId: postId, text: commentText});
-
-            setComments(prev => [...prev, newComment]);
-
+            setComments((prev) => [...prev, newComment]);
             setCommentText("");
             incrementCommentCount(postId);
-
         } catch (err) {
             console.log(err);
         }
-    };
+    }
 
     useEffect(() => {
-
         const requestComments = async () => {
+            setLoadingComments(true);
+
             try {
-
                 const data = await getComments(postId);
-                const resp = data.data;
-                setComments(resp.items);
-
+                const resp = data.data ?? data;
+                setComments(resp.items ?? []);
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoadingComments(false);
             }
-        }
+        };
 
         requestComments();
-
-    }, []);
+    }, [postId]);
 
     const handleToggleLike = async (commentId) => {
+        const targetComment = comments.find((c) => c.id === commentId);
+        if (!targetComment) return;
+
+        const liked = targetComment.likedByMe;
+
+        setComments((prev) =>
+            prev.map((c) =>
+                c.id === commentId
+                    ? {
+                        ...c,
+                        likedByMe: !c.likedByMe,
+                        likeCount: c.likedByMe ? c.likeCount - 1 : c.likeCount + 1,
+                    }
+                    : c
+            )
+        );
 
         try {
-
-            const liked = comments.find(c => c.id == commentId).likedByMe;
-
-            setComments(prev =>
-                prev.map(c =>
-                    c.id === commentId
-                        ? {
-                            ...c,
-                            likedByMe: !c.likedByMe,
-                            likeCount: c.likedByMe
-                                ? c.likeCount - 1
-                                : c.likeCount + 1
-                        }
-                        : c
-                )
-            );
-
             if (liked) {
                 await unlikeComment(commentId);
             } else {
                 await likeComment(commentId);
             }
-
-
         } catch (err) {
             console.error(err);
+
+            setComments((prev) =>
+                prev.map((c) =>
+                    c.id === commentId
+                        ? {
+                            ...c,
+                            likedByMe: liked,
+                            likeCount: liked ? c.likeCount + 1 : c.likeCount - 1,
+                        }
+                        : c
+                )
+            );
         }
     };
 
     return (
-        <div className="pt-2 space-y-3">
+        <div className="space-y-3 pt-2">
             <Separator />
-            {comments.length === 0 ? (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Sem comentários
+            {loadingComments ? (
+                <Loading size="sm" className="min-h-15" />
+            ) : comments.length === 0 ? (
+                <div className="text-sm text-muted-foreground">
+                    {t('comments.empty')}
                 </div>
             ) : (
-                <Scroll className="max-h-50">
+                <Scroll className="max-h-[20rem]">
                     <div className="space-y-3">
                         {comments.map((comment) => (
-                            <div key={comment.id ?? comment.user_id + comment.created_at} className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                            <div
+                                key={comment.id ?? `${comment.user_id}-${comment.created_at}`}
+                                className="rounded-xl bg-muted p-3"
+                            >
                                 <div className="flex gap-3">
                                     <div>
                                         <Avatar
                                             src={comment.avatarUrl}
                                             username={comment.userName}
                                             name={comment.name}
-                                            size="MD"
+                                            size="md"
                                         />
                                     </div>
-                                    <div className="flex-1">
+
+                                    <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
-                                            <span className={`${yaleBlue.text.hover} truncate min-w-10 sm:truncate-none`}>
-                                                <Link className='truncate' to={`/${comment.userName}`}>
+                                            <span className="min-w-10 truncate text-foreground transition-colors hover:text-primary sm:truncate-none">
+                                                <Link className="truncate" to={`/${comment.userName}`}>
                                                     {comment.name}
                                                 </Link>
                                             </span>
 
-                                            <span className="text-slate-500 truncate sm:truncate-none">
+                                            <span className="truncate text-muted-foreground sm:truncate-none">
                                                 @{comment.userName}
                                             </span>
-
-                                            <span title={new Date(comment.created_at).toLocaleString()} className="text-slate-400 truncate sm:truncate-none">
-                                                {getCurrentTime(comment.created_at)}
+                                            <span
+                                                title={new Date(comment.created_at).toLocaleString()}
+                                                className="truncate text-muted-foreground sm:truncate-none"
+                                            >
+                                                {getCurrentTime(comment.created_at, currentLanguage)}
                                             </span>
                                         </div>
-                                        <div className="mt-2 leading-relaxed">
+
+                                        <div className="mt-2 leading-relaxed text-foreground">
                                             <TextWithLink text={comment.contents} />
                                         </div>
-                                        <div className="flex items-center gap-6 mt-3 text-slate-500">
-                                            <button
-                                                onClick={() => handleToggleLike(comment.id)}
-                                                className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${comment.likedByMe
-                                                    ? 'text-pink-600 dark:text-pink-400'
-                                                    : 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
-                                                    }`}
-                                            >
-                                                <Heart className={`h-5 w-5 ${comment.likedByMe ? 'fill-current' : ''}`} />
-                                                {comment.likeCount}
-                                            </button>
 
+                                        <div className="mt-3 flex items-center gap-6 text-muted-foreground">
+                                            <LikeButton 
+                                                onClick={() => handleToggleLike(comment.id)}
+                                                liked={comment.likedByMe}
+                                                count={comment.likeCount}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -173,6 +174,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                     </div>
                 </Scroll>
             )}
+
             <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="flex items-center justify-end gap-2">
                     <Textarea
@@ -185,17 +187,13 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                 handleSubmit(e);
                             }
                         }}
-                        placeholder="Escreva um comentário..."
+                        placeholder={t('comments.placeholder')}
                         className="min-h-[40px] resize-none"
                     />
-                    <div>
-                        <Button
-                            onClick={handleSubmit}
-                            size="sm"
-                        >
-                            <Send className="h-4 w-4" />
-                        </Button>
-                    </div>
+
+                    <Button type="submit" variant="primary" size="sm">
+                        <Send className="h-4 w-4" />
+                    </Button>
                 </div>
             </form>
         </div>

@@ -1,6 +1,8 @@
 async function fetchLinkPreview(url) {
 	try {
 		const response = await fetch(`https://api.microlink.io?url=${encodeURIComponent(url)}`);
+		if (response.status != 200)
+			return null;
 		const data = await response.json();
 		const d = data.data;
 		return {

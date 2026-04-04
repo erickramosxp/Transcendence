@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { Input } from "@/design-system/primitives/Input";
+import { Button } from "@/design-system";
+import { Input } from "@/design-system";
 import { Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 

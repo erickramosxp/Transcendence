@@ -10,12 +10,13 @@ import jakarta.ws.rs.NotAuthorizedException;
 import com.ft.transcendence.auth.dto.AuthResponse;
 import com.ft.transcendence.auth.dto.RegisterRequest;
 import com.ft.transcendence.auth.domain.AuthProvider;
-import com.ft.transcendence.auth.domain.AuthProviderType;
 import com.ft.transcendence.user.domain.User;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.build.Jwt;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import static com.ft.transcendence.auth.domain.AuthProvider.createAuthProviderLocal;
+import static com.ft.transcendence.preferences.domain.UserPreference.createDefaultPreferences;
 
 @ApplicationScoped
 public class AuthService {
@@ -24,10 +25,7 @@ public class AuthService {
     public AuthResponse registerLocal(RegisterRequest req) {
         validateRegister(req);
 
-        if (User.find("email", req.email).firstResult() != null)
-            throw new BadRequestException("Email already in use");
-        if (User.find("username", req.username).firstResult() != null)
-            throw new BadRequestException("Username already in use");
+        ensureEmailAndUsernameAreFree(req);
 
         var now = OffsetDateTime.now();
 
@@ -40,15 +38,19 @@ public class AuthService {
         user.updatedAt = now;
         user.persist();
 
-        var ap = new AuthProvider();
-        ap.user = user;
-        ap.providerType = AuthProviderType.LOCAL;
-        ap.passwordHash = BcryptUtil.bcryptHash(req.password);
-        ap.createdAt = now;
-        ap.persist();
+        createAuthProviderLocal(user, req, now);
+
+        createDefaultPreferences(user, now);
 
         String token = issueToken(user);
         return AuthResponse.of(token, user);
+    }
+
+    private void ensureEmailAndUsernameAreFree(RegisterRequest req) {
+        if (User.find("email", req.email.trim().toLowerCase()).firstResult() != null)
+            throw new BadRequestException("Email already in use");
+        if (User.find("username", req.username.trim()).firstResult() != null)
+            throw new BadRequestException("Username already in use");
     }
 
     @Transactional

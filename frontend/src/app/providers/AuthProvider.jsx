@@ -4,16 +4,24 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "@/features/auth/authService";
 import { toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useTranslation } from "react-i18next";
+import { getUserPreferences } from "@/shared/api/preferencesService";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/design-system/hooks/useTheme";
+import i18n from "@/i18n";
 const AuthContext = createContext(null);
 
 const clientId = import.meta.env.GOOGLE_WEB_CLIENT_ID;
 
-export function AuthProvider({children}) {
+export function AuthProvider({ children }) {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { changeLanguage } = useLanguage();
+    const { changeTheme } = useTheme();
     let navigate = useNavigate();
+    const { t } = useTranslation('authProvider');
 
 
     useEffect(() => {
@@ -28,7 +36,7 @@ export function AuthProvider({children}) {
         setLoading(false);
     }, []);
 
-    const login = async (credentials) =>  {
+    const login = async (credentials) => {
 
         try {
             const resp = await authService.login(credentials);
@@ -41,12 +49,20 @@ export function AuthProvider({children}) {
             setUser(user);
             setIsAuthenticated(true);
 
-            toast.success('Login realizado com sucesso!');
-            setTimeout(() => navigate('/feed'), 1000);
+            try {
+                const userPreferences = await getUserPreferences();
+                await changeLanguage(userPreferences.language);
+                await changeTheme(userPreferences.theme);
+            } catch (e) {
+                console.log(e);
+            }
 
-        } catch (err){
+            toast.success(i18n.t('authProvider:login.success'));
+            setTimeout(() => { navigate('/feed')}, 1000);
+
+        } catch (err) {
             console.log(err);
-            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            const errorMsg = err.response?.data?.message || i18n.t('authProvider:login.error');
             console.log(errorMsg);
             toast.error(errorMsg);
         }
@@ -60,7 +76,7 @@ export function AuthProvider({children}) {
 
             const { token, user } = resp.data;
 
-            toast.success("Registro efetuado com sucesso");
+            toast.success(t('register.success'));
 
             localStorage.setItem('@trascendence:token', token);
             localStorage.setItem('@trascendence:user', JSON.stringify(user));
@@ -69,12 +85,12 @@ export function AuthProvider({children}) {
             setIsAuthenticated(true);
 
             setTimeout(() => {
-                toast.success('Redirecionado para página inicial');
+                toast.success(t('register.redirect'));
                 navigate('/feed');
             }, 2000);
 
         } catch (err) {
-            const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+            const errorMsg = err.response?.data?.message || t('register.error');
             console.log(errorMsg);
             toast.error(errorMsg);
         }
@@ -104,26 +120,35 @@ export function AuthProvider({children}) {
                     setUser(user);
                     setIsAuthenticated(true);
 
+                    try {
+                        const userPreferences = await getUserPreferences();
+                        await changeLanguage(userPreferences.language);
+                        await changeTheme(userPreferences.theme);
+
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                     setTimeout(() => {
-                    toast.success('Redirecionado para página inicial');
-                    navigate('/feed');
+                        toast.success(i18n.t('authProvider:socialLogin.success'));
+                        navigate('/feed');
                     }, 2000);
 
                 } catch (err) {
 
-                    const errorMsg = err.response?.data?.message || "Ocorreu um erro inesperado";
+                    const errorMsg = err.response?.data?.message || i18n.t('authProvider:socialLogin.error');
                     console.log(errorMsg);
                     toast.error(errorMsg);
                 }
             },
-            onError: () => toast.error("Falha no login com Google"),
+            onError: () => toast.error(i18n.t('authProvider:socialLogin.googleError')),
         })
     ) : (
         null
     )
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, user, loading, login, register, socialLogin, logout}}>
+        <AuthContext.Provider value={{ isAuthenticated, user, loading, login, register, socialLogin, logout }}>
             {children}
         </AuthContext.Provider>
     );

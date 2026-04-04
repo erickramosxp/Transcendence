@@ -1,43 +1,29 @@
 import React from "react";
-import { Heart, MessageSquare } from "lucide-react";
-import { yaleBlue } from "@/design-system/tokens/colors";
-import { Avatar } from "@/design-system/primitives/Avatar"
-import { TextWithLink } from "@/design-system/primitives/TextWithLink";
+import { Link } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
 import { getCurrentTime } from "@/shared/getCurrentTime";
-import  CommentCard  from "@/features/feed/components/CommentCard";
+import CommentCard from "@/features/feed/components/CommentCard";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/design-system/tokens/colors";
-import { Link } from 'react-router-dom'
-import Media from "@/design-system/components/Media";
 
-//     {
-//   "items": [
-//     {
-//       "id": 0,
-//       "name": "string",
-//       "userName": "string",
-//       "contents": "string",
-//       "avatarUrl": "string",
-//       "likedByMe": true,
-//       "likeCount": 0,
-//       "commentCount": 0,
-//       "media": "string",
-//       "created_at": "2022-03-10T12:15:50-04:00"
-//     }
-//   ],
-//   "page": 0,
-//   "size": 0,
-//   "hasMore": true
-// }
+import { Avatar, TextWithLink, Media, LikeButton } from "@/design-system";
 
-function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, incrementCommentCount, className }) {
 
+function PostCard({
+	post,
+	onLike,
+	onToggleComments,
+	activeCommentsPostId,
+	incrementCommentCount,
+	className,
+}) {
+
+	const { currentLanguage } = useLanguage();
+	const commentsOpen = activeCommentsPostId === post.id;
 
 	return (
-
-		<div className={cn(
-			"bg-card rounded-2xl shadow-md p-3 sm:p-4",
-			className)}>
-			<div className="flex gap-3 sm:gap-4 min-w-0">
+		<div className={cn("rounded-2xl bg-card p-3 shadow-md sm:p-4", className)}>
+			<div className="flex min-w-0 gap-3 sm:gap-4">
 				<div>
 					<Avatar
 						src={post.avatarUrl}
@@ -47,86 +33,102 @@ function PostCard({ post, onLike, onToggleComments, activeCommentsPostId, increm
 						className="shrink-0"
 					/>
 				</div>
-				<div className="flex-1 min-w-0">
+
+				<div className="min-w-0 flex-1">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
-						<span className={yaleBlue.text.hover + " truncate max-w-[120px] sm:max-w-none"}>
-							<Link className='truncate' to={`/${post.userName}`}>
+						<span className="max-w-[120px] truncate text-foreground transition-colors hover:text-primary sm:max-w-none">
+							<Link className="truncate" to={`/${post.userName}`}>
 								{post.name}
 							</Link>
 						</span>
-						<span className="text-slate-500 truncate max-w-[100px] sm:max-w-none" title={`@${post.userName}`}>
+
+						<span
+							className="max-w-[100px] truncate text-muted-foreground sm:max-w-none"
+							title={`@${post.userName}`}
+						>
 							@{post.userName}
 						</span>
-						<span title={new Date(post.created_at).toLocaleString()} className="text-slate-400 shrink-0 truncate">
-							{getCurrentTime(post.created_at)}
+						<span
+							title={new Date(post.created_at).toLocaleString()}
+							className="shrink-0 truncate text-muted-foreground"
+						>
+							{getCurrentTime(post.created_at, currentLanguage)}
 						</span>
 					</div>
 
-					<div className="mt-2 text-stone-700 dark:text-stone-300 leading-relaxed break-words overflow-hidden">
+					<div className="mt-2 break-words overflow-hidden leading-relaxed text-foreground">
 						<TextWithLink text={post.contents} />
 					</div>
 
-					{post.linkPreview && (
-						<a
-							href={post.linkPreview.url}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="mt-2 block rounded-lg border border-slate-200 overflow-hidden hover:border-slate-300 transition-colors"
-						>
-							<div className="flex gap-3 p-3">
-								{post.linkPreview.image && (
-									<img
-										src={post.linkPreview.image}
-										alt={post.linkPreview.title}
-										className="w-20 h-20 object-cover rounded-md shrink-0"
-									/>
-								)}
-								<div className="min-w-0 flex-1">
-									<h3 className="text-sm font-medium text-stone-800 line-clamp-2">
-										{post.linkPreview.title}
-									</h3>
-									{post.linkPreview.description && (
-										<p className="text-sm text-slate-500 mt-0.5 line-clamp-2">
-											{post.linkPreview.description}
-										</p>
+					{
+						post.linkPreview && (
+							<a
+								href={post.linkPreview.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="mt-2 block overflow-hidden rounded-lg border border-border transition-colors hover:bg-accent/40"
+							>
+								<div className="flex gap-3 p-3">
+									{post.linkPreview.image && (
+										<img
+											src={post.linkPreview.image}
+											alt={post.linkPreview.title}
+											className="h-20 w-20 shrink-0 rounded-md object-cover"
+										/>
 									)}
+
+									<div className="min-w-0 flex-1">
+										<h3 className="line-clamp-2 text-sm font-medium text-foreground">
+											{post.linkPreview.title}
+										</h3>
+
+										{post.linkPreview.description && (
+											<p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+												{post.linkPreview.description}
+											</p>
+										)}
+									</div>
 								</div>
-							</div>
-						</a>
-					)}
-					<Media 
-						url={post.media} 
-    					mimeType={post.mimeType} 
-					/>
-					<div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-3 text-slate-500">
-						<button
+							</a>
+						)
+					}
+
+					<Media url={post.media} mimeType={post.mimeType} />
+
+					<div className="mt-3 flex flex-wrap items-center gap-4 text-muted-foreground sm:gap-6">
+						<LikeButton
 							onClick={() => onLike(post.id)}
-							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${post.likedByMe
-								? 'text-pink-600 dark:text-pink-400'
-								: 'text-slate-500 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400'
-								}`}
-						>
-							<Heart className={`h-5 w-5 ${post.likedByMe ? 'fill-current' : ''}`} />
-							{post.likeCount}
-						</button>
+							liked={post.likedByMe}
+							count={post.likeCount}
+						/>
 						<button
 							onClick={() => onToggleComments(post.id)}
-							className={`flex items-center gap-2 text-sm transition-all hover:scale-105 ${activeCommentsPostId
-									? "text-[#4a78b5] dark:text-[#6e93c4]"
-									: "text-slate-500 dark:text-slate-400 hover:text-[#4a78b5] dark:hover:text-[#6e93c4]"
-								}`}						>
+							className={cn(
+								"flex items-center gap-2 text-sm transition-all hover:scale-105",
+								commentsOpen
+									? "text-primary"
+									: "text-muted-foreground hover:text-primary"
+							)}
+						>
 							<MessageSquare className="h-5 w-5" />
-							<span className="font-medium">{post.commentCount ?? post.comments?.length ?? 0}</span>
+							<span className="font-medium">
+								{post.commentCount ?? post.comments?.length ?? 0}
+							</span>
 						</button>
 					</div>
+				</div >
+			</div >
+
+			{commentsOpen && (
+				<div className="px-4 pb-4">
+					<CommentCard
+						postId={post.id}
+						incrementCommentCount={incrementCommentCount}
+					/>
 				</div>
-			</div>
-				{activeCommentsPostId === post.id && (
-					<div className="px-4 pb-4">
-						<CommentCard postId={post.id} incrementCommentCount={incrementCommentCount}/>
-					</div>
-				)}
-		</div>
+			)
+			}
+		</div >
 	);
 }
 

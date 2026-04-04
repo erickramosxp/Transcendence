@@ -1,17 +1,20 @@
 import React from "react";
-import { Button } from "@/design-system/primitives/Button";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { GoogleIcon } from "./GoogleIcon";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
+import { GoogleIcon } from "./GoogleIcon";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { Button } from "@/design-system";
 
 export function SocialLogin({buttonTitle}) {
 
     const { socialLogin } = useAuth();
+    const { t } = useTranslation('auth');
 
     const handleGoogleLogin = () => {
 
       if (!import.meta.env.GOOGLE_WEB_CLIENT_ID) {
-        toast.error('Login com Google indisponível');
+        toast.error(t('socialLogin.unavailable'));
         return ;
       }
       socialLogin();
