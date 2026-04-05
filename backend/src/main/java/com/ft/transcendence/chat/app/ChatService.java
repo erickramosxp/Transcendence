@@ -15,11 +15,22 @@ import java.util.Optional;
 @ApplicationScoped
 public class ChatService {
 
-    public ListChatResponse listUserChats(Long currentUserId) {
-        List<ChatParticipant> participations = ChatParticipant.find("user.id = ?1 and chat is not null order by joinedAt desc", currentUserId).list();
-        List<Chat> chats = participations.stream()
-                .map(p -> p.chat)
-                .toList();
+    public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
+        if (page < 0 || size <= 0)
+            throw new BadRequestException("Invalid page or size");
+
+        int start = page * size;
+        int end = start + size;
+
+        List<ChatParticipant> participations = ChatParticipant.find("user.id = ?1 and chat is not null order by joinedAt desc", currentUserId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = participations.size() > size;
+        if (hasMore)
+            participations = participations.subList(0, size);
+
+        List<Chat> chats = participations.stream().map(p -> p.chat).toList();
 
         return ListChatResponse.of(chats);
     }

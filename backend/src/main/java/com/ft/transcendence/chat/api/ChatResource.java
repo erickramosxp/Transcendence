@@ -21,8 +21,9 @@ public class ChatResource {
 
     @GET
     @Authenticated
-    public ListChatResponse listMyChats() {
-        return chatService.listUserChats(currentUser.id());
+    public ListChatResponse listMyChats(@QueryParam("page") @DefaultValue("0") int page,
+                                        @QueryParam("size") @DefaultValue("20") int size) {
+        return chatService.listUserChats(page, size, currentUser.id());
     }
 
     @POST
