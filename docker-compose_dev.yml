@@ -18,9 +18,12 @@ services:
       QUARKUS_DATASOURCE_WEB_ID_GOOGLE: ${GOOGLE_WEB_CLIENT_ID}
       QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
-      QUARKUS_MINIO_URL: http://minio_dev:9000
+      QUARKUS_MINIO_HOST: minio-dev
+      QUARKUS_MINIO_PORT: 9000
+      QUARKUS_MINIO_ENDPOINT: http://localhost:9000
       QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      QUARKUS_MINIO_SECURE: "false"
 
     depends_on:
       database_dev:
@@ -66,9 +69,9 @@ services:
       retries: 3
       start_period: 10s
     
-  minio_dev:
+  minio-dev:
       image: quay.io/minio/minio
-      container_name: minio
+      container_name: minio-dev
       ports:
         - "9000:9000"
         - "9001:9001"

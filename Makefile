@@ -50,6 +50,7 @@ env:
 	@echo ".env pronto. Edite as variáveis de ambiente conforme necessário."
 
 build:
+	@mkdir -p ~/minio/data
 	$(COMPOSE) up --build -d
 
 build_dev:
@@ -57,6 +58,7 @@ build_dev:
 	$(COMPOSE_DEV) up --build -d
 
 up:
+	@mkdir -p ~/minio/data
 	$(COMPOSE) up -d
 
 up_dev:

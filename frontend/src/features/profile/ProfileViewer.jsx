@@ -9,7 +9,7 @@ import { ProfilePostList } from '@/features/profile/components/lists/ProfilePost
 import { LikedPostList } from '@/features/profile/components/lists/LikedPostList';
 
 import { useAuth } from '@/app/providers/AuthProvider';
-import { getUserInfo } from '@/features/profile/services/profileService';
+import { getUserInfo, updateProfileAvatar } from '@/features/profile/services/profileService';
 import { ProfileContext } from '@/features/profile/context/ProfileContext';
 
 import { useTranslation } from 'react-i18next';
@@ -80,6 +80,20 @@ export function ProfileViewer() {
     }))
   }
 
+  const updateAvatar = async (image) => {
+
+    try {
+
+      const formData = new FormData();
+      formData.append("file", image);
+
+      const resp = await updateProfileAvatar(formData);
+      changeFields({avatarUrl: resp.avatarUrl});
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
 
   if (loadHeader) {
     return (
@@ -100,12 +114,12 @@ export function ProfileViewer() {
 
   return (
     <ProfileContext.Provider
-      value={{ userData, setUserData, changeFields, changeFollowCount }}
+      value={{ userData, setUserData, changeFields, changeFollowCount, updateAvatar }}
     >
       <div className={`bg-background min-h-screen`}>
         <div ref={topRef} />
         <ProfileHeader />
-        <div className='max-w-4xl mx-auto px-4 pb-10'>
+        <div className='max-w-4xl mx-auto px-3 sm:px-4 pb-10'>
           <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
             <TabsList className='mb-4'>
               <TabsTrigger value="posts">{t('viewer.posts')}</TabsTrigger>

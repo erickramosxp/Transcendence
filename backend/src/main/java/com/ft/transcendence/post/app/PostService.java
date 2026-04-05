@@ -1,5 +1,6 @@
 package com.ft.transcendence.post.app;
 
+import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.FeedResponse;
@@ -7,14 +8,20 @@ import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class PostService {
+
+    @Inject
+    StorageService storageService;
 
     @Transactional
     public PostResponse create(Long userId, PostRequest req) {
@@ -34,14 +41,23 @@ public class PostService {
 
         post.persist();
 
-        return PostResponse.of(post, false);
+        String avatarUrl  = post.user.avatarUrl;
+        if (avatarUrl != null) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+
+        return PostResponse.of(post, false, avatarUrl);
     }
 
     public PostResponse getPostById(Long postId, Long currentUserId) {
         Post post = Post.findById(postId);
         boolean likedByMe = Like.find("user.id = ?1 and post.id = ?2", currentUserId, postId).firstResultOptional().isPresent();
 
-        return PostResponse.of(post, likedByMe);
+        String avatarUrl  = post.user.avatarUrl;
+        if (avatarUrl != null) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+        return PostResponse.of(post, likedByMe, avatarUrl);
     }
 
     public FeedResponse feed(int page, int size, long userId) {
@@ -65,7 +81,22 @@ public class PostService {
         var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
         FeedResponse resp = new FeedResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
+
+
+        Map<String, String> avatarCache = new HashMap<>();
+        resp.items = posts.stream().map(p -> {
+
+            String avatarUrl  = p.user.avatarUrl;
+            if (avatarUrl != null) {
+                avatarUrl = avatarCache.computeIfAbsent(
+                        avatarUrl,
+                        storageService::generateUrl
+                );
+            }
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl);
+        }).toList();
+
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;

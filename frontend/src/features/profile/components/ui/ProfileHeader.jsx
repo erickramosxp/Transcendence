@@ -24,7 +24,7 @@ export const ProfileHeader = () => {
 
 	const [editOpen, setEditOpen] = useState(false);
 	const [newImage, setNewImage] = useState(null);
-	const { userData, changeFields, changeFollowCount } = useProfile();
+	const { userData, changeFields, changeFollowCount, updateAvatar } = useProfile();
 
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const { user } = useAuth();
@@ -120,7 +120,7 @@ export const ProfileHeader = () => {
 					<ImageCropModal onClose={() => setNewImage(null)}>
 						<CroppedImage
 							image={newImage}
-							setNewImage={setNewUrlImage}
+							setNewImage={updateAvatar}
 							onClose={setNewImage}
 							cropShape="round"
 							aspect={1 / 1}

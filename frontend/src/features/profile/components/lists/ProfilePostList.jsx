@@ -5,6 +5,7 @@ import { usePostList } from "@/features/profile/hooks/usePostList";
 import { useProfile } from "@/features/profile/context/ProfileContext";
 import { Loading } from "@/design-system";
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 export function ProfilePostList({ username }) {
 
