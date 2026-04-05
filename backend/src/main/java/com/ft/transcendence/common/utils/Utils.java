@@ -5,9 +5,8 @@ import jakarta.ws.rs.BadRequestException;
 public class Utils {
 
     public enum MessageType {
-        TEXT("TEXT"),
-        MEDIA("MEDIA"),
-        TEXT_WITH_MEDIA("TEXT_WITH_MEDIA");
+        TEXT("text"),
+        MEDIA("image");
 
         private final String value;
 
@@ -28,7 +27,7 @@ public class Utils {
             throw new BadRequestException("Message must contain text or media");
 
         if (hasText && hasMedia)
-            return MessageType.TEXT_WITH_MEDIA;
+            throw new BadRequestException("Message cannot contain text and media");
 
         return hasText ? MessageType.TEXT : MessageType.MEDIA;
     }

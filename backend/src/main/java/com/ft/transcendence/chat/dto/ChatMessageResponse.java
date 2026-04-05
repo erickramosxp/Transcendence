@@ -28,7 +28,7 @@ public class ChatMessageResponse {
         r.content = cm.content;
         r.mediaUrl = cm.mediaUrl;
         r.type = cm.type;
-        r.replyToId = cm.replyTo.id;
+        r.replyToId = cm.replyTo != null ? cm.replyTo.id : null;
         r.createdAt = cm.createdAt;
         r.updatedAt = cm.updatedAt;
         r.deletedAt = cm.deletedAt;
