@@ -417,7 +417,7 @@
   }
 
   .ds-chat-list-search {
-    @apply mt-5 shrink-0;
+    @apply mt-5 shrink-0 flex items-center gap-2;
   }
 
   .ds-chat-search-field {

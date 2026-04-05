@@ -6,7 +6,19 @@
   "list": {
     "title": "Messages",
     "searchPlaceholder": "Search conversations...",
-    "searchAriaLabel": "Search conversations"
+    "searchAriaLabel": "Search conversations",
+    "add": {
+      "openAriaLabel": "Add conversation",
+      "title": "Add conversation",
+      "tabGroup": "New group",
+      "tabDm": "New chat",
+      "groupMembersLabel": "Members",
+      "groupMembersPlaceholder": "Search people to add",
+      "dmUserLabel": "Contact",
+      "dmUserPlaceholder": "Username or email",
+      "cancel": "Cancel",
+      "create": "Create"
+    }
   },
   "empty": {
     "title": "Your messages",
