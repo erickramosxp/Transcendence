@@ -67,9 +67,4 @@ public class ChatService {
 
         return ChatResponse.of(chat);
     }
-
-    @Transactional
-    public ChatMessageRequest createMessage(Long currentUserId, ChatMessageRequest req) {
-
-    }
 }

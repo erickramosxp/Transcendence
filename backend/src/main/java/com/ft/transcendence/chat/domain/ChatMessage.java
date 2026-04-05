@@ -29,7 +29,7 @@ public class ChatMessage extends PanacheEntityBase {
     public String mediaUrl;
 
     @Column(name = "type", nullable = false)
-    public String type; // 'text', 'image', ...
+    public String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reply_to_id")
@@ -43,4 +43,20 @@ public class ChatMessage extends PanacheEntityBase {
 
     @Column(name = "deleted_at")
     public OffsetDateTime deletedAt;
+
+    public static ChatMessage createChatMessage(Chat chat, Long userId, String content, String mediaUrl, String type, ChatMessage replyTo) {
+        ChatMessage chatMessage = new ChatMessage();
+        OffsetDateTime now = OffsetDateTime.now();
+        chatMessage.chat = chat;
+        chatMessage.sender = User.findById(userId);
+        chatMessage.content = content;
+        chatMessage.mediaUrl = mediaUrl;
+        chatMessage.type = type;
+        chatMessage.replyTo = replyTo;
+        chatMessage.createdAt = now;
+        chatMessage.updatedAt = now;
+        chatMessage.deletedAt = null;
+        chatMessage.persist();
+        return chatMessage;
+    }
 }

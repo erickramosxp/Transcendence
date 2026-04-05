@@ -49,15 +49,4 @@ public class ChatResource {
         ChatResponse chat = chatService.createGroupChat(currentUser.id(), req);
         return Response.status(Response.Status.CREATED).entity(chat).build();
     }
-
-    @POST
-    @Path("/{chatId}/message")
-    @Authenticated
-    public Response sendMessage(@PathParam("chatId") Long chatId, ChatMessageRequest req) {
-        if ((req.text == null || req.text.isBlank()) && (req.mediaUrl == null || req.mediaUrl.isBlank()))
-            throw new BadRequestException("Message must contain text or images");
-
-        ChatMessageResponse message = chatService.createMessage(currentUser.id(), req);
-        return Response.status(Response.Status.CREATED).entity(message).build();
-    }
 }
