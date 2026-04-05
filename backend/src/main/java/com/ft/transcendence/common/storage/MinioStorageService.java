@@ -39,13 +39,13 @@ public class MinioStorageService implements StorageService {
     }
 
     @Override
-    public String upload(String path, InputStream stream, String contentType) {
+    public String upload(String path, InputStream stream, long size, String contentType) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucket)
                             .object(path)
-                            .stream(stream, -1, 10485760)
+                            .stream(stream, size, -1)
                             .contentType(contentType)
                             .build()
             );

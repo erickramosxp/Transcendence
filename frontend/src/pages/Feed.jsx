@@ -4,7 +4,7 @@ import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
 
 import { useTranslation } from "react-i18next";
-import { 
+import {
     Card,
     CardHeader,
     CardTitle,
@@ -19,14 +19,23 @@ export function Feed() {
 
     async function addPost(postData) {
 
-        const newPost = {
-            text: postData.text,
-            mediaUrl: postData.file ? URL.createObjectURL(postData.file) : null
-        };
+        const formData = new FormData();
+
+        formData.append("text", postData.text);
+
+        // formData.append(
+        //     "fileType",
+        //     typeof postData.postType === "string" ? postData.postType : postData.postType?.type || ""
+        // );
+
+        if (postData.file) {
+            formData.append("file", postData.file);
+        }
+
 
         try {
 
-            const resp = await createPost(newPost);
+            const resp = await createPost(formData);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
             console.log(err);
