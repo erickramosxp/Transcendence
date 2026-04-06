@@ -1,12 +1,28 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft, Phone, Video } from "lucide-react";
+import { ChevronLeft, Phone } from "lucide-react";
 import { AvatarWithStatus, Button } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
+import { VoiceCallModal } from "@/features/chat/components/VoiceCallModal";
 
 export default function ChatThreadHeader({ currentChat, onBack }) {
 	const { t } = useTranslation("chat");
 	const status = currentChat.status ?? "online";
 	const online = status === "online";
+	// Fase `incoming` virá do sinal (WebSocket/WebRTC); por ora o ícone de telefone abre só `outgoing`.
+	const [voiceCall, setVoiceCall] = useState({
+		open: false,
+		phase: "outgoing",
+	});
+
+	function openOutgoingCall() {
+		setVoiceCall({ open: true, phase: "outgoing" });
+	}
+
+	/** Fecha o modal e restaura a fase para a próxima chamada (inclui recusar / cancelar / encerrar). */
+	function endVoiceSession() {
+		setVoiceCall({ open: false, phase: "outgoing" });
+	}
 
 	return (
 		<div className="ds-chat-thread-header">
@@ -42,12 +58,23 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 				</span>
 			</div>
 			<div className="ds-chat-thread-actions">
-				<Button variant="ghost" size="icon" aria-label={t("a11y.call")}>
+				<Button
+					onClick={openOutgoingCall}
+					variant="ghost"
+					size="icon"
+					aria-label={t("a11y.call")}
+				>
 					<Phone className="ds-chat-icon-header" />
 				</Button>
-				<Button variant="ghost" size="icon" aria-label={t("a11y.video")}>
-					<Video className="ds-chat-icon-header" />
-				</Button>
+				<VoiceCallModal
+					open={voiceCall.open}
+					phase={voiceCall.phase}
+					peer={currentChat}
+					onClose={endVoiceSession}
+					onAccept={() =>
+						setVoiceCall((v) => ({ ...v, phase: "active" }))
+					}
+				/>
 			</div>
 		</div>
 	);

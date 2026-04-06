@@ -15,7 +15,7 @@
       "groupMembersLabel": "Miembros",
       "groupMembersPlaceholder": "Busca personas para el grupo",
       "dmUserLabel": "Contacto",
-      "dmUserPlaceholder": "Usuario o correo",
+      "dmUserPlaceholder": "Usuario",
       "cancel": "Cancelar",
       "create": "Crear"
     }
@@ -42,5 +42,29 @@
   },
   "input": {
     "placeholder": "Escribe un mensaje..."
+  },
+  "a11y": {
+    "back": "Volver a la lista de conversaciones",
+    "call": "Iniciar llamada de voz"
+  },
+  "call": {
+    "title": {
+      "incoming": "Llamada entrante",
+      "outgoing": "Llamada de voz",
+      "active": "En llamada"
+    },
+    "hint": {
+      "incoming": "{{name}} te está llamando",
+      "outgoing": "Llamando a {{name}}…",
+      "active": "Conectado — el audio está activo"
+    },
+    "cancelOutgoing": "Cancelar llamada",
+    "a11y": {
+      "accept": "Contestar llamada",
+      "decline": "Rechazar llamada",
+      "hangUp": "Colgar",
+      "mute": "Silenciar micrófono",
+      "unmute": "Activar micrófono"
+    }
   }
 }

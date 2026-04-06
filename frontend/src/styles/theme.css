@@ -599,6 +599,38 @@
   .ds-chat-icon-input {
     @apply size-4 sm:size-5;
   }
+
+  .ds-chat-voice-modal {
+    @apply flex w-full min-h-[260px] flex-col items-center justify-center text-center sm:min-h-[280px];
+  }
+
+  .ds-chat-voice-modal__avatar {
+    @apply mb-3;
+  }
+
+  .ds-chat-voice-modal__name {
+    @apply text-lg font-bold leading-tight tracking-tight text-foreground sm:text-xl;
+  }
+
+  .ds-chat-voice-modal__hint {
+    @apply mt-1 max-w-xs text-sm leading-snug text-muted-foreground sm:text-[0.9375rem];
+  }
+
+  .ds-chat-voice-modal__duration {
+    @apply mt-3 font-mono text-base tabular-nums text-muted-foreground sm:text-lg;
+  }
+
+  .ds-chat-voice-modal__actions {
+    @apply mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-8 sm:gap-4;
+  }
+
+  .ds-chat-voice-modal__icon-call {
+    @apply size-5 sm:size-6;
+  }
+
+  .ds-chat-voice-modal__icon-mic {
+    @apply size-4 sm:size-5;
+  }
 }
 
 .feed-background {

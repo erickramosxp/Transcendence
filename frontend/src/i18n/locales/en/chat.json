@@ -15,7 +15,7 @@
       "groupMembersLabel": "Members",
       "groupMembersPlaceholder": "Search people to add",
       "dmUserLabel": "Contact",
-      "dmUserPlaceholder": "Username or email",
+      "dmUserPlaceholder": "Username",
       "cancel": "Cancel",
       "create": "Create"
     }
@@ -42,5 +42,29 @@
   },
   "input": {
     "placeholder": "Type a message..."
+  },
+  "a11y": {
+    "back": "Back to conversation list",
+    "call": "Start voice call"
+  },
+  "call": {
+    "title": {
+      "incoming": "Incoming call",
+      "outgoing": "Voice call",
+      "active": "On a call"
+    },
+    "hint": {
+      "incoming": "{{name}} is calling you",
+      "outgoing": "Calling {{name}}…",
+      "active": "Connected — audio is on"
+    },
+    "cancelOutgoing": "Cancel call",
+    "a11y": {
+      "accept": "Answer call",
+      "decline": "Decline call",
+      "hangUp": "End call",
+      "mute": "Mute microphone",
+      "unmute": "Unmute microphone"
+    }
   }
 }
