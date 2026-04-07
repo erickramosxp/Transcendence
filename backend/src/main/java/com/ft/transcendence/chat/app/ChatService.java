@@ -32,7 +32,7 @@ public class ChatService {
 
         List<Chat> chats = participations.stream().map(p -> p.chat).toList();
 
-        return ListChatResponse.of(chats);
+        return ListChatResponse.of(chats, page, hasMore);
     }
 
     @Transactional
