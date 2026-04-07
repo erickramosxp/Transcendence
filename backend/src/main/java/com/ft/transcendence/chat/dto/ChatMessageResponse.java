@@ -10,7 +10,7 @@ public class ChatMessageResponse {
     public Long senderId;
     public String senderUsername;
     public String senderAvatarUrl;
-    public String content;
+    public String text;
     public String mediaUrl;
     public String type;
     public Long replyToId;
@@ -25,7 +25,7 @@ public class ChatMessageResponse {
         r.senderId = cm.sender.id;
         r.senderUsername = cm.sender.username;
         r.senderAvatarUrl = cm.sender.avatarUrl;
-        r.content = cm.content;
+        r.text = cm.text;
         r.mediaUrl = cm.mediaUrl;
         r.type = cm.type;
         r.replyToId = cm.replyTo != null ? cm.replyTo.id : null;

@@ -17,7 +17,7 @@ public abstract class BaseApiTest {
         String username = "user" + unique;
 
         // register
-        given()
+        long id = ((Number) given()
                 .contentType("application/json")
                 .body("""
                 {
@@ -29,7 +29,9 @@ public abstract class BaseApiTest {
                 """.formatted(email, username))
                 .post("/auth/register")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .extract()
+                .path("user.id")).longValue();
 
         // login
         String token =
@@ -48,10 +50,10 @@ public abstract class BaseApiTest {
                         .path("token");
 
         UserTestContext ctx = new UserTestContext();
+        ctx.id = id;
         ctx.email = email;
         ctx.username = username;
         ctx.token = token;
-
         return ctx;
     }
 
