@@ -32,3 +32,13 @@ export async function resolveMediaType(url, mimeTypeFromBackend) {
 
   return '';
 }
+
+export function resolveMediaTypeSync(url) {
+  const cleanUrl = url.split('?')[0];
+  const extension = cleanUrl.split('.').pop().toLowerCase();
+
+  if (['mp4', 'webm', 'ogg'].includes(extension)) return 'video';
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) return 'image';
+
+  return '';
+}

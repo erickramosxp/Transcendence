@@ -3,9 +3,9 @@ import  PostCard  from "@/features/feed/components/PostCard";
 import { usePostList } from "@/features/profile/hooks/usePostList";
 import { getUserMediaPosts, getPostUserDetails } from '@/features/profile/services/profileService'
 import { Modal, Loading } from "@/design-system";
-import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useTranslation } from "react-i18next";
 import { toast } from 'react-toastify';
+import { MediaGridRenderer } from "./midiaThumbnails/MediaGridRenderer";
 
 export function MediaGrid({ username }) {
 
@@ -63,17 +63,14 @@ export function MediaGrid({ username }) {
         {posts.map((item, index) => (
           <div
             key={`${item.postId}-${index}`}
-            className="aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+            className="flex justify-center aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => getPostDetails(item.postId)}
           >
-            { resolveMediaType(item?.mediaUrl, null) === 'video' ?
-              <video 
-                src={item.mediaUrl}
-                className="h-full w-full object-cover"
-                muted
-                preload="metadata"
-              >
-              </video>
+            <MediaGridRenderer 
+              item={item}
+            />
+            {/* { resolveMediaTypeSync(item?.mediaUrl) === 'video' ?
+              <VideoThumbnail thumbnailUrl={item.mediaUrl} />
             :
               <img
                 src={item?.mediaUrl || null}
@@ -82,7 +79,7 @@ export function MediaGrid({ username }) {
                 className="h-full w-full object-cover"
                 loading="lazy"
               />
-            }
+            } */}
           </div>
         ))}
       </div>
