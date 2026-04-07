@@ -91,7 +91,7 @@ public class UserService {
 
             String mediaUrl = p.mediaUrl;
 
-            if (mediaUrl != null && (!mediaUrl.contains("http") || !mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.startsWith("http") || mediaUrl.startsWith("blob"))) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
 
@@ -141,7 +141,7 @@ public class UserService {
 
             String mediaUrl = p.mediaUrl;
 
-            if (mediaUrl != null && (!mediaUrl.contains("http") || !mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
 
@@ -177,7 +177,14 @@ public class UserService {
             posts = posts.subList(0, size);
 
         UserMediaResponse resp = new UserMediaResponse();
-        resp.items = posts.stream().map(MediaResponse::of).toList();
+        resp.items = posts.stream().map(p -> {
+            
+            String mediaUrl = p.mediaUrl;
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+            return MediaResponse.of(p, mediaUrl);
+        }).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
@@ -250,6 +257,7 @@ public class UserService {
         if (!contentType.startsWith("image/")) {
             throw new IllegalArgumentException("Invalid file type");
         }
+        
         String path = "users/" + userId + "/avatar/avatar.png";
         storageService.upload(path, stream, size, contentType);
         User user = User.findById(userId);

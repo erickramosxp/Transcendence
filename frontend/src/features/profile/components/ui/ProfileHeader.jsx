@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { SquarePen, Settings } from 'lucide-react';
 import { useAuth } from "@/app/providers/AuthProvider";
 import { toast } from 'react-toastify'
@@ -16,7 +16,8 @@ import { ImageCropModal } from "@/features/profile/components/modals/ImageCropMo
 import { useTranslation } from "react-i18next";
 import { SettingsContent } from "../SettingsContent";
 
-import { Button, Modal, Avatar } from "@/design-system";
+import { Button, Modal } from "@/design-system";
+import { AvatarEditable } from "./AvatarEditable";
 
 export const ProfileHeader = () => {
 
@@ -68,16 +69,14 @@ export const ProfileHeader = () => {
 
 	}
 
-	const updateImage = (event) => {
+	const updateImage = (file) => {
 
-		const file = event.target.files[0];
-
+		
 		if (file) {
 			// Cria uma URL temporária para o arquivo selecionado
 			const imageUrl = URL.createObjectURL(file);
 			setNewImage(imageUrl);
 		}
-		event.target.value = '';
 	}
 
 	const setNewUrlImage = (image) => {
@@ -161,28 +160,11 @@ export const ProfileHeader = () => {
 						<div className="px-4 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
 
 							<div className="flex justify-between items-start relative">
-
-								<div className="-mt-16 rounded-full p-1 relative z-5 border-background bg-background">
-									<label className="relative group">
-										<Avatar
-											size="xl3"
-											id={userData?.userName}
-											name={userData?.name}
-											src={
-												userData?.avatarUrl
-											}
-											className="group-hover:brightness-75"
-										/>
-
-										<div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-											<span className="text text-xs font-bold bg-black/50 px-2 py-1 rounded">Trocar</span>
-										</div>
-										<input onChange={updateImage} className=" hidden" type="file" accept=".jpg, .png" />
-
-									</label>
-
-								</div>
-
+								<AvatarEditable
+									user={userData}
+									canEdit={user.id === userData.id}
+									onChange={updateImage}
+								/>
 								<div>
 									<div className="flex justify-center items-center gap-2.5 mt-4">
 										{user?.id != userData?.id ?
@@ -215,5 +197,5 @@ export const ProfileHeader = () => {
 				</div>
 			</div>
 		</>
-		);
+	);
 }

@@ -67,7 +67,6 @@ public class PostService {
             String originalName = req.file.fileName();
             String extension = originalName.substring(originalName.lastIndexOf("."));
             String fullNameFile = java.util.UUID.randomUUID() + extension;
-            System.out.println("Extension " + extension + " | file " + req.file.fileName() + " | type " + contentType );
 
 
             String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;

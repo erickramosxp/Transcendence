@@ -21,6 +21,7 @@ export async function resolveMediaType(url, mimeTypeFromBackend) {
   try {
     const response = await fetch(url, { method: 'HEAD' });
     const contentType = response.headers.get('content-type');
+    console.log(contentType);
 
     if (contentType?.startsWith('image/')) return 'image';
     if (contentType?.startsWith('video/')) return 'video';
