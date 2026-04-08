@@ -55,7 +55,7 @@ export function Media({ url, mimeType }) {
         return (
             <video
                 controls
-                className="rounded-lg lx:max-w-lg mt-3 max-w-xl w-full"
+                className="rounded-lg lx:max-w-lg mt-3 max-w-xl w-full sm:max-h-[400px]"
                 ref={videoRef}
             >
                 <source src={url}type="video/mp4" />
@@ -63,6 +63,5 @@ export function Media({ url, mimeType }) {
         );
     }
 
-    // não renderiza nada
     return null;
 }

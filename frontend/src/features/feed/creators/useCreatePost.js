@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { extractUrl } from "@/shared/linkPreview";
 import linkPreviewService from "@/shared/api/linkPreviewService";
 import { useDebounce } from "@/hooks/useDebounce";
+import { validImageFile, validVideoFile } from "@/features/profile/utils/validFile";
+import { toast } from 'react-toastify'
 
 const LINK_PREVIEW_DEBOUNCE_MS = 600;
 
@@ -40,23 +42,44 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		}
 	}, [debouncedText]);
 
-	async function handleSubmit() {
-		if (postType === "text" && text.trim() === "") return;
-
-		if ((postType === "photo" || postType === "video") && file == null) return;
-
-		onAddPost({
-			text: text,
-			file: file,
-			fileType: typeof postType === "string" ? postType : postType?.type || "",
-			linkPreview: linkPreview,
-		});
+	const cleanAllInput = () => {
 		setText("");
 		setFile(null);
 		setLinkPreview(null);
 		setLinkPreviewLoading(false);
 		setLinkPreviewError(null);
-		onClose();
+	}
+
+	async function handleSubmit() {
+		if (postType === "text" && text.trim() === "") return;
+
+		if ((postType === "photo" || postType === "video") && file == null) return;
+
+		if (file) {
+			let validation;
+			if (postType == "photo")
+				validation = validImageFile(file);
+			else if (postType == "video")
+				validation = validVideoFile(file);
+
+			if (!validation.valid) {
+				toast.error(validation.error);
+				setFile(null);
+				return;
+			}
+		}
+
+		try {
+			onAddPost({
+				text: text,
+				file: file,
+				fileType: typeof postType === "string" ? postType : postType?.type || "",
+				linkPreview: linkPreview,
+			});
+		} finally {
+			cleanAllInput();
+			onClose();
+		}
 	}
 
 	function handleChange(e) {

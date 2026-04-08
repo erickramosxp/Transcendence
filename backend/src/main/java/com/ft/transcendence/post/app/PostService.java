@@ -1,11 +1,12 @@
 package com.ft.transcendence.post.app;
 
+import com.ft.transcendence.common.media.MediaAnalysis;
+import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
-import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -27,26 +29,33 @@ public class PostService {
     @Inject
     StorageService storageService;
 
+    @Inject
+    MediaValidationService mediaValidationService;
+
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
         if ((req.text == null || req.text.isBlank()) && (req.file == null))
             throw new BadRequestException("Posts must contain text or images");
 
         // file
-        InputStream stream = null;
         String contentType = null;
         long size = 0;
+        MediaAnalysis analysis;
         if (req.file != null) {
-            stream = Files.newInputStream(req.file.uploadedFile());
-            contentType = req.file.contentType();
+            Path uploadedPath = req.file.uploadedFile();
             size = req.file.size();
 
-            if (size > 10_000_000) {
-                throw new IllegalArgumentException("Media post too large");
+            try {
+                analysis = mediaValidationService.analyzePostFile(uploadedPath);
+            } catch (Exception e) {
+                throw new BadRequestException("Error validating file");
             }
-            if (!contentType.startsWith("image/") && !contentType.startsWith("video/")) {
-                throw new IllegalArgumentException("Invalid file type");
+
+            if (!analysis.valid()) {
+                throw new BadRequestException(analysis.error());
             }
+
+            contentType = analysis.detectedMimeType();
         }
 
         var now = OffsetDateTime.now();
@@ -59,22 +68,23 @@ public class PostService {
         post.commentCount = 0L;
         post.createdAt = now;
         post.updatedAt = now;
-
         post.persist();
+
         String mediaUrl = null;
 
         if (req.file != null) {
             String originalName = req.file.fileName();
             String extension = originalName.substring(originalName.lastIndexOf("."));
             String fullNameFile = java.util.UUID.randomUUID() + extension;
-
-
             String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;
-            storageService.upload(path, stream, size, contentType);
+
+            try (InputStream stream = Files.newInputStream(req.file.uploadedFile())) {
+                storageService.upload(path, stream, size, contentType);
+            }
 
             post.mediaUrl = path;
-
             mediaUrl = path;
+
             if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
