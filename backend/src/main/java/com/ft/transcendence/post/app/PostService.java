@@ -71,6 +71,4 @@ public class PostService {
         resp.hasMore = hasMore;
         return resp;
     }
-
-
 }
