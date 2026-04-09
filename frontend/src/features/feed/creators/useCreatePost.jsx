@@ -1,19 +1,24 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { extractUrl } from "@/shared/linkPreview";
 import linkPreviewService from "@/shared/api/linkPreviewService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { validImageFile, validVideoFile } from "@/features/profile/utils/validFile";
+import { validImageFile, validVideoFile, validateImageContent } from "@/features/profile/utils/validFile";
 import { toast } from 'react-toastify'
+import { useTranslation } from "react-i18next";
 
 const LINK_PREVIEW_DEBOUNCE_MS = 600;
 
 export function useCreatePost(onAddPost, onClose, postType) {
+	const { t } = useTranslation();
+
 	const [text, setText] = useState("");
 	const [file, setFile] = useState(null);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [linkPreview, setLinkPreview] = useState(null);
 	const [linkPreviewLoading, setLinkPreviewLoading] = useState(false);
 	const [linkPreviewError, setLinkPreviewError] = useState(null);
+
+
 
 	const debouncedText = useDebounce(text, LINK_PREVIEW_DEBOUNCE_MS);
 
@@ -51,14 +56,25 @@ export function useCreatePost(onAddPost, onClose, postType) {
 	}
 
 	async function handleSubmit() {
-		if (postType === "text" && text.trim() === "") return;
-
-		if ((postType === "photo" || postType === "video") && file == null) return;
+		if (postType === "text" && text.trim() === "") {
+			toast.error(t("common:errors.post.empty"));
+			return;
+		}
+		
+		if ((postType === "photo" || postType === "video") && file == null) {
+			const msg = postType === "photo" ? t("common:errors.post.emptyImage") : t("common:errors.post.emptyVideo");
+			toast.error(msg);
+			return;
+		} 
 
 		if (file) {
 			let validation;
-			if (postType == "photo")
+			if (postType == "photo") {
 				validation = validImageFile(file);
+				if (validation.valid) {
+					validation = await validateImageContent(file);
+				}
+			}
 			else if (postType == "video")
 				validation = validVideoFile(file);
 

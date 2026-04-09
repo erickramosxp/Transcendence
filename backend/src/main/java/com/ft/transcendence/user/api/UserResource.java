@@ -86,10 +86,7 @@ public class UserResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response updateAvatar(FileUploadForm req) throws IOException {
         long userId = currentUser.id();
-        InputStream stream = Files.newInputStream(req.file.uploadedFile());
-        String contentType = req.file.contentType();
-        long size = req.file.size();
-        return userService.updateAvatar(userId, stream, contentType, size);
+        return userService.updateAvatar(userId, req);
     }
 
     @PATCH

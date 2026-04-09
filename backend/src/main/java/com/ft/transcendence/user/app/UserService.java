@@ -1,6 +1,9 @@
 package com.ft.transcendence.user.app;
 
+import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.common.media.MediaAnalysis;
+import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.follow.domain.Follow;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
@@ -14,17 +17,23 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Path;
 
 @ApplicationScoped
 public class UserService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    MediaValidationService mediaValidationService;
 
     public UserPageResponse getUserPage(User user, Long currentUserId) {
         Long followers = Follow.count("followee.id = ?1", user.id);
@@ -249,17 +258,44 @@ public class UserService {
     }
 
     @Transactional
-    public Response updateAvatar(long userId, InputStream stream, String contentType, long size) {
+    public Response updateAvatar(long userId, FileUploadForm req) throws IOException {
 
-        if (size > 2_000_000) {
-            throw new IllegalArgumentException("Avatar too large");
+        if (req.file == null)
+            throw new BadRequestException("Avatar upload must contain image");
+
+
+
+        String contentType = req.file.contentType();
+        MediaAnalysis analysis;
+        Path uploadedPath = req.file.uploadedFile();
+        try {
+            analysis = mediaValidationService.analyzeImage(uploadedPath);
+        } catch (Exception e) {
+            throw new BadRequestException("Error validating file");
         }
-        if (!contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("Invalid file type");
+
+        if (!analysis.valid()) {
+            throw new BadRequestException(analysis.error());
         }
-        
-        String path = "users/" + userId + "/avatar/avatar.png";
-        storageService.upload(path, stream, size, contentType);
+
+
+        String mimeType = analysis.detectedMimeType();
+
+        String extension = switch (mimeType) {
+            case "image/jpeg" -> ".jpg";
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> ".png";
+        };
+
+        String fullNameFile = java.util.UUID.randomUUID() + extension;
+        String path = "users/" + userId + "/avatar/avatar" + fullNameFile;
+
+        InputStream stream = Files.newInputStream(req.file.uploadedFile());
+        long size = req.file.size();
+
+        storageService.upload(path, stream, size, mimeType);
         User user = User.findById(userId);
         user.avatarUrl = path;
         String avatarUrl = storageService.generateUrl(path);

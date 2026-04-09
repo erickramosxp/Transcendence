@@ -116,7 +116,7 @@ export function Modal({
         aria-modal="true"
       >
         <div className="flex items-center justify-between p-2 sm:px-4 sm:py-3">
-          <h2 className="text-2xl font-semibold">{title}</h2>
+          <h2 className="text-2xl font-semibold p-2">{title}</h2>
           <Button
             size="sm"
             variant="destructive"

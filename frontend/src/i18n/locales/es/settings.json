@@ -1,0 +1,24 @@
+{
+    "tabs": {
+        "account": "Cuenta",
+        "security": "Seguridad",
+        "appearance": "Apariencia"
+    },
+    "account": {
+        "logout": "Cerrar sesión"
+    },
+    "security": {
+        "title": "Cambiar contraseña",
+        "currentPassword": "Contraseña actual",
+        "newPassword": "Nueva contraseña",
+        "confirmPassword": "Confirmar contraseña",
+        "submit": "Cambiar"
+    },
+    "appearance": {
+        "theme": "Tema",
+        "language": "Idioma"
+    },
+    "messages": {
+        "notImplemented": "Funcionalidad no implementada aún"
+    }
+}

@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 
 const validImageTypes = [
     "image/jpeg",
@@ -19,11 +20,11 @@ const limits = {
 export function validImageFile(file) {
 
     if (!file) {
-        return { valid: false, error: "Arquivo não encontrado" };
+        return { valid: false, error: i18n.t("errors.upload.notFound") };
     }
 
     if (!validImageTypes.includes(file.type)) {
-        return { valid: false, error: "Tipo de imagem inválido" };
+        return { valid: false, error: i18n.t("errors.upload.invalidType") };
     }
 
     return { valid: true };
@@ -32,13 +33,32 @@ export function validImageFile(file) {
 export function validVideoFile(file) {
 
     if (!file) {
-        return { valid: false, error: "Arquivo não encontrado" };
+        return { valid: false, error: i18n.t("errors.upload.notFound") };
     }
 
     if (!validVideoTypes.includes(file.type)) {
-        return { valid: false, error: "Tipo de vídeo inválido" };
+        return { valid: false, error: i18n.t("errors.upload.invalidType") };
     }
 
     return { valid: true };
 
+}
+
+export function validateImageContent(file) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve({ valid: true });
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            resolve({ valid: false, error: i18n.t("errors.upload.invalidImage") });
+        };
+
+        img.src = url;
+    });
 }

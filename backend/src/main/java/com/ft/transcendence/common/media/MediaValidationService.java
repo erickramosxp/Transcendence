@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.tika.Tika;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
@@ -27,42 +30,71 @@ public class MediaValidationService {
     private final Tika tika = new Tika();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MediaAnalysis analyzePostFile(Path path) throws Exception {
+    public MediaAnalysis analyzeImage(Path path) throws Exception {
+        String mimeType = tika.detect(path);
+        return analyzeImage(path, mimeType);
+    }
+
+    public MediaAnalysis analyzeImage(Path path, String mimeType) throws Exception {
 
         if (path == null || !Files.exists(path)) {
             return new MediaAnalysis(false, "File not found", null, MediaKind.UNKNOWN);
         }
 
-        System.out.println("Vou analizar");
         long size = Files.size(path);
-
-        if (size > VIDEO_LIMIT) {
-            return new MediaAnalysis(false, "Media too large", null, MediaKind.UNKNOWN);
+        if (size > IMAGE_LIMIT) {
+            return new MediaAnalysis(false, "Image too large", null, MediaKind.UNKNOWN);
         }
+
+        if (!VALID_IMAGE_TYPES.contains(mimeType)) {
+            return new MediaAnalysis(false, "Invalid image type", mimeType, MediaKind.UNKNOWN);
+        }
+
+        if (!isValidImage(path)) {
+            return new MediaAnalysis(false, "Invalid image content", mimeType, MediaKind.UNKNOWN);
+        }
+
+        return new MediaAnalysis(true, null, mimeType, MediaKind.IMAGE);
+    }
+
+    public MediaAnalysis analyzeVideo(Path path, String mimeType) throws Exception {
+
+        if (path == null || !Files.exists(path)) {
+            return new MediaAnalysis(false, "File not found", null, MediaKind.UNKNOWN);
+        }
+
+        long size = Files.size(path);
+        if (size > VIDEO_LIMIT) {
+            return new MediaAnalysis(false, "Video too large", null, MediaKind.UNKNOWN);
+        }
+
+        if (!VALID_VIDEO_TYPES.contains(mimeType)) {
+            return new MediaAnalysis(false, "Invalid video type", mimeType, MediaKind.UNKNOWN);
+        }
+
+        StreamKind streamKind = detectStreamKind(path);
+
+        if (streamKind == StreamKind.AUDIO_ONLY) {
+            return new MediaAnalysis(true, null, mimeType, MediaKind.AUDIO);
+        }
+
+        if (streamKind == StreamKind.VIDEO_ONLY || streamKind == StreamKind.AUDIO_VIDEO) {
+            return new MediaAnalysis(true, null, mimeType, MediaKind.VIDEO);
+        }
+
+        return new MediaAnalysis(false, "Invalid video content", mimeType, MediaKind.UNKNOWN);
+    }
+
+    public MediaAnalysis analyzePostFile(Path path) throws Exception {
 
         String mimeType = tika.detect(path);
-
         if (VALID_IMAGE_TYPES.contains(mimeType)) {
-            if (size > IMAGE_LIMIT) {
-                return new MediaAnalysis(false, "Media too large", null, MediaKind.UNKNOWN);
-            }
-            return new MediaAnalysis(true, null, mimeType, MediaKind.IMAGE);
+            return analyzeImage(path, mimeType);
         }
 
-
-        System.out.println("mimeType -> " + mimeType);
         if (VALID_VIDEO_TYPES.contains(mimeType)) {
+            return analyzeVideo(path, mimeType);
 
-            StreamKind streamKind = detectStreamKind(path);
-
-            System.out.println("StremKind -> " + streamKind.name());
-            if (streamKind == StreamKind.AUDIO_ONLY) {
-                return new MediaAnalysis(true, null, mimeType, MediaKind.AUDIO);
-            }
-
-            if (streamKind == StreamKind.VIDEO_ONLY || streamKind == StreamKind.AUDIO_VIDEO) {
-                return new MediaAnalysis(true, null, mimeType, MediaKind.VIDEO);
-            }
         }
         return new MediaAnalysis(false, "Invalid file type", mimeType, MediaKind.UNKNOWN);
     }
@@ -124,5 +156,14 @@ public class MediaValidationService {
         VIDEO_ONLY,
         AUDIO_VIDEO,
         UNKNOWN
+    }
+
+    public boolean isValidImage(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
+            BufferedImage img = ImageIO.read(is);
+            return img != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

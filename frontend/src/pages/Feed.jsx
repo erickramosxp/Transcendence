@@ -2,6 +2,7 @@ import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
+import {toast} from 'react-toastify'
 
 import { useTranslation } from "react-i18next";
 import {
@@ -23,11 +24,6 @@ export function Feed() {
 
         formData.append("text", postData.text);
 
-        // formData.append(
-        //     "fileType",
-        //     typeof postData.postType === "string" ? postData.postType : postData.postType?.type || ""
-        // );
-
         if (postData.file) {
             formData.append("file", postData.file);
         }
@@ -38,6 +34,8 @@ export function Feed() {
             const resp = await createPost(formData);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
+            const message = err.response?.data?.message || t("common:errors.post.createFailed");
+            toast.error(message);
             console.log(err);
         }
 

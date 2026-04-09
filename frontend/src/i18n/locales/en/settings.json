@@ -1,0 +1,24 @@
+{
+    "tabs": {
+        "account": "Account",
+        "security": "Security",
+        "appearance": "Appearance"
+    },
+    "account": {
+        "logout": "Logout"
+    },
+    "security": {
+        "title": "Change password",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "submit": "Change"
+    },
+    "appearance": {
+        "theme": "Theme",
+        "language": "Language"
+    },
+    "messages": {
+        "notImplemented": "Feature not implemented yet"
+    }
+}

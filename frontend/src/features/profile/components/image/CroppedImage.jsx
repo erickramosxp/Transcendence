@@ -33,7 +33,6 @@ export const CroppedImage = ({ image, cropShape = 'rect', aspect = 1, setNewImag
             
             const { url, file } = await getCroppedImage(image, croppedPixel);
             setNewImage(file);
-            // onClose(null);
         } finally {
 
             onClose(null);

@@ -51,7 +51,7 @@ export function ProfileViewer() {
       } catch (err) {
         console.log(err);
         setNotFounded(true);
-        toast.error('Fail to get profile info');
+        toast.error(t('postList.error'));
       } finally {
         setLoadHeader(false);
       }
@@ -89,7 +89,9 @@ export function ProfileViewer() {
 
       const resp = await updateProfileAvatar(formData);
       changeFields({avatarUrl: resp.avatarUrl});
+      toast.success(t("common:success.avatar.updated"));
     } catch (err) {
+      toast.error(t("common:errors.avatar.uploadFailed"));
       console.log(err);
     }
   }

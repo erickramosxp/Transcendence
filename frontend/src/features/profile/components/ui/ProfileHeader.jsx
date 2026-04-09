@@ -18,6 +18,7 @@ import { SettingsContent } from "../SettingsContent";
 
 import { Button, Modal } from "@/design-system";
 import { AvatarEditable } from "./AvatarEditable";
+import { validImageFile, validateImageContent } from "../../utils/validFile";
 
 export const ProfileHeader = () => {
 
@@ -69,14 +70,22 @@ export const ProfileHeader = () => {
 
 	}
 
-	const updateImage = (file) => {
+	const updateImage = async (file) => {
 
-		
-		if (file) {
-			// Cria uma URL temporária para o arquivo selecionado
-			const imageUrl = URL.createObjectURL(file);
-			setNewImage(imageUrl);
+		const typeValidation = validImageFile(file);
+		if (!typeValidation.valid) {
+			toast.error(contentValidation.error);
+			return;
 		}
+
+		const contentValidation = await validateImageContent(file);
+		if (!contentValidation.valid) {
+			toast.error(contentValidation.error);
+			return;
+		}
+
+		const imageUrl = URL.createObjectURL(file);
+		setNewImage(imageUrl);
 	}
 
 	const setNewUrlImage = (image) => {
