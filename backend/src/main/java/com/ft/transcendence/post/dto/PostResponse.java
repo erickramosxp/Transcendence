@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 public class PostResponse {
     public Long id;
     public String name;
-    public String userName;
+    public String username;
     public String contents;
     public String avatarUrl;
     public boolean likedByMe;
@@ -20,7 +20,7 @@ public class PostResponse {
         var r = new PostResponse();
         r.id = p.id;
         r.name = p.user.name;
-        r.userName = p.user.username;
+        r.username = p.user.username;
         r.avatarUrl = p.user.avatarUrl;
         r.contents = p.text;
         r.likedByMe = likedByMe;
