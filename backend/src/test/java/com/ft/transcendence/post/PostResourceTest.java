@@ -17,13 +17,8 @@ public class PostResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .contentType("application/json")
-                .body("""
-                {
-                  "text": "Post de teste",
-                  "mediaUrl": null
-                }
-                """)
+                .contentType("multipart/form-data")
+                .multiPart("text", "Post de teste")
                 .when()
                 .post("/posts")
                 .then()
@@ -51,13 +46,8 @@ public class PostResourceTest extends BaseApiTest {
         Long postId =
                 ((Number) given()
                         .header("Authorization", "Bearer " + user.token)
-                        .contentType("application/json")
-                        .body("""
-                {
-                  "text": null,
-                  "mediaUrl": "https://imgs.search.brave.com/P2uLl-BVn49fNM_CZllrda4s90AJ0N6bpbAphp7e1zc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi90ZXN0/ZS1kZS1lc2NvbGhh/LW0tbHRpcGxhLWNs/b3NlLXVwLXVtLXB3/bmNpbC1lLWV4YW1l/LW0lQzMlQkFsdGlw/bGEtY29tLXRleHRv/LWRvLTE1NDQyMjA2/My5qcGc"
-                }
-                """)
+                        .contentType("multipart/form-data")
+                        .multiPart("text", "Post de teste")
                         .when()
                         .post("/posts")
                         .then()
