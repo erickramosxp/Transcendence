@@ -4,5 +4,7 @@ public enum MediaKind {
     IMAGE,
     VIDEO,
     AUDIO,
-    UNKNOWN
+    UNKNOWN,
+    TOO_LARGE,
+    NOT_FOUNDED
 }

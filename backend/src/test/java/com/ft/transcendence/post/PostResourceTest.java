@@ -101,12 +101,12 @@ public class PostResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", new File("src/test/resources/corrupted.jpg"))
+                .multiPart("file", new File("src/test/resources/corrupted.jpg"), "image/jpeg")
                 .multiPart("text", "Imagem inválida")
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(422);
     }
 
     @Test
@@ -116,12 +116,12 @@ public class PostResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", new File("src/test/resources/fake.jpg"))
+                .multiPart("file", new File("src/test/resources/fake.jpg"), "image/jpeg")
                 .multiPart("text", "Imagem fake")
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(415);
     }
 
     @Test
@@ -131,12 +131,12 @@ public class PostResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", new File("src/test/resources/corrupted.mp4"))
+                .multiPart("file", new File("src/test/resources/corrupted.mp4"), "video/mp4")
                 .multiPart("text", "Currupted video")
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(422);
     }
 
     @Test
@@ -146,12 +146,12 @@ public class PostResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", new File("src/test/resources/fake-video.mp4"))
+                .multiPart("file", new File("src/test/resources/fake-video.mp4"), "video/mp4")
                 .multiPart("text", "Fake video")
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(415);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class PostResourceTest extends BaseApiTest {
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(415);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class PostResourceTest extends BaseApiTest {
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(413);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class PostResourceTest extends BaseApiTest {
                 .when()
                 .post("/posts")
                 .then()
-                .statusCode(400);
+                .statusCode(413);
     }
 
 

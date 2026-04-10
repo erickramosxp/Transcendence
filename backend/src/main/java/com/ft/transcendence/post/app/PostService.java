@@ -1,6 +1,9 @@
 package com.ft.transcendence.post.app;
 
+import com.ft.transcendence.common.exception.PayloadTooLargeException;
+import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import com.ft.transcendence.common.media.MediaAnalysis;
+import com.ft.transcendence.common.media.MediaKind;
 import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
@@ -13,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotSupportedException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +56,12 @@ public class PostService {
             }
 
             if (!analysis.valid()) {
+                if (analysis.mediaKind() == MediaKind.TOO_LARGE)
+                    throw new PayloadTooLargeException(analysis.error());
+                else if (analysis.mediaKind() == MediaKind.NOT_FOUNDED)
+                    throw new UnprocessableEntityException(analysis.error());
+                else if (analysis.mediaKind() == MediaKind.UNKNOWN)
+                    throw new NotSupportedException(analysis.error());
                 throw new BadRequestException(analysis.error());
             }
 

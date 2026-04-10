@@ -22,7 +22,7 @@ public class MinioStorageService implements StorageService {
     private String bucket;
 
     void onStart(@Observes StartupEvent ev) {
-        // Criar bucket, depois remover isso e colocar pra criar o bucket por propeties
+        // Criar bucket se não existir
         try {
             boolean found = minioClient.bucketExists(
                     BucketExistsArgs.builder().bucket(bucket).build()
@@ -34,7 +34,7 @@ public class MinioStorageService implements StorageService {
                 );
             }
         } catch (Exception e) {
-            System.err.println("Erro ao checar/criado bucket: " + e.getMessage());
+            System.err.println("Fail to check bucket: " + e.getMessage());
         }
     }
 

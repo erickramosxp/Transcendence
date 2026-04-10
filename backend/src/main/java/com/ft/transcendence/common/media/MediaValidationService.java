@@ -38,12 +38,12 @@ public class MediaValidationService {
     public MediaAnalysis analyzeImage(Path path, String mimeType) throws Exception {
 
         if (path == null || !Files.exists(path)) {
-            return new MediaAnalysis(false, "File not found", null, MediaKind.UNKNOWN);
+            return new MediaAnalysis(false, "File not found", null, MediaKind.NOT_FOUNDED);
         }
 
         long size = Files.size(path);
         if (size > IMAGE_LIMIT) {
-            return new MediaAnalysis(false, "Image too large", null, MediaKind.UNKNOWN);
+            return new MediaAnalysis(false, "Image too large", null, MediaKind.TOO_LARGE);
         }
 
         if (!VALID_IMAGE_TYPES.contains(mimeType)) {
@@ -51,7 +51,7 @@ public class MediaValidationService {
         }
 
         if (!isValidImage(path)) {
-            return new MediaAnalysis(false, "Invalid image content", mimeType, MediaKind.UNKNOWN);
+            return new MediaAnalysis(false, "Invalid image content", mimeType, MediaKind.NOT_FOUNDED);
         }
 
         return new MediaAnalysis(true, null, mimeType, MediaKind.IMAGE);
@@ -60,12 +60,12 @@ public class MediaValidationService {
     public MediaAnalysis analyzeVideo(Path path, String mimeType) throws Exception {
 
         if (path == null || !Files.exists(path)) {
-            return new MediaAnalysis(false, "File not found", null, MediaKind.UNKNOWN);
+            return new MediaAnalysis(false, "File not found", null, MediaKind.NOT_FOUNDED);
         }
 
         long size = Files.size(path);
         if (size > VIDEO_LIMIT) {
-            return new MediaAnalysis(false, "Video too large", null, MediaKind.UNKNOWN);
+            return new MediaAnalysis(false, "Video too large", null, MediaKind.TOO_LARGE);
         }
 
         if (!VALID_VIDEO_TYPES.contains(mimeType)) {
@@ -82,7 +82,7 @@ public class MediaValidationService {
             return new MediaAnalysis(true, null, mimeType, MediaKind.VIDEO);
         }
 
-        return new MediaAnalysis(false, "Invalid video content", mimeType, MediaKind.UNKNOWN);
+        return new MediaAnalysis(false, "Invalid video content", mimeType, MediaKind.NOT_FOUNDED);
     }
 
     public MediaAnalysis analyzePostFile(Path path) throws Exception {
