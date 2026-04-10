@@ -26,7 +26,8 @@ COPY --from=build /workspace/target/quarkus-app/quarkus/ ./quarkus/
 # curl para healthcheck do Docker Compose (/q/health/live)
 USER root
 RUN microdnf install -y curl-minimal && microdnf clean all
-RUN apk add --no-cache ffmpeg
+COPY --from=mwader/static-ffmpeg:8.1 /ffmpeg /usr/local/bin/
+COPY --from=mwader/static-ffmpeg:8.1 /ffprobe /usr/local/bin/
 USER 185
 
 EXPOSE 8080

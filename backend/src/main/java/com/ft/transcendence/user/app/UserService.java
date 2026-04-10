@@ -288,9 +288,7 @@ public class UserService {
             case "image/gif" -> ".gif";
             default -> ".png";
         };
-
-        String fullNameFile = java.util.UUID.randomUUID() + extension;
-        String path = "users/" + userId + "/avatar/avatar" + fullNameFile;
+        String path = "users/" + userId + "/avatar/avatar" + extension;
 
         InputStream stream = Files.newInputStream(req.file.uploadedFile());
         long size = req.file.size();

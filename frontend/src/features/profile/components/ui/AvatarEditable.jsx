@@ -43,6 +43,7 @@ export const AvatarEditable = ({ user, canEdit = false, onChange }) => {
                             className="text-accent-foreground text-xs font-bold bg-accent/60 px-2 py-1 rounded cursor-pointer"
                             type="file"
                             accept=".jpg,.png"
+                            maxMBSize={5}
                         />
                     </label>
                 )}
