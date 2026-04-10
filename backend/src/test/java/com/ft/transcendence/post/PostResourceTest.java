@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
 import static org.codehaus.plexus.PlexusTestCase.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -77,9 +78,15 @@ public class PostResourceTest extends BaseApiTest {
     public void testUploadValidVideo() {
         UserTestContext user = createUser();
 
+        var videoResource = getClass().getClassLoader().getResource("test-video.mp4");
+
+        assertNotNull(videoResource, "O vídeo de teste não foi encontrado no src/test/resources");
+
+        File videoFile = new File(videoResource.getFile());
+
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", new File("src/test/resources/test-video.mp4"))
+                .multiPart("file", videoFile)
                 .multiPart("text", "Video valido")
                 .when()
                 .post("/posts")
