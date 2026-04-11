@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 public class CommentResponse {
     public Long id;
     public String name;
-    public String userName;
+    public String username;
     public String contents;
     public String avatarUrl;
     public boolean likedByMe;

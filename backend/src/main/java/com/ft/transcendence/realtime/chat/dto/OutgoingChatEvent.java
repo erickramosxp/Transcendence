@@ -1,4 +1,6 @@
-package com.ft.transcendence.chat.dto;
+package com.ft.transcendence.realtime.chat.dto;
+
+import com.ft.transcendence.chat.dto.ChatMessageResponse;
 
 import java.time.OffsetDateTime;
 

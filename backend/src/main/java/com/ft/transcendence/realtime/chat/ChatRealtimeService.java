@@ -1,16 +1,15 @@
-package com.ft.transcendence.chat.ws;
+package com.ft.transcendence.realtime.chat;
 
 import com.ft.transcendence.chat.app.ChatMessageService;
 import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.dto.ChatMessageRequest;
 import com.ft.transcendence.chat.dto.ChatMessageResponse;
-import com.ft.transcendence.chat.dto.IncomingChatEvent;
-import com.ft.transcendence.chat.dto.OutgoingChatEvent;
+import com.ft.transcendence.realtime.chat.dto.IncomingChatEvent;
+import com.ft.transcendence.realtime.chat.dto.OutgoingChatEvent;
 import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class ChatRealtimeService {

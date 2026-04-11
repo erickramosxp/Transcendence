@@ -1,4 +1,4 @@
-package com.ft.transcendence.chat.ws;
+package com.ft.transcendence.realtime.chat;
 
 import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;

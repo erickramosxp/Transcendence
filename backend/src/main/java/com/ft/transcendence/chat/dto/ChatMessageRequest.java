@@ -1,5 +1,7 @@
 package com.ft.transcendence.chat.dto;
 
+import com.ft.transcendence.realtime.chat.dto.IncomingChatEvent;
+
 public class ChatMessageRequest {
     public String text;
     public String mediaUrl;
