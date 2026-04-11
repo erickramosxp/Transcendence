@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	getMessages,
+	getConversation,
 	sendMessages,
 	mapApiMessageToUi,
-} from "@/features/chat/chatService";
+} from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 
 export function useChatConversation(currentChat) {
@@ -14,7 +14,7 @@ export function useChatConversation(currentChat) {
 	const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	const [nextCursor, setNextCursor] = useState(null);
+	const [nextOlderPage, setNextOlderPage] = useState(null);
 	const [loadingOlder, setLoadingOlder] = useState(false);
 
 	const currentUserId = readCurrentUserId();
@@ -23,7 +23,7 @@ export function useChatConversation(currentChat) {
 	useEffect(() => {
 		if (!currentChat) {
 			setMessages([]);
-			setNextCursor(null);
+			setNextOlderPage(null);
 			setError(null);
 			return;
 		}
@@ -34,15 +34,15 @@ export function useChatConversation(currentChat) {
 		(async () => {
 			setLoading(true);
 			setError(null);
-			setNextCursor(null);
+			setNextOlderPage(null);
 			try {
-				const data = await getMessages(convId, { limit: 50 });
+				const data = await getConversation(convId, { page: 0, size: 20 });
 				if (cancelled) return;
 				const ui = data.messages.map((m) =>
 					mapApiMessageToUi(m, currentUserId, peerName),
 				);
 				setMessages(ui);
-				setNextCursor(data.nextCursor ?? null);
+				setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			} catch (e) {
 				if (!cancelled) setError(e?.message ?? t("errors.load"));
 			} finally {
@@ -56,29 +56,31 @@ export function useChatConversation(currentChat) {
 	}, [currentChat?.id, currentUserId, peerName, t]);
 
 	const loadOlder = useCallback(async () => {
-		if (!currentChat || !nextCursor || loadingOlder) return;
+		if (!currentChat || !nextOlderPage || loadingOlder) return;
 
 		const el = listRef.current;
 		const prevH = el?.scrollHeight ?? 0;
 
 		setLoadingOlder(true);
 		try {
-			const data = await getMessages(currentChat.id, {
-				limit: 50,
-				before: nextCursor,
+			const data = await getConversation(currentChat.id, {
+				page: nextOlderPage,
+				size: 20,
 			});
 			const ui = data.messages.map((m) =>
 				mapApiMessageToUi(m, currentUserId, peerName),
 			);
 			setMessages((prev) => [...ui, ...prev]);
-			setNextCursor(data.nextCursor ?? null);
+			setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			requestAnimationFrame(() => {
 				if (el) el.scrollTop = el.scrollHeight - prevH;
 			});
+		} catch (e) {
+			setError(e?.message ?? t("errors.load"));
 		} finally {
 			setLoadingOlder(false);
 		}
-	}, [currentChat, nextCursor, loadingOlder, currentUserId, peerName]);
+	}, [currentChat, nextOlderPage, loadingOlder, currentUserId, peerName, t]);
 
 	const onScroll = useCallback(
 		(e) => {

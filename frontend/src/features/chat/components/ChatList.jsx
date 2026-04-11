@@ -9,7 +9,7 @@ import {
 } from "@/features/chat/components/AddConversationModal";
 import ChatItem from "@/features/chat/components/ChatItem";
 
-export default function ChatList({ friendsChat, selectedId, onSelectChat }) {
+export default function ChatList({ myChats, selectedChat, onSelectChat }) {
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
 	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.GROUP);
@@ -54,12 +54,12 @@ export default function ChatList({ friendsChat, selectedId, onSelectChat }) {
 			<Separator className="mt-6 shrink-0" />
 
 			<ul className="ds-chat-list-scroll" role="list">
-				{friendsChat.map((friend) => (
-					<li key={friend.id}>
+				{myChats.map((chat) => (
+					<li key={chat?.id}>
 						<ChatItem
-							chat={friend}
-							isSelected={friend.id === selectedId}
-							onClick={() => onSelectChat(friend)}
+							chat={chat}
+							isSelected={chat.id === selectedChat?.id}
+							onClick={() => onSelectChat(chat)}
 						/>
 					</li>
 				))}

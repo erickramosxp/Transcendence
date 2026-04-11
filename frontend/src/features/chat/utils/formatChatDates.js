@@ -43,3 +43,39 @@ export function formatChatDaySeparatorLabel(iso, locale, labels) {
 	}).format(new Date(iso));
 	return long.replace(/^./u, (c) => c.toUpperCase());
 }
+
+/**
+ * Horário na lista de conversas: hoje só hora; ontem rótulo; mesmo ano data curta; outro ano com ano.
+ */
+export function formatChatListTime(iso, locale, labels) {
+	if (iso == null || iso === "") return "";
+	const d = new Date(iso);
+	if (Number.isNaN(d.getTime())) return "";
+
+	const today = startOfLocalDay(new Date());
+	const msgDay = startOfLocalDay(d);
+	const y = new Date(today);
+	y.setDate(y.getDate() - 1);
+
+	if (msgDay.getTime() === today.getTime()) {
+		return formatChatBubbleTime(iso, locale);
+	}
+	if (msgDay.getTime() === y.getTime()) {
+		return labels?.yesterday ?? "";
+	}
+
+	const loc = resolveDateLocale(locale);
+	const nowYear = new Date().getFullYear();
+	const msgYear = d.getFullYear();
+	if (msgYear === nowYear) {
+		return new Intl.DateTimeFormat(loc, {
+			day: "numeric",
+			month: "short",
+		}).format(d);
+	}
+	return new Intl.DateTimeFormat(loc, {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	}).format(d);
+}
