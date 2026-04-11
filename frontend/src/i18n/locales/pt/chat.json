@@ -4,6 +4,7 @@
     "yesterday": "Ontem"
   },
   "list": {
+    "directDm": "Mensagem direta",
     "title": "Mensagens",
     "searchPlaceholder": "Buscar conversas...",
     "searchAriaLabel": "Buscar conversas",
@@ -13,11 +14,25 @@
       "tabGroup": "Novo grupo",
       "tabDm": "Nova conversa",
       "groupMembersLabel": "Membros",
-      "groupMembersPlaceholder": "Busque pessoas para o grupo",
+      "groupMembersPlaceholder": "Buscar pessoas para o grupo",
       "dmUserLabel": "Contato",
       "dmUserPlaceholder": "Nome de usuário",
       "cancel": "Cancelar",
-      "create": "Criar"
+      "create": "Criar",
+      "addMemberAria": "Adicionar membro ao grupo",
+      "memberErrorEmpty": "Digite um nome de usuário.",
+      "memberErrorDuplicate": "Esse usuário já está na lista.",
+      "memberErrorSelf": "Você não pode se adicionar como membro (você já entra como admin).",
+      "memberErrorNotFound": "Usuário não encontrado: {{username}}",
+      "memberErrorGeneric": "Não foi possível verificar o usuário.",
+      "removeMemberAria": "Remover {{username}} da lista",
+      "creating": "Criando...",
+      "createSuccess": "Conversa criada.",
+      "createErrorGroupName": "Informe o nome do grupo.",
+      "createErrorNoMembers": "Adicione pelo menos um membro.",
+      "createErrorDmUsername": "Informe o nome de usuário.",
+      "createErrorDmSelf": "Você não pode iniciar uma conversa com você mesmo.",
+      "createErrorGeneric": "Não foi possível criar a conversa."
     }
   },
   "empty": {
@@ -38,7 +53,7 @@
     "older": "Carregando mais mensagens..."
   },
   "thread": {
-    "empty": "Nenhuma mensagem nesta conversa ainda."
+    "empty": "Ainda não há mensagens nesta conversa."
   },
   "input": {
     "placeholder": "Digite sua mensagem..."
@@ -55,7 +70,7 @@
     },
     "hint": {
       "incoming": "{{name}} está te ligando",
-      "outgoing": "Chamando {{name}}…",
+      "outgoing": "Chamando {{name}}...",
       "active": "Conexão ativa — o áudio vai pelo dispositivo"
     },
     "cancelOutgoing": "Cancelar ligação",

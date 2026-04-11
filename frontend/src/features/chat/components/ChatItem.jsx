@@ -13,6 +13,19 @@ export default function ChatItem({ chat, isSelected, onClick }) {
 		yesterday: t("day.yesterday"),
 	});
 
+	const isGroup = chat.type === "group";
+	const groupTitle = (
+		chat.chatName ??
+		chat.chat_name ??
+		chat.name ??
+		""
+	).trim();
+	const directTitle = (chat.name ?? "").trim();
+	const rowTitle = isGroup
+		? groupTitle || t("peerFallback")
+		: directTitle || t("list.directDm");
+	const avatarName = isGroup ? rowTitle : directTitle || t("list.directDm");
+
     return (
         <button
             type="button"
@@ -23,19 +36,19 @@ export default function ChatItem({ chat, isSelected, onClick }) {
             )}
         >
             <AvatarWithStatus
-                // src={chat.avatar}
-                name={chat.type === "direct" ? "DM": chat.type === "group" ? "Group": chat.chatName}
+                // src={chat.user.avatarUrl}
+                name={avatarName}
                 // status={chat.status ?? "online"}
                 size="sm"
                 className="shrink-0"
             />
             <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-baseline justify-between gap-2">
-                    <span className="ds-chat-list-peer">{chat.type}</span>
+                    <span className="ds-chat-list-peer">{rowTitle}</span>
                     <span className="ds-chat-list-time">{timeLabel}</span>
                 </div>
                 {chat.lastMessage && (
-                    <p className="ds-chat-list-preview">"Padrão de mensagem"</p>
+                    <p className="ds-chat-list-preview">{chat.lastMessage.text}</p>
                 )}
             </div>
             {unread != null && (

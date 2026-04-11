@@ -4,6 +4,7 @@
     "yesterday": "Yesterday"
   },
   "list": {
+    "directDm": "Direct message",
     "title": "Messages",
     "searchPlaceholder": "Search conversations...",
     "searchAriaLabel": "Search conversations",
@@ -17,7 +18,21 @@
       "dmUserLabel": "Contact",
       "dmUserPlaceholder": "Username",
       "cancel": "Cancel",
-      "create": "Create"
+      "create": "Create",
+      "addMemberAria": "Add member to group",
+      "memberErrorEmpty": "Enter a username.",
+      "memberErrorDuplicate": "This user is already in the list.",
+      "memberErrorSelf": "You can't add yourself — you're already the group owner.",
+      "memberErrorNotFound": "User not found: {{username}}",
+      "memberErrorGeneric": "Could not verify the user.",
+      "removeMemberAria": "Remove {{username}} from list",
+      "creating": "Creating…",
+      "createSuccess": "Conversation created.",
+      "createErrorGroupName": "Enter the group name.",
+      "createErrorNoMembers": "Add at least one member.",
+      "createErrorDmUsername": "Enter a username.",
+      "createErrorDmSelf": "You cannot start a direct chat with yourself.",
+      "createErrorGeneric": "Could not create the conversation."
     }
   },
   "empty": {

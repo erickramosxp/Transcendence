@@ -19,7 +19,7 @@ export default function MessageThread({
 }) {
 	const { t } = useTranslation("chat");
 	const { currentLanguage } = useLanguage();
-
+	console.log(messages);
 	return (
 		<>
 			{error && (

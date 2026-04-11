@@ -9,7 +9,12 @@ import {
 } from "@/features/chat/components/AddConversationModal";
 import ChatItem from "@/features/chat/components/ChatItem";
 
-export default function ChatList({ myChats, selectedChat, onSelectChat }) {
+export default function ChatList({
+	myChats,
+	selectedChat,
+	onSelectChat,
+	onChatCreated,
+}) {
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
 	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.GROUP);
@@ -49,6 +54,7 @@ export default function ChatList({ myChats, selectedChat, onSelectChat }) {
 				onClose={closeAddModal}
 				activeTab={addTab}
 				onTabChange={setAddTab}
+				onChatCreated={onChatCreated}
 			/>
 
 			<Separator className="mt-6 shrink-0" />

@@ -24,6 +24,18 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 		setVoiceCall({ open: false, phase: "outgoing" });
 	}
 
+	const isGroup = currentChat.type === "group";
+	const groupTitle = (
+		currentChat.chatName ??
+		currentChat.chat_name ??
+		currentChat.name ??
+		""
+	).trim();
+	const directTitle = (currentChat.name ?? "").trim();
+	const headerTitle = isGroup
+		? groupTitle || t("peerFallback")
+		: directTitle || t("list.directDm");
+
 	return (
 		<div className="ds-chat-thread-header">
 			{onBack && (
@@ -39,13 +51,13 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 				</Button>
 			)}
 			<AvatarWithStatus
-				src={currentChat.avatar}
-				name={currentChat.name}
+				// src={currentChat.user.avatarUrl}
+				name={headerTitle}
 				status={status}
 				size="lg"
 			/>
 			<div className="min-w-0 flex-1 space-y-1">
-				<h3 className="ds-chat-thread-title">{currentChat.name}</h3>
+				<h3 className="ds-chat-thread-title">{headerTitle}</h3>
 				<span
 					className={cn(
 						"ds-chat-thread-status",
@@ -69,7 +81,7 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 				<VoiceCallModal
 					open={voiceCall.open}
 					phase={voiceCall.phase}
-					peer={currentChat}
+					peer={{ ...currentChat, name: headerTitle }}
 					onClose={endVoiceSession}
 					onAccept={() =>
 						setVoiceCall((v) => ({ ...v, phase: "active" }))

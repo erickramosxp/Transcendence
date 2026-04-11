@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
@@ -14,12 +14,15 @@ export function Chat() {
     const [loadHeader, setLoadHeader] = useState(true);
     const [notFounded, setNotFounded] = useState(false);
 
-    useEffect(() => {
-		const fetchMyChats = async () => {  
+	const refreshChats = useCallback(async () => {
+		const resp = await getMyChats();
+		setMyChats(resp.items ?? []);
+	}, []);
+
+	useEffect(() => {
+		const fetchMyChats = async () => {
 			try {
-				const resp = await getMyChats();
-				const chats = resp.items;
-				setMyChats(chats);
+				await refreshChats();
 				setNotFounded(false);
 			} catch (err) {
 				console.error(err);
@@ -30,7 +33,23 @@ export function Chat() {
 			}
 		};
 		fetchMyChats();
-	}, [t]);
+	}, [t, refreshChats]);
+
+	const handleChatCreated = useCallback(
+		async (apiChat, meta) => {
+			try {
+				await refreshChats();
+			} catch (e) {
+				console.error(e);
+				toast.error(t("errors.load"));
+				return;
+			}
+			const name = meta?.peerLabel ?? apiChat?.chatName ?? undefined;
+			setSelectedChat(name != null ? { ...apiChat, name } : apiChat);
+			toast.success(t("list.add.createSuccess"));
+		},
+		[refreshChats, t],
+	);
 
     if (loadHeader) {
         return <Loading size="lg" full={true} />;
@@ -56,6 +75,7 @@ export function Chat() {
 					myChats={myChats}
 					selectedChat={selectedChat}
 					onSelectChat={setSelectedChat}
+					onChatCreated={handleChatCreated}
 				/>
 			</aside>
 			<main
