@@ -4,10 +4,12 @@
     "yesterday": "Yesterday"
   },
   "list": {
-    "directDm": "Direct message",
+    "fallbackGroup": "Group",
+    "fallbackDm": "DM",
     "title": "Messages",
     "searchPlaceholder": "Search conversations...",
     "searchAriaLabel": "Search conversations",
+    "loadMore": "Load more conversations",
     "add": {
       "openAriaLabel": "Add conversation",
       "title": "Add conversation",
@@ -26,13 +28,13 @@
       "memberErrorNotFound": "User not found: {{username}}",
       "memberErrorGeneric": "Could not verify the user.",
       "removeMemberAria": "Remove {{username}} from list",
-      "creating": "Creating…",
-      "createSuccess": "Conversation created.",
       "createErrorGroupName": "Enter the group name.",
-      "createErrorNoMembers": "Add at least one member.",
-      "createErrorDmUsername": "Enter a username.",
-      "createErrorDmSelf": "You cannot start a direct chat with yourself.",
-      "createErrorGeneric": "Could not create the conversation."
+      "createErrorGroupMembers": "Add at least one member.",
+      "createErrorDmUser": "Enter the contact's username.",
+      "createErrorDmSelf": "You can't start a chat only with yourself.",
+      "createErrorGeneric": "Could not create the conversation.",
+      "creating": "Creating…",
+      "createSuccess": "Conversation created."
     }
   },
   "empty": {

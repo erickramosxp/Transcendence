@@ -22,9 +22,11 @@ export default function ChatItem({ chat, isSelected, onClick }) {
 	).trim();
 	const directTitle = (chat.name ?? "").trim();
 	const rowTitle = isGroup
-		? groupTitle || t("peerFallback")
-		: directTitle || t("list.directDm");
-	const avatarName = isGroup ? rowTitle : directTitle || t("list.directDm");
+		? groupTitle || t("list.fallbackGroup")
+		: directTitle || t("list.fallbackDm");
+	const avatarName = isGroup
+		? rowTitle
+		: directTitle || t("list.fallbackDm");
 
     return (
         <button

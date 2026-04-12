@@ -13,7 +13,9 @@ export default function ChatList({
 	myChats,
 	selectedChat,
 	onSelectChat,
-	onChatCreated,
+	hasMore = false,
+	loadingMore = false,
+	onLoadMore,
 }) {
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
@@ -54,7 +56,6 @@ export default function ChatList({
 				onClose={closeAddModal}
 				activeTab={addTab}
 				onTabChange={setAddTab}
-				onChatCreated={onChatCreated}
 			/>
 
 			<Separator className="mt-6 shrink-0" />
@@ -70,6 +71,24 @@ export default function ChatList({
 					</li>
 				))}
 			</ul>
+
+			{(hasMore || loadingMore) && (
+				<div className="mt-2 shrink-0 px-1 pb-2">
+					<Button
+						type="button"
+						variant="ghost"
+						className="h-9 w-full text-muted-foreground"
+						disabled={loadingMore || !hasMore}
+						aria-busy={loadingMore}
+						aria-label={
+							loadingMore ? t("loading.messages") : t("list.loadMore")
+						}
+						onClick={() => onLoadMore?.()}
+					>
+						{loadingMore ? t("loading.messages") : t("list.loadMore")}
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

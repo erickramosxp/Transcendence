@@ -33,8 +33,8 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 	).trim();
 	const directTitle = (currentChat.name ?? "").trim();
 	const headerTitle = isGroup
-		? groupTitle || t("peerFallback")
-		: directTitle || t("list.directDm");
+		? groupTitle || t("list.fallbackGroup")
+		: directTitle || t("list.fallbackDm");
 
 	return (
 		<div className="ds-chat-thread-header">

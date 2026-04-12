@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
@@ -10,19 +10,20 @@ import { useTranslation } from "react-i18next";
 export function Chat() {
 	const { t } = useTranslation('chat');
 	const [selectedChat, setSelectedChat] = useState(null);
-    const [myChats, setMyChats] = useState([]);
-    const [loadHeader, setLoadHeader] = useState(true);
-    const [notFounded, setNotFounded] = useState(false);
-
-	const refreshChats = useCallback(async () => {
-		const resp = await getMyChats();
-		setMyChats(resp.items ?? []);
-	}, []);
+	const [myChats, setMyChats] = useState([]);
+	const [chatListPage, setChatListPage] = useState(0);
+	const [chatListHasMore, setChatListHasMore] = useState(false);
+	const [chatListLoadingMore, setChatListLoadingMore] = useState(false);
+	const [loadHeader, setLoadHeader] = useState(true);
+	const [notFounded, setNotFounded] = useState(false);
 
 	useEffect(() => {
 		const fetchMyChats = async () => {
 			try {
-				await refreshChats();
+				const resp = await getMyChats({ page: 0 });
+				setMyChats(resp.items ?? []);
+				setChatListPage(0);
+				setChatListHasMore(Boolean(resp.hasMore));
 				setNotFounded(false);
 			} catch (err) {
 				console.error(err);
@@ -33,23 +34,35 @@ export function Chat() {
 			}
 		};
 		fetchMyChats();
-	}, [t, refreshChats]);
+	}, [t]);
 
-	const handleChatCreated = useCallback(
-		async (apiChat, meta) => {
-			try {
-				await refreshChats();
-			} catch (e) {
-				console.error(e);
-				toast.error(t("errors.load"));
-				return;
-			}
-			const name = meta?.peerLabel ?? apiChat?.chatName ?? undefined;
-			setSelectedChat(name != null ? { ...apiChat, name } : apiChat);
-			toast.success(t("list.add.createSuccess"));
-		},
-		[refreshChats, t],
-	);
+	async function loadMoreChats() {
+		if (!chatListHasMore || chatListLoadingMore) return;
+		const nextPage = chatListPage + 1;
+		setChatListLoadingMore(true);
+		try {
+			const resp = await getMyChats({ page: nextPage });
+			const newItems = resp.items ?? [];
+			setMyChats((prev) => {
+				const seen = new Set(prev.map((c) => c?.id).filter(Boolean));
+				const merged = [...prev];
+				for (const c of newItems) {
+					if (c?.id != null && !seen.has(c.id)) {
+						seen.add(c.id);
+						merged.push(c);
+					}
+				}
+				return merged;
+			});
+			setChatListPage(nextPage);
+			setChatListHasMore(Boolean(resp.hasMore));
+		} catch (err) {
+			console.error(err);
+			toast.error(t("errors.load"));
+		} finally {
+			setChatListLoadingMore(false);
+		}
+	}
 
     if (loadHeader) {
         return <Loading size="lg" full={true} />;
@@ -75,7 +88,9 @@ export function Chat() {
 					myChats={myChats}
 					selectedChat={selectedChat}
 					onSelectChat={setSelectedChat}
-					onChatCreated={handleChatCreated}
+					hasMore={chatListHasMore}
+					loadingMore={chatListLoadingMore}
+					onLoadMore={loadMoreChats}
 				/>
 			</aside>
 			<main
