@@ -25,6 +25,7 @@ services:
       QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "false"
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s

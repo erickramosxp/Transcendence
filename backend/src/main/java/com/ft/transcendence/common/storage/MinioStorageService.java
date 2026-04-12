@@ -18,7 +18,7 @@ public class MinioStorageService implements StorageService {
     @Inject
     private MinioClient minioClient;
 
-    @ConfigProperty(name = "quarkus.minio.bucket-name")
+    @ConfigProperty(name = "minio.bucket-name")
     private String bucket;
 
     void onStart(@Observes StartupEvent ev) {
