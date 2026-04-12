@@ -21,7 +21,7 @@ public class PostResponse {
         r.id = p.id;
         r.name = p.user.name;
         r.username = p.user.username;
-        r.avatarUrl = p.user.avatarUrl;
+        r.avatarUrl = avatarUrl;
         r.contents = p.text;
         r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
