@@ -22,6 +22,12 @@
             "uploadFailed": "Failed to update avatar."
         },
         "network": {
+            "404": "Resource not found.",
+            "413": "File is too large. Maximum size exceeded.",
+            "415": "Unsupported file type.",
+            "422": "Invalid data. Please check your input.",
+            "400": "Bad request. Please try again.",
+            "500": "Internal server error. Please try again later.",
             "generic": "Network error. Please try again."
         }
     },

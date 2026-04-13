@@ -2,7 +2,7 @@ import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 
 import { useTranslation } from "react-i18next";
 import {
@@ -34,9 +34,17 @@ export function Feed() {
             const resp = await createPost(formData);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
-            const message = err.response?.data?.message || t("common:errors.post.createFailed");
+            let message = t("common:errors.post.createFailed");
+
+            if (err.response) {
+                const code = err.response.status;
+                message = t(`common:errors.network.${code}`, {
+                    defaultValue: t("common:errors.network.500")
+                });
+            } else if (err.request) {
+                message = t(`common:errors.network.generic`);
+            }
             toast.error(message);
-            console.log(err);
         }
 
     }
