@@ -1,0 +1,24 @@
+package com.ft.transcendence.realtime.ws;
+
+import io.quarkus.websockets.next.WebSocketConnection;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class RealtimeConnection {
+    public final String connectionId;
+    public final Long userId;
+    public final WebSocketConnection socket;
+    public final Set<Long> subscribedChatIds = ConcurrentHashMap.newKeySet();
+    public final Set<Long> subscribedPresenceUserIds = ConcurrentHashMap.newKeySet();
+    public volatile OffsetDateTime lastSeenAt;
+
+    public RealtimeConnection(String connectionId, Long userId, WebSocketConnection socket) {
+        this.connectionId = connectionId;
+        this.userId = userId;
+        this.socket = socket;
+        this.lastSeenAt = OffsetDateTime.now();
+    }
+}

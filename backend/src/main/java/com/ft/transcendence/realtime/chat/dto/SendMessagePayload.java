@@ -1,7 +1,7 @@
 package com.ft.transcendence.realtime.chat.dto;
 
-public class IncomingChatEvent {
-    public String action;
+public class SendMessagePayload {
+    public Long chatId;
     public String text;
     public String mediaUrl;
     public String type;
