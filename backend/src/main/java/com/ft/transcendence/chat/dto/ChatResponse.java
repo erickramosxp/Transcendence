@@ -15,7 +15,6 @@ public class ChatResponse {
     public static ChatResponse of(Chat c) {
         ChatResponse r = new ChatResponse();
         r.id = c.id;
-        r.chatName = c.chatName;
         r.type = c.getType();
         r.createdAt = c.createdAt;
         r.updatedAt = c.updatedAt;
