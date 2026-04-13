@@ -9,7 +9,6 @@ import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class RealtimeChatHandler {
@@ -28,7 +27,7 @@ public class RealtimeChatHandler {
         if (req == null || req.chatId == null)
             return;
 
-        boolean chatParticipant = ChatParticipant.find("chat.id = ?1 and user.id = ?2", req.chatId, connection.userId).firstResult().isPersistent();
+        boolean chatParticipant = ChatParticipant.count("chat.id = ?1 and user.id = ?2", req.chatId, connection.userId) > 0;
         if (!chatParticipant)
             throw new ForbiddenException("User is not participant of this chat");
 

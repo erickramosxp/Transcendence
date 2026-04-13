@@ -2,7 +2,6 @@ package com.ft.transcendence.realtime.ws;
 
 import io.quarkus.websockets.next.WebSocketConnection;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

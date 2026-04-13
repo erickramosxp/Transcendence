@@ -11,7 +11,6 @@ import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
@@ -74,6 +73,8 @@ public class RealtimePresenceHandler {
         boolean wasLastConnection = registry.isUserOnline(connection.userId) && registry.getUserConnectionCount(connection.userId) == 1;
 
         connection.lastSeenAt = OffsetDateTime.now();
+
+        presenceService.removeWatcher(connection);
 
         if (wasLastConnection)
             notifyWatchers(connection.userId, false, connection.lastSeenAt);

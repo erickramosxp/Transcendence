@@ -13,7 +13,6 @@ import jakarta.ws.rs.ForbiddenException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 
 @ApplicationScoped
 public class WsAuthService {

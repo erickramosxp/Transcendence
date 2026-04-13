@@ -1,11 +1,7 @@
 package com.ft.transcendence.realtime.ws;
 
-import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
 import com.ft.transcendence.realtime.ws.dto.RealtimeIncomingEvent;
-import io.quarkus.security.Authenticated;
-import io.quarkus.security.identity.SecurityIdentity;
-import io.quarkus.smallrye.jwt.runtime.auth.BearerTokenAuthentication;
 import io.quarkus.websockets.next.*;
 import jakarta.inject.Inject;
 
