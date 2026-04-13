@@ -49,7 +49,6 @@ export function ProfileViewer() {
         setUserData(resp);
         setNotFounded(false);
       } catch (err) {
-        console.log(err);
         setNotFounded(true);
         toast.error(t('postList.error'));
       } finally {
@@ -92,7 +91,6 @@ export function ProfileViewer() {
       toast.success(t("common:success.avatar.updated"));
     } catch (err) {
       toast.error(t("common:errors.avatar.uploadFailed"));
-      console.log(err);
     }
   }
 

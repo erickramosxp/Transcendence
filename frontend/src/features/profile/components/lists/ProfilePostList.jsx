@@ -23,8 +23,6 @@ export function ProfilePostList({ username }) {
         await loadInitial();
 
       } catch (err) {
-
-        console.error(err);
         toast.error("Falha ao buscar posts do usuário");
       } finally {
         setLoading(false);
@@ -37,7 +35,7 @@ export function ProfilePostList({ username }) {
   useEffect(() => {
     setPosts(prev =>
       prev.map(post =>
-        post.userName === userData.username
+        post.username === userData.username
           ? {
             ...post,
             avatarUrl: userData.avatarUrl 
