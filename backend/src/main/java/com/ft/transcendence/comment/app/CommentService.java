@@ -46,7 +46,13 @@ public class CommentService {
 
         post.commentCount = post.commentCount + 1;
 
-        return CommentResponse.of(comment, false, null);
+
+        String avatarUrl  = comment.user.avatarUrl;
+        if (avatarUrl != null && !avatarUrl.isBlank() && !(avatarUrl.contains("http") || avatarUrl.contains("blob"))) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+
+        return CommentResponse.of(comment, false, avatarUrl);
     }
 
     public CommentsByPostResponse commentsByPost(Long userId, Long postId) {

@@ -43,7 +43,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                 text: value,
             });
 
-            setComments((prev) => [...prev, newComment]);
+            setComments((prev) => [newComment, ...prev]);
             setCommentText("");
             incrementCommentCount(postId);
         } catch (err) {
