@@ -28,7 +28,7 @@ function PostCard({
 					<Avatar
 						src={post.avatarUrl}
 						name={post.name}
-						username={post.userName}
+						username={post.username}
 						size="lg"
 						className="shrink-0"
 					/>
@@ -37,16 +37,16 @@ function PostCard({
 				<div className="min-w-0 flex-1">
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
 						<span className="max-w-[120px] truncate text-foreground transition-colors hover:text-primary sm:max-w-none">
-							<Link className="truncate" to={`/${post.userName}`}>
+							<Link className="truncate" to={`/${post.username}`}>
 								{post.name}
 							</Link>
 						</span>
 
 						<span
 							className="max-w-[100px] truncate text-muted-foreground sm:max-w-none"
-							title={`@${post.userName}`}
+							title={`@${post.username}`}
 						>
-							@{post.userName}
+							@{post.username}
 						</span>
 						<span
 							title={new Date(post.created_at).toLocaleString()}
