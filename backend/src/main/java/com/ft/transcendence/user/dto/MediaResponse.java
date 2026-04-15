@@ -9,10 +9,10 @@ public class MediaResponse {
     public String mediaUrl;
     public OffsetDateTime createdAt;
 
-    public static MediaResponse of(Post p) {
+    public static MediaResponse of(Post p, String mediaUrl) {
         MediaResponse r = new MediaResponse();
         r.postId = p.id;
-        r.mediaUrl = p.mediaUrl;
+        r.mediaUrl = mediaUrl;
         r.createdAt = p.createdAt;
         return r;
     }

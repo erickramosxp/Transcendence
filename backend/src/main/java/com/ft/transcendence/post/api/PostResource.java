@@ -3,6 +3,7 @@ package com.ft.transcendence.post.api;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.like.app.LikeService;
 import com.ft.transcendence.post.app.PostService;
+import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
@@ -12,6 +13,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.io.IOException;
 
 @Path("/posts")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,7 +30,8 @@ public class PostResource {
 
     @POST
     @Authenticated
-    public PostResponse post(PostRequest req) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public PostResponse post(CreatePostForm req) throws IOException {
         long userId = currentUser.id();
         return postService.create(userId, req);
     }

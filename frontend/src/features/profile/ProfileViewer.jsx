@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useLayoutEffect, useRef} from 'react'
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import { useAuth } from '@/app/providers/AuthProvider';
-import { getUserInfo } from './services/profileService';
+import { ProfileHeader } from '@/features/profile/components/ui/ProfileHeader'
 
-import { MediaGrid } from '@/features/profile/components/MediaGrid'
-import { ProfileHeader } from '@/features/profile/components/ProfileHeader'
-import { ProfilePostList } from './components/ProfilePostList';
-import { LikedPostList } from './components/LikedPostList';
+import { MediaGrid } from '@/features/profile/components/ui/MediaGrid'
+import { ProfilePostList } from '@/features/profile/components/lists/ProfilePostList';
+import { LikedPostList } from '@/features/profile/components/lists/LikedPostList';
+
+import { useAuth } from '@/app/providers/AuthProvider';
+import { getUserInfo, updateProfileAvatar } from '@/features/profile/services/profileService';
+import { ProfileContext } from '@/features/profile/context/ProfileContext';
 
 import { useTranslation } from 'react-i18next';
 
@@ -38,25 +40,24 @@ export function ProfileViewer() {
 
   useEffect(() => {
 
-		const getProfileInfo = async () => {
+    const getProfileInfo = async () => {
 
       setLoadHeader(true);
 
-			try {
-				const resp = await getUserInfo(profileUsername);
-				setUserData(resp);
-				setNotFounded(false);
-			} catch (err) {
-				console.log(err);
+      try {
+        const resp = await getUserInfo(profileUsername);
+        setUserData(resp);
+        setNotFounded(false);
+      } catch (err) {
         setNotFounded(true);
-				toast.error('Fail to get profile info');
-			} finally {
+        toast.error(t('postList.error'));
+      } finally {
         setLoadHeader(false);
-			}
-		}
+      }
+    }
 
-		getProfileInfo();
-	},[profileUsername]);
+    getProfileInfo();
+  }, [profileUsername]);
 
   const changeFields = (data) => {
 
@@ -78,14 +79,29 @@ export function ProfileViewer() {
     }))
   }
 
+  const updateAvatar = async (image) => {
 
-  	if (loadHeader) {
-		return (
-      <Loading size='lg' full={true}/>
-		);
-	}
+    try {
 
-  if (notFounded){
+      const formData = new FormData();
+      formData.append("file", image);
+
+      const resp = await updateProfileAvatar(formData);
+      changeFields({avatarUrl: resp.avatarUrl});
+      toast.success(t("common:success.avatar.updated"));
+    } catch (err) {
+      toast.error(t("common:errors.avatar.uploadFailed"));
+    }
+  }
+
+
+  if (loadHeader) {
+    return (
+      <Loading size='lg' full={true} />
+    );
+  }
+
+  if (notFounded) {
 
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
@@ -97,28 +113,32 @@ export function ProfileViewer() {
   }
 
   return (
-    <div className={`bg-background min-h-screen`}>
-      <div ref={topRef} />
-      <ProfileHeader userData={userData} changeFields={changeFields} changeFollowCount={changeFollowCount}/>
-      <div className='max-w-4xl mx-auto px-4 pb-10'>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
-          <TabsList className='mb-4'>
-            <TabsTrigger value="posts">{t('viewer.posts')}</TabsTrigger>
-            <TabsTrigger value="media">{t('viewer.media')}</TabsTrigger>
-            <TabsTrigger value="likes">{t('viewer.likes')}</TabsTrigger>
-          </TabsList>
+    <ProfileContext.Provider
+      value={{ userData, setUserData, changeFields, changeFollowCount, updateAvatar }}
+    >
+      <div className={`bg-background min-h-screen`}>
+        <div ref={topRef} />
+        <ProfileHeader />
+        <div className='max-w-4xl mx-auto px-3 sm:px-4 pb-10'>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className={`max-w-4xl`} >
+            <TabsList className='mb-4'>
+              <TabsTrigger value="posts">{t('viewer.posts')}</TabsTrigger>
+              <TabsTrigger value="media">{t('viewer.media')}</TabsTrigger>
+              <TabsTrigger value="likes">{t('viewer.likes')}</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="posts">
-            <ProfilePostList username={userData.username} />
-          </TabsContent>
-          <TabsContent value="media">
-            <MediaGrid  username={userData.username}/>
-          </TabsContent>
-          <TabsContent value="likes">
-            <LikedPostList username={userData.username}/>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="posts">
+              <ProfilePostList username={userData.username} />
+            </TabsContent>
+            <TabsContent value="media">
+              <MediaGrid username={userData.username} />
+            </TabsContent>
+            <TabsContent value="likes">
+              <LikedPostList username={userData.username} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </ProfileContext.Provider>
   )
 }

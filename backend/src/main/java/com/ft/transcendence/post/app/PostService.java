@@ -1,47 +1,129 @@
 package com.ft.transcendence.post.app;
 
+import com.ft.transcendence.common.exception.PayloadTooLargeException;
+import com.ft.transcendence.common.exception.UnprocessableEntityException;
+import com.ft.transcendence.common.media.MediaAnalysis;
+import com.ft.transcendence.common.media.MediaKind;
+import com.ft.transcendence.common.media.MediaValidationService;
+import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
+import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
-import com.ft.transcendence.post.dto.PostRequest;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotSupportedException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class PostService {
 
+    @Inject
+    StorageService storageService;
+
+    @Inject
+    MediaValidationService mediaValidationService;
+
     @Transactional
-    public PostResponse create(Long userId, PostRequest req) {
-        if ((req.text == null || req.text.isBlank()) && (req.mediaUrl == null || req.mediaUrl.isBlank()))
+    public PostResponse create(Long userId, CreatePostForm req) throws IOException {
+        if ((req.text == null || req.text.isBlank()) && (req.file == null))
             throw new BadRequestException("Posts must contain text or images");
+
+        // file
+        String contentType = null;
+        long size = 0;
+        MediaAnalysis analysis;
+        if (req.file != null) {
+            Path uploadedPath = req.file.uploadedFile();
+            size = req.file.size();
+
+            try {
+                analysis = mediaValidationService.analyzePostFile(uploadedPath);
+            } catch (Exception e) {
+                throw new BadRequestException("Error validating file");
+            }
+
+            if (!analysis.valid()) {
+                if (analysis.mediaKind() == MediaKind.TOO_LARGE)
+                    throw new PayloadTooLargeException(analysis.error());
+                else if (analysis.mediaKind() == MediaKind.NOT_FOUNDED)
+                    throw new UnprocessableEntityException(analysis.error());
+                else if (analysis.mediaKind() == MediaKind.UNKNOWN)
+                    throw new NotSupportedException(analysis.error());
+                throw new BadRequestException(analysis.error());
+            }
+
+            contentType = analysis.detectedMimeType();
+        }
 
         var now = OffsetDateTime.now();
 
         Post post = new Post();
         post.user = User.findById(userId);
         post.text = (req.text == null || req.text.isBlank()) ? null : req.text;
-        post.mediaUrl = (req.mediaUrl == null || req.mediaUrl.isBlank()) ? null : req.mediaUrl;
+        post.mediaUrl = null;
         post.likeCount = 0L;
         post.commentCount = 0L;
         post.createdAt = now;
         post.updatedAt = now;
-
         post.persist();
 
-        return PostResponse.of(post, false);
+        String mediaUrl = null;
+
+        if (req.file != null) {
+            String originalName = req.file.fileName();
+            String extension = originalName.substring(originalName.lastIndexOf("."));
+            String fullNameFile = java.util.UUID.randomUUID() + extension;
+            String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;
+
+            try (InputStream stream = Files.newInputStream(req.file.uploadedFile())) {
+                storageService.upload(path, stream, size, contentType);
+            }
+
+            post.mediaUrl = path;
+            mediaUrl = path;
+
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+        }
+
+
+        String avatarUrl  = post.user.avatarUrl;
+        if (avatarUrl != null) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+
+        return PostResponse.of(post, false, avatarUrl, mediaUrl);
     }
 
     public PostResponse getPostById(Long postId, Long currentUserId) {
         Post post = Post.findById(postId);
         boolean likedByMe = Like.find("user.id = ?1 and post.id = ?2", currentUserId, postId).firstResultOptional().isPresent();
 
-        return PostResponse.of(post, likedByMe);
+        String mediaUrl = post.mediaUrl;
+
+        if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            mediaUrl = storageService.generateUrl(mediaUrl);
+        }
+
+        String avatarUrl  = post.user.avatarUrl;
+        if (avatarUrl != null) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+        return PostResponse.of(post, likedByMe, avatarUrl, mediaUrl);
     }
 
     public FeedResponse feed(int page, int size, long userId) {
@@ -65,10 +147,33 @@ public class PostService {
         var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
         FeedResponse resp = new FeedResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
+
+
+        Map<String, String> avatarCache = new HashMap<>();
+        resp.items = posts.stream().map(p -> {
+
+            String mediaUrl = p.mediaUrl;
+
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+
+            String avatarUrl  = p.user.avatarUrl;
+            if (avatarUrl != null) {
+                avatarUrl = avatarCache.computeIfAbsent(
+                        avatarUrl,
+                        storageService::generateUrl
+                );
+            }
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+        }).toList();
+
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
         return resp;
     }
+
+
 }

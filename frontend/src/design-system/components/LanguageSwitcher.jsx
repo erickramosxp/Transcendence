@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { Languages, Check } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { createPortal } from "react-dom";
-
+import { toast } from 'react-toastify';
 import { Button } from "@/design-system"
 import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
+import i18n from "@/i18n";
 
 
 const languages = [
@@ -16,7 +17,7 @@ const languages = [
 ];
 
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({activeToastNotification = false}) {
 
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
@@ -57,6 +58,8 @@ export function LanguageSwitcher() {
   function handleSelectLanguage(code) {
     setIsOpen(false);
     changeLanguage(code);
+    if (activeToastNotification)
+      toast.success(i18n.t('common:language.changed'));
   }
 
   useEffect(() => {

@@ -70,3 +70,9 @@ export async function unfollowUser(username) {
   const response = await api.post(`/user/${username}/unfollow`);
   return response.data;
 }
+
+export async function updateProfileAvatar(formData) {
+
+  const response = await api.patch(`/user/avatar`, formData);
+  return response.data;
+}

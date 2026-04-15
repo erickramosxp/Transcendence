@@ -2,9 +2,10 @@ import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
+import { toast } from 'react-toastify'
 
 import { useTranslation } from "react-i18next";
-import { 
+import {
     Card,
     CardHeader,
     CardTitle,
@@ -19,17 +20,31 @@ export function Feed() {
 
     async function addPost(postData) {
 
-        const newPost = {
-            text: postData.text,
-            mediaUrl: postData.file ? URL.createObjectURL(postData.file) : null
-        };
+        const formData = new FormData();
+
+        formData.append("text", postData.text);
+
+        if (postData.file) {
+            formData.append("file", postData.file);
+        }
+
 
         try {
 
-            const resp = await createPost(newPost);
+            const resp = await createPost(formData);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
-            console.log(err);
+            let message = t("common:errors.post.createFailed");
+
+            if (err.response) {
+                const code = err.response.status;
+                message = t(`common:errors.network.${code}`, {
+                    defaultValue: t("common:errors.network.500")
+                });
+            } else if (err.request) {
+                message = t(`common:errors.network.generic`);
+            }
+            toast.error(message);
         }
 
     }

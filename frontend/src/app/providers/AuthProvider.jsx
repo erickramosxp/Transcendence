@@ -11,7 +11,7 @@ import { useTheme } from "@/design-system/hooks/useTheme";
 import i18n from "@/i18n";
 const AuthContext = createContext(null);
 
-const clientId = import.meta.env.GOOGLE_WEB_CLIENT_ID;
+const clientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID;
 
 export function AuthProvider({ children }) {
 

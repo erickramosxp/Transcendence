@@ -73,7 +73,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
   ];
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6 p-2">
       <div className="grid gap-4">
         {inputs.map(({ id, label, type, value, placeholder, onChange, maxLength }) => (
           <div key={id} className="space-y-2">

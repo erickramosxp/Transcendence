@@ -1,5 +1,9 @@
 package com.ft.transcendence.user.app;
 
+import com.ft.transcendence.common.storage.FileUploadForm;
+import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.common.media.MediaAnalysis;
+import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.follow.domain.Follow;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
@@ -7,15 +11,28 @@ import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.nio.file.Path;
 
 @ApplicationScoped
 public class UserService {
+
+    @Inject
+    StorageService storageService;
+
+    @Inject
+    MediaValidationService mediaValidationService;
 
     public UserPageResponse getUserPage(User user, Long currentUserId) {
         Long followers = Follow.count("followee.id = ?1", user.id);
@@ -24,7 +41,12 @@ public class UserService {
                 .firstResultOptional()
                 .isPresent();
 
-        return UserPageResponse.of(user, followers, following, isFollowing);
+        String avatarUrl = user.avatarUrl;
+
+        if (user.avatarUrl != null && !user.avatarUrl.startsWith("http")) {
+            avatarUrl = storageService.generateUrl(user.avatarUrl);
+        }
+        return UserPageResponse.of(user, followers, following, isFollowing, avatarUrl);
     }
 
     private String normalize(String s) {
@@ -70,7 +92,28 @@ public class UserService {
         var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
         UserPostsResponse resp = new UserPostsResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
+
+        Map<String, String> avatarCache = new HashMap<>();
+
+        resp.items = posts.stream().map(p -> {
+
+            String mediaUrl = p.mediaUrl;
+
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.startsWith("http") || mediaUrl.startsWith("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+
+            String avatarUrl  = p.user.avatarUrl;
+            if (avatarUrl != null) {
+                avatarUrl = avatarCache.computeIfAbsent(
+                        avatarUrl,
+                        storageService::generateUrl
+                );
+            }
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+        }).toList();
+
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
@@ -98,8 +141,28 @@ public class UserService {
 
         var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
+
         UserPostsResponse resp = new UserPostsResponse();
-        resp.items = posts.stream().map(p -> PostResponse.of(p, likedPostIds.contains(p.id))).toList();
+        Map<String, String> avatarCache = new HashMap<>();
+
+        resp.items = posts.stream().map(p -> {
+
+            String mediaUrl = p.mediaUrl;
+
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+
+            String avatarUrl  = p.user.avatarUrl;
+            if (avatarUrl != null) {
+                avatarUrl = avatarCache.computeIfAbsent(
+                        avatarUrl,
+                        storageService::generateUrl
+                );
+            }
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+        }).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
@@ -122,7 +185,14 @@ public class UserService {
             posts = posts.subList(0, size);
 
         UserMediaResponse resp = new UserMediaResponse();
-        resp.items = posts.stream().map(MediaResponse::of).toList();
+        resp.items = posts.stream().map(p -> {
+            
+            String mediaUrl = p.mediaUrl;
+            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+                mediaUrl = storageService.generateUrl(mediaUrl);
+            }
+            return MediaResponse.of(p, mediaUrl);
+        }).toList();
         resp.page = page;
         resp.size = size;
         resp.hasMore = hasMore;
@@ -184,5 +254,50 @@ public class UserService {
         UserFollowListResponse list = new UserFollowListResponse();
         list.items = follows.stream().map(UserFollowResponse::ofFollowing).toList();
         return list;
+    }
+
+    @Transactional
+    public Response updateAvatar(long userId, FileUploadForm req) throws IOException {
+
+        if (req.file == null)
+            throw new BadRequestException("Avatar upload must contain image");
+
+
+
+        String contentType = req.file.contentType();
+        MediaAnalysis analysis;
+        Path uploadedPath = req.file.uploadedFile();
+        try {
+            analysis = mediaValidationService.analyzeImage(uploadedPath);
+        } catch (Exception e) {
+            throw new BadRequestException("Error validating file");
+        }
+
+        if (!analysis.valid()) {
+            throw new BadRequestException(analysis.error());
+        }
+
+
+        String mimeType = analysis.detectedMimeType();
+
+        String extension = switch (mimeType) {
+            case "image/jpeg" -> ".jpg";
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> ".png";
+        };
+        String path = "users/" + userId + "/avatar/avatar" + extension;
+
+        InputStream stream = Files.newInputStream(req.file.uploadedFile());
+        long size = req.file.size();
+
+        storageService.upload(path, stream, size, mimeType);
+        User user = User.findById(userId);
+        user.avatarUrl = path;
+        String avatarUrl = storageService.generateUrl(path);
+        return Response.ok(
+                new UpdateAvatarResponse(avatarUrl)
+        ).build();
     }
 }

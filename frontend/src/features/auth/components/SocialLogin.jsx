@@ -13,7 +13,7 @@ export function SocialLogin({buttonTitle}) {
 
     const handleGoogleLogin = () => {
 
-      if (!import.meta.env.GOOGLE_WEB_CLIENT_ID) {
+      if (!import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID) {
         toast.error(t('socialLogin.unavailable'));
         return ;
       }
