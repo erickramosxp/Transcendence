@@ -1,14 +1,14 @@
-
 import api from "@/shared/api/httpClient";
 
-export async function getMyChats({ page = 0, size = 20 } = {}) {
-	const response = await api.get(`/chats`, {
-		params: { page, size },
-	});
+export const CHAT_LIST_PAGE_SIZE = 20;
+export const MESSAGE_LIST_PAGE_SIZE = 20;
+
+export async function getMyChats({ page = 0, size = CHAT_LIST_PAGE_SIZE } = {}) {
+	const response = await api.get(`/chats`, { params: { page, size } });
 	return response.data;
 }
 
-export async function getConversation(conversationId, {page = 0, size = 20}) {
+export async function getConversation(conversationId, { page = 0, size = MESSAGE_LIST_PAGE_SIZE }) {
 	const response = await api.get(`/chats/${conversationId}/messages`, {
 		params: {
 			page: page,

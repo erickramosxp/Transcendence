@@ -233,14 +233,14 @@ export function AddConversationModal({
 						className="mt-4 space-y-2"
 					>
 						<Label htmlFor="group-name">
-							Nome do Grupo
+							{t("list.add.groupNameLabel")}
 						</Label>
 						<Input
 							id="group-name"
 							type="text"
 							value={groupName}
 							onChange={(e) => setGroupName(e.target.value)}
-							placeholder="Digite o nome do grupo"
+							placeholder={t("list.add.groupNamePlaceholder")}
 							className="rounded-xl bg-input-background"
 							autoComplete="off"
 						/>

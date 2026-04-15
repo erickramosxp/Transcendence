@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MessageCirclePlus, Search } from "lucide-react";
 
@@ -14,15 +14,36 @@ export default function ChatList({
 	selectedChat,
 	onSelectChat,
 	onChatCreated,
+	hasMore = false,
+	loadingMore = false,
+	onLoadMore,
 }) {
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
 	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.GROUP);
+	const listRef = useRef(null);
+	const sentinelRef = useRef(null);
 
 	function closeAddModal() {
 		setAddOpen(false);
 		setAddTab(ADD_CONVERSATION_TAB.GROUP);
 	}
+
+	useEffect(() => {
+		const root = listRef.current;
+		const target = sentinelRef.current;
+		if (!root || !target || !hasMore || !onLoadMore) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const hit = entries.some((e) => e.isIntersecting);
+				if (hit && hasMore && !loadingMore) onLoadMore();
+			},
+			{ root, rootMargin: "120px", threshold: 0 },
+		);
+		observer.observe(target);
+		return () => observer.disconnect();
+	}, [hasMore, loadingMore, onLoadMore, myChats.length]);
 
 	return (
 		<div className="ds-chat-list-shell">
@@ -59,17 +80,41 @@ export default function ChatList({
 
 			<Separator className="mt-6 shrink-0" />
 
-			<ul className="ds-chat-list-scroll" role="list">
-				{myChats.map((chat) => (
-					<li key={chat?.id}>
-						<ChatItem
-							chat={chat}
-							isSelected={chat.id === selectedChat?.id}
-							onClick={() => onSelectChat(chat)}
+			<div className="mt-4 flex min-h-0 flex-1 flex-col">
+				<ul
+					ref={listRef}
+					className="ds-chat-list-scroll !mt-0 min-h-0 flex-1"
+					role="list"
+				>
+					{myChats.map((chat) => (
+						<li key={chat?.id}>
+							<ChatItem
+								chat={chat}
+								isSelected={chat.id === selectedChat?.id}
+								onClick={() => onSelectChat(chat)}
+							/>
+						</li>
+					))}
+					{loadingMore && (
+						<li className="list-none">
+							<div
+								className="py-4 text-center text-muted-foreground"
+								role="status"
+								aria-live="polite"
+							>
+								{t("list.loadingMore")}
+							</div>
+						</li>
+					)}
+					{hasMore && (
+						<li
+							ref={sentinelRef}
+							className="pointer-events-none h-2 shrink-0 list-none p-0"
+							aria-hidden
 						/>
-					</li>
-				))}
-			</ul>
+					)}
+				</ul>
+			</div>
 		</div>
 	);
 }
