@@ -8,25 +8,19 @@ export default function ChatItem({ chat, isSelected, onClick }) {
 	const { t } = useTranslation("chat");
 	const { currentLanguage } = useLanguage();
 	const unread = chat.unreadCount > 0 ? chat.unreadCount : null;
-	const updatedAt = chat.updatedAt ?? chat.updated_at;
+	const updatedAt = chat.lastMessage?.createdAt ?? chat.lastMessage?.created_at;
 	const timeLabel = formatChatListTime(updatedAt, currentLanguage, {
 		yesterday: t("day.yesterday"),
 	});
 
-	const isGroup = chat.type === "group";
-	const groupTitle = (
-		chat.chatName ??
-		chat.chat_name ??
-		chat.name ??
-		""
-	).trim();
-	const directTitle = (chat.name ?? "").trim();
-	const rowTitle = isGroup
-		? groupTitle || t("list.fallbackGroup")
-		: directTitle || t("list.fallbackDm");
-	const avatarName = isGroup
-		? rowTitle
-		: directTitle || t("list.fallbackDm");
+	const isDirect = chat.type === "direct";
+	const peer = chat.user;
+	const groupTitle = (chat.chatName ?? "").trim();
+	const directLabel =
+		(peer?.name ?? "").trim() || (peer?.username ?? "").trim();
+	const rowTitle = isDirect
+		? directLabel || t("list.fallbackDm")
+		: groupTitle || t("list.fallbackGroup");
 
     return (
         <button
@@ -38,8 +32,8 @@ export default function ChatItem({ chat, isSelected, onClick }) {
             )}
         >
             <AvatarWithStatus
-                // src={chat.user.avatarUrl}
-                name={avatarName}
+                src={isDirect ? (peer?.avatarUrl ?? peer?.avatarURL ?? null) : null}
+                name={rowTitle}
                 // status={chat.status ?? "online"}
                 size="sm"
                 className="shrink-0"
