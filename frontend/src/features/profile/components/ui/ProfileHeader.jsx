@@ -19,6 +19,7 @@ import { SettingsContent } from "../SettingsContent";
 import { Button, Modal } from "@/design-system";
 import { AvatarEditable } from "./AvatarEditable";
 import { validImageFile, validateImageContent } from "../../utils/validFile";
+import FriendshipButton from "@/features/friends/components/FriendshipButton";
 
 export const ProfileHeader = () => {
 
@@ -166,7 +167,7 @@ export const ProfileHeader = () => {
 							coverUrl={userData?.bannerImgUrl}
 						/>
 
-						<div className="px-4 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
+						<div className="px-3 pb-4 bg-card border-b border-border shadow-md rounded-b-md">
 
 							<div className="flex justify-between items-start relative">
 								<AvatarEditable
@@ -175,12 +176,15 @@ export const ProfileHeader = () => {
 									onChange={updateImage}
 								/>
 								<div>
-									<div className="flex justify-center items-center gap-2.5 mt-4">
+									<div className="flex justify-end items-center gap-2 mt-4">
 										{user?.id != userData?.id ?
 											(
-												<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
-													{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
-												</Button>
+												<>
+													<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
+														{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
+													</Button>
+													<FriendshipButton initialStatus={"PENDING_RECEIVED"}/>
+												</>
 											)
 											:
 											<>

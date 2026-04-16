@@ -12,9 +12,8 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/friendships")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Authenticated
+@Produces(MediaType.APPLICATION_JSON)
 public class FriendshipResource {
 
     @Inject
