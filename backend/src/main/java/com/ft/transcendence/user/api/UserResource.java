@@ -1,6 +1,7 @@
 package com.ft.transcendence.user.api;
 
 import com.ft.transcendence.common.security.CurrentUser;
+import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.user.app.UserService;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
@@ -9,6 +10,10 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -78,7 +83,8 @@ public class UserResource {
     @PATCH
     @Path("/avatar")
     @Authenticated
-    public Response updateAvatar(UpdateAvatarRequest req) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response updateAvatar(FileUploadForm req) throws IOException {
         long userId = currentUser.id();
         return userService.updateAvatar(userId, req);
     }

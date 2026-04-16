@@ -3,5 +3,43 @@
         "empty": "Nada por aquí aún.",
         "loadMore": "Cargando más…",
         "end": "Has llegado al final"
+    },
+    "errors": {
+        "upload": {
+            "invalidType": "Tipo de archivo no permitido.",
+            "invalidImage": "La imagen es inválida o está dañada.",
+            "invalidVideo": "El video es inválido o está dañado.",
+            "fileTooLarge": "El archivo es demasiado grande.",
+            "unknown": "Error al subir el archivo."
+        },
+        "post": {
+            "empty": "El post no puede estar vacío.",
+            "emptyVideo": "Video no puede estar vacío.",
+            "emptyImage": "Imagen no puede estar vacía.",
+            "createFailed": "Error al crear el post."
+        },
+        "avatar": {
+            "uploadFailed": "Error al actualizar el avatar."
+        },
+        "network": {
+            "404": "Recurso no encontrado.",
+            "413": "El archivo es demasiado grande. Se excedió el tamaño máximo.",
+            "415": "Tipo de archivo no soportado.",
+            "422": "Datos inválidos. Verifica la información enviada.",
+            "400": "Solicitud incorrecta. Inténtalo nuevamente.",
+            "500": "Error interno del servidor. Inténtalo más tarde.",
+            "generic": "Error de red. Inténtalo de nuevo."
+        }
+    },
+    "success": {
+        "post": {
+            "created": "Post creado con éxito."
+        },
+        "avatar": {
+            "updated": "Avatar actualizado con éxito."
+        }
+    },
+    "language": {
+        "changed": "Idioma cambiado con éxito."
     }
 }

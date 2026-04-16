@@ -18,12 +18,12 @@ public class UserPageResponse {
     public boolean isFollowing;
     public OffsetDateTime registerDate;
 
-    public static UserPageResponse of(User user, Long followers, Long following, boolean isFollowing) {
+    public static UserPageResponse of(User user, Long followers, Long following, boolean isFollowing, String avatarUrl) {
         UserPageResponse resp = new UserPageResponse();
         resp.id = user.id;
         resp.username = user.username;
         resp.name = user.name;
-        resp.avatarUrl = user.avatarUrl;
+        resp.avatarUrl = avatarUrl;
         resp.bannerImgUrl = user.bannerImgUrl;
         resp.bio = user.biography;
         resp.websiteUrl = user.websiteUrl;

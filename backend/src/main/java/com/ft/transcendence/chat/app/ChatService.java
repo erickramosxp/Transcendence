@@ -2,6 +2,7 @@ package com.ft.transcendence.chat.app;
 
 import com.ft.transcendence.chat.domain.Chat;
 import com.ft.transcendence.chat.domain.ChatParticipant;
+import com.ft.transcendence.chat.domain.ChatMessage;
 import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,7 +11,12 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.find;
 
 @ApplicationScoped
 public class ChatService {
@@ -30,9 +36,24 @@ public class ChatService {
         if (hasMore)
             participations = participations.subList(0, size);
 
-        List<Chat> chats = participations.stream().map(p -> p.chat).toList();
+        List<ChatResponse> items = participations.stream()
+                .map(participation -> {
+                    Chat chat = participation.chat;
+                    UserMessageResponse otherUser = null;
 
-        return ListChatResponse.of(chats, page, hasMore);
+                    if ("direct".equals(chat.getType())) {
+                        ChatParticipant otherParticipant = ChatParticipant.find("chat.id = ?1 and user.id <> ?2", chat.id, currentUserId).firstResult();
+                        if (otherParticipant != null)
+                            otherUser = UserMessageResponse.of(otherParticipant.user);
+                    }
+
+                    ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", chat.id).firstResult();
+
+                    return ChatResponse.of(chat, otherUser,lastMessage);
+                })
+                .toList();
+
+        return ListChatResponse.of(items, page, hasMore);
     }
 
     @Transactional
@@ -44,7 +65,7 @@ public class ChatService {
 
         Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent())
-            return ChatResponse.of(existing.get());
+            return ChatResponse.of(existing.get(), null, null);
 
         User userA = User.findById(currentUserId);
         User userB = User.findById(userBId);

@@ -6,6 +6,7 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
+RUN apk add --no-cache ffmpeg
 RUN mvn -B dependency:resolve dependency:resolve-plugins
 
 COPY . .

@@ -10,11 +10,11 @@ public class ListChatResponse {
     public int size;
     public boolean hasMore;
 
-    public static ListChatResponse of(List<Chat> chats, int page, boolean hasMore) {
+    public static ListChatResponse of(List<ChatResponse> items, int page, boolean hasMore) {
         ListChatResponse resp = new ListChatResponse();
-        resp.items = chats.stream().map(ChatResponse::of).toList();
+        resp.items = items;
         resp.page = page;
-        resp.size = chats.size();
+        resp.size = items.size();
         resp.hasMore = hasMore;
         return resp;
     }

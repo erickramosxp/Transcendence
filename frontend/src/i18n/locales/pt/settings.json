@@ -1,0 +1,24 @@
+{
+    "tabs": {
+        "account": "Conta",
+        "security": "Segurança",
+        "appearance": "Aparência"
+    },
+    "account": {
+        "logout": "Sair"
+    },
+    "security": {
+        "title": "Alterar senha",
+        "currentPassword": "Senha atual",
+        "newPassword": "Nova senha",
+        "confirmPassword": "Confirmar senha",
+        "submit": "Alterar"
+    },
+    "appearance": {
+        "theme": "Tema",
+        "language": "Idioma"
+    },
+    "messages": {
+        "notImplemented": "Funcionalidade ainda não implementada"
+    }
+}

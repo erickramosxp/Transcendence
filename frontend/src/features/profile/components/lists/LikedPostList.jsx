@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { getLikedPosts } from "@/features/profile/services/profileService";
+import { PostListUI } from "@/features/profile/components/lists/PostListUI";
+import { usePostList } from "@/features/profile/hooks/usePostList";
+import { useProfile } from "@/features/profile/context/ProfileContext";
 import { toast } from 'react-toastify';
-import { getLikedPosts } from "../services/profileService";
-import { PostListUI } from "./PostListUI";
-import { usePostList } from "../hooks/usePostList";
 
 import { useTranslation } from "react-i18next";
 import { Loading } from "@/design-system";
@@ -10,7 +11,8 @@ import { Loading } from "@/design-system";
 export function LikedPostList({ username }) {
 
   const [loading, setLoading] = useState(true);
-  const { posts, loadInitial, ...handlers } = usePostList(
+  const { userData } = useProfile();
+  const { posts, loadInitial, setPosts, ...handlers } = usePostList(
     (page, size) => getLikedPosts(username, page, size)
   );
   const { t } = useTranslation('profile');
@@ -31,6 +33,19 @@ export function LikedPostList({ username }) {
 
     getUserLikedPosts();
   }, [username]);
+
+  useEffect(() => {
+    setPosts(prev =>
+      prev.map(post =>
+        post.userName === userData.username
+          ? {
+            ...post,
+            avatarUrl: userData.avatarUrl
+          }
+          : post
+      )
+    );
+  }, [userData.avatarUrl]);
 
 
   if (loading)
