@@ -14,6 +14,7 @@ public final class RealtimeEventType {
     public static final String USER_OFFLINE = "USER_OFFLINE";
     public static final String PING = "PING";
     public static final String PONG = "PONG";
+    public static final String ERROR = "ERROR";
 
     private RealtimeEventType() {}
 }

@@ -16,6 +16,7 @@ import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ForbiddenException;
 
 import java.util.Set;
@@ -32,6 +33,7 @@ public class RealtimeChatHandler {
     @Inject
     RealtimeEventSender sender;
 
+    @Transactional
     public void subscribe(String connectionId, JsonNode payload) {
         RealtimeConnection connection = registry.get(connectionId);
         if (connection == null)
@@ -56,6 +58,7 @@ public class RealtimeChatHandler {
         registry.unsubscribeChat(connectionId, req.chatId);
     }
 
+    @Transactional
     public void sendMessage(String connectionId, JsonNode payload) {
         RealtimeConnection connection = registry.get(connectionId);
         if (connection == null)

@@ -18,7 +18,7 @@ public class CommentResponse {
         var r = new CommentResponse();
         r.id = comment.id;
         r.name = comment.user.name;
-        r.userName = comment.user.username;
+        r.username = comment.user.username;
         r.contents = comment.text;
         r.avatarUrl = avatarUrl;
         r.likedByMe = likedByMe;

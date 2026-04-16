@@ -3,6 +3,7 @@ package com.ft.transcendence.realtime.ws;
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
 import com.ft.transcendence.realtime.ws.dto.RealtimeIncomingEvent;
 import io.quarkus.websockets.next.*;
+import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
 
@@ -19,8 +20,10 @@ public class RealtimeWebSocket {
     WsAuthService authService;
 
     @OnOpen
+    @ActivateRequestContext
     public void onOpen() {
         try {
+            System.out.println(">>> WEBSOCKET CONNECTED: " + socket.id());
             AuthenticatedSocketUser user = authService.authenticate(socket);
             registry.add(new RealtimeConnection(socket.id(), user.userId, socket));
             dispatcher.handleConnected(socket.id());
@@ -32,11 +35,13 @@ public class RealtimeWebSocket {
     }
 
     @OnTextMessage
+    @ActivateRequestContext
     public void onMessage(RealtimeIncomingEvent event) {
         dispatcher.dispatch(socket.id(), event);
     }
 
     @OnClose
+    @ActivateRequestContext
     public void onClose() {
         dispatcher.handleDisconnected(socket.id());
     }
