@@ -3,7 +3,7 @@ import { Button } from '@/design-system';
 import { UserRoundPlus, UserRoundX, Users, UserMinus } from 'lucide-react'
 import { useFriendshipActions } from '../hooks/useFriendshipActions';
 
-const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
+const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess }) => {
     const [status, setStatus] = useState(initialStatus);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -29,7 +29,8 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
         targetUserId,
         setStatus,
         setOpen,
-        setLoading
+        setLoading,
+        onSuccess
     });
 
 

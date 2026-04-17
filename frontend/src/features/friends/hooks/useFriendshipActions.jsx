@@ -3,7 +3,7 @@ import React from "react";
 import { acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest } from '../service/friendService';
 import { toast } from 'react-toastify'
 
-export function useFriendshipActions({ friendshipId, targetUserId, setStatus, setOpen, setLoading }) {
+export function useFriendshipActions({ friendshipId, targetUserId, setStatus, setOpen, setLoading, onSuccess }) {
 
 
     return {
@@ -40,6 +40,10 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             try {
                 await acceptFriendRequest(friendshipId);
                 toast.success("Pedido de amizade aceito");
+                onSuccess?.("accept", {
+                    friendshipId,
+                    friendId: targetUserId
+                });
             } catch (err) {
                 toast.error("Erro ao aceitar o pedido de amizade");
                 setStatus('PENDING_RECEIVED');
@@ -55,6 +59,9 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             try {
                 await rejectFriendRequest(friendshipId);
                 toast.success("Pedido de amizade recusado");
+                onSuccess?.("reject", {
+                    friendshipId
+                });
             } catch (err) {
                 toast.error("Erro ao recusar o pedido de amizade");
                 setStatus('PENDING_RECEIVED');
@@ -70,6 +77,9 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             try {
                 await removeFriend(friendshipId);
                 toast.success("Amizade removida");
+                onSuccess?.("unfriend", {
+                    friendshipId
+                });
             } catch (err) {
                 toast.error("Erro ao remover a amizade");
                 setStatus('ACCEPTED');
