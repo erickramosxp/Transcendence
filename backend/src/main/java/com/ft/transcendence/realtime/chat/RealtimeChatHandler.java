@@ -6,10 +6,7 @@ import com.ft.transcendence.chat.app.ChatMessageService;
 import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.dto.ChatMessageRequest;
 import com.ft.transcendence.chat.dto.ChatMessageResponse;
-import com.ft.transcendence.realtime.chat.dto.ChatSubscribePayload;
-import com.ft.transcendence.realtime.chat.dto.SendMessagePayload;
-import com.ft.transcendence.realtime.chat.dto.TypingEventPayload;
-import com.ft.transcendence.realtime.chat.dto.TypingPayload;
+import com.ft.transcendence.realtime.chat.dto.*;
 import com.ft.transcendence.realtime.ws.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.RealtimeEventSender;
 import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
@@ -48,14 +45,20 @@ public class RealtimeChatHandler {
             throw new ForbiddenException("User is not participant of this chat");
 
         registry.subscribeChat(connectionId, req.chatId);
+        sender.send(connection, RealtimeEventType.CHAT_SUBSCRIBED, ChatSubscribedPayload.of(req.chatId));
     }
 
     public void unsubscribe(String connectionId, JsonNode payload) {
+        RealtimeConnection connection = registry.get(connectionId);
+        if (connection == null)
+            return;
+
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
         if (req == null || req.chatId == null)
             return;
 
         registry.unsubscribeChat(connectionId, req.chatId);
+        sender.send(connection, RealtimeEventType.CHAT_UNSUBSCRIBED, ChatUnsubscribedPayload.of(req.chatId));
     }
 
     @Transactional
