@@ -100,6 +100,7 @@ export const ProfileHeader = () => {
 	const isMobile = window.innerWidth < 768;
 
 
+	console.log(userData);
 	return (
 		<>
 			<Modal
@@ -183,7 +184,7 @@ export const ProfileHeader = () => {
 													<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
 														{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
 													</Button>
-													<FriendshipButton initialStatus={"PENDING_RECEIVED"}/>
+													<FriendshipButton initialStatus={userData?.relationStatus} friendshipId={userData?.friendshipId} targetUserId={userData?.id}/>
 												</>
 											)
 											:

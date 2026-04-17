@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/design-system';
 import { UserRoundPlus, UserRoundX, Users, UserMinus } from 'lucide-react'
+import { toast } from 'react-toastify'
+import { acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest } from '../service/friendService';
 
 const baseButtonClass =
     'inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors';
@@ -31,17 +33,62 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
     }, []);
 
     const actions = {
-        sendRequest: async () => setStatus('PENDING_SENT'),
-        cancelRequest: async () => setStatus('NONE'),
+        sendRequest: async () => {
+            setStatus('PENDING_SENT')
+
+            try {
+                await sendFriendRequest(targetUserId);
+                toast.success("Pedido de amizade enviado");
+            } catch (err) {
+                toast.error("Erro ao enviar o pedido de amizade");
+                setStatus('NONE');
+            }
+        },
+        cancelRequest: async () => {
+            setStatus('NONE')
+            try {
+                await removeFriend(friendshipId);
+                toast.success("Pedido de amizade cancelado");
+            } catch (err) {
+                toast.error("Erro ao cancelar o pedido de amizade");
+                setStatus('PENDING_SENT')
+            }
+        },
         accept: async () => {
             setStatus('ACCEPTED');
+            try {
+                await acceptFriendRequest(friendshipId);
+                toast.success("Pedido de amizade aceito");
+            } catch (err) {
+                toast.error("Erro ao aceitar o pedido de amizade");
+                setStatus('PENDING_RECEIVED');
+                return;
+            }
             setOpen(false);
         },
         reject: async () => {
             setStatus('NONE');
+            try {
+                await rejectFriendRequest(friendshipId);
+                toast.success("Pedido de amizade recusado");
+            } catch (err) {
+                toast.error("Erro ao recusar o pedido de amizade");
+                setStatus('PENDING_RECEIVED');
+                return;
+            }
             setOpen(false);
         },
-        unfriend: async () => setStatus('NONE'),
+        unfriend: async () => {
+            setStatus('NONE')
+            try {
+                await removeFriend(friendshipId);
+                toast.success("Amizade removida");
+            } catch (err) {
+                toast.error("Erro ao remover a amizade");
+                setStatus('ACCEPTED');
+                return;
+            }
+        },
     };
 
 
