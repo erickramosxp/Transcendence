@@ -7,7 +7,8 @@ import {
 } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 
-export function useChatConversation(currentChat) {
+export function useChatConversation(currentChat, options = {}) {
+	const { onAfterMessageSent } = options;
 	const { t } = useTranslation("chat");
 	const listRef = useRef(null);
 
@@ -100,6 +101,15 @@ export function useChatConversation(currentChat) {
 				);
 				const ui = mapApiMessageToUi(created, currentUserId, peerName);
 				setMessages((prev) => [...prev, ui]);
+				const createdAt =
+					created.createdAt ?? ui.timestamp;
+				onAfterMessageSent?.({
+					chatId: currentChat.id,
+					lastMessage: {
+						text: created.text ?? text,
+						createdAt,
+					},
+				});
 				requestAnimationFrame(() => {
 					if (listRef.current)
 						listRef.current.scrollTop = listRef.current.scrollHeight;
@@ -108,7 +118,7 @@ export function useChatConversation(currentChat) {
 				setError(e?.message ?? t("errors.send"));
 			}
 		},
-		[currentChat, currentUserId, peerName, t],
+		[currentChat, currentUserId, peerName, t, onAfterMessageSent],
 	);
 
 	return {

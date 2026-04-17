@@ -6,6 +6,7 @@ import {
 	getMyChats,
 	CHAT_LIST_PAGE_SIZE,
 } from "@/features/chat/services/chatService";
+import { sortChatsByRecency } from "@/features/chat/utils/sortChatsByRecency";
 import { Loading } from "@/design-system";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -29,7 +30,7 @@ export function Chat() {
 		const resp = await getMyChats({ page: 0, size: CHAT_LIST_PAGE_SIZE });
 		const items = resp.items ?? [];
 		const more = Boolean(resp.hasMore);
-		setMyChats(items);
+		setMyChats(sortChatsByRecency(items));
 		setChatListHasMore(more);
 		listFetchRef.current = { page: 0, hasMore: more, loading: false };
 		return resp;
@@ -72,7 +73,7 @@ export function Chat() {
 						merged.push(c);
 					}
 				}
-				return merged;
+				return sortChatsByRecency(merged);
 			});
 			s.page = nextPage;
 			s.hasMore = Boolean(resp.hasMore);
@@ -85,6 +86,23 @@ export function Chat() {
 			setChatListLoadingMore(false);
 		}
 	}, [t]);
+
+	const bumpChatAfterMessage = useCallback(({ chatId, lastMessage }) => {
+		setMyChats((prev) => {
+			const idx = prev.findIndex(
+				(c) => c?.id != null && Number(c.id) === Number(chatId),
+			);
+			if (idx < 0) return prev;
+			const next = prev.map((c, i) =>
+				i === idx ? { ...c, lastMessage } : c,
+			);
+			return sortChatsByRecency(next);
+		});
+		setSelectedChat((sel) => {
+			if (sel?.id == null || Number(sel.id) !== Number(chatId)) return sel;
+			return { ...sel, lastMessage };
+		});
+	}, []);
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {
@@ -141,6 +159,7 @@ export function Chat() {
 				<ChatWindow
 					currentChat={selectedChat}
 					onBack={() => setSelectedChat(null)}
+					onAfterMessageSent={bumpChatAfterMessage}
 				/>
 			</main>
 		</div>

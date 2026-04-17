@@ -5,7 +5,7 @@ import MessageInput from "@/features/chat/components/MessageInput";
 import MessageThread from "@/features/chat/components/MessageThread";
 import { useChatConversation } from "@/features/chat/hooks/useChatConversation";
 
-export default function ChatWindow({ currentChat, onBack }) {
+export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) {
 	const {
 		messages,
 		loading,
@@ -15,7 +15,7 @@ export default function ChatWindow({ currentChat, onBack }) {
 		onScroll,
 		handleSendMessage,
 		currentUserId,
-	} = useChatConversation(currentChat);
+	} = useChatConversation(currentChat, { onAfterMessageSent });
 
 	if (!currentChat) {
 		return <ChatEmptyState />;
