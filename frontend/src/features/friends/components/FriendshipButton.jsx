@@ -1,24 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/design-system';
 import { UserRoundPlus, UserRoundX, Users, UserMinus } from 'lucide-react'
-import { toast } from 'react-toastify'
-import { acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest } from '../service/friendService';
-
-const baseButtonClass =
-    'inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors';
-
-const buttonVariants = {
-    primary: `${baseButtonClass} bg-primary text-primary-foreground hover:bg-primary/90`,
-    secondary: `${baseButtonClass} bg-accent text-foreground hover:bg-accent/80`,
-    outline: `${baseButtonClass} border border-border bg-card text-foreground hover:bg-accent`,
-    dangerGhost: `${baseButtonClass} border border-border bg-card text-foreground hover:bg-accent`,
-    successItem: 'block w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-green-50',
-    dangerItem: 'block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50',
-};
+import { useFriendshipActions } from '../hooks/useFriendshipActions';
 
 const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
     const [status, setStatus] = useState(initialStatus);
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -32,69 +20,22 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const actions = {
-        sendRequest: async () => {
-            setStatus('PENDING_SENT')
+    useEffect(() => {
+        setStatus(initialStatus);
+    }, [initialStatus]);
 
-            try {
-                await sendFriendRequest(targetUserId);
-                toast.success("Pedido de amizade enviado");
-            } catch (err) {
-                toast.error("Erro ao enviar o pedido de amizade");
-                setStatus('NONE');
-            }
-        },
-        cancelRequest: async () => {
-            setStatus('NONE')
-            try {
-                await removeFriend(friendshipId);
-                toast.success("Pedido de amizade cancelado");
-            } catch (err) {
-                toast.error("Erro ao cancelar o pedido de amizade");
-                setStatus('PENDING_SENT')
-            }
-        },
-        accept: async () => {
-            setStatus('ACCEPTED');
-            try {
-                await acceptFriendRequest(friendshipId);
-                toast.success("Pedido de amizade aceito");
-            } catch (err) {
-                toast.error("Erro ao aceitar o pedido de amizade");
-                setStatus('PENDING_RECEIVED');
-                return;
-            }
-            setOpen(false);
-        },
-        reject: async () => {
-            setStatus('NONE');
-            try {
-                await rejectFriendRequest(friendshipId);
-                toast.success("Pedido de amizade recusado");
-            } catch (err) {
-                toast.error("Erro ao recusar o pedido de amizade");
-                setStatus('PENDING_RECEIVED');
-                return;
-            }
-            setOpen(false);
-        },
-        unfriend: async () => {
-            setStatus('NONE')
-            try {
-                await removeFriend(friendshipId);
-                toast.success("Amizade removida");
-            } catch (err) {
-                toast.error("Erro ao remover a amizade");
-                setStatus('ACCEPTED');
-                return;
-            }
-        },
-    };
+    const actions = useFriendshipActions({
+        friendshipId,
+        targetUserId,
+        setStatus,
+        setOpen,
+        setLoading
+    });
 
 
     if (status === 'NONE') {
         return (
-            <Button onClick={actions.sendRequest} title="Adicionar amigo" aria-label="Adicionar amigo">
+            <Button onClick={actions.sendRequest} title="Adicionar amigo" aria-label="Adicionar amigo" disabled={loading}>
                 <UserRoundPlus />
                 <span className="hidden sm:inline">
                     Adicionar
@@ -105,7 +46,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
 
     if (status === 'PENDING_SENT') {
         return (
-            <Button onClick={actions.cancelRequest} variant={"destructive"}>
+            <Button onClick={actions.cancelRequest} variant={"destructive"} disabled={loading}>
                 <UserRoundX />
                 <span className="hidden sm:inline">
                     Cancelar
@@ -116,7 +57,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
 
     if (status === 'ACCEPTED') {
         return (
-            <Button onClick={actions.unfriend} variant={"outline"}>
+            <Button onClick={actions.unfriend} variant={"outline"} disabled={loading}>
                 <UserMinus />
                 <span className="hidden sm:inline">
                     Desfazer amizade
@@ -128,7 +69,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
     if (status === 'PENDING_RECEIVED') {
         return (
             <div className="relative inline-block" ref={dropdownRef}>
-                <Button onClick={() => setOpen((prev) => !prev)} variant={"primary"} className="max-w-full truncate">
+                <Button onClick={() => setOpen((prev) => !prev)} variant={"primary"} className="max-w-full truncate" disabled={loading}>
                     <Users />
                     <span className="hidden sm:inline">
                         Responder
@@ -139,12 +80,12 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId }) => {
                 </Button>
 
                 {open && (
-                    <div className="absolute right-0 z-10 mt-2 w-48 rounded-md border border-border bg-card shadow-lg">
+                    <div className="absolute right-0 z-10 mt-2 w-48 rounded-md border border-border bg-card shadow-lg" >
                         <div className="py-1">
-                            <Button onClick={actions.accept} variant={"ghost"} size={"full"}>
+                            <Button onClick={actions.accept} variant={"ghost"} size={"full"} disabled={loading}>
                                 Aceitar convite
                             </Button>
-                            <Button onClick={actions.reject} variant={"ghost"} size={"full"}>
+                            <Button onClick={actions.reject} variant={"ghost"} size={"full"} disabled={loading}>
                                 Recusar convite
                             </Button>
                         </div>

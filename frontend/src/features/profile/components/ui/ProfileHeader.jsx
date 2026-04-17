@@ -99,8 +99,6 @@ export const ProfileHeader = () => {
 	const closeConnections = () => setConnectionsModal({ open: false, tab: 'followers' });
 	const isMobile = window.innerWidth < 768;
 
-
-	console.log(userData);
 	return (
 		<>
 			<Modal
