@@ -27,8 +27,8 @@ export async function rejectFriendRequest(friendshipId) {
     return result;
 }
 
-export async function getListFriends() {
-    const result = await api.get(`${baseRoute}`)
+export async function getListFriends(currentPage, size, searchQuery) {
+    const result = await api.get(`${baseRoute}?page=${currentPage}&size=${size}&q=${searchQuery}`)
     
     return result;
 }

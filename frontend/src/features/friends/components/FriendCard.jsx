@@ -31,7 +31,7 @@ const FriendCard = ({ user, friendshipState }) => {
 
   return (
     <Card>
-      <CardContent className='flex items-center justify-between p-4'>
+      <CardContent className='flex items-center justify-between p-4 [&:last-child]:pb-4'>
         <div className='flex items-center gap-3'>
           <AvatarWithStatus
             name={user?.name}
@@ -50,6 +50,7 @@ const FriendCard = ({ user, friendshipState }) => {
             targetUserId={user?.friendId}
             initialStatus={friendshipState}
             onSuccess={handleSuccess}
+            variant='inline'
           />
         </div>
       </CardContent>

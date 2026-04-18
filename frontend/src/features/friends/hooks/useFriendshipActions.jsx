@@ -2,13 +2,14 @@ import React from "react";
 
 import { acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest } from '../service/friendService';
 import { toast } from 'react-toastify'
+import { FRIENDSHIP_STATUS } from "@/shared/constants/friendship";
 
 export function useFriendshipActions({ friendshipId, targetUserId, setStatus, setOpen, setLoading, onSuccess }) {
 
 
     return {
         sendRequest: async () => {
-            setStatus('PENDING_SENT')
+            setStatus(FRIENDSHIP_STATUS.PENDING_SENT)
 
             setLoading(true);
             try {
@@ -16,26 +17,26 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
                 toast.success("Pedido de amizade enviado");
             } catch (err) {
                 toast.error("Erro ao enviar o pedido de amizade");
-                setStatus('NONE');
+                setStatus(FRIENDSHIP_STATUS.NONE);
             } finally {
                 setLoading(false);
             }
         },
         cancelRequest: async () => {
-            setStatus('NONE')
+            setStatus(FRIENDSHIP_STATUS.NONE)
             setLoading(true);
             try {
                 await removeFriend(friendshipId);
                 toast.success("Pedido de amizade cancelado");
             } catch (err) {
                 toast.error("Erro ao cancelar o pedido de amizade");
-                setStatus('PENDING_SENT')
+                setStatus(FRIENDSHIP_STATUS.PENDING_SENT)
             } finally {
                 setLoading(false);
             }
         },
         accept: async () => {
-            setStatus('ACCEPTED');
+            setStatus(FRIENDSHIP_STATUS.ACCEPTED);
             setLoading(true);
             try {
                 await acceptFriendRequest(friendshipId);
@@ -46,7 +47,7 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
                 });
             } catch (err) {
                 toast.error("Erro ao aceitar o pedido de amizade");
-                setStatus('PENDING_RECEIVED');
+                setStatus(FRIENDSHIP_STATUS.PENDING_RECEIVED);
                 return;
             } finally {
                 setLoading(false);
@@ -54,7 +55,7 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             setOpen(false);
         },
         reject: async () => {
-            setStatus('NONE');
+            setStatus(FRIENDSHIP_STATUS.NONE);
             setLoading(true);
             try {
                 await rejectFriendRequest(friendshipId);
@@ -64,7 +65,7 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
                 });
             } catch (err) {
                 toast.error("Erro ao recusar o pedido de amizade");
-                setStatus('PENDING_RECEIVED');
+                setStatus(FRIENDSHIP_STATUS.PENDING_RECEIVED);
                 return;
             } finally {
                 setLoading(false);
@@ -72,7 +73,7 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             setOpen(false);
         },
         unfriend: async () => {
-            setStatus('NONE')
+            setStatus(FRIENDSHIP_STATUS.NONE)
             setLoading(true);
             try {
                 await removeFriend(friendshipId);
@@ -82,7 +83,7 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
                 });
             } catch (err) {
                 toast.error("Erro ao remover a amizade");
-                setStatus('ACCEPTED');
+                setStatus(FRIENDSHIP_STATUS.ACCEPTED);
                 return;
             } finally {
                 setLoading(false);

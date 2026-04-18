@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/design-system';
 import { UserRoundPlus, UserRoundX, Users, UserMinus } from 'lucide-react'
 import { useFriendshipActions } from '../hooks/useFriendshipActions';
+import { FRIENDSHIP_STATUS } from '@/shared/constants/friendship';
 
-const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess }) => {
+const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant = 'dropdown', onSuccess }) => {
     const [status, setStatus] = useState(initialStatus);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess
     });
 
 
-    if (status === 'NONE') {
+    if (status === FRIENDSHIP_STATUS.NONE) {
         return (
             <Button onClick={actions.sendRequest} title="Adicionar amigo" aria-label="Adicionar amigo" disabled={loading}>
                 <UserRoundPlus />
@@ -45,7 +46,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess
         );
     }
 
-    if (status === 'PENDING_SENT') {
+    if (status === FRIENDSHIP_STATUS.PENDING_SENT) {
         return (
             <Button onClick={actions.cancelRequest} variant={"destructive"} disabled={loading}>
                 <UserRoundX />
@@ -56,7 +57,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess
         );
     }
 
-    if (status === 'ACCEPTED') {
+    if (status === FRIENDSHIP_STATUS.ACCEPTED) {
         return (
             <Button onClick={actions.unfriend} variant={"outline"} disabled={loading}>
                 <UserMinus />
@@ -67,7 +68,29 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, onSuccess
         );
     }
 
-    if (status === 'PENDING_RECEIVED') {
+    if (status === FRIENDSHIP_STATUS.PENDING_RECEIVED) {
+
+
+        if (variant === 'inline') {
+            return (
+                <div className="flex items-center gap-1.5">
+                    <Button
+                        onClick={actions.accept}
+                        size='sm'
+                    >
+                        Aceitar
+                    </Button>
+                    <Button
+                        onClick={actions.reject}
+                        variant='destructive'
+                        size='sm'
+                    >
+                        Recusar
+                    </Button>
+                </div>
+            );
+        }
+
         return (
             <div className="relative inline-block" ref={dropdownRef}>
                 <Button onClick={() => setOpen((prev) => !prev)} variant={"primary"} className="max-w-full truncate" disabled={loading}>

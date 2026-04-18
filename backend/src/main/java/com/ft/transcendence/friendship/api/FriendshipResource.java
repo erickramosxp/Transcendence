@@ -1,5 +1,6 @@
 package com.ft.transcendence.friendship.api;
 
+import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.friendship.app.FriendshipService;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
@@ -56,9 +57,13 @@ public class FriendshipResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFriends() {
+    public Response getFriends(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("20") int size,
+            @QueryParam("q") String query
+    ) {
         Long currentUserId = currentUser.id();
-        List<FriendshipDTO> friends = friendshipService.getFriendsList(currentUserId);
+        PageResponse<FriendshipDTO> friends = friendshipService.getFriendsList(currentUserId, page, size, query);
         return Response.ok(friends).build();
     }
 

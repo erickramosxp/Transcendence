@@ -1,38 +1,37 @@
-import React, { useState } from 'react'
+import React from 'react'
 import FriendCard from './FriendCard'
-import { Button, Input, Loading } from '@/design-system'
-import { Search } from 'lucide-react'
 import { useFriendsContext } from '../Context/FriendsContext'
+import { PaginatedSearchList } from './PaginatedSearchList'
+import { FRIENDSHIP_STATUS } from '@/shared/constants/friendship'
 
 const FriendsList = () => {
 
-  const [search, setSearch] = useState('');
+  const {
+    friends,
+    loading,
+    loadingMore,
+    hasMoreFriends,
+    fetchFriends
+  } = useFriendsContext();
 
-  const { friends, loading } = useFriendsContext();
 
   return (
-    <div className='flex flex-col gap-4'>
-      <div className='flex items-center gap-1.5'>
-        <Input id='search' name='search' icon={<Search size={20} />} value={search} onChange={(e) => setSearch(e.target.value)}/>
-        <Button className='cursor-pointer'>Buscar</Button>
-      </div>
-      { loading ? 
-        <div className='flex items-center justify-center min-h-80'>
-          <Loading /> 
-        </div>
-      :
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-          {friends && friends?.length > 0 ? (
-            friends?.map((friend) => (
-              <FriendCard key={friend?.friendId} user={friend} friendshipState='ACCEPTED'/>
-            ))
-          ) : (
-          <p>Nenhuma amizade por enquanto</p> 
-        )
-        }
-        </div>
-      }
-    </div>
+    <PaginatedSearchList 
+      showSearch={true}
+      data={friends}
+      loading={loading}
+      loadingMore={loadingMore}
+      hasMore={hasMoreFriends}
+      onFetch={fetchFriends}
+      emptyMessage='Nenhuma por aqui ainda.'
+      renderItem={(friend) => (
+        <FriendCard 
+          key={friend?.friendshipId || friend?.friendId}
+          user={friend}
+          friendshipState={FRIENDSHIP_STATUS.ACCEPTED}
+        />
+      )}
+    />
   )
 }
 
