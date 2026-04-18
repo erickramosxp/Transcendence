@@ -20,13 +20,8 @@ public class CommentResourceTest extends BaseApiTest {
         Long postId =
                 ((Number) given()
                         .header("Authorization", "Bearer " + user.token)
-                        .contentType("application/json")
-                        .body("""
-            {
-              "text": "Post para comentário",
-              "mediaUrl": null
-            }
-            """)
+                        .contentType("multipart/form-data")
+                        .multiPart("text", "Post de teste")
                         .when()
                         .post("/posts")
                         .then()
@@ -57,13 +52,8 @@ public class CommentResourceTest extends BaseApiTest {
         Long postId =
                 ((Number) given()
                         .header("Authorization", "Bearer " + user.token)
-                        .contentType("application/json")
-                        .body("""
-            {
-              "text": "Post com comentários",
-              "mediaUrl": null
-            }
-            """)
+                        .contentType("multipart/form-data")
+                        .multiPart("text", "Post de teste")
                         .when()
                         .post("/posts")
                         .then()

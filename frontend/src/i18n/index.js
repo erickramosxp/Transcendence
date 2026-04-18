@@ -8,6 +8,7 @@ import enCommon from "./locales/en/common.json";
 import enHome from "./locales/en/home.json";
 import enAuthProvider from "./locales/en/authProvider.json";
 import enChat from "./locales/en/chat.json";
+import enSettings from "./locales/en/settings.json";
 
 import ptAuth from "./locales/pt/auth.json";
 import ptFeed from "./locales/pt/feed.json";
@@ -16,6 +17,7 @@ import ptCommon from "./locales/pt/common.json";
 import ptHome from "./locales/pt/home.json";
 import ptAuthProvider from "./locales/pt/authProvider.json";
 import ptChat from "./locales/pt/chat.json";
+import ptSettings from "./locales/pt/settings.json";
 
 import esAuth from "./locales/es/auth.json";
 import esFeed from "./locales/es/feed.json";
@@ -24,6 +26,7 @@ import esCommon from "./locales/es/common.json";
 import esHome from "./locales/es/home.json";
 import esAuthProvider from "./locales/es/authProvider.json";
 import esChat from "./locales/es/chat.json";
+import esSettings from "./locales/es/settings.json";
 
 const resources = {
     "en-US": {
@@ -34,6 +37,7 @@ const resources = {
         home: enHome,
         authProvider: enAuthProvider,
         chat: enChat,
+        settings: enSettings
     },
     "pt-BR": {
         auth: ptAuth,
@@ -43,6 +47,7 @@ const resources = {
         home: ptHome,
         authProvider: ptAuthProvider,
         chat: ptChat,
+        settings: ptSettings
     },
     "es-ES": {
         auth: esAuth,
@@ -52,6 +57,7 @@ const resources = {
         home: esHome,
         authProvider: esAuthProvider,
         chat: esChat,
+        settings: esSettings
     }
 }
 

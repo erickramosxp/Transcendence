@@ -1,6 +1,9 @@
 import React from 'react'
 import { MapPin, Link, Calendar } from 'lucide-react';
-import { formatJoinDate } from '../utils/formatJoinDate';
+import { formatJoinDate } from '@/features/profile/utils/formatJoinDate';
+
+
+//////--
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/hooks/useLanguage';
 

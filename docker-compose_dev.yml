@@ -18,16 +18,24 @@ services:
       QUARKUS_DATASOURCE_WEB_ID_GOOGLE: ${GOOGLE_WEB_CLIENT_ID}
       QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      QUARKUS_MINIO_HOST: http://minio-dev
+      QUARKUS_MINIO_PORT: 9000
+      QUARKUS_MINIO_ENDPOINT: http://minio-dev:9000
+      QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      QUARKUS_MINIO_SECURE: "false"
 
     depends_on:
       database_dev:
+        condition: service_healthy
+      minio-dev:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/q/health/live || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 6
-      start_period: 120s
+      retries: 5
+      start_period: 90s
 
   frontend_dev:
     build:
@@ -62,7 +70,25 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    
+  minio-dev:
+      image: quay.io/minio/minio
+      container_name: minio-dev
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+      ports:
+        - "9000:9000"
+        - "9001:9001"
+      environment:
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        MINIO_SERVER_URL: http://127.0.0.1:9000
+      volumes:
+        - ~/minio/data:/data
+      command: server /data --console-address ":9001"
 
 volumes:
   db_data:
-

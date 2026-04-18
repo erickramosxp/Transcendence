@@ -4,7 +4,7 @@ export const CoverPhoto = ({coverUrl}) => {
 
   return (
     
-    <div className="h-40 sm:h-52 w-full relative bg-card">
+    <div className="h-40 sm:h-52 w-full bg-card">
       {coverUrl ? (
         <img
           src={coverUrl}

@@ -14,13 +14,13 @@ public class CommentResponse {
     public Long likeCount;
     public OffsetDateTime created_at;
 
-    public static CommentResponse of(Comment comment, boolean likedByMe) {
+    public static CommentResponse of(Comment comment, boolean likedByMe, String avatarUrl) {
         var r = new CommentResponse();
         r.id = comment.id;
         r.name = comment.user.name;
         r.userName = comment.user.username;
         r.contents = comment.text;
-        r.avatarUrl = comment.user.avatarUrl;
+        r.avatarUrl = avatarUrl;
         r.likedByMe = likedByMe;
         r.likeCount = comment.likeCount;
         r.created_at = comment.createdAt;

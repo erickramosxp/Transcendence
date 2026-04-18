@@ -93,8 +93,11 @@ function CreateVideoPost({ onAddPost, onClose }) {
 							</div>
 						)}
 						<div className="flex items-center justify-between gap-2">
-							<div className="flex gap-1 sm:gap-2">
-								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" />
+							<div className="flex gap-1 sm:gap-2 items-center">
+								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" maxMBSize={20}/>
+								<div className="text-xs text-muted-foreground">
+									<span>Max size (20MB)</span>
+								</div>
 							</div>
 							<div>
 								<Button

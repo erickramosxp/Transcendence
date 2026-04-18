@@ -16,17 +16,17 @@ public class PostResponse {
     public String media;
     public OffsetDateTime created_at;
 
-    public static PostResponse of(Post p, boolean likedByMe) {
+    public static PostResponse of(Post p, boolean likedByMe, String avatarUrl, String mediaUrl) {
         var r = new PostResponse();
         r.id = p.id;
         r.name = p.user.name;
         r.username = p.user.username;
-        r.avatarUrl = p.user.avatarUrl;
+        r.avatarUrl = avatarUrl;
         r.contents = p.text;
         r.likedByMe = likedByMe;
         r.likeCount = p.likeCount;
         r.commentCount = p.commentCount;
-        r.media = p.mediaUrl;
+        r.media = mediaUrl;
         r.created_at = p.createdAt;
         return r;
     }

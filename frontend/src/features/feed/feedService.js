@@ -7,12 +7,7 @@ export async function getFeed(page = 0, size = 10) {
 }
 
 export async function createPost(data) {
-    const response = await api.post("/posts", data, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-    });
+    const response = await api.post("/posts", data);
 
     return response.data;
 }

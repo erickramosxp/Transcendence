@@ -107,11 +107,15 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 						)}
 
 						<div className="flex items-center justify-between gap-2">
-							<div className="flex gap-1 sm:gap-2">
+							<div className="flex gap-1 sm:gap-2 items-center">
 								<FileUploadButton
 									onFileSelect={setFile}
 									accept="image/jpeg,image/png,image/gif,image/webp"
+									maxMBSize={5}
 								/>
+								<div className="text-xs text-muted-foreground">
+									<span>Max size (5MB)</span>
+								</div>
 							</div>
 
 							<Button onClick={handleSubmit} variant="primary" size="sm">
