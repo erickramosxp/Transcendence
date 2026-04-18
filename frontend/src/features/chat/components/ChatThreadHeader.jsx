@@ -25,13 +25,13 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 	}
 
 	const isGroup = currentChat.type === "group";
+	const peer = currentChat.user;
 	const groupTitle = (
 		currentChat.chatName ??
-		currentChat.chat_name ??
 		currentChat.name ??
 		""
 	).trim();
-	const directTitle = (currentChat.name ?? "").trim();
+	const directTitle = (peer?.name ?? "").trim();
 	const headerTitle = isGroup
 		? groupTitle || t("list.fallbackGroup")
 		: directTitle || t("list.fallbackDm");
