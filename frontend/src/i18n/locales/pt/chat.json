@@ -9,6 +9,7 @@
     "title": "Mensagens",
     "searchPlaceholder": "Buscar conversas...",
     "searchAriaLabel": "Buscar conversas",
+    "noResults": "Nenhuma conversa encontrada.",
     "loadingMore": "Carregando mais…",
     "add": {
       "openAriaLabel": "Adicionar conversa",

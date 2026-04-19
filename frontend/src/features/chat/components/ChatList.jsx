@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MessageCirclePlus, Search } from "lucide-react";
 
@@ -8,6 +8,40 @@ import {
 	ADD_CONVERSATION_TAB,
 } from "@/features/chat/components/AddConversationModal";
 import ChatItem from "@/features/chat/components/ChatItem";
+
+function normalizeForSearch(value) {
+	return String(value ?? "")
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/\p{M}/gu, "")
+		.trim();
+}
+
+function chatMatchesQuery(chat, needleNorm) {
+	if (!needleNorm) return true;
+	const isDirect = chat.type === "direct";
+	const peer = chat.user;
+	const haystackParts = [];
+
+	if (isDirect && peer) {
+		const name = (peer.name ?? "").trim();
+		const username = (peer.username ?? "").trim();
+		if (name) haystackParts.push(name);
+		if (username) {
+			haystackParts.push(username);
+			haystackParts.push(`@${username}`);
+		}
+	} else {
+		const groupTitle = (chat.chatName ?? "").trim();
+		if (groupTitle) haystackParts.push(groupTitle);
+	}
+
+	const preview = (chat.lastMessage?.text ?? "").trim();
+	if (preview) haystackParts.push(preview);
+
+	const haystack = normalizeForSearch(haystackParts.join("\n"));
+	return haystack.includes(needleNorm);
+}
 
 export default function ChatList({
 	myChats,
@@ -21,8 +55,22 @@ export default function ChatList({
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
 	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.GROUP);
+	const [listSearch, setListSearch] = useState("");
 	const listRef = useRef(null);
 	const sentinelRef = useRef(null);
+
+	const searchActive = listSearch.trim().length > 0;
+	const needleNorm = useMemo(
+		() => normalizeForSearch(listSearch),
+		[listSearch],
+	);
+
+	const filteredChats = useMemo(() => {
+		if (!needleNorm) return myChats;
+		return myChats.filter((c) => chatMatchesQuery(c, needleNorm));
+	}, [myChats, needleNorm]);
+
+	const allowLoadMore = hasMore && !searchActive;
 
 	function closeAddModal() {
 		setAddOpen(false);
@@ -32,18 +80,18 @@ export default function ChatList({
 	useEffect(() => {
 		const root = listRef.current;
 		const target = sentinelRef.current;
-		if (!root || !target || !hasMore || !onLoadMore) return;
+		if (!root || !target || !allowLoadMore || !onLoadMore) return;
 
 		const observer = new IntersectionObserver(
 			(entries) => {
 				const hit = entries.some((e) => e.isIntersecting);
-				if (hit && hasMore && !loadingMore) onLoadMore();
+				if (hit && allowLoadMore && !loadingMore) onLoadMore();
 			},
 			{ root, rootMargin: "120px", threshold: 0 },
 		);
 		observer.observe(target);
 		return () => observer.disconnect();
-	}, [hasMore, loadingMore, onLoadMore, myChats.length]);
+	}, [allowLoadMore, loadingMore, onLoadMore, myChats.length]);
 
 	return (
 		<div className="ds-chat-list-shell">
@@ -58,6 +106,8 @@ export default function ChatList({
 					icon={<Search className="size-4 text-muted-foreground" />}
 					placeholder={t("list.searchPlaceholder")}
 					className="ds-chat-search-field min-w-0 flex-1"
+					value={listSearch}
+					onChange={(e) => setListSearch(e.target.value)}
 				/>
 				<Button
 					type="button"
@@ -86,7 +136,7 @@ export default function ChatList({
 					className="ds-chat-list-scroll !mt-0 min-h-0 flex-1"
 					role="list"
 				>
-					{myChats.map((chat) => (
+					{filteredChats.map((chat) => (
 						<li key={chat?.id}>
 							<ChatItem
 								chat={chat}
@@ -95,6 +145,13 @@ export default function ChatList({
 							/>
 						</li>
 					))}
+					{searchActive && filteredChats.length === 0 && (
+						<li className="list-none">
+							<p className="px-2 py-6 text-center text-sm text-muted-foreground">
+								{t("list.noResults")}
+							</p>
+						</li>
+					)}
 					{loadingMore && (
 						<li className="list-none">
 							<div
@@ -106,7 +163,7 @@ export default function ChatList({
 							</div>
 						</li>
 					)}
-					{hasMore && (
+					{allowLoadMore && (
 						<li
 							ref={sentinelRef}
 							className="pointer-events-none h-2 shrink-0 list-none p-0"

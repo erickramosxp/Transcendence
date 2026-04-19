@@ -76,11 +76,12 @@ export default function Message({ currentUserId, message, showSenderName }) {
 					>
 						{timeLabel}
 					</time>
-					{isMine && (
+					{/* TODO: Adicionar check de envio */}
+					{/* {isMine && (
 						<span className="text-xs" aria-hidden>
 							&#10003;&#10003;
 						</span>
-					)}
+					)} */}
 				</div>
 			</div>
 		</div>

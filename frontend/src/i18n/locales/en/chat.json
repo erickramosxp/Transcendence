@@ -9,6 +9,7 @@
     "title": "Messages",
     "searchPlaceholder": "Search conversations...",
     "searchAriaLabel": "Search conversations",
+    "noResults": "No conversations match your search.",
     "loadingMore": "Loading more…",
     "add": {
       "openAriaLabel": "Add conversation",
