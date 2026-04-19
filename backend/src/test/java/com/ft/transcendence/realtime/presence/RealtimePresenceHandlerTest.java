@@ -1,9 +1,9 @@
 package com.ft.transcendence.realtime.presence;
 
 import com.ft.transcendence.base.BaseApiTest;
-import com.ft.transcendence.realtime.ws.RealtimeConnection;
-import com.ft.transcendence.realtime.ws.RealtimeEventSender;
-import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
+import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import com.ft.transcendence.user.UserTestContext;
 import io.quarkus.test.InjectMock;
@@ -83,7 +83,7 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
 
         assertEquals(Set.of(target1, target2), watcher.subscribedPresenceUserIds);
 
-        handler.unsubscribe(watcher.connectionId, null);
+        handler.unsubscribe(watcher.connectionId);
 
         assertTrue(watcher.subscribedPresenceUserIds.isEmpty());
         assertTrue(presenceService.getWatchers(target1).isEmpty());

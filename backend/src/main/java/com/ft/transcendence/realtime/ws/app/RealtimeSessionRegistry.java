@@ -1,5 +1,6 @@
-package com.ft.transcendence.realtime.ws;
+package com.ft.transcendence.realtime.ws.app;
 
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;

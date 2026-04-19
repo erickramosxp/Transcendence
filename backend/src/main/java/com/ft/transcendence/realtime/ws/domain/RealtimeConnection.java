@@ -1,6 +1,4 @@
-package com.ft.transcendence.realtime.ws;
-
-import io.quarkus.websockets.next.WebSocketConnection;
+package com.ft.transcendence.realtime.ws.domain;
 
 import java.time.OffsetDateTime;
 import java.util.Set;

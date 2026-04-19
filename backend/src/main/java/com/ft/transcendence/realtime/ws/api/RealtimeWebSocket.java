@@ -1,5 +1,9 @@
-package com.ft.transcendence.realtime.ws;
+package com.ft.transcendence.realtime.ws.api;
 
+import com.ft.transcendence.realtime.ws.app.RealtimeEventDispatcher;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.app.WsAuthService;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
 import com.ft.transcendence.realtime.ws.dto.RealtimeIncomingEvent;
 import io.quarkus.websockets.next.*;

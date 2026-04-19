@@ -1,8 +1,8 @@
 package com.ft.transcendence.realtime.presence;
 
 import com.ft.transcendence.follow.domain.Follow;
-import com.ft.transcendence.realtime.ws.RealtimeConnection;
-import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -48,19 +48,6 @@ public class PresenceService {
 
             watcher.subscribedPresenceUserIds.add(targetUserId);
             watchersByTargetUser.computeIfAbsent(targetUserId, k -> ConcurrentHashMap.newKeySet()).add(watcher.connectionId);
-        }
-    }
-
-    public void unsubscribePresence(RealtimeConnection watcher, Set<Long> targetUserIds) {
-        for (Long targetUserId : targetUserIds) {
-            watcher.subscribedPresenceUserIds.remove(targetUserId);
-
-            Set<String> watchers = watchersByTargetUser.get(targetUserId);
-            if (watchers != null) {
-                watchers.remove(watcher.connectionId);
-                if (watchers.isEmpty())
-                    watchersByTargetUser.remove(targetUserId);
-            }
         }
     }
 

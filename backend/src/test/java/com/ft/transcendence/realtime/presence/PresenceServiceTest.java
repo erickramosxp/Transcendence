@@ -1,8 +1,8 @@
 package com.ft.transcendence.realtime.presence;
 
 import com.ft.transcendence.base.BaseApiTest;
-import com.ft.transcendence.realtime.ws.RealtimeConnection;
-import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.user.UserTestContext;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

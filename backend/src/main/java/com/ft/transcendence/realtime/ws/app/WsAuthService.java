@@ -1,4 +1,4 @@
-package com.ft.transcendence.realtime.ws;
+package com.ft.transcendence.realtime.ws.app;
 
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
 import com.ft.transcendence.user.domain.User;

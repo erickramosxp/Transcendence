@@ -1,10 +1,9 @@
-package com.ft.transcendence.realtime.ws;
+package com.ft.transcendence.realtime.ws.app;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.transcendence.realtime.ws.dto.RealtimeOutgoingEvent;
 import io.quarkus.websockets.next.OpenConnections;
-import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

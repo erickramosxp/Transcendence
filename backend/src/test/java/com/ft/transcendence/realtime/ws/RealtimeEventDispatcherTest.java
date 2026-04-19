@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.transcendence.base.BaseApiTest;
 import com.ft.transcendence.realtime.chat.RealtimeChatHandler;
 import com.ft.transcendence.realtime.presence.RealtimePresenceHandler;
+import com.ft.transcendence.realtime.ws.app.RealtimeEventDispatcher;
+import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.dto.RealtimeIncomingEvent;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -59,7 +63,7 @@ public class RealtimeEventDispatcherTest extends BaseApiTest {
 
         dispatcher.dispatch("conn-1", event);
 
-        verify(presenceHandler).unsubscribe(eq("conn-1"), any());
+        verify(presenceHandler).unsubscribe(eq("conn-1"));
     }
 
     @Test

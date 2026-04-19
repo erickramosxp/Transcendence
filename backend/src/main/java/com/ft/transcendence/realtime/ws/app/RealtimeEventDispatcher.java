@@ -1,7 +1,8 @@
-package com.ft.transcendence.realtime.ws;
+package com.ft.transcendence.realtime.ws.app;
 
 import com.ft.transcendence.realtime.chat.RealtimeChatHandler;
 import com.ft.transcendence.realtime.presence.RealtimePresenceHandler;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.dto.RealtimeErrorPayload;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import com.ft.transcendence.realtime.ws.dto.RealtimeIncomingEvent;
@@ -37,7 +38,7 @@ public class RealtimeEventDispatcher {
                 case RealtimeEventType.TYPING_START -> chatHandler.typingStart(connectionId, event.payload);
                 case RealtimeEventType.TYPING_STOP -> chatHandler.typingStop(connectionId, event.payload);
                 case RealtimeEventType.PRESENCE_SUBSCRIBE -> presenceHandler.subscribe(connectionId);
-                case RealtimeEventType.PRESENCE_UNSUBSCRIBE -> presenceHandler.unsubscribe(connectionId, event.payload);
+                case RealtimeEventType.PRESENCE_UNSUBSCRIBE -> presenceHandler.unsubscribe(connectionId);
                 case RealtimeEventType.PING -> presenceHandler.ping(connectionId);
                 default -> {
                     sender.send(connectionId, RealtimeEventType.ERROR,

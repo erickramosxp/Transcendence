@@ -1,12 +1,9 @@
 package com.ft.transcendence.realtime.presence;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.transcendence.realtime.presence.dto.PresenceUpdatePayload;
-import com.ft.transcendence.realtime.ws.RealtimeConnection;
-import com.ft.transcendence.realtime.ws.RealtimeEventSender;
-import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
-import com.ft.transcendence.realtime.ws.dto.RealtimeErrorPayload;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
+import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,8 +21,6 @@ public class RealtimePresenceHandler {
     PresenceService presenceService;
     @Inject
     RealtimeEventSender sender;
-    @Inject
-    ObjectMapper objectMapper;
 
     public void subscribe(String connectionId) {
         RealtimeConnection connection = registry.get(connectionId);
@@ -64,7 +59,7 @@ public class RealtimePresenceHandler {
         return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
     }
 
-    public void unsubscribe(String connectionId, JsonNode payload) {
+    public void unsubscribe(String connectionId) {
         RealtimeConnection connection = registry.get(connectionId);
         if (connection == null)
             return;
