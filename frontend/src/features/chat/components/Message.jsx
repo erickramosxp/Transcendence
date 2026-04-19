@@ -2,10 +2,15 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslation } from "react-i18next";
 import { formatChatBubbleTime } from "@/features/chat/utils/formatChatDates";
 import { cn } from "@/design-system/tokens/colors";
+import { TextWithLink } from "@/design-system";
+import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
 export default function Message({ currentUserId, message, showSenderName }) {
 	const { currentLanguage } = useLanguage();
 	const { t } = useTranslation("chat");
+	const { preview: linkPreview, loading: linkPreviewLoading } =
+		useMessageLinkPreview(message.text);
 	const timeLabel = formatChatBubbleTime(message.timestamp, currentLanguage);
 	const isMine =
 		String(message.senderId) === String(currentUserId) || message.sender === "me";
@@ -31,7 +36,32 @@ export default function Message({ currentUserId, message, showSenderName }) {
 						{senderHeading}
 					</div>
 				)}
-				<div className="ds-chat-bubble-text">{message.text}</div>
+				{linkPreviewLoading && !linkPreview && (
+					<p
+						className={cn(
+							"mb-2 text-[11px] sm:text-xs",
+							isMine
+								? "text-primary-foreground/75"
+								: "text-muted-foreground",
+						)}
+					>
+						{t("linkPreview.loading")}
+					</p>
+				)}
+				<ChatLinkPreviewCard
+					preview={linkPreview}
+					className={cn("mb-2", showHeading ? "mt-1" : "mt-0")}
+				/>
+				<div className="ds-chat-bubble-text">
+					<TextWithLink
+						text={message.text ?? ""}
+						linkClassName={
+							isMine
+								? "text-primary-foreground underline decoration-primary-foreground/70 underline-offset-2 break-all hover:opacity-90"
+								: undefined
+						}
+					/>
+				</div>
 				<div
 					className={cn(
 						"ds-chat-bubble-meta",

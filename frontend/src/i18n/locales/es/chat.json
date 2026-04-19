@@ -63,6 +63,9 @@
   "input": {
     "placeholder": "Escribe un mensaje..."
   },
+  "linkPreview": {
+    "loading": "Cargando vista previa del enlace…"
+  },
   "a11y": {
     "back": "Volver a la lista de conversaciones",
     "call": "Iniciar llamada de voz"

@@ -577,7 +577,7 @@
   }
 
   .ds-chat-bubble-text {
-    @apply whitespace-pre-wrap text-sm leading-normal;
+    @apply min-w-0 whitespace-pre-wrap break-words text-sm leading-normal;
   }
 
   .ds-chat-bubble-meta {

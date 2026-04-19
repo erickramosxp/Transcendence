@@ -63,6 +63,9 @@
   "input": {
     "placeholder": "Type a message..."
   },
+  "linkPreview": {
+    "loading": "Loading link preview…"
+  },
   "a11y": {
     "back": "Back to conversation list",
     "call": "Start voice call"

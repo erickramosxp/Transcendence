@@ -4,11 +4,15 @@ import { Button } from "@/design-system";
 import { Input } from "@/design-system";
 import { Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
 export default function MessageInput({ onSendMessage }) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+	const { preview: draftLinkPreview, loading: draftLinkPreviewLoading } =
+		useMessageLinkPreview(text);
 
 	useEffect(() => {
 		const mq = window.matchMedia("(min-width: 1024px)");
@@ -32,7 +36,22 @@ export default function MessageInput({ onSendMessage }) {
 	}
 
 	return (
-		<form onSubmit={handleSendMessage} className="ds-chat-input-form">
+		<div className="w-full space-y-2">
+			{(draftLinkPreviewLoading || draftLinkPreview) && (
+				<div className="space-y-1">
+					{draftLinkPreviewLoading && (
+						<p className="text-xs text-muted-foreground">
+							{t("linkPreview.loading")}
+						</p>
+					)}
+					<ChatLinkPreviewCard
+						preview={draftLinkPreview}
+						compact
+						className="mt-0"
+					/>
+				</div>
+			)}
+			<form onSubmit={handleSendMessage} className="ds-chat-input-form">
 			<Button
 				variant="outline"
 				size="icon"
@@ -78,5 +97,6 @@ export default function MessageInput({ onSendMessage }) {
 				<Send className="ds-chat-icon-input" />
 			</Button>
 		</form>
+		</div>
 	);
 }
