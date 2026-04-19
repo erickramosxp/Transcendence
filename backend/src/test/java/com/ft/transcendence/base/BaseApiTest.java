@@ -51,6 +51,7 @@ public abstract class BaseApiTest {
 
         UserTestContext ctx = new UserTestContext();
         ctx.id = id;
+        ctx.name = "Test";
         ctx.email = email;
         ctx.username = username;
         ctx.token = token;
