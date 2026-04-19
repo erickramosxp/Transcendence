@@ -2,7 +2,6 @@ package com.ft.transcendence.realtime.presence;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ft.transcendence.realtime.presence.dto.PresenceSubscribePayload;
 import com.ft.transcendence.realtime.presence.dto.PresenceUpdatePayload;
 import com.ft.transcendence.realtime.ws.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.RealtimeEventSender;
@@ -28,25 +27,16 @@ public class RealtimePresenceHandler {
     @Inject
     ObjectMapper objectMapper;
 
-    public void subscribe(String connectionId, JsonNode payload) {
+    public void subscribe(String connectionId) {
         RealtimeConnection connection = registry.get(connectionId);
         if (connection == null)
             return;
 
-        PresenceSubscribePayload req = objectMapper.convertValue(payload, PresenceSubscribePayload.class);
-        if (req == null) {
-            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.PRESENCE_SUBSCRIBE);
-            return;
-        }
+        Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
 
-        if (req.userIds == null || req.userIds.isEmpty()) {
-            sendError(connection,"MISSING_FIELD","userIds is required", RealtimeEventType.PRESENCE_SUBSCRIBE);
-            return;
-        }
+        presenceService.subscribePresence(connection, targetUserIds);
 
-        presenceService.subscribePresence(connection, req.userIds);
-
-        for (Long userId : req.userIds) {
+        for (Long userId : targetUserIds) {
             sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
         }
     }
@@ -79,18 +69,7 @@ public class RealtimePresenceHandler {
         if (connection == null)
             return;
 
-        PresenceSubscribePayload req = objectMapper.convertValue(payload, PresenceSubscribePayload.class);
-        if (req == null) {
-            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.PRESENCE_UNSUBSCRIBE);
-            return;
-        }
-
-        if (req.userIds == null || req.userIds.isEmpty()) {
-            sendError(connection,"MISSING_FIELD","userIds is required", RealtimeEventType.PRESENCE_UNSUBSCRIBE);
-            return;
-        }
-
-        presenceService.unsubscribePresence(connection, req.userIds);
+        presenceService.removeWatcher(connection);
     }
 
     public void handleConnected(String connectionId) {
@@ -132,11 +111,5 @@ public class RealtimePresenceHandler {
             sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
                     targetConnection.name, targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
         }
-    }
-
-    private void sendError(RealtimeConnection connection, String code, String message, String originalType) {
-        if (connection == null)
-            return;
-        sender.send(connection.connectionId, RealtimeEventType.ERROR, RealtimeErrorPayload.of(code, message, originalType));
     }
 }
