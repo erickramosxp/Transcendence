@@ -63,10 +63,9 @@ public class RealtimeSessionRegistry {
     }
 
     public void remove(String connectionId) {
-        RealtimeConnection connection = byConnectionId.remove(connectionId);
-        if (connection == null) {
+        RealtimeConnection connection = byConnectionId.get(connectionId);
+        if (connection == null)
             return;
-        }
 
         for (Long chatId : Set.copyOf(connection.subscribedChatIds)) {
             unsubscribeChat(connectionId, chatId);
