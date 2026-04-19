@@ -609,7 +609,7 @@
   }
 
   .ds-chat-input-emoji-btn {
-    @apply absolute top-1/2 right-1 z-[2] hidden size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground lg:inline-flex;
+    @apply absolute top-1/2 right-1 z-[2] inline-flex size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground;
   }
 
   .ds-chat-input-emoji-pop {

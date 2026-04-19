@@ -54,7 +54,7 @@ export default function ChatList({
 }) {
 	const { t } = useTranslation("chat");
 	const [addOpen, setAddOpen] = useState(false);
-	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.GROUP);
+	const [addTab, setAddTab] = useState(ADD_CONVERSATION_TAB.DM);
 	const [listSearch, setListSearch] = useState("");
 	const listRef = useRef(null);
 	const sentinelRef = useRef(null);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system";
 import { Input } from "@/design-system";
@@ -11,6 +11,7 @@ export default function MessageInput({ onSendMessage }) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+	const emojiPickerAreaRef = useRef(null);
 	const { preview: draftLinkPreview, loading: draftLinkPreviewLoading } =
 		useMessageLinkPreview(text);
 
@@ -23,6 +24,22 @@ export default function MessageInput({ onSendMessage }) {
 		mq.addEventListener("change", closePickerIfNarrow);
 		return () => mq.removeEventListener("change", closePickerIfNarrow);
 	}, []);
+
+	useEffect(() => {
+		if (!showEmojiPicker) return;
+
+		function handleClickOutside(event) {
+			if (
+				emojiPickerAreaRef.current &&
+				!emojiPickerAreaRef.current.contains(event.target)
+			) {
+				setShowEmojiPicker(false);
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [showEmojiPicker]);
 
 	function handleSendMessage(e) {
 		e.preventDefault();
@@ -69,23 +86,25 @@ export default function MessageInput({ onSendMessage }) {
 					className="ds-chat-input-field"
 					placeholder={t("input.placeholder")}
 				/>
-				<Button
-					type="button"
-					variant="ghost"
-					size="icon"
-					className="ds-chat-input-emoji-btn"
-					tabIndex={-1}
-					onClick={() => {
-						setShowEmojiPicker(!showEmojiPicker);
-					}}
-				>
-					<Smile className="size-4" />
-				</Button>
-				{showEmojiPicker && (
-					<div className="ds-chat-input-emoji-pop">
-						<EmojiPicker onEmojiClick={handleEmojiSelect} />
-					</div>
-				)}
+				<div ref={emojiPickerAreaRef} className="hidden lg:contents">
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="ds-chat-input-emoji-btn"
+						tabIndex={-1}
+						onClick={() => {
+							setShowEmojiPicker(!showEmojiPicker);
+						}}
+					>
+						<Smile className="size-4" />
+					</Button>
+					{showEmojiPicker && (
+						<div className="ds-chat-input-emoji-pop">
+							<EmojiPicker onEmojiClick={handleEmojiSelect} />
+						</div>
+					)}
+				</div>
 			</div>
 
 			<Button

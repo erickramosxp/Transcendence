@@ -213,18 +213,18 @@ export function AddConversationModal({
 						className="grid w-full grid-cols-2 gap-1 p-1"
 					>
 						<TabsTrigger
-							value={ADD_CONVERSATION_TAB.GROUP}
-							className="flex items-center gap-2 text-xs sm:text-sm"
-						>
-							<UsersRound className="size-4 shrink-0" aria-hidden />
-							{t("list.add.tabGroup")}
-						</TabsTrigger>
-						<TabsTrigger
 							value={ADD_CONVERSATION_TAB.DM}
 							className="flex items-center gap-2 text-xs sm:text-sm"
 						>
 							<UserRound className="size-4 shrink-0" aria-hidden />
 							{t("list.add.tabDm")}
+						</TabsTrigger>
+						<TabsTrigger
+							value={ADD_CONVERSATION_TAB.GROUP}
+							className="flex items-center gap-2 text-xs sm:text-sm"
+						>
+							<UsersRound className="size-4 shrink-0" aria-hidden />
+							{t("list.add.tabGroup")}
 						</TabsTrigger>
 					</TabsList>
 
