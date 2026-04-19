@@ -12,8 +12,6 @@ public final class RealtimeEventType {
     public static final String PRESENCE_SUBSCRIBE = "PRESENCE_SUBSCRIBE";
     public static final String PRESENCE_UNSUBSCRIBE = "PRESENCE_UNSUBSCRIBE";
     public static final String PRESENCE_UPDATED = "PRESENCE_UPDATED";
-    public static final String USER_ONLINE = "USER_ONLINE";
-    public static final String USER_OFFLINE = "USER_OFFLINE";
     public static final String PING = "PING";
     public static final String PONG = "PONG";
     public static final String ERROR = "ERROR";

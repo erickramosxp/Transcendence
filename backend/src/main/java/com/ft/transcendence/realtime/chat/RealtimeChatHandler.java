@@ -49,11 +49,6 @@ public class RealtimeChatHandler {
             return;
         }
 
-        if (!connection.subscribedChatIds.contains(req.chatId)) {
-            sendError(connection,"NOT_SUBSCRIBED","Connection is not subscribed to this chat", RealtimeEventType.CHAT_SUBSCRIBE);
-            return;
-        }
-
         boolean chatParticipant = ChatParticipant.count("chat.id = ?1 and user.id = ?2", req.chatId, connection.userId) > 0;
         if (!chatParticipant)
             throw new ForbiddenException("User is not participant of this chat");
