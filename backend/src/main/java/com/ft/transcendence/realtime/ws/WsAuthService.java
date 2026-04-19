@@ -39,7 +39,7 @@ public class WsAuthService {
 
             User user = User.findById(userId);
 
-            return AuthenticatedSocketUser.of(userId, jwt.getClaim("username"), user.avatarUrl, jwt.getSubject());
+            return AuthenticatedSocketUser.of(userId, jwt.getClaim("name"), jwt.getClaim("username"), user.avatarUrl, jwt.getSubject());
         } catch (ForbiddenException e) {
             throw e;
         } catch (Exception e) {

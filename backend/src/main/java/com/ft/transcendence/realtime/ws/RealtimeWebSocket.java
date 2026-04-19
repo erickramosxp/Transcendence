@@ -24,7 +24,7 @@ public class RealtimeWebSocket {
     public void onOpen() {
         try {
             AuthenticatedSocketUser user = authService.authenticate(socket);
-            registry.add(new RealtimeConnection(socket.id(), user.userId, user.username, user.avatarUrl));
+            registry.add(new RealtimeConnection(socket.id(), user.userId, user.name, user.username, user.avatarUrl));
             dispatcher.handleConnected(socket.id());
         } catch (NotAuthorizedException e) {
             socket.closeAndAwait(new CloseReason(1008, "Not authorized"));

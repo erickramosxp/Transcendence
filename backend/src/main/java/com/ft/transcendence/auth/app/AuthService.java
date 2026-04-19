@@ -81,6 +81,7 @@ public class AuthService {
         return Jwt
                 .upn(user.email)
                 .claim("uid", user.id)
+                .claim("name", user.name)
                 .claim("username", user.username)
                 .sign();
     }

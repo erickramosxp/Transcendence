@@ -53,22 +53,25 @@ public class RealtimePresenceHandler {
 
     private PresenceUpdatePayload getUserPayload(Long userId) {
         RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
+        String name = null;
         String username = null;
         String avatarUrl = null;
         OffsetDateTime now = OffsetDateTime.now();
 
         if (targetConnection != null) {
+            name = targetConnection.name;
             username = targetConnection.username;
             avatarUrl = targetConnection.avatarUrl;
         } else {
             User user = User.findById(userId);
             if (user != null) {
+                name = user.name;
                 username = user.username;
                 avatarUrl = user.avatarUrl;
             }
         }
 
-        return PresenceUpdatePayload.of(userId, username, avatarUrl, presenceService.isOnline(userId), now);
+        return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
     }
 
     public void unsubscribe(String connectionId, JsonNode payload) {
@@ -127,7 +130,7 @@ public class RealtimePresenceHandler {
         Set<RealtimeConnection> watchers = presenceService.getWatchers(targetConnection.userId);
         for (RealtimeConnection watcher : watchers) {
             sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
-                    targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
+                    targetConnection.name, targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
         }
     }
 
