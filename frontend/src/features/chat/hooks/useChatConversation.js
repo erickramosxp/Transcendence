@@ -17,6 +17,7 @@ export function useChatConversation(currentChat, options = {}) {
 	const [error, setError] = useState(null);
 	const [nextOlderPage, setNextOlderPage] = useState(null);
 	const [loadingOlder, setLoadingOlder] = useState(false);
+	const shouldScrollToBottomRef = useRef(false);
 
 	const currentUserId = readCurrentUserId();
 	const peerName = currentChat?.name ?? t("peerFallback");
@@ -36,6 +37,7 @@ export function useChatConversation(currentChat, options = {}) {
 			setLoading(true);
 			setError(null);
 			setNextOlderPage(null);
+			shouldScrollToBottomRef.current = true;
 			try {
 				const data = await getConversation(convId, { page: 0, size: 20 });
 				if (cancelled) return;
@@ -55,6 +57,17 @@ export function useChatConversation(currentChat, options = {}) {
 			cancelled = true;
 		};
 	}, [currentChat?.id, currentUserId, peerName, t]);
+
+	useEffect(() => {
+		if (!shouldScrollToBottomRef.current) return;
+		if (!listRef.current) return;
+		requestAnimationFrame(() => {
+			if (listRef.current) {
+				listRef.current.scrollTop = listRef.current.scrollHeight;
+				shouldScrollToBottomRef.current = false;
+			}
+		});
+	}, [messages]);
 
 	const loadOlder = useCallback(async () => {
 		if (!currentChat || !nextOlderPage || loadingOlder) return;
