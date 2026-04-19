@@ -27,8 +27,8 @@ public class FriendshipResource {
     @Path("/request/{targetUserId}")
     public Response sendRequest(@PathParam("targetUserId") Long targetUserId) {
         Long currentUserId = currentUser.id();
-        friendshipService.sendRequest(currentUserId, targetUserId);
-        return Response.status(Response.Status.CREATED).build();
+        FriendshipDTO friend = friendshipService.sendRequest(currentUserId, targetUserId);
+        return Response.ok(friend).status(Response.Status.CREATED).build();
     }
 
     @GET

@@ -11,6 +11,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const dropdownRef = useRef(null);
+    const [currentFriendshipId, setCurrentFriendshipId] = useState(friendshipId);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -25,15 +26,17 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
 
     useEffect(() => {
         setStatus(initialStatus);
-    }, [initialStatus]);
+        setCurrentFriendshipId(friendshipId);
+    }, [initialStatus, friendshipId]);
 
     const actions = useFriendshipActions({
-        friendshipId,
+        friendshipId: currentFriendshipId,
         targetUserId,
         setStatus,
         setOpen,
         setLoading,
-        onSuccess
+        onSuccess,
+        setCurrentFriendshipId
     });
 
 

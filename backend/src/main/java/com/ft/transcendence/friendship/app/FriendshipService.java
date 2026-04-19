@@ -24,7 +24,7 @@ public class FriendshipService {
     StorageService storageService;
 
     @Transactional
-    public void sendRequest(Long currentUserId, Long targetUserId) {
+    public FriendshipDTO sendRequest(Long currentUserId, Long targetUserId) {
 
         if (currentUserId.equals(targetUserId)) {
             throw new WebApplicationException("You can't add yourself", Response.Status.BAD_REQUEST); // Erro 400
@@ -48,6 +48,12 @@ public class FriendshipService {
         request.status = FriendshipStatus.PENDING;
 
         request.persist();
+
+        User friendUser = targetUser.get();
+
+        FriendshipDTO dto = new FriendshipDTO(request.id, request.friendId, friendUser.name, friendUser.username, null);
+
+        return dto;
     }
 
     public List<FriendshipDTO> getPendingRequests(Long currentUserId) {

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { FRIENDSHIP_STATUS } from "@/shared/constants/friendship";
 import { useTranslation } from "react-i18next";
 
-export function useFriendshipActions({ friendshipId, targetUserId, setStatus, setOpen, setLoading, onSuccess }) {
+export function useFriendshipActions({ friendshipId, targetUserId, setStatus, setOpen, setLoading, onSuccess, setCurrentFriendshipId }) {
 
     const { t } = useTranslation('friends');
 
@@ -15,7 +15,8 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
 
             setLoading(true);
             try {
-                await sendFriendRequest(targetUserId);
+                const resp = await sendFriendRequest(targetUserId);
+                setCurrentFriendshipId(resp.data.friendshipId);
                 toast.success(t('toast.requestSentSuccess'));
             } catch (err) {
                 toast.error(t('toast.requestSentError'));
