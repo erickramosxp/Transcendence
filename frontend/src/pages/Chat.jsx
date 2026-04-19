@@ -131,6 +131,7 @@ export function Chat() {
             </p>
         </div>
     }
+	console.log(selectedChat);
 
 	return (
 		<div className="ds-chat-layout">

@@ -34,10 +34,12 @@ export function mapApiMessageToUi(apiMsg, currentUserId, peerFallback) {
 	const sid = apiMsg.senderId ?? apiMsg.sender_id;
 	const isMe = String(sid) === String(currentUserId);
 	const user = apiMsg.user;
-	const senderLabel =
+	const fromProfile =
 		user?.name?.trim() ||
 		(user?.username ? `@${user.username}` : null) ||
-		peerFallback;
+		null;
+	const peerLabel = !isMe ? peerFallback : null;
+	const senderDisplayName = fromProfile ?? peerLabel;
 
 	const created =
 		apiMsg.createdAt ?? apiMsg.created_at ?? apiMsg.sentAt ?? apiMsg.sent_at;
@@ -45,7 +47,8 @@ export function mapApiMessageToUi(apiMsg, currentUserId, peerFallback) {
 		id: apiMsg.id,
 		text: apiMsg.text ?? apiMsg.content,
 		senderId: sid,
-		sender: isMe ? "me" : senderLabel,
+		sender: isMe ? "me" : (senderDisplayName ?? peerFallback),
+		senderDisplayName,
 		timestamp: created,
 	};
 }

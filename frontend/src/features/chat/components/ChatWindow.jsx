@@ -28,6 +28,7 @@ export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) 
 			<MessageThread
 				messages={messages}
 				currentUserId={currentUserId}
+				showSenderName={currentChat?.type === "group"}
 				listRef={listRef}
 				onScroll={onScroll}
 				loadingOlder={loadingOlder}

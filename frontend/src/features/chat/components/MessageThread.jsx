@@ -11,6 +11,7 @@ import {
 export default function MessageThread({
 	messages,
 	currentUserId,
+	showSenderName,
 	listRef,
 	onScroll,
 	loadingOlder,
@@ -62,7 +63,11 @@ export default function MessageThread({
 							return (
 								<Fragment key={msg.id}>
 									{showDay && <ChatDaySeparator label={dayLabel} />}
-									<Message currentUserId={currentUserId} message={msg} />
+									<Message
+										currentUserId={currentUserId}
+										message={msg}
+										showSenderName={showSenderName}
+									/>
 								</Fragment>
 							);
 						})

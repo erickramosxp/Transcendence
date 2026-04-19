@@ -568,6 +568,14 @@
     @apply rounded-tl-md bg-card text-card-foreground ring-1 ring-border;
   }
 
+  .ds-chat-bubble-sender {
+    @apply mb-1 text-left text-[11px] font-semibold leading-tight sm:text-xs;
+  }
+
+  .ds-chat-bubble-sender--theirs {
+    @apply text-primary;
+  }
+
   .ds-chat-bubble-text {
     @apply whitespace-pre-wrap text-sm leading-normal;
   }

@@ -57,7 +57,8 @@
     "older": "Cargando mensajes anteriores..."
   },
   "thread": {
-    "empty": "Aún no hay mensajes en esta conversación."
+    "empty": "Aún no hay mensajes en esta conversación.",
+    "unknownSender": "Desconocido"
   },
   "input": {
     "placeholder": "Escribe un mensaje..."
