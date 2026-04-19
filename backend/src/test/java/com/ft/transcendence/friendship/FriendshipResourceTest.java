@@ -69,8 +69,8 @@ public class FriendshipResourceTest extends BaseApiTest {
                 .get("/friendships")
                 .then()
                 .statusCode(200)
-                .body("size()", is(1))
-                .body("[0].friendId", is(userB.id.intValue()));
+                .body("items.size()", is(1))
+                .body("items[0].friendId", is(userB.id.intValue()));
     }
 
 //    public void testSecurityCannotAcceptOwnRequest() {}
