@@ -1,6 +1,7 @@
 package com.ft.transcendence.realtime.ws;
 
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
+import com.ft.transcendence.user.domain.User;
 import jakarta.ws.rs.NotAuthorizedException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -36,7 +37,9 @@ public class WsAuthService {
 
             Long userId = Long.valueOf(uidClaim.toString());
 
-            return AuthenticatedSocketUser.of(userId, jwt.getClaim("username"), jwt.getSubject());
+            User user = User.findById(userId);
+
+            return AuthenticatedSocketUser.of(userId, jwt.getClaim("username"), user.avatarUrl, jwt.getSubject());
         } catch (ForbiddenException e) {
             throw e;
         } catch (Exception e) {

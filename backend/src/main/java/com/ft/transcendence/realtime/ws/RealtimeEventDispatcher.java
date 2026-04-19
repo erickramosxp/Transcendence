@@ -40,6 +40,8 @@ public class RealtimeEventDispatcher {
                 case RealtimeEventType.PRESENCE_UNSUBSCRIBE -> presenceHandler.unsubscribe(connectionId, event.payload);
                 case RealtimeEventType.PING -> presenceHandler.ping(connectionId);
                 default -> {
+                    sender.send(connectionId, RealtimeEventType.ERROR,
+                            RealtimeErrorPayload.of("UNKNOWN_EVENT_TYPE","Unsupported realtime event type",null));
                 }
             }
         } catch (ForbiddenException e) {

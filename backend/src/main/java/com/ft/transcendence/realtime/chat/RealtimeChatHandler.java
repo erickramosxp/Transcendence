@@ -10,6 +10,7 @@ import com.ft.transcendence.realtime.chat.dto.*;
 import com.ft.transcendence.realtime.ws.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.RealtimeEventSender;
 import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.dto.RealtimeErrorPayload;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -38,12 +39,18 @@ public class RealtimeChatHandler {
         }
 
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
-        if (req == null || req.chatId == null) {
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
         }
 
-        if (connection.subscribedChatIds.contains(req.chatId)) {
-            sender.send(connection.connectionId, RealtimeEventType.CHAT_SUBSCRIBED, ChatSubscribedPayload.of(req.chatId));
+        if (req.chatId == null) {
+            sendError(connection,"MISSING_FIELD","chatId is required", RealtimeEventType.CHAT_SUBSCRIBE);
+            return;
+        }
+
+        if (!connection.subscribedChatIds.contains(req.chatId)) {
+            sendError(connection,"NOT_SUBSCRIBED","Connection is not subscribed to this chat", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
         }
 
@@ -61,8 +68,15 @@ public class RealtimeChatHandler {
             return;
 
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
-        if (req == null || req.chatId == null)
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_UNSUBSCRIBE);
             return;
+        }
+
+        if (req.chatId == null) {
+            sendError(connection,"MISSING_FIELD","chatId is required", RealtimeEventType.CHAT_UNSUBSCRIBE);
+            return;
+        }
 
         registry.unsubscribeChat(connectionId, req.chatId);
         sender.send(connection.connectionId, RealtimeEventType.CHAT_UNSUBSCRIBED, ChatUnsubscribedPayload.of(req.chatId));
@@ -76,12 +90,18 @@ public class RealtimeChatHandler {
         }
 
         SendMessagePayload req = objectMapper.convertValue(payload, SendMessagePayload.class);
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.SEND_MESSAGE);
+            return;
+        }
 
-        if (req == null || req.chatId == null) {
+        if (req.chatId == null) {
+            sendError(connection,"MISSING_FIELD","chatId is required", RealtimeEventType.SEND_MESSAGE);
             return;
         }
 
         if (!connection.subscribedChatIds.contains(req.chatId)) {
+            sendError(connection,"NOT_SUBSCRIBED","Connection is not subscribed to this chat", RealtimeEventType.SEND_MESSAGE);
             return;
         }
 
@@ -110,16 +130,22 @@ public class RealtimeChatHandler {
         }
 
         TypingPayload req = objectMapper.convertValue(payload, TypingPayload.class);
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", eventType);
+            return;
+        }
 
-        if (req == null || req.chatId == null) {
+        if (req.chatId == null) {
+            sendError(connection,"MISSING_FIELD","chatId is required", eventType);
             return;
         }
 
         if (!connection.subscribedChatIds.contains(req.chatId)) {
+            sendError(connection,"NOT_SUBSCRIBED","Connection is not subscribed to this chat", eventType);
             return;
         }
 
-        TypingEventPayload outgoing = TypingEventPayload.of(connection.userId, req.chatId, connection.name);
+        TypingEventPayload outgoing = TypingEventPayload.of(connection.userId, req.chatId, connection.username);
         Set<RealtimeConnection> subscribers = registry.getConnectionsByChat(req.chatId);
 
         for (RealtimeConnection subscriber : subscribers) {
@@ -128,5 +154,11 @@ public class RealtimeChatHandler {
             if (!skip)
                 sender.send(subscriber.connectionId, eventType, outgoing);
         }
+    }
+
+    private void sendError(RealtimeConnection connection, String code, String message, String originalType) {
+        if (connection == null)
+            return;
+        sender.send(connection.connectionId, RealtimeEventType.ERROR, RealtimeErrorPayload.of(code, message, originalType));
     }
 }

@@ -40,7 +40,8 @@ public class RealtimePresenceHandler {
         OffsetDateTime now = OffsetDateTime.now();
 
         for (Long userId : req.userIds) {
-            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(userId, presenceService.isOnline(userId), now));
+            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(userId,
+                    connection.username, connection.avatarUrl, presenceService.isOnline(userId), now));
         }
     }
 
@@ -62,7 +63,7 @@ public class RealtimePresenceHandler {
             return;
 
         connection.lastSeenAt = OffsetDateTime.now();
-        notifyWatchers(connection.userId, true, connection.lastSeenAt);
+        notifyWatchers(connection, true, connection.lastSeenAt);
     }
 
     public void handleDisconnected(String connectionId) {
@@ -77,7 +78,7 @@ public class RealtimePresenceHandler {
         presenceService.removeWatcher(connection);
 
         if (wasLastConnection)
-            notifyWatchers(connection.userId, false, connection.lastSeenAt);
+            notifyWatchers(connection, false, connection.lastSeenAt);
     }
 
     public void ping(String connectionId) {
@@ -89,10 +90,11 @@ public class RealtimePresenceHandler {
         sender.send(connection.connectionId, RealtimeEventType.PONG, null);
     }
 
-    private void notifyWatchers(Long targetUserId, boolean online, OffsetDateTime lastSeenAt) {
-        Set<RealtimeConnection> watchers = presenceService.getWatchers(targetUserId);
+    private void notifyWatchers(RealtimeConnection targetConnection, boolean online, OffsetDateTime lastSeenAt) {
+        Set<RealtimeConnection> watchers = presenceService.getWatchers(targetConnection.userId);
         for (RealtimeConnection watcher : watchers) {
-            sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetUserId, online, lastSeenAt));
+            sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
+                    targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
         }
     }
 }

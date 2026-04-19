@@ -24,14 +24,11 @@ public class RealtimeWebSocket {
     public void onOpen() {
         try {
             AuthenticatedSocketUser user = authService.authenticate(socket);
-            System.out.println("[WS][OPEN] socketId=" + socket.id() + " userId=" + user.userId);
-            registry.add(new RealtimeConnection(socket.id(), user.userId, user.name));
+            registry.add(new RealtimeConnection(socket.id(), user.userId, user.username, user.avatarUrl));
             dispatcher.handleConnected(socket.id());
         } catch (NotAuthorizedException e) {
-            System.out.println("[WS][OPEN][AUTH_FAIL] socketId=" + socket.id() + " reason=not_authorized");
             socket.closeAndAwait(new CloseReason(1008, "Not authorized"));
         } catch (Exception e) {
-            System.out.println("[WS][OPEN][ERROR] socketId=" + socket.id() + " error=" + e.getClass().getSimpleName() + " message=" + e.getMessage());
             socket.closeAndAwait(new CloseReason(1011, "Internal error"));
         }
     }
@@ -45,7 +42,6 @@ public class RealtimeWebSocket {
     @OnClose
     @ActivateRequestContext
     public void onClose() {
-        System.out.println("[WS][CLOSE] socketId=" + socket.id());
         dispatcher.handleDisconnected(socket.id());
     }
 }
