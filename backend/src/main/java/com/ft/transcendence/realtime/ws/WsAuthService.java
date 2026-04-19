@@ -36,7 +36,7 @@ public class WsAuthService {
 
             Long userId = Long.valueOf(uidClaim.toString());
 
-            return AuthenticatedSocketUser.of(userId, jwt.getName(), jwt.getSubject());
+            return AuthenticatedSocketUser.of(userId, jwt.getClaim("username"), jwt.getSubject());
         } catch (ForbiddenException e) {
             throw e;
         } catch (Exception e) {

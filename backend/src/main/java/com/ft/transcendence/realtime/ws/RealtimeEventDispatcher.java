@@ -68,6 +68,6 @@ public class RealtimeEventDispatcher {
             return;
 
         RealtimeErrorPayload error = RealtimeErrorPayload.of(code, message, originalType);
-        sender.send(connection, RealtimeEventType.ERROR, error);
+        sender.send(connection.connectionId, RealtimeEventType.ERROR, error);
     }
 }

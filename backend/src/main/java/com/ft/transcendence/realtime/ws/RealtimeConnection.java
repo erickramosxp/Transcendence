@@ -9,15 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RealtimeConnection {
     public final String connectionId;
     public final Long userId;
-    public final WebSocketConnection socket;
+    public final String name;
     public final Set<Long> subscribedChatIds = ConcurrentHashMap.newKeySet();
     public final Set<Long> subscribedPresenceUserIds = ConcurrentHashMap.newKeySet();
     public volatile OffsetDateTime lastSeenAt;
 
-    public RealtimeConnection(String connectionId, Long userId, WebSocketConnection socket) {
+    public RealtimeConnection(String connectionId, Long userId, String name) {
         this.connectionId = connectionId;
         this.userId = userId;
-        this.socket = socket;
+        this.name = name;
         this.lastSeenAt = OffsetDateTime.now();
     }
 }

@@ -3,6 +3,8 @@ package com.ft.transcendence.realtime.ws;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ft.transcendence.realtime.ws.dto.RealtimeOutgoingEvent;
+import io.quarkus.websockets.next.OpenConnections;
+import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -11,12 +13,16 @@ public class RealtimeEventSender {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    OpenConnections openConnections;
 
-    public void send(RealtimeConnection connection, String type, Object payload) {
-        if (connection == null)
-            return;
-
+    public void send(String connectionId, String type, Object payload) {
         JsonNode jsonPayload = objectMapper.valueToTree(payload);
-        connection.socket.sendTextAndAwait(RealtimeOutgoingEvent.of(type, jsonPayload));
+
+        openConnections.stream()
+                .filter(c -> !c.isClosed())
+                .filter(c -> c.id().equals(connectionId))
+                .findFirst()
+                .ifPresent(c -> c.sendTextAndAwait(RealtimeOutgoingEvent.of(type, jsonPayload)));
     }
 }
