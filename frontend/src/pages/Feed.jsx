@@ -86,7 +86,7 @@ export function Feed() {
                             <CardContent>
                                 {usersOnline && usersOnline.map((user) => (
                                     <UserListItem 
-                                        key={user?.id}
+                                        key={user?.friendshipId}
                                         user={user}
                                         onClick={() => {}}
                                     />

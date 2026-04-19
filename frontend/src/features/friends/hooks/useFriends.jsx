@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getFriendPendingRequests, getListFriends } from '../service/friendService';
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next';
 
 export const useFriends = () => {
+
+    const { t } = useTranslation('friends');
 
     const [friends, setFriends] = useState([]);
     const [requests, setRequests] = useState([]);
@@ -10,7 +13,7 @@ export const useFriends = () => {
     const [loadingMore, setLoadingMore] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [page, setPage] = useState(0);
+    // const [page, setPage] = useState(0);
     const [hasMoreFriends, setHasMoreFriends] = useState(true);
 
 
@@ -37,7 +40,7 @@ export const useFriends = () => {
             setHasMoreFriends(backendHasMore);
 
         } catch (error) {
-            toast.error("Erro ao carregar amigos");
+            toast.error(t('toast.loadFriendsError'));
         } finally {
             setLoading(false);
             setLoadingMore(false);
@@ -53,7 +56,7 @@ export const useFriends = () => {
                 const requestsResp = await getFriendPendingRequests();
                 setRequests(requestsResp.data);
             } catch {
-                toast.error("Erro ao carregar solicitações");
+                toast.error(t('toast.loadRequestsError'));
             }
         }
 

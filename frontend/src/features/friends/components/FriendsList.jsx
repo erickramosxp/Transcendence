@@ -3,8 +3,11 @@ import FriendCard from './FriendCard'
 import { useFriendsContext } from '../Context/FriendsContext'
 import { PaginatedSearchList } from './PaginatedSearchList'
 import { FRIENDSHIP_STATUS } from '@/shared/constants/friendship'
+import { useTranslation } from 'react-i18next'
 
 const FriendsList = () => {
+
+  const { t } = useTranslation('friends');
 
   const {
     friends,
@@ -23,7 +26,9 @@ const FriendsList = () => {
       loadingMore={loadingMore}
       hasMore={hasMoreFriends}
       onFetch={fetchFriends}
-      emptyMessage='Nenhuma por aqui ainda.'
+      placeholder={t('search.placeholder')}
+      emptyMessage={t('empty.friends')}
+      notFoundMessage={t('empty.notFound')}
       renderItem={(friend) => (
         <FriendCard 
           key={friend?.friendshipId || friend?.friendId}

@@ -19,6 +19,7 @@ import { AvatarWithStatus } from '@/design-system'
  * @param {Function} [props.onClick] - Action when clicking on the user (ex: opening chat)
  */
 export function UserListItem({ user, onClick }) {
+
    return (
       <div
          onClick={onClick}

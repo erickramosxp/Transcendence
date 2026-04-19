@@ -3,8 +3,10 @@ import { Button } from '@/design-system';
 import { UserRoundPlus, UserRoundX, Users, UserMinus } from 'lucide-react'
 import { useFriendshipActions } from '../hooks/useFriendshipActions';
 import { FRIENDSHIP_STATUS } from '@/shared/constants/friendship';
+import { useTranslation } from 'react-i18next';
 
 const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant = 'dropdown', onSuccess }) => {
+    const { t } = useTranslation('friends');
     const [status, setStatus] = useState(initialStatus);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -40,7 +42,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
             <Button onClick={actions.sendRequest} title="Adicionar amigo" aria-label="Adicionar amigo" disabled={loading}>
                 <UserRoundPlus />
                 <span className="hidden sm:inline">
-                    Adicionar
+                    {t('buttons.add')}
                 </span>
             </Button>
         );
@@ -51,7 +53,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
             <Button onClick={actions.cancelRequest} variant={"destructive"} disabled={loading}>
                 <UserRoundX />
                 <span className="hidden sm:inline">
-                    Cancelar
+                    {t('buttons.cancel')}
                 </span>
             </Button>
         );
@@ -62,7 +64,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
             <Button onClick={actions.unfriend} variant={"outline"} disabled={loading}>
                 <UserMinus />
                 <span className="hidden sm:inline">
-                    Desfazer amizade
+                    {t('buttons.undoFriendship')}
                 </span>
             </Button>
         );
@@ -78,14 +80,14 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
                         onClick={actions.accept}
                         size='sm'
                     >
-                        Aceitar
+                        {t('buttons.accept')}
                     </Button>
                     <Button
                         onClick={actions.reject}
                         variant='destructive'
                         size='sm'
                     >
-                        Recusar
+                        {t('buttons.reject')}
                     </Button>
                 </div>
             );
@@ -96,7 +98,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
                 <Button onClick={() => setOpen((prev) => !prev)} variant={"primary"} className="max-w-full truncate" disabled={loading}>
                     <Users />
                     <span className="hidden sm:inline">
-                        Responder
+                        {t('buttons.reply')}
                     </span>
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -107,10 +109,10 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
                     <div className="absolute right-0 z-10 mt-2 w-48 rounded-md border border-border bg-card shadow-lg" >
                         <div className="py-1">
                             <Button onClick={actions.accept} variant={"ghost"} size={"full"} disabled={loading}>
-                                Aceitar convite
+                                {t('buttons.acceptInvite')}
                             </Button>
                             <Button onClick={actions.reject} variant={"ghost"} size={"full"} disabled={loading}>
-                                Recusar convite
+                                {t('buttons.rejectInvite')}
                             </Button>
                         </div>
                     </div>

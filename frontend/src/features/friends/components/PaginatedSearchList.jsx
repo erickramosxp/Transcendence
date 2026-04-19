@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Loading, Input, Button, Scroll } from "@/design-system";
 import { Search } from 'lucide-react'
+import { useTranslation } from "react-i18next";
 
 export const PaginatedSearchList = ({
     data,
@@ -10,12 +11,13 @@ export const PaginatedSearchList = ({
     hasMore,
     onFetch,
     renderItem,
-    placeholder = "Buscar...",
-    emptyMessage = "Lista vazia.",
-    notFoundMessage = "Nenhum resultado encontrado.",
+    placeholder,
+    emptyMessage ,
+    notFoundMessage ,
     showSearch = true
 }) => {
-
+    
+    const { t } = useTranslation('friends');
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
     const endListRef = useRef(null);
@@ -80,7 +82,7 @@ export const PaginatedSearchList = ({
                     {hasMore && data?.length > 0 && (
                         <div className="flex justify-center mt-4">
                             <Button onClick={handleLoadMore} disabled={loadingMore} className='cursor-pointer'>
-                                {loadingMore ? 'Carregando...' : 'Carregar Mais'}
+                                {loadingMore ? t('search.loadingMore') :  t('search.loadMore')}
                             </Button>
                         </div>
                     )}
