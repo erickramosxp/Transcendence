@@ -7,7 +7,6 @@ import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -169,6 +168,11 @@ public class FriendshipService {
         return friends;
     }
 
+    public PageResponse<FriendshipDTO> getOnlineFriends(Long currentUserId) {
+
+        return getFriendsList(currentUserId, 0, 10, null);
+    }
+
     private Friendship getAndValidatePendingRequest(Long friendshipId, Long currentUserId) {
 
         Friendship request = Friendship.<Friendship>findByIdOptional(friendshipId)
@@ -184,4 +188,5 @@ public class FriendshipService {
 
         return request;
     }
+
 }

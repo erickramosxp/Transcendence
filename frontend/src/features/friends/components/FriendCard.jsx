@@ -2,7 +2,13 @@ import React from 'react'
 import { AvatarWithStatus, Card, CardContent } from '@/design-system'
 import FriendshipButton from './FriendshipButton'
 import { useFriendsContext } from '../Context/FriendsContext';
+import { FRIENDSHIP_STATUS } from '@/shared/constants/friendship';
 
+/**
+ * @param {Object} props
+ * @param {Object} props.user - User data
+ * @param {keyof typeof FRIENDSHIP_STATUS} props.friendshipState - The current status of the friendship defined in FRIENDSHIP STATUS
+ */
 const FriendCard = ({ user, friendshipState }) => {
 
   const {

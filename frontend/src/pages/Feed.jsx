@@ -1,22 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
 import { toast } from 'react-toastify'
+import { getListOnlineFriends } from "@/features/friends/service/friendService";
 
 import { useTranslation } from "react-i18next";
 import {
     Card,
     CardHeader,
     CardTitle,
-    CardContent
+    CardContent,
+    Loading,
+    UserListItem
 } from "@/design-system";
 
 export function Feed() {
 
     const [posts, setPosts] = useState([]);
+    const [usersOnline, setUsersOnline] = useState(null);
+    const [loadingUsersOnline, setLoadingUsersOnline] = useState(true);
 
     const { t } = useTranslation('feed');
+
+    useEffect(() => {
+
+        const getOnlineUsers = async () => {
+
+            try {
+                const resp = await getListOnlineFriends();
+                setUsersOnline(resp.data.items);
+            } finally {
+                setLoadingUsersOnline(false);
+            }
+        }
+
+        getOnlineUsers();
+
+    }, []);
 
     async function addPost(postData) {
 
@@ -62,7 +83,15 @@ export function Feed() {
                             <CardHeader className="pb-0">
                                 <CardTitle>{t('sections.onlineFriends')}</CardTitle>
                             </CardHeader>
-                            <CardContent />
+                            <CardContent>
+                                {usersOnline && usersOnline.map((user) => (
+                                    <UserListItem 
+                                        key={user?.id}
+                                        user={user}
+                                        onClick={() => {}}
+                                    />
+                                ))}
+                            </CardContent>
                         </Card>
 
                         <Card className="bg-card/90 backdrop-blur-xl border-border">

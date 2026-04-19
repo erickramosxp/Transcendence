@@ -71,8 +71,8 @@ public class FriendshipResource {
     @Path("/online")
     public Response getFriendsOnline() {
         Long currentUserId = currentUser.id();
-        // List<FriendshipDTO> friends = friendshipService.getPendingRequests(currentUserId);
-        return Response.ok().build();
+        PageResponse<FriendshipDTO> friends = friendshipService.getOnlineFriends(currentUserId);
+        return Response.ok(friends).build();
     }
 
     @DELETE
