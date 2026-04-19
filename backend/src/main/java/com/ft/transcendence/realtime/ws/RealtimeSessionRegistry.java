@@ -86,4 +86,20 @@ public class RealtimeSessionRegistry {
         Set<String> ids = connectionIdsByUser.get(userId);
         return ids == null ? 0 : ids.size();
     }
+
+    public RealtimeConnection getAnyConnectionByUserId(Long userId) {
+        Set<String> connectionIds = connectionIdsByUser.get(userId);
+        if (connectionIds == null || connectionIds.isEmpty()) {
+            return null;
+        }
+
+        for (String connectionId : connectionIds) {
+            RealtimeConnection connection = byConnectionId.get(connectionId);
+            if (connection != null) {
+                return connection;
+            }
+        }
+
+        return null;
+    }
 }

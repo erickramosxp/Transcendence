@@ -7,7 +7,9 @@ import com.ft.transcendence.realtime.presence.dto.PresenceUpdatePayload;
 import com.ft.transcendence.realtime.ws.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.RealtimeEventSender;
 import com.ft.transcendence.realtime.ws.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.dto.RealtimeErrorPayload;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
+import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -32,17 +34,41 @@ public class RealtimePresenceHandler {
             return;
 
         PresenceSubscribePayload req = objectMapper.convertValue(payload, PresenceSubscribePayload.class);
-        if (req == null || req.userIds == null || req.userIds.isEmpty())
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.PRESENCE_SUBSCRIBE);
             return;
+        }
+
+        if (req.userIds == null || req.userIds.isEmpty()) {
+            sendError(connection,"MISSING_FIELD","userIds is required", RealtimeEventType.PRESENCE_SUBSCRIBE);
+            return;
+        }
 
         presenceService.subscribePresence(connection, req.userIds);
 
+        for (Long userId : req.userIds) {
+            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
+        }
+    }
+
+    private PresenceUpdatePayload getUserPayload(Long userId) {
+        RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
+        String username = null;
+        String avatarUrl = null;
         OffsetDateTime now = OffsetDateTime.now();
 
-        for (Long userId : req.userIds) {
-            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(userId,
-                    connection.username, connection.avatarUrl, presenceService.isOnline(userId), now));
+        if (targetConnection != null) {
+            username = targetConnection.username;
+            avatarUrl = targetConnection.avatarUrl;
+        } else {
+            User user = User.findById(userId);
+            if (user != null) {
+                username = user.username;
+                avatarUrl = user.avatarUrl;
+            }
         }
+
+        return PresenceUpdatePayload.of(userId, username, avatarUrl, presenceService.isOnline(userId), now);
     }
 
     public void unsubscribe(String connectionId, JsonNode payload) {
@@ -51,8 +77,15 @@ public class RealtimePresenceHandler {
             return;
 
         PresenceSubscribePayload req = objectMapper.convertValue(payload, PresenceSubscribePayload.class);
-        if (req == null || req.userIds == null || req.userIds.isEmpty())
+        if (req == null) {
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.PRESENCE_UNSUBSCRIBE);
             return;
+        }
+
+        if (req.userIds == null || req.userIds.isEmpty()) {
+            sendError(connection,"MISSING_FIELD","userIds is required", RealtimeEventType.PRESENCE_UNSUBSCRIBE);
+            return;
+        }
 
         presenceService.unsubscribePresence(connection, req.userIds);
     }
@@ -96,5 +129,11 @@ public class RealtimePresenceHandler {
             sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
                     targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
         }
+    }
+
+    private void sendError(RealtimeConnection connection, String code, String message, String originalType) {
+        if (connection == null)
+            return;
+        sender.send(connection.connectionId, RealtimeEventType.ERROR, RealtimeErrorPayload.of(code, message, originalType));
     }
 }
