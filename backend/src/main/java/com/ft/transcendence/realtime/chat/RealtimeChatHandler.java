@@ -34,13 +34,9 @@ public class RealtimeChatHandler {
     RealtimeEventSender sender;
 
     @Transactional
-    public void subscribe(String connectionId, JsonNode payload) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null) {
-            return;
-        }
-
+    public void subscribe(RealtimeConnection connection, JsonNode payload) {
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
+
         if (req == null) {
             sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
@@ -55,17 +51,13 @@ public class RealtimeChatHandler {
         if (!chatParticipant)
             throw new ForbiddenException("User is not participant of this chat");
 
-        registry.subscribeChat(connectionId, req.chatId);
+        registry.subscribeChat(connection, req.chatId);
     }
 
     @Transactional
-    public void unsubscribe(String connectionId, JsonNode payload) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null) {
-            return;
-        }
-
+    public void unsubscribe(RealtimeConnection connection, JsonNode payload) {
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
+
         if (req == null) {
             sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
@@ -80,7 +72,7 @@ public class RealtimeChatHandler {
         if (!chatParticipant)
             throw new ForbiddenException("User is not participant of this chat");
 
-        registry.unsubscribeChat(connectionId, req.chatId);
+        registry.unsubscribeChat(connection.connectionId, req.chatId);
     }
 
     private Set<RealtimeConnection> getOnlineParticipants(Long chatId) {
@@ -99,13 +91,9 @@ public class RealtimeChatHandler {
     }
 
     @Transactional
-    public void sendMessage(String connectionId, JsonNode payload) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null) {
-            return;
-        }
-
+    public void sendMessage(RealtimeConnection connection, JsonNode payload) {
         SendMessagePayload req = objectMapper.convertValue(payload, SendMessagePayload.class);
+
         if (req == null) {
             sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.SEND_MESSAGE);
             return;
@@ -132,21 +120,17 @@ public class RealtimeChatHandler {
         }
     }
 
-    public void typingStart(String connectionId, JsonNode payload) {
-        broadcastTyping(connectionId, payload, RealtimeEventType.TYPING_START);
+    public void typingStart(RealtimeConnection connection, JsonNode payload) {
+        broadcastTyping(connection, payload, RealtimeEventType.TYPING_START);
     }
 
-    public void typingStop(String connectionId, JsonNode payload) {
-        broadcastTyping(connectionId, payload, RealtimeEventType.TYPING_STOP);
+    public void typingStop(RealtimeConnection connection, JsonNode payload) {
+        broadcastTyping(connection, payload, RealtimeEventType.TYPING_STOP);
     }
 
-    private void broadcastTyping(String connectionId, JsonNode payload, String eventType) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null) {
-            return;
-        }
-
+    private void broadcastTyping(RealtimeConnection connection, JsonNode payload, String eventType) {
         TypingPayload req = objectMapper.convertValue(payload, TypingPayload.class);
+
         if (req == null) {
             sendError(connection,"INVALID_PAYLOAD", "Payload is required", eventType);
             return;
@@ -166,7 +150,7 @@ public class RealtimeChatHandler {
         Set<RealtimeConnection> subscribers = registry.getConnectionsByChat(req.chatId);
 
         for (RealtimeConnection subscriber : subscribers) {
-            boolean skip = subscriber.connectionId.equals(connectionId);
+            boolean skip = subscriber.connectionId.equals(connection.connectionId);
 
             if (!skip)
                 sender.send(subscriber.connectionId, eventType, outgoing);

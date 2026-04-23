@@ -10,6 +10,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.time.OffsetDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
@@ -45,43 +47,30 @@ public class RealtimePresenceHandler {
         return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
     }
 
-    public void handleConnected(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
+    public void handleConnected(RealtimeConnection connection) {
         connection.lastSeenAt = OffsetDateTime.now();
 
-        Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
-        presenceService.subscribePresence(connection, targetUserIds);
-
-        for (Long userId : targetUserIds) {
-            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
-        }
+        listPresenceFriends(connection);
 
         notifyWatchers(connection, true, connection.lastSeenAt);
     }
 
-    public void listPresenceFriends(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
+    public void listPresenceFriends(RealtimeConnection connection) {
         connection.lastSeenAt = OffsetDateTime.now();
 
         Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
         presenceService.subscribePresence(connection, targetUserIds);
 
-        for (Long userId : targetUserIds) {
+        List<Long> orderedUserIds = targetUserIds.stream()
+                .sorted(Comparator.comparing((Long userId) -> registry.isUserOnline(userId)).reversed())
+                .toList();
+
+        for (Long userId : orderedUserIds) {
             sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
         }
     }
 
-    public void handleDisconnected(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
+    public void handleDisconnected(RealtimeConnection connection) {
         boolean wasLastConnection = registry.isUserOnline(connection.userId) && registry.getUserConnectionCount(connection.userId) == 1;
 
         connection.lastSeenAt = OffsetDateTime.now();
@@ -92,11 +81,7 @@ public class RealtimePresenceHandler {
             notifyWatchers(connection, false, connection.lastSeenAt);
     }
 
-    public void ping(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
+    public void ping(RealtimeConnection connection) {
         connection.lastSeenAt = OffsetDateTime.now();
         sender.send(connection.connectionId, RealtimeEventType.PONG, null);
     }

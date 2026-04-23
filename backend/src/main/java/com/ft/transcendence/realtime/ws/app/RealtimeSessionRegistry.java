@@ -22,14 +22,9 @@ public class RealtimeSessionRegistry {
         return byConnectionId.get(connectionId);
     }
 
-    public void subscribeChat(String connectionId, Long chatId) {
-        RealtimeConnection connection = byConnectionId.get(connectionId);
-        if (connection == null) {
-            return;
-        }
-
+    public void subscribeChat(RealtimeConnection connection, Long chatId) {
         connection.subscribedChatIds.add(chatId);
-        connectionIdsByChat.computeIfAbsent(chatId, k -> ConcurrentHashMap.newKeySet()).add(connectionId);
+        connectionIdsByChat.computeIfAbsent(chatId, k -> ConcurrentHashMap.newKeySet()).add(connection.connectionId);
     }
 
     public void unsubscribeChat(String connectionId, Long chatId) {
@@ -63,20 +58,16 @@ public class RealtimeSessionRegistry {
         return ids != null && !ids.isEmpty();
     }
 
-    public void remove(String connectionId) {
-        RealtimeConnection connection = byConnectionId.get(connectionId);
-        if (connection == null)
-            return;
-
+    public void remove(RealtimeConnection connection) {
         for (Long chatId : Set.copyOf(connection.subscribedChatIds)) {
-            unsubscribeChat(connectionId, chatId);
+            unsubscribeChat(connection.connectionId, chatId);
         }
 
-        byConnectionId.remove(connectionId);
+        byConnectionId.remove(connection.connectionId);
 
         Set<String> userConnections = connectionIdsByUser.get(connection.userId);
         if (userConnections != null) {
-            userConnections.remove(connectionId);
+            userConnections.remove(connection.connectionId);
             if (userConnections.isEmpty())
                 connectionIdsByUser.remove(connection.userId);
         }

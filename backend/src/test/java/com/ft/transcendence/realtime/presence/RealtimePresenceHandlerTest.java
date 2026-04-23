@@ -46,7 +46,7 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
 
         var before = connection.lastSeenAt;
 
-        handler.ping("conn-ping");
+        handler.ping(connection);
 
         assertTrue(connection.lastSeenAt.isAfter(before) || connection.lastSeenAt.isEqual(before));
         verify(sender).send("conn-ping", RealtimeEventType.PONG, null);
@@ -62,7 +62,8 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
 
         presenceService.subscribePresence(watcher, Set.of(2L));
 
-        handler.handleConnected("conn-target");
+        RealtimeConnection connection = registry.get("conn-target");
+        handler.handleConnected(connection);
 
         verify(sender).send(eq("conn-watcher"), eq(RealtimeEventType.PRESENCE_UPDATED), any());
     }
@@ -83,7 +84,7 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
 
         presenceService.subscribePresence(watcher, Set.of(targetUserId));
 
-        handler.handleDisconnected(target.connectionId);
+        handler.handleDisconnected(target);
 
         verify(sender).send(eq(watcher.connectionId), eq(RealtimeEventType.PRESENCE_UPDATED), any());
     }
@@ -100,7 +101,8 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
 
         presenceService.subscribePresence(watcher, Set.of(2L));
 
-        handler.handleDisconnected("conn-target-a");
+        RealtimeConnection connection = registry.get("conn-target-a");
+        handler.handleDisconnected(connection);
 
         verify(sender, never()).send(eq("conn-watcher-3"), eq(RealtimeEventType.PRESENCE_UPDATED), any());
     }

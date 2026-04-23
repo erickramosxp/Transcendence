@@ -52,7 +52,8 @@ public class RealtimeEventDispatcherTest extends BaseApiTest {
 
         dispatcher.dispatch("conn-1", event);
 
-        verify(presenceHandler).ping("conn-1");
+        RealtimeConnection connection = registry.get("conn-1");
+        verify(presenceHandler).ping(connection);
     }
 
     @Test
@@ -63,7 +64,8 @@ public class RealtimeEventDispatcherTest extends BaseApiTest {
 
         dispatcher.dispatch("conn-1", event);
 
-        verify(chatHandler).subscribe(eq("conn-1"), any());
+        RealtimeConnection connection = registry.get("conn-1");
+        verify(chatHandler).subscribe(connection, any());
     }
 
     @Test

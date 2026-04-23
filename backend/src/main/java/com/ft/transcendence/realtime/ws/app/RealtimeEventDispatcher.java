@@ -25,6 +25,10 @@ public class RealtimeEventDispatcher {
     RealtimeEventSender sender;
 
     public void dispatch(String connectionId, RealtimeIncomingEvent event) {
+        RealtimeConnection connection = registry.get(connectionId);
+        if (connection == null)
+            return;
+
         if (event == null || event.type == null) {
             sendError(connectionId, "INVALID_EVENT", "Event type is missing", null);
             return;
@@ -32,13 +36,13 @@ public class RealtimeEventDispatcher {
 
         try {
             switch (event.type) {
-                case RealtimeEventType.CHAT_SUBSCRIBE -> chatHandler.subscribe(connectionId, event.payload);
-                case RealtimeEventType.CHAT_UNSUBSCRIBE -> chatHandler.unsubscribe(connectionId, event.payload);
-                case RealtimeEventType.LIST_PRESENCE -> presenceHandler.listPresenceFriends(connectionId);
-                case RealtimeEventType.SEND_MESSAGE -> chatHandler.sendMessage(connectionId, event.payload);
-                case RealtimeEventType.TYPING_START -> chatHandler.typingStart(connectionId, event.payload);
-                case RealtimeEventType.TYPING_STOP -> chatHandler.typingStop(connectionId, event.payload);
-                case RealtimeEventType.PING -> presenceHandler.ping(connectionId);
+                case RealtimeEventType.CHAT_SUBSCRIBE -> chatHandler.subscribe(connection, event.payload);
+                case RealtimeEventType.CHAT_UNSUBSCRIBE -> chatHandler.unsubscribe(connection, event.payload);
+                case RealtimeEventType.LIST_PRESENCE -> presenceHandler.listPresenceFriends(connection);
+                case RealtimeEventType.SEND_MESSAGE -> chatHandler.sendMessage(connection, event.payload);
+                case RealtimeEventType.TYPING_START -> chatHandler.typingStart(connection, event.payload);
+                case RealtimeEventType.TYPING_STOP -> chatHandler.typingStop(connection, event.payload);
+                case RealtimeEventType.PING -> presenceHandler.ping(connection);
                 default -> {
                     sender.send(connectionId, RealtimeEventType.ERROR,
                             RealtimeErrorPayload.of("UNKNOWN_EVENT_TYPE","Unsupported realtime event type", event.type));
@@ -56,12 +60,20 @@ public class RealtimeEventDispatcher {
     }
 
     public void handleConnected(String connectionId) {
-        presenceHandler.handleConnected(connectionId);
+        RealtimeConnection connection = registry.get(connectionId);
+        if (connection == null)
+            return;
+
+        presenceHandler.handleConnected(connection);
     }
 
     public void handleDisconnected(String connectionId) {
-        presenceHandler.handleDisconnected(connectionId);
-        registry.remove(connectionId);
+        RealtimeConnection connection = registry.get(connectionId);
+        if (connection == null)
+            return;
+
+        presenceHandler.handleDisconnected(connection);
+        registry.remove(connection);
     }
 
     private void sendError(String connectionId, String code, String message, String originalType) {
