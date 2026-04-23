@@ -6,7 +6,7 @@ import { Button, Input, Separator } from "@/design-system";
 import {
 	AddConversationModal,
 	ADD_CONVERSATION_TAB,
-} from "@/features/chat/components/AddConversationModal";
+} from "@/features/chat/components/modals/AddConversationModal";
 import ChatItem from "@/features/chat/components/ChatItem";
 
 function normalizeForSearch(value) {

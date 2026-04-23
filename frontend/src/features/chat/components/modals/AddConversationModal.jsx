@@ -1,20 +1,20 @@
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MessageCirclePlus, UserRound, UsersRound, UserPlus, X } from "lucide-react";
+import { MessageCirclePlus, UserRound, UsersRound } from "lucide-react";
 
 import {
 	Button,
-	Input,
-	Label,
 	Modal,
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
 } from "@/design-system";
-import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { createDM, createGroup } from "@/features/chat/services/chatService";
+import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { getUserInfo } from "@/features/profile/services/profileService";
+import { AddConversationDMForm } from "@/features/chat/components/modals/AddConversationDMForm";
+import { AddConversationGroupForm } from "@/features/chat/components/modals/AddConversationGroupForm";
 
 export const ADD_CONVERSATION_TAB = {
 	GROUP: "chat-group",
@@ -234,111 +234,42 @@ export function AddConversationModal({
 						</TabsTrigger>
 					</TabsList>
 
-					<TabsContent
-						value={ADD_CONVERSATION_TAB.GROUP}
-						className="mt-4 space-y-2"
-					>
-						<Label htmlFor="group-name">
-							{t("list.add.groupNameLabel")}
-						</Label>
-						<Input
-							id="group-name"
-							type="text"
-							value={groupName}
-							onChange={(e) => {
+					<TabsContent value={ADD_CONVERSATION_TAB.GROUP}>
+						<AddConversationGroupForm
+							groupName={groupName}
+							onGroupNameChange={(e) => {
 								setGroupName(e.target.value);
 								if (submitError) setSubmitError(null);
 							}}
-							placeholder={t("list.add.groupNamePlaceholder")}
-							className="rounded-xl bg-input-background"
-							autoComplete="off"
+							groupFieldId={groupFieldId}
+							groupQuery={groupQuery}
+							onGroupQueryChange={(e) => {
+								setGroupQuery(e.target.value);
+								if (memberError) setMemberError(null);
+								if (submitError) setSubmitError(null);
+							}}
+							onGroupQueryKeyDown={(e) => {
+								if (e.key === "Enter") {
+									e.preventDefault();
+									handleAddGroupMember();
+								}
+							}}
+							onAddGroupMember={handleAddGroupMember}
+							addingMember={addingMember}
+							memberError={memberError}
+							groupMembers={groupMembers}
+							onRemoveGroupMember={removeGroupMember}
 						/>
-
-						<Label htmlFor={groupFieldId}>
-							{t("list.add.groupMembersLabel")}
-						</Label>
-						<div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:gap-2 sm:justify-end">
-							<Input
-								id={groupFieldId}
-								type="text"
-								value={groupQuery}
-								onChange={(e) => {
-									setGroupQuery(e.target.value);
-									if (memberError) setMemberError(null);
-									if (submitError) setSubmitError(null);
-								}}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										handleAddGroupMember();
-									}
-								}}
-								placeholder={t("list.add.groupMembersPlaceholder")}
-								className="rounded-xl bg-input-background flex-1"
-								autoComplete="off"
-								disabled={addingMember}
-							/>
-							<Button
-								variant="primary"
-								type="button"
-								onClick={handleAddGroupMember}
-								disabled={addingMember}
-								className="h-10 px-3 flex-shrink-0 flex items-center justify-center"
-								style={{ minWidth: "40px" }}
-								aria-label={t("list.add.addMemberAria")}
-							>
-								<UserPlus className="size-5" aria-hidden />
-							</Button>
-						</div>
-
-						{memberError && (
-							<p className="text-sm text-destructive" role="alert">
-								{memberError}
-							</p>
-						)}
-
-						{groupMembers.length > 0 && (
-							<ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-								{groupMembers.map((member) => (
-									<li
-										key={member.id}
-										className="flex items-center justify-between gap-2 rounded-lg border border-border/60 px-2 py-1.5"
-									>
-										<span className="min-w-0 truncate">{member.displayLabel}</span>
-										<Button
-											type="button"
-											variant="ghost"
-											size="icon"
-											className="size-8 shrink-0"
-											onClick={() => removeGroupMember(member.id)}
-											aria-label={t("list.add.removeMemberAria", {
-												username: member.username,
-											})}
-										>
-											<X className="size-4" aria-hidden />
-										</Button>
-									</li>
-								))}
-							</ul>
-						)}
 					</TabsContent>
 
-					<TabsContent
-						value={ADD_CONVERSATION_TAB.DM}
-						className="mt-4 space-y-2"
-					>
-						<Label htmlFor={dmFieldId}>{t("list.add.dmUserLabel")}</Label>
-						<Input
-							id={dmFieldId}
-							type="text"
-							value={dmQuery}
-							onChange={(e) => {
+					<TabsContent value={ADD_CONVERSATION_TAB.DM}>
+						<AddConversationDMForm
+							dmFieldId={dmFieldId}
+							dmQuery={dmQuery}
+							onDmQueryChange={(e) => {
 								setDmQuery(e.target.value);
 								if (submitError) setSubmitError(null);
 							}}
-							placeholder={t("list.add.dmUserPlaceholder")}
-							className="rounded-xl bg-input-background"
-							autoComplete="off"
 						/>
 					</TabsContent>
 				</Tabs>
