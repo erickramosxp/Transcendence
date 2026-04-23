@@ -22,20 +22,6 @@ public class RealtimePresenceHandler {
     @Inject
     RealtimeEventSender sender;
 
-    public void subscribe(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
-        Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
-
-        presenceService.subscribePresence(connection, targetUserIds);
-
-        for (Long userId : targetUserIds) {
-            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
-        }
-    }
-
     private PresenceUpdatePayload getUserPayload(Long userId) {
         RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
         String name = null;
@@ -59,20 +45,20 @@ public class RealtimePresenceHandler {
         return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
     }
 
-    public void unsubscribe(String connectionId) {
-        RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
-            return;
-
-        presenceService.removeWatcher(connection);
-    }
-
     public void handleConnected(String connectionId) {
         RealtimeConnection connection = registry.get(connectionId);
         if (connection == null)
             return;
 
         connection.lastSeenAt = OffsetDateTime.now();
+
+        Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
+        presenceService.subscribePresence(connection, targetUserIds);
+
+        for (Long userId : targetUserIds) {
+            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
+        }
+
         notifyWatchers(connection, true, connection.lastSeenAt);
     }
 

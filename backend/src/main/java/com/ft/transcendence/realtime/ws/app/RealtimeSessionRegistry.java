@@ -102,4 +102,18 @@ public class RealtimeSessionRegistry {
 
         return null;
     }
+
+    public Set<RealtimeConnection> getConnectionsByUserId(Long userId) {
+        Set<String> connectionIds = connectionIdsByUser.getOrDefault(userId, Set.of());
+        Set<RealtimeConnection> result = ConcurrentHashMap.newKeySet();
+
+        for (String connectionId : connectionIds) {
+            RealtimeConnection connection = byConnectionId.get(connectionId);
+            if (connection != null) {
+                result.add(connection);
+            }
+        }
+
+        return result;
+    }
 }

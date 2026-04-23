@@ -17,7 +17,9 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ForbiddenException;
 
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @ApplicationScoped
 public class RealtimeChatHandler {
@@ -54,27 +56,46 @@ public class RealtimeChatHandler {
             throw new ForbiddenException("User is not participant of this chat");
 
         registry.subscribeChat(connectionId, req.chatId);
-        sender.send(connection.connectionId, RealtimeEventType.CHAT_SUBSCRIBED, ChatSubscribedPayload.of(req.chatId));
     }
 
+    @Transactional
     public void unsubscribe(String connectionId, JsonNode payload) {
         RealtimeConnection connection = registry.get(connectionId);
-        if (connection == null)
+        if (connection == null) {
             return;
+        }
 
         ChatSubscribePayload req = objectMapper.convertValue(payload, ChatSubscribePayload.class);
         if (req == null) {
-            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_UNSUBSCRIBE);
+            sendError(connection,"INVALID_PAYLOAD", "Payload is required", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
         }
 
         if (req.chatId == null) {
-            sendError(connection,"MISSING_FIELD","chatId is required", RealtimeEventType.CHAT_UNSUBSCRIBE);
+            sendError(connection,"MISSING_FIELD","chatId is required", RealtimeEventType.CHAT_SUBSCRIBE);
             return;
         }
 
+        boolean chatParticipant = ChatParticipant.count("chat.id = ?1 and user.id = ?2", req.chatId, connection.userId) > 0;
+        if (!chatParticipant)
+            throw new ForbiddenException("User is not participant of this chat");
+
         registry.unsubscribeChat(connectionId, req.chatId);
-        sender.send(connection.connectionId, RealtimeEventType.CHAT_UNSUBSCRIBED, ChatUnsubscribedPayload.of(req.chatId));
+    }
+
+    private Set<RealtimeConnection> getOnlineParticipants(Long chatId) {
+        Set<RealtimeConnection> result = ConcurrentHashMap.newKeySet();
+
+        List<Long> participantIds = ChatParticipant.find(
+                "select cp.user.id from ChatParticipant cp where cp.chat.id = ?1",
+                chatId
+        ).project(Long.class).list();
+
+        for (Long participantId : participantIds) {
+            result.addAll(registry.getConnectionsByUserId(participantId));
+        }
+
+        return result;
     }
 
     @Transactional
@@ -95,18 +116,19 @@ public class RealtimeChatHandler {
             return;
         }
 
-        if (!connection.subscribedChatIds.contains(req.chatId)) {
-            sendError(connection,"NOT_SUBSCRIBED","Connection is not subscribed to this chat", RealtimeEventType.SEND_MESSAGE);
+        boolean chatParticipant = ChatParticipant.count("chat.id = ?1 and user.id = ?2", req.chatId, connection.userId) > 0;
+        if (!chatParticipant) {
+            sendError(connection,"NON_PARTICIPANT","User does not participate in this chat", RealtimeEventType.SEND_MESSAGE);
             return;
         }
 
         ChatMessageRequest messageRequest = ChatMessageRequest.of(req);
         ChatMessageResponse message = chatMessageService.createMessage(connection.userId, req.chatId, messageRequest);
 
-        Set<RealtimeConnection> subscribers = registry.getConnectionsByChat(req.chatId);
+        Set<RealtimeConnection> participants = getOnlineParticipants(req.chatId);
 
-        for (RealtimeConnection subscriber : subscribers) {
-            sender.send(subscriber.connectionId, RealtimeEventType.MESSAGE_CREATED, message);
+        for (RealtimeConnection participant : participants) {
+            sender.send(participant.connectionId, RealtimeEventType.MESSAGE_CREATED, message);
         }
     }
 
@@ -143,6 +165,7 @@ public class RealtimeChatHandler {
         TypingEventPayload outgoing = TypingEventPayload.of(connection.userId, req.chatId, connection.username);
         Set<RealtimeConnection> subscribers = registry.getConnectionsByChat(req.chatId);
 
+        System.out.println("Passou aqui!!!");
         for (RealtimeConnection subscriber : subscribers) {
             boolean skip = subscriber.connectionId.equals(connectionId);
 
