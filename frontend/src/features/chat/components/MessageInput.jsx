@@ -1,12 +1,45 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system";
 import { Input } from "@/design-system";
 import { Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
 export default function MessageInput({ onSendMessage }) {
+	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+	const emojiPickerAreaRef = useRef(null);
+	const { preview: draftLinkPreview, loading: draftLinkPreviewLoading } =
+		useMessageLinkPreview(text);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(min-width: 1024px)");
+		const closePickerIfNarrow = () => {
+			if (!mq.matches) setShowEmojiPicker(false);
+		};
+		closePickerIfNarrow();
+		mq.addEventListener("change", closePickerIfNarrow);
+		return () => mq.removeEventListener("change", closePickerIfNarrow);
+	}, []);
+
+	useEffect(() => {
+		if (!showEmojiPicker) return;
+
+		function handleClickOutside(event) {
+			if (
+				emojiPickerAreaRef.current &&
+				!emojiPickerAreaRef.current.contains(event.target)
+			) {
+				setShowEmojiPicker(false);
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [showEmojiPicker]);
 
 	function handleSendMessage(e) {
 		e.preventDefault();
@@ -20,81 +53,69 @@ export default function MessageInput({ onSendMessage }) {
 	}
 
 	return (
-		<form
-			onSubmit={handleSendMessage}
-			style={{
-				display: "flex",
-				alignItems: "center",
-				margin: 0,
-				padding: "8px 12px",
-				gap: 10,
-				borderRadius: 12,
-				position: "relative", // Adiciona contexto para elementos absolutos filhos
-			}}
-		>
-			<Button variant="outline" size="icon" style={{ flex: "0 0 auto", height: 40, width: 40, minWidth: 40, minHeight: 40, padding: 0 }}>
-				<Paperclip className="h-5 w-5" />
+		<div className="w-full space-y-2">
+			{(draftLinkPreviewLoading || draftLinkPreview) && (
+				<div className="space-y-1">
+					{draftLinkPreviewLoading && (
+						<p className="text-xs text-muted-foreground">
+							{t("linkPreview.loading")}
+						</p>
+					)}
+					<ChatLinkPreviewCard
+						preview={draftLinkPreview}
+						compact
+						className="mt-0"
+					/>
+				</div>
+			)}
+			<form onSubmit={handleSendMessage} className="ds-chat-input-form">
+			<Button
+				variant="outline"
+				size="icon"
+				type="button"
+				className="ds-chat-input-icon-btn"
+			>
+				<Paperclip className="ds-chat-icon-input" />
 			</Button>
 
-			<div style={{ position: "relative", flex: 1 }}>
+			<div className="relative min-w-0 flex-1">
 				<Input
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 					onFocus={() => setShowEmojiPicker(false)}
-					style={{
-						width: "100%",
-						height: 40,
-						borderRadius: 8,
-						paddingLeft: 14,
-						paddingRight: 32, // dá espaço pro ícone SMILE
-					}}
-					placeholder="Digite sua mensagem..."
+					className="ds-chat-input-field"
+					placeholder={t("input.placeholder")}
 				/>
-				<Button
-					type="button"
-					variant="ghost"
-					size="icon"
-					style={{
-						position: "absolute",
-						right: "8px",
-						top: "50%",
-						transform: "translateY(-50%)",
-						padding: 0,
-						height: 28,
-						width: 28,
-						minWidth: 28,
-						minHeight: 28,
-						color: "#888",
-						zIndex: 2,
-					}}
-					tabIndex={-1}
-					aria-label="Abrir emojis"
-					onClick={() => { setShowEmojiPicker(!showEmojiPicker); }}
-				>
-					<Smile className="size-4" />
-				</Button>
-				{showEmojiPicker && (
-					<div
-						className="absolute"
-						style={{
-							bottom: "calc(100% + 8px)",
-							right: 0,
-							zIndex: 10,
+				<div ref={emojiPickerAreaRef} className="hidden lg:contents">
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="ds-chat-input-emoji-btn"
+						tabIndex={-1}
+						onClick={() => {
+							setShowEmojiPicker(!showEmojiPicker);
 						}}
 					>
-						<EmojiPicker onEmojiClick={handleEmojiSelect} />
-					</div>
-				)}
+						<Smile className="size-4" />
+					</Button>
+					{showEmojiPicker && (
+						<div className="ds-chat-input-emoji-pop">
+							<EmojiPicker onEmojiClick={handleEmojiSelect} />
+						</div>
+					)}
+				</div>
 			</div>
 
 			<Button
 				onClick={handleSendMessage}
 				size="icon"
 				type="submit"
-				style={{ flex: "0 0 auto", height: 40, width: 40, minWidth: 40, minHeight: 40, padding: 0 }}
+				className="ds-chat-input-icon-btn"
 			>
-				<Send className="h-5 w-5" />
+				<Send className="ds-chat-icon-input" />
 			</Button>
 		</form>
-	)
+		</div>
+	);
 }

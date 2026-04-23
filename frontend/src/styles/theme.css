@@ -69,6 +69,18 @@
   --color-online: #22c55e;
   --color-unread: #4a78b5;
 
+  /* Chat list (sidebar) — hover mais claro que seleção; alinhado à escala Yale / neutros */
+  --chat-list-item-hover: #f1f4f9;
+  --chat-list-item-selected: #dee4ee;
+
+  /* Painel principal do chat (vazio + conversa): light usa brilho suave; dark fica uniforme */
+  --chat-window-surface: radial-gradient(
+    ellipse 100% 72% at 50% 0%,
+    var(--yale-blue-50) 0%,
+    var(--background) 52%,
+    var(--background) 100%
+  );
+
   /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -203,6 +215,12 @@
 
   --input-background: #151f30;
 
+  --chat-list-item-hover: #1e293b;
+  --chat-list-item-selected: #243049;
+
+  /* Sem spotlight claro: fundo sólido alinhado ao app (tokens Yale escuros) */
+  --chat-window-surface: var(--background);
+
   --like: var(--color-pink-400);
   --like-hover: #ff8fba;
 }
@@ -277,6 +295,9 @@
   --radius-xl: var(--radius-xl);
   --color-online: var(--color-online);
   --color-unread: var(--color-unread);
+
+  --color-chat-list-item-hover: var(--chat-list-item-hover);
+  --color-chat-list-item-selected: var(--chat-list-item-selected);
 
   --color-input-background: var(--input-background);
 
@@ -367,6 +388,268 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+/* Chat: layout e peças reutilizáveis (evita longas strings de utilitários nos .jsx) */
+@layer components {
+  .ds-chat-window-surface {
+    background: var(--chat-window-surface);
+  }
+  .ds-chat-layout {
+    @apply flex h-full min-h-0 w-full flex-col overflow-hidden bg-background md:flex-row;
+  }
+
+  .ds-chat-sidebar {
+    @apply flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%,20rem)] md:max-w-[380px] md:shrink-0 md:border-r;
+  }
+
+  .ds-chat-main {
+    @apply flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden;
+  }
+
+  .ds-chat-window-column {
+    @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .ds-chat-list-shell {
+    @apply flex h-full min-h-0 flex-col px-4 pb-4 pt-6 sm:px-5;
+  }
+
+  .ds-chat-list-head {
+    @apply shrink-0 space-y-1;
+  }
+
+  .ds-chat-list-title {
+    @apply bg-gradient-title bg-clip-text text-xl font-bold leading-tight tracking-tight text-transparent sm:text-[1.375rem];
+  }
+
+  .ds-chat-list-search {
+    @apply mt-5 shrink-0 flex items-center gap-2;
+  }
+
+  .ds-chat-search-field {
+    @apply h-10 rounded-xl bg-input-background text-sm sm:h-11;
+  }
+
+  .ds-chat-list-scroll {
+    @apply mt-4 flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:thin];
+  }
+
+  .ds-chat-list-item {
+    @apply flex w-full items-center gap-3.5 rounded-lg border border-transparent bg-transparent px-3 py-3 text-left transition-[background-color] duration-150 ease-out hover:bg-chat-list-item-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35;
+  }
+
+  .ds-chat-list-item--selected {
+    @apply bg-chat-list-item-selected hover:bg-chat-list-item-selected;
+  }
+
+  .ds-chat-list-peer {
+    @apply min-w-0 truncate text-[0.9375rem] font-bold leading-tight text-foreground;
+  }
+
+  .ds-chat-list-time {
+    @apply shrink-0 text-[11px] font-medium tabular-nums leading-none text-muted-foreground;
+  }
+
+  .ds-chat-list-preview {
+    @apply truncate text-[0.8125rem] leading-snug text-muted-foreground;
+  }
+
+  .ds-chat-unread-badge {
+    @apply flex size-5 shrink-0 items-center justify-center rounded-full bg-unread text-[10px] font-semibold text-primary-foreground;
+  }
+
+  .ds-chat-thread-header {
+    @apply flex shrink-0 items-center gap-3 px-4 pb-4 pt-5 sm:gap-4 sm:px-6 sm:pb-4 sm:pt-6;
+  }
+
+  .ds-chat-thread-title {
+    @apply truncate text-lg font-bold leading-tight tracking-tight text-foreground sm:text-xl;
+  }
+
+  .ds-chat-thread-status {
+    @apply block text-xs font-medium leading-none sm:text-[13px];
+  }
+
+  .ds-chat-thread-status--online {
+    @apply text-online;
+  }
+
+  .ds-chat-thread-status--offline {
+    @apply text-muted-foreground;
+  }
+
+  .ds-chat-thread-actions {
+    @apply flex shrink-0 gap-1 sm:gap-2;
+  }
+
+  .ds-chat-icon-header {
+    @apply size-[1.15rem] sm:size-5;
+  }
+
+  .ds-chat-thread-banner {
+    @apply shrink-0 px-4 py-2 text-sm sm:px-6;
+  }
+
+  .ds-chat-thread-banner--error {
+    @apply text-destructive;
+  }
+
+  .ds-chat-thread-banner--muted {
+    @apply text-muted-foreground;
+  }
+
+  .ds-chat-thread-loading {
+    @apply flex min-h-0 flex-1 flex-col items-center justify-center px-4 text-center text-sm text-muted-foreground sm:px-6;
+  }
+
+  .ds-chat-thread-scroll {
+    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-1 sm:px-5;
+  }
+
+  .ds-chat-thread-loading-more {
+    @apply py-2 text-center text-xs text-muted-foreground;
+  }
+
+  .ds-chat-thread-empty {
+    @apply mt-8 text-center text-sm text-muted-foreground;
+  }
+
+  .ds-chat-composer {
+    @apply shrink-0 border-t border-border bg-card/80 px-3 py-2.5 backdrop-blur-sm sm:px-5;
+  }
+
+  .ds-chat-empty-shell {
+    @apply flex flex-1 flex-col items-center justify-center px-6;
+  }
+
+  .ds-chat-empty-hero {
+    @apply mb-6 flex size-16 items-center justify-center rounded-2xl bg-gradient-chat text-primary-foreground shadow-lg shadow-primary/25;
+  }
+
+  .ds-chat-empty-heading {
+    @apply text-center text-xl font-bold leading-tight tracking-tight text-foreground sm:text-2xl;
+  }
+
+  .ds-chat-empty-text {
+    @apply mt-3 max-w-sm text-center text-sm leading-relaxed text-muted-foreground;
+  }
+
+  .ds-chat-day-wrap {
+    @apply flex justify-center py-3 sm:py-4;
+  }
+
+  .ds-chat-day-pill {
+    @apply rounded-full bg-muted/90 px-3 py-1 text-[11px] font-medium text-muted-foreground shadow-sm sm:px-3.5 sm:text-xs;
+  }
+
+  .ds-chat-msg-row {
+    @apply mb-2 flex px-2 py-1 sm:px-3 sm:py-1.5;
+  }
+
+  .ds-chat-msg-row--mine {
+    @apply justify-end;
+  }
+
+  .ds-chat-msg-row--theirs {
+    @apply justify-start;
+  }
+
+  .ds-chat-bubble {
+    @apply relative max-w-[min(85%,28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
+  }
+
+  .ds-chat-bubble--mine {
+    @apply rounded-tr-md bg-primary text-primary-foreground;
+  }
+
+  .ds-chat-bubble--theirs {
+    @apply rounded-tl-md bg-card text-card-foreground ring-1 ring-border;
+  }
+
+  .ds-chat-bubble-sender {
+    @apply mb-1 text-left text-[11px] font-semibold leading-tight sm:text-xs;
+  }
+
+  .ds-chat-bubble-sender--theirs {
+    @apply text-primary;
+  }
+
+  .ds-chat-bubble-text {
+    @apply min-w-0 whitespace-pre-wrap break-words text-sm leading-normal;
+  }
+
+  .ds-chat-bubble-meta {
+    @apply mt-1 flex items-center justify-end gap-1;
+  }
+
+  .ds-chat-bubble-meta--mine {
+    @apply text-primary-foreground/80;
+  }
+
+  .ds-chat-bubble-meta--theirs {
+    @apply text-muted-foreground;
+  }
+
+  .ds-chat-bubble-time {
+    @apply text-[11px] sm:text-xs tabular-nums;
+  }
+
+  .ds-chat-input-form {
+    @apply relative m-0 flex items-center gap-2 rounded-xl py-1 sm:gap-2.5;
+  }
+
+  .ds-chat-input-icon-btn {
+    @apply size-9 shrink-0 sm:size-10;
+  }
+
+  .ds-chat-input-field {
+    @apply h-9 rounded-lg pr-3 sm:h-10 lg:pr-10;
+  }
+
+  .ds-chat-input-emoji-btn {
+    @apply absolute top-1/2 right-1 z-[2] inline-flex size-7 min-h-7 min-w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground;
+  }
+
+  .ds-chat-input-emoji-pop {
+    @apply absolute right-0 bottom-[calc(100%+0.5rem)] z-10;
+  }
+
+  .ds-chat-icon-input {
+    @apply size-4 sm:size-5;
+  }
+
+  .ds-chat-voice-modal {
+    @apply flex w-full min-h-[260px] flex-col items-center justify-center text-center sm:min-h-[280px];
+  }
+
+  .ds-chat-voice-modal__avatar {
+    @apply mb-3;
+  }
+
+  .ds-chat-voice-modal__name {
+    @apply text-lg font-bold leading-tight tracking-tight text-foreground sm:text-xl;
+  }
+
+  .ds-chat-voice-modal__hint {
+    @apply mt-1 max-w-xs text-sm leading-snug text-muted-foreground sm:text-[0.9375rem];
+  }
+
+  .ds-chat-voice-modal__duration {
+    @apply mt-3 font-mono text-base tabular-nums text-muted-foreground sm:text-lg;
+  }
+
+  .ds-chat-voice-modal__actions {
+    @apply mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-8 sm:gap-4;
+  }
+
+  .ds-chat-voice-modal__icon-call {
+    @apply size-5 sm:size-6;
+  }
+
+  .ds-chat-voice-modal__icon-mic {
+    @apply size-4 sm:size-5;
   }
 }
 
