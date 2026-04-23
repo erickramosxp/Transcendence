@@ -8,6 +8,7 @@ public final class RealtimeEventType {
     public static final String TYPING_START = "TYPING_START";
     public static final String TYPING_STOP = "TYPING_STOP";
     public static final String PRESENCE_UPDATED = "PRESENCE_UPDATED";
+    public static final String LIST_PRESENCE = "LIST_PRESENCE";
     public static final String PING = "PING";
     public static final String PONG = "PONG";
     public static final String ERROR = "ERROR";

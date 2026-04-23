@@ -34,6 +34,7 @@ public class RealtimeEventDispatcher {
             switch (event.type) {
                 case RealtimeEventType.CHAT_SUBSCRIBE -> chatHandler.subscribe(connectionId, event.payload);
                 case RealtimeEventType.CHAT_UNSUBSCRIBE -> chatHandler.unsubscribe(connectionId, event.payload);
+                case RealtimeEventType.LIST_PRESENCE -> presenceHandler.listPresenceFriends(connectionId);
                 case RealtimeEventType.SEND_MESSAGE -> chatHandler.sendMessage(connectionId, event.payload);
                 case RealtimeEventType.TYPING_START -> chatHandler.typingStart(connectionId, event.payload);
                 case RealtimeEventType.TYPING_STOP -> chatHandler.typingStop(connectionId, event.payload);

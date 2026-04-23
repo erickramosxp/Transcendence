@@ -165,7 +165,6 @@ public class RealtimeChatHandler {
         TypingEventPayload outgoing = TypingEventPayload.of(connection.userId, req.chatId, connection.username);
         Set<RealtimeConnection> subscribers = registry.getConnectionsByChat(req.chatId);
 
-        System.out.println("Passou aqui!!!");
         for (RealtimeConnection subscriber : subscribers) {
             boolean skip = subscriber.connectionId.equals(connectionId);
 
