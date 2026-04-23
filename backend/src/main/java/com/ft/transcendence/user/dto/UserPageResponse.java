@@ -10,6 +10,8 @@ public class UserPageResponse {
     public String bannerImgUrl;
     public String username;
     public String name;
+    public String relationStatus;
+    public Long friendshipId;
     public String bio;
     public String websiteUrl;
     public String location;

@@ -13,7 +13,7 @@ export function LeftSidebar() {
                 <Link to={"/"}>Home</Link>
                 <Link to={"/feed"}>Feed</Link>
                 <Link to={"/chat"}>Chat</Link>
-                <Link to={"/search"}>Search</Link>
+                <Link to={"/friends"}>Friends</Link>
                 <Link to={"/profile"}>Profile</Link>
                 <Link to={"/editProfile"}>Edit Profile</Link>
                 <ThemeToggle />

@@ -1,0 +1,45 @@
+{
+    "title": "Amigos",
+    "tabs": {
+        "friends": "Amigos",
+        "requests": "Pedidos",
+        "discover": "Descobrir"
+    },
+    "search": {
+        "placeholder": "Buscar...",
+        "button": "Buscar",
+        "loadMore": "Carregar mais",
+        "loadingMore": "Carregando..."
+    },
+    "empty": {
+        "friends": "Nada por aqui ainda.",
+        "requests": "Você não tem nenhum pedido de amizade pendente.",
+        "default": "Lista vazia.",
+        "notFound": "Nenhum resultado encontrado."
+    },
+    "buttons": {
+        "add": "Adicionar",
+        "addFriend": "Adicionar amigo",
+        "cancel": "Cancelar",
+        "undoFriendship": "Desfazer amizade",
+        "accept": "Aceitar",
+        "reject": "Recusar",
+        "reply": "Responder",
+        "acceptInvite": "Aceitar convite",
+        "rejectInvite": "Recusar convite"
+    },
+    "toast": {
+        "loadFriendsError": "Erro ao carregar amigos",
+        "loadRequestsError": "Erro ao carregar solicitações",
+        "requestSentSuccess": "Pedido de amizade enviado",
+        "requestSentError": "Erro ao enviar o pedido de amizade",
+        "requestCanceledSuccess": "Pedido de amizade cancelado",
+        "requestCanceledError": "Erro ao cancelar o pedido de amizade",
+        "requestAcceptedSuccess": "Pedido de amizade aceito",
+        "requestAcceptedError": "Erro ao aceitar o pedido de amizade",
+        "requestRejectedSuccess": "Pedido de amizade recusado",
+        "requestRejectedError": "Erro ao recusar o pedido de amizade",
+        "friendRemovedSuccess": "Amizade removida",
+        "friendRemovedError": "Erro ao remover a amizade"
+    }
+}
