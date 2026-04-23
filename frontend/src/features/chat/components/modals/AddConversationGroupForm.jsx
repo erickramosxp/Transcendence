@@ -1,6 +1,5 @@
 import { UserPlus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
 import { Button, Input, Label } from "@/design-system";
 
 export function AddConversationGroupForm({
@@ -13,6 +12,8 @@ export function AddConversationGroupForm({
 	onAddGroupMember,
 	addingMember,
 	memberError,
+	groupSuggestions,
+	onSelectGroupSuggestion,
 	groupMembers,
 	onRemoveGroupMember,
 }) {
@@ -56,6 +57,27 @@ export function AddConversationGroupForm({
 					<UserPlus className="size-5" aria-hidden />
 				</Button>
 			</div>
+
+			{groupSuggestions.length > 0 && (
+				<ul className="mt-2 space-y-1 text-sm">
+					{groupSuggestions.map((friend) => {
+						const label = friend?.name?.trim()
+							? `${friend.name} (@${friend.username})`
+							: `@${friend.username}`;
+						return (
+							<li key={friend.friendId}>
+								<button
+									type="button"
+									className="w-full rounded-lg border border-border/60 px-3 py-2 text-left text-foreground hover:bg-accent/50"
+									onClick={() => onSelectGroupSuggestion?.(friend)}
+								>
+									{label}
+								</button>
+							</li>
+						);
+					})}
+				</ul>
+			)}
 
 			{memberError && (
 				<p className="text-sm text-destructive" role="alert">
