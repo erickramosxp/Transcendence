@@ -32,12 +32,11 @@
       "memberErrorGeneric": "Could not verify the user.",
       "removeMemberAria": "Remove {{username}} from list",
       "createErrorGroupName": "Enter the group name.",
-      "createErrorGroupMembers": "Add at least one member.",
-      "createErrorDmUser": "Enter the contact's username.",
+      "createErrorDmUsername": "Enter the contact's username.",
       "createErrorDmSelf": "You can't start a chat only with yourself.",
       "createErrorGeneric": "Could not create the conversation.",
-      "creating": "Creating…",
-      "createSuccess": "Conversation created."
+      "createErrorNoMembers": "Add at least one member.",
+      "creating": "Creating…"
     }
   },
   "empty": {

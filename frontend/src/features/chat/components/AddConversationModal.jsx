@@ -70,6 +70,7 @@ export function AddConversationModal({
 	}
 
 	function removeGroupMember(userId) {
+		setSubmitError(null);
 		setGroupMembers((prev) => prev.filter((m) => m.id !== userId));
 	}
 
@@ -113,6 +114,7 @@ export function AddConversationModal({
 				{ id: Number(id), username: uname, displayLabel },
 			]);
 			setGroupQuery("");
+			setSubmitError(null);
 		} catch (e) {
 			if (e?.response?.status === 404) {
 				setMemberError(t("list.add.memberErrorNotFound", { username }));
@@ -205,7 +207,11 @@ export function AddConversationModal({
 			<div className="flex flex-col gap-4 sm:gap-5">
 				<Tabs
 					value={activeTab}
-					onValueChange={onTabChange}
+					onValueChange={(nextTab) => {
+						setMemberError(null);
+						setSubmitError(null);
+						onTabChange?.(nextTab);
+					}}
 					className="w-full"
 				>
 					<TabsList
@@ -239,7 +245,10 @@ export function AddConversationModal({
 							id="group-name"
 							type="text"
 							value={groupName}
-							onChange={(e) => setGroupName(e.target.value)}
+							onChange={(e) => {
+								setGroupName(e.target.value);
+								if (submitError) setSubmitError(null);
+							}}
 							placeholder={t("list.add.groupNamePlaceholder")}
 							className="rounded-xl bg-input-background"
 							autoComplete="off"
@@ -256,6 +265,7 @@ export function AddConversationModal({
 								onChange={(e) => {
 									setGroupQuery(e.target.value);
 									if (memberError) setMemberError(null);
+									if (submitError) setSubmitError(null);
 								}}
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
@@ -322,7 +332,10 @@ export function AddConversationModal({
 							id={dmFieldId}
 							type="text"
 							value={dmQuery}
-							onChange={(e) => setDmQuery(e.target.value)}
+							onChange={(e) => {
+								setDmQuery(e.target.value);
+								if (submitError) setSubmitError(null);
+							}}
 							placeholder={t("list.add.dmUserPlaceholder")}
 							className="rounded-xl bg-input-background"
 							autoComplete="off"

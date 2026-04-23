@@ -32,12 +32,11 @@
       "memberErrorGeneric": "Não foi possível verificar o usuário.",
       "removeMemberAria": "Remover {{username}} da lista",
       "createErrorGroupName": "Informe o nome do grupo.",
-      "createErrorGroupMembers": "Adicione pelo menos um membro.",
-      "createErrorDmUser": "Informe o nome de usuário do contato.",
+      "createErrorDmUsername": "Informe o nome de usuário do contato.",
       "createErrorDmSelf": "Você não pode iniciar uma conversa só consigo mesmo.",
       "createErrorGeneric": "Não foi possível criar a conversa.",
-      "creating": "Criando…",
-      "createSuccess": "Conversa criada."
+      "createErrorNoMembers": "Adicione pelo menos um membro.",
+      "creating": "Criando…"
     }
   },
   "empty": {
