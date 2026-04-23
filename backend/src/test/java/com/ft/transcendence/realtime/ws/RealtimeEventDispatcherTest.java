@@ -65,7 +65,7 @@ public class RealtimeEventDispatcherTest extends BaseApiTest {
         dispatcher.dispatch("conn-1", event);
 
         RealtimeConnection connection = registry.get("conn-1");
-        verify(chatHandler).subscribe(connection, any());
+        verify(chatHandler).subscribe(eq(connection), any());
     }
 
     @Test
