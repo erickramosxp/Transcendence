@@ -40,7 +40,6 @@ const resources = {
         home: enHome,
         authProvider: enAuthProvider,
         chat: enChat,
-        settings: enSettings
         settings: enSettings,
         friends: enFriends
     },
@@ -52,7 +51,6 @@ const resources = {
         home: ptHome,
         authProvider: ptAuthProvider,
         chat: ptChat,
-        settings: ptSettings
         settings: ptSettings,
         friends: ptFriends
     },
@@ -64,7 +62,6 @@ const resources = {
         home: esHome,
         authProvider: esAuthProvider,
         chat: esChat,
-        settings: esSettings
         settings: esSettings,
         friends: esFriends
     }
