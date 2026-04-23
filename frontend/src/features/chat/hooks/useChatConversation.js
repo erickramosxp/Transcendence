@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import {
 	getConversation,
 	sendMessages,
-	mapApiMessageToUi,
 } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
+import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
 
 export function useChatConversation(currentChat, options = {}) {
 	const { onAfterMessageSent } = options;
@@ -42,7 +42,7 @@ export function useChatConversation(currentChat, options = {}) {
 				const data = await getConversation(convId, { page: 0, size: 20 });
 				if (cancelled) return;
 				const ui = data.messages.map((m) =>
-					mapApiMessageToUi(m, currentUserId, peerName),
+					mapMessageSenderData(m, currentUserId, peerName),
 				);
 				setMessages(ui);
 				setNextOlderPage(data.hasMore ? data.page + 1 : null);
@@ -82,7 +82,7 @@ export function useChatConversation(currentChat, options = {}) {
 				size: 20,
 			});
 			const ui = data.messages.map((m) =>
-				mapApiMessageToUi(m, currentUserId, peerName),
+				mapMessageSenderData(m, currentUserId, peerName),
 			);
 			setMessages((prev) => [...ui, ...prev]);
 			setNextOlderPage(data.hasMore ? data.page + 1 : null);
@@ -112,7 +112,7 @@ export function useChatConversation(currentChat, options = {}) {
 					text,
 					currentUserId,
 				);
-				const ui = mapApiMessageToUi(created, currentUserId, peerName);
+				const ui = mapMessageSenderData(created, currentUserId, peerName);
 				setMessages((prev) => [...prev, ui]);
 				const createdAt =
 					created.createdAt ?? ui.timestamp;
