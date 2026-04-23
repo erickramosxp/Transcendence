@@ -78,8 +78,11 @@ public class AuthService {
     }
 
     private String issueToken(User user) {
-        return Jwt.upn(user.email)
+        return Jwt
+                .upn(user.email)
                 .claim("uid", user.id)
+                .claim("name", user.name)
+                .claim("username", user.username)
                 .sign();
     }
 

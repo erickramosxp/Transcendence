@@ -94,6 +94,8 @@ public class GoogleAuthService {
         String token = Jwt
                 .upn(user.email)
                 .claim("uid", user.id)
+                .claim("name", user.name)
+                .claim("username", user.username)
                 .sign();
 
         return AuthResponse.of(token, user);
