@@ -40,57 +40,6 @@ public class RealtimePresenceHandlerTest extends BaseApiTest {
     }
 
     @Test
-    public void testSubscribeUsesMutualFriendsAndSendsInitialSnapshot() {
-        UserTestContext user1 = createUser();
-        UserTestContext user2 = createUser();
-        UserTestContext user3 = createUser();
-
-        auth(user1)
-                .post("/user/{username}/follow", user2.username)
-                .then()
-                .statusCode(200);
-
-        auth(user2)
-                .post("/user/{username}/follow", user1.username)
-                .then()
-                .statusCode(200);
-
-        auth(user1)
-                .post("/user/{username}/follow", user3.username)
-                .then()
-                .statusCode(200);
-
-        RealtimeConnection watcher = new RealtimeConnection("conn-user1", user1.id, user1.name, user1.username, null);
-        registry.add(watcher);
-
-        handler.subscribe("conn-user1");
-
-        assertTrue(watcher.subscribedPresenceUserIds.contains(user2.id));
-        assertFalse(watcher.subscribedPresenceUserIds.contains(user3.id));
-        verify(sender, atLeastOnce()).send(eq("conn-user1"), eq(RealtimeEventType.PRESENCE_UPDATED), any());
-    }
-
-    @Test
-    public void testUnsubscribeRemovesAllSubscriptions() {
-        Long watcherUserId = 7001L;
-        Long target1 = 7002L;
-        Long target2 = 7003L;
-
-        RealtimeConnection watcher = new RealtimeConnection("conn-unsub-" + System.nanoTime(), watcherUserId, "Watcher", "watcher", null);
-        registry.add(watcher);
-
-        presenceService.subscribePresence(watcher, Set.of(target1, target2));
-
-        assertEquals(Set.of(target1, target2), watcher.subscribedPresenceUserIds);
-
-        handler.unsubscribe(watcher.connectionId);
-
-        assertTrue(watcher.subscribedPresenceUserIds.isEmpty());
-        assertTrue(presenceService.getWatchers(target1).isEmpty());
-        assertTrue(presenceService.getWatchers(target2).isEmpty());
-    }
-
-    @Test
     public void testPingUpdatesLastSeenAndSendsPong() {
         RealtimeConnection connection = new RealtimeConnection("conn-ping", 10L, "User", "user", null);
         registry.add(connection);

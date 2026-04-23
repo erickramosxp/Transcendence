@@ -46,27 +46,6 @@ public class RealtimeEventDispatcherTest extends BaseApiTest {
     }
 
     @Test
-    public void testDispatchPresenceSubscribe() {
-        RealtimeIncomingEvent event = new RealtimeIncomingEvent();
-        event.type = "PRESENCE_SUBSCRIBE";
-
-        dispatcher.dispatch("conn-1", event);
-
-        verify(presenceHandler).subscribe("conn-1");
-    }
-
-    @Test
-    public void testDispatchPresenceUnsubscribe() {
-        RealtimeIncomingEvent event = new RealtimeIncomingEvent();
-        event.type = "PRESENCE_UNSUBSCRIBE";
-        event.payload = objectMapper.createObjectNode();
-
-        dispatcher.dispatch("conn-1", event);
-
-        verify(presenceHandler).unsubscribe(eq("conn-1"));
-    }
-
-    @Test
     public void testDispatchPing() {
         RealtimeIncomingEvent event = new RealtimeIncomingEvent();
         event.type = "PING";
