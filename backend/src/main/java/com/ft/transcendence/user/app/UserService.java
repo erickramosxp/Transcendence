@@ -5,6 +5,8 @@ import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.media.MediaAnalysis;
 import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.follow.domain.Follow;
+import com.ft.transcendence.friendship.domain.Friendship;
+import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @ApplicationScoped
 public class UserService {
@@ -46,7 +49,40 @@ public class UserService {
         if (user.avatarUrl != null && !user.avatarUrl.startsWith("http")) {
             avatarUrl = storageService.generateUrl(user.avatarUrl);
         }
-        return UserPageResponse.of(user, followers, following, isFollowing, avatarUrl);
+        UserPageResponse userPageResponse = UserPageResponse.of(user, followers, following, isFollowing, avatarUrl);
+
+        Long targetUserId = user.id;
+        if (targetUserId.equals(currentUserId)) {
+            userPageResponse.relationStatus = "SELF";
+            return userPageResponse;
+        }
+
+        Optional<Friendship> relation = Friendship.find(
+                "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
+                currentUserId, targetUserId
+        ).firstResultOptional();
+
+        if (relation.isEmpty()) {
+            userPageResponse.relationStatus = "NONE";
+            return userPageResponse;
+        }
+
+        Friendship friendship = relation.get();
+        userPageResponse.friendshipId = friendship.id;
+
+        if (friendship.status.equals(FriendshipStatus.ACCEPTED)) {
+            userPageResponse.relationStatus = "ACCEPTED";
+        } else if (friendship.status.equals(FriendshipStatus.PENDING)) {
+
+            if (friendship.userId.equals(currentUserId)) {
+                userPageResponse.relationStatus = "PENDING_SENT";
+            } else {
+                userPageResponse.relationStatus = "PENDING_RECEIVED";
+            }
+        }
+
+
+        return userPageResponse;
     }
 
     private String normalize(String s) {

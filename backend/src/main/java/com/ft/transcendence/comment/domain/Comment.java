@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "comments")
 public class Comment extends PanacheEntityBase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
