@@ -1,1 +1,93 @@
-{}
+{
+  "day": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "list": {
+    "fallbackGroup": "Group",
+    "fallbackDm": "DM",
+    "title": "Messages",
+    "searchPlaceholder": "Search conversations...",
+    "searchAriaLabel": "Search conversations",
+    "noResults": "No conversations match your search.",
+    "loadingMore": "Loading more…",
+    "add": {
+      "openAriaLabel": "Add conversation",
+      "title": "Add conversation",
+      "tabGroup": "New group",
+      "tabDm": "New chat",
+      "groupNameLabel": "Group name",
+      "groupNamePlaceholder": "Enter the group name",
+      "groupMembersLabel": "Members",
+      "groupMembersPlaceholder": "Search people to add",
+      "dmUserLabel": "Contact",
+      "dmUserPlaceholder": "Username",
+      "cancel": "Cancel",
+      "create": "Create",
+      "addMemberAria": "Add member to group",
+      "memberErrorEmpty": "Enter a username.",
+      "memberErrorDuplicate": "This user is already in the list.",
+      "memberErrorSelf": "You can't add yourself — you're already the group owner.",
+      "memberErrorNotFound": "User not found: {{username}}",
+      "memberErrorGeneric": "Could not verify the user.",
+      "removeMemberAria": "Remove {{username}} from list",
+      "createErrorGroupName": "Enter the group name.",
+      "createErrorDmUsername": "Enter the contact's username.",
+      "createErrorDmSelf": "You can't start a chat only with yourself.",
+      "createErrorGeneric": "Could not create the conversation.",
+      "createErrorNoMembers": "Add at least one member.",
+      "creating": "Creating…"
+    }
+  },
+  "empty": {
+    "title": "Your messages",
+    "hint": "Select a conversation to start messaging"
+  },
+  "status": {
+    "online": "Online now",
+    "offline": "Offline"
+  },
+  "peerFallback": "Contact",
+  "errors": {
+    "load": "Could not load messages",
+    "send": "Could not send message"
+  },
+  "loading": {
+    "messages": "Loading...",
+    "older": "Loading older messages..."
+  },
+  "thread": {
+    "empty": "No messages in this conversation yet.",
+    "unknownSender": "Unknown"
+  },
+  "input": {
+    "placeholder": "Type a message..."
+  },
+  "linkPreview": {
+    "loading": "Loading link preview…"
+  },
+  "a11y": {
+    "back": "Back to conversation list",
+    "call": "Start voice call"
+  },
+  "call": {
+    "title": {
+      "incoming": "Incoming call",
+      "outgoing": "Voice call",
+      "active": "On a call"
+    },
+    "hint": {
+      "incoming": "{{name}} is calling you",
+      "outgoing": "Calling {{name}}…",
+      "active": "Connected — audio is on"
+    },
+    "cancelOutgoing": "Cancel call",
+    "a11y": {
+      "accept": "Answer call",
+      "decline": "Decline call",
+      "hangUp": "End call",
+      "mute": "Mute microphone",
+      "unmute": "Unmute microphone"
+    }
+  }
+}

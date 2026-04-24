@@ -1,1 +1,93 @@
-{}
+{
+  "day": {
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "list": {
+    "fallbackGroup": "Grupo",
+    "fallbackDm": "DM",
+    "title": "Mensajes",
+    "searchPlaceholder": "Buscar conversaciones...",
+    "searchAriaLabel": "Buscar conversaciones",
+    "noResults": "No hay conversaciones que coincidan.",
+    "loadingMore": "Cargando más…",
+    "add": {
+      "openAriaLabel": "Añadir conversación",
+      "title": "Añadir conversación",
+      "tabGroup": "Nuevo grupo",
+      "tabDm": "Nuevo chat",
+      "groupNameLabel": "Nombre del grupo",
+      "groupNamePlaceholder": "Introduce el nombre del grupo",
+      "groupMembersLabel": "Miembros",
+      "groupMembersPlaceholder": "Busca personas para el grupo",
+      "dmUserLabel": "Contacto",
+      "dmUserPlaceholder": "Usuario",
+      "cancel": "Cancelar",
+      "create": "Crear",
+      "addMemberAria": "Añadir miembro al grupo",
+      "memberErrorEmpty": "Introduce un nombre de usuario.",
+      "memberErrorDuplicate": "Este usuario ya está en la lista.",
+      "memberErrorSelf": "No puedes añadirte a ti mismo (ya eres administrador del grupo).",
+      "memberErrorNotFound": "Usuario no encontrado: {{username}}",
+      "memberErrorGeneric": "No se pudo verificar el usuario.",
+      "removeMemberAria": "Quitar a {{username}} de la lista",
+      "createErrorGroupName": "Introduce el nombre del grupo.",
+      "createErrorDmUsername": "Introduce el usuario del contacto.",
+      "createErrorDmSelf": "No puedes abrir un chat solo contigo mismo.",
+      "createErrorGeneric": "No se pudo crear la conversación.",
+      "createErrorNoMembers": "Añade al menos un miembro.",
+      "creating": "Creando…"
+    }
+  },
+  "empty": {
+    "title": "Tus mensajes",
+    "hint": "Selecciona una conversación para empezar a chatear"
+  },
+  "status": {
+    "online": "En línea",
+    "offline": "Desconectado"
+  },
+  "peerFallback": "Contacto",
+  "errors": {
+    "load": "Error al cargar",
+    "send": "Error al enviar el mensaje"
+  },
+  "loading": {
+    "messages": "Cargando...",
+    "older": "Cargando mensajes anteriores..."
+  },
+  "thread": {
+    "empty": "Aún no hay mensajes en esta conversación.",
+    "unknownSender": "Desconocido"
+  },
+  "input": {
+    "placeholder": "Escribe un mensaje..."
+  },
+  "linkPreview": {
+    "loading": "Cargando vista previa del enlace…"
+  },
+  "a11y": {
+    "back": "Volver a la lista de conversaciones",
+    "call": "Iniciar llamada de voz"
+  },
+  "call": {
+    "title": {
+      "incoming": "Llamada entrante",
+      "outgoing": "Llamada de voz",
+      "active": "En llamada"
+    },
+    "hint": {
+      "incoming": "{{name}} te está llamando",
+      "outgoing": "Llamando a {{name}}…",
+      "active": "Conectado — el audio está activo"
+    },
+    "cancelOutgoing": "Cancelar llamada",
+    "a11y": {
+      "accept": "Contestar llamada",
+      "decline": "Rechazar llamada",
+      "hangUp": "Colgar",
+      "mute": "Silenciar micrófono",
+      "unmute": "Activar micrófono"
+    }
+  }
+}

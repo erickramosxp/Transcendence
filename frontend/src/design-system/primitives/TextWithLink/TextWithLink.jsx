@@ -1,7 +1,7 @@
 import { parseTextWithLinks } from "@/shared/linkPreview";
 import { cn } from "@/design-system/tokens/colors";
 
-export function TextWithLink({ text, className = "" }) {
+export function TextWithLink({ text, className = "", linkClassName }) {
 	const parts = parseTextWithLinks(text);
 
 	return (
@@ -14,7 +14,8 @@ export function TextWithLink({ text, className = "" }) {
 						target="_blank"
 						rel="noopener noreferrer"
 						className={cn(
-							"text-primary hover:opacity-80 hover:underline underline-offset-2 break-all transition-colors"
+							"text-primary hover:opacity-80 hover:underline underline-offset-2 break-all transition-colors",
+							linkClassName,
 						)}
 					>
 						{part.content}

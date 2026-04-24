@@ -1,0 +1,45 @@
+{
+    "title": "Friends",
+    "tabs": {
+        "friends": "Friends",
+        "requests": "Requests",
+        "discover": "Discover"
+    },
+    "search": {
+        "placeholder": "Search...",
+        "button": "Search",
+        "loadMore": "Load more",
+        "loadingMore": "Loading..."
+    },
+    "empty": {
+        "friends": "No friends here yet.",
+        "requests": "You have no pending friend requests.",
+        "default": "Empty list.",
+        "notFound": "No results found."
+    },
+    "buttons": {
+        "add": "Add",
+        "addFriend": "Add friend",
+        "cancel": "Cancel",
+        "undoFriendship": "Remove friend",
+        "accept": "Accept",
+        "reject": "Reject",
+        "reply": "Reply",
+        "acceptInvite": "Accept invite",
+        "rejectInvite": "Reject invite"
+    },
+    "toast": {
+        "loadFriendsError": "Failed to load friends",
+        "loadRequestsError": "Failed to load requests",
+        "requestSentSuccess": "Friend request sent",
+        "requestSentError": "Failed to send friend request",
+        "requestCanceledSuccess": "Friend request canceled",
+        "requestCanceledError": "Failed to cancel friend request",
+        "requestAcceptedSuccess": "Friend request accepted",
+        "requestAcceptedError": "Failed to accept friend request",
+        "requestRejectedSuccess": "Friend request rejected",
+        "requestRejectedError": "Failed to reject friend request",
+        "friendRemovedSuccess": "Friend removed",
+        "friendRemovedError": "Failed to remove friend"
+    }
+}

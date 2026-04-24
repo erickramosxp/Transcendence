@@ -14,7 +14,7 @@ services:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://database_dev:5432/${DATABASE_NAME}
       QUARKUS_DATASOURCE_USERNAME: ${DATABASE_USER}
       QUARKUS_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
-      QUARKUS_HTTP_CORS_ORIGINS: ${DEV_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      QUARKUS_HTTP_CORS_ORIGINS: ${DEV_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,http://localhost:8081,https://localhost:8443}
       QUARKUS_DATASOURCE_WEB_ID_GOOGLE: ${GOOGLE_WEB_CLIENT_ID}
       QUARKUS_GOOGLE_WEB_CLIENT_SECRET: ${GOOGLE_WEB_CLIENT_SECRET}
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
@@ -49,6 +49,24 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    depends_on:
+      backend_dev:
+        condition: service_healthy
+
+  nginx_dev:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile.dev
+      args:
+        VITE_BACKEND_URL: /api
+        VITE_GOOGLE_WEB_CLIENT_ID: ${GOOGLE_WEB_CLIENT_ID}
+        FRONTEND_SERVER_NAME: localhost
+        BACKEND_SERVER_NAME: localhost
+        MINIO_ENDPOINT: localhost
+        MINIO_API_ENDPOINT: localhost
+    ports:
+      - "8081:80"
+      - "8443:443"
     depends_on:
       backend_dev:
         condition: service_healthy
