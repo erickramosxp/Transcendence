@@ -50,6 +50,7 @@ export const WS_INCOMING_EVENTS = {
 
     /**
      * Sent after a message is persisted.
+     * 
      */
     MESSAGE_CREATED: 'MESSAGE_CREATED',
 

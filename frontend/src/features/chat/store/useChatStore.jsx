@@ -17,11 +17,39 @@
 
 import { create } from 'zustand'
 
+const updateConversationPreview = (
+    conversations,
+    message,
+    incrementUnread = false
+) => {
+    const updated = conversations.map((chat) => {
+        if (chat.chatId !== message.chatId) {
+            return chat
+        }
+
+        return {
+            ...chat,
+            lastMessage: message.text,
+            lastMessageAt: message.createdAt,
+            unreadCount: incrementUnread
+                ? (chat.unreadCount || 0) + 1
+                : chat.unreadCount
+        }
+    })
+
+    return updated.sort(
+        (a, b) =>
+            new Date(b.lastMessageAt) -
+            new Date(a.lastMessageAt)
+    )
+}
+
 export const useChatStore = create((set) => ({
 
     activeChatId: null,
     messages: [],
     typingUsers: [],
+    conversations: [],
 
     setActiveChat: (chatId) =>
         set({
@@ -48,6 +76,33 @@ export const useChatStore = create((set) => ({
 
             return {
                 messages: [...state.messages, message]
+            }
+        }),
+
+    handleIncomingMessage: (message) =>
+        set((state) => {
+            const isCurrentChat =
+                state.activeChatId === message.chatId
+
+            let updatedMessages = state.messages
+
+            if (isCurrentChat) {
+                updatedMessages = [
+                    ...state.messages,
+                    message
+                ]
+            }
+
+            const updatedConversations =
+                updateConversationPreview(
+                    state.conversations,
+                    message,
+                    !isCurrentChat
+                )
+
+            return {
+                messages: updatedMessages,
+                conversations: updatedConversations
             }
         }),
 

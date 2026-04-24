@@ -14,10 +14,11 @@ import { useChatStore } from '@/features/chat/store/useChatStore'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 
-import { 
-    WS_SEND_EVENTS, 
-    WS_INCOMING_EVENTS, 
-    WS_ERROR_CODES } from '@/shared/constants/websocket'
+import {
+    WS_SEND_EVENTS,
+    WS_INCOMING_EVENTS,
+    WS_ERROR_CODES
+} from '@/shared/constants/websocket'
 
 export const useSocketStore = create((set, get) => ({
     socket: null,
@@ -50,6 +51,12 @@ export const useSocketStore = create((set, get) => ({
             console.error('WebSocket error')
         }
 
+        const handleMessageCreated = (message) => {
+            useChatStore
+                .getState()
+                .addMessage(message)
+        }
+
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data)
 
@@ -57,6 +64,7 @@ export const useSocketStore = create((set, get) => ({
                 case WS_INCOMING_EVENTS.PONG:
                     break;
                 case WS_INCOMING_EVENTS.MESSAGE_CREATED:
+                    handleMessageCreated(data);
                     break;
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:
                     break;
