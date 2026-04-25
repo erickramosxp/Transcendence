@@ -49,18 +49,14 @@ public class ChatParticipant extends PanacheEntityBase {
 
     public static Optional<Chat> findDirectChatId(Long user1Id, Long user2Id) {
         return find("""
-            SELECT c
-            FROM Chat c
-            WHERE c.type = 'direct'
-              AND (SELECT COUNT(p.id) FROM ChatParticipant p WHERE p.chat.id = c.id) = 2
-              AND EXISTS (
-                  SELECT 1 FROM ChatParticipant p1
-                  WHERE p1.chat.id = c.id AND p1.user.id = ?1
-              )
-              AND EXISTS (
-                  SELECT 1 FROM ChatParticipant p2
-                  WHERE p2.chat.id = c.id AND p2.user.id = ?2
-              )
+                SELECT DISTINCT c
+                FROM Chat c
+                JOIN ChatParticipant p1 ON p1.chat.id = c.id
+                JOIN ChatParticipant p2 ON p2.chat.id = c.id
+                WHERE c.type = 'direct'
+                  AND p1.user.id = ?1
+                  AND p2.user.id = ?2
+                  AND ?1 <> ?2
             """, user1Id, user2Id).firstResultOptional();
     }
 }
