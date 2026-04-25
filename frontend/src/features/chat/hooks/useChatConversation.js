@@ -22,7 +22,16 @@ export function useChatConversation(currentChat, options = {}) {
 	const shouldScrollToBottomRef = useRef(false);
 
 	const currentUserId = readCurrentUserId();
-	const peerName = currentChat?.name ?? t("peerFallback");
+	const peerName =
+		(currentChat?.name ?? "").trim() ||
+		(currentChat?.type === "direct"
+			? (currentChat?.user?.name ?? "").trim() ||
+				(currentChat?.user?.username
+					? `@${currentChat.user.username}`
+					: "")
+			: "") ||
+		(currentChat?.chatName ?? "").trim() ||
+		t("peerFallback");
 
 	// const messages = useChatStore(
 	// 	(state) => state.messages

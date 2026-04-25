@@ -74,7 +74,12 @@ export default function ChatList({
 
 	function closeAddModal() {
 		setAddOpen(false);
-		setAddTab(ADD_CONVERSATION_TAB.GROUP);
+		setAddTab(ADD_CONVERSATION_TAB.DM);
+	}
+
+	function openAddModal() {
+		setAddTab(ADD_CONVERSATION_TAB.DM);
+		setAddOpen(true);
 	}
 
 	useEffect(() => {
@@ -114,7 +119,7 @@ export default function ChatList({
 					variant="ghost"
 					size="icon"
 					aria-label={t("list.add.openAriaLabel")}
-					onClick={() => setAddOpen(true)}
+					onClick={openAddModal}
 				>
 					<MessageCirclePlus className="size-5 text-muted-foreground sm:size-6" />
 				</Button>

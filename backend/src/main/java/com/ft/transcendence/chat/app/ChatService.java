@@ -63,21 +63,24 @@ public class ChatService {
         if (currentUserId.equals(userBId))
             throw new BadRequestException("Can't create chat with yourself");
 
-        Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
-        if (existing.isPresent())
-            return ChatResponse.of(existing.get(), null, null);
-
         User userA = User.findById(currentUserId);
         User userB = User.findById(userBId);
         if (userA == null || userB == null)
             throw new NotFoundException("User not found");
+
+        Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
+        if (existing.isPresent()) {
+            UserMessageResponse otherUser = UserMessageResponse.of(userB);
+            ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", existing.get().id).firstResult();
+            return ChatResponse.of(existing.get(), otherUser, lastMessage);
+        }
 
         Chat chat = Chat.createDirectChat();
 
         ChatParticipant.create(chat, userA, "member");
         ChatParticipant.create(chat, userB, "member");
 
-        return ChatResponse.of(chat);
+        return ChatResponse.of(chat, UserMessageResponse.of(userB), null);
     }
 
     @Transactional
