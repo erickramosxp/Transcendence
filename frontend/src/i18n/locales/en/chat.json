@@ -36,6 +36,7 @@
       "createErrorDmSelf": "You can't start a chat only with yourself.",
       "createErrorGeneric": "Could not create the conversation.",
       "createErrorNoMembers": "Add at least one member.",
+      "createSuccess": "Conversation created.",
       "creating": "Creating…"
     }
   },
