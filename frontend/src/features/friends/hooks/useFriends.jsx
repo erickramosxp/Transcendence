@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getFriendPendingRequests, getListFriends } from '../service/friendService';
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next';
+import { usePresenceStore } from '../store/usePresenceStore';
 
 export const useFriends = () => {
 
@@ -15,6 +16,7 @@ export const useFriends = () => {
 
     // const [page, setPage] = useState(0);
     const [hasMoreFriends, setHasMoreFriends] = useState(true);
+    const isUserOnline = usePresenceStore((state) => state.isUserOnline);
 
 
     const fetchFriends = useCallback(async (currentPage, searchQuery = "", isNewSearch = false) => {
@@ -28,7 +30,13 @@ export const useFriends = () => {
             }
 
             const resp = await getListFriends(currentPage, 8, searchQuery);
-            const newData = resp.data.items;
+            const rawData = resp.data.items;
+            
+            const newData = rawData.map((f) => ({
+                ...f,
+                isOnline: isUserOnline(f.friendId)
+            }))
+
             const backendHasMore = resp.data.hasMore;
 
             if (isNewSearch) {
