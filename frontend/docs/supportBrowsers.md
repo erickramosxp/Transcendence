@@ -193,8 +193,8 @@
 	Start at  17:50:16
 	Duration  33.36s (transform 828ms, setup 64.63s, import 32.64s, tests 71.15s, environment 1.93s)
 
-
 	```
+
 ---
 
 ### Limitações conhecidas por navegador
