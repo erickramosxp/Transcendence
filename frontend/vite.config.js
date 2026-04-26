@@ -60,7 +60,7 @@ export default defineConfig({
       test: {
         name: 'storybook',
         maxWorkers: 1,
-        filesParallelism: true,
+        fileParallelism: true,
         testTimeout: 30000,
         browser: {
           enabled: true,
