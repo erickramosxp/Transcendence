@@ -64,9 +64,13 @@ jobs:
         working-directory: frontend
         run: npx playwright install --with-deps chromium firefox
 
-      - name: Run unit/component tests
+      - name: Run unit tests
         working-directory: frontend
-        run: npx vitest run
+        run: npm run test
+
+      - name: Run Storybook tests (chromium + firefox)
+        working-directory: frontend
+        run: npm run test:storybook
 
       - name: Run E2E tests (chromium + firefox)
         working-directory: frontend

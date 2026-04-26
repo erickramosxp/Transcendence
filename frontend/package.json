@@ -8,10 +8,11 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run --project unit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:watch": "vitest --watch",
+    "test:watch": "vitest --watch --project unit",
+    "test:storybook": "vitest run --project storybook",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

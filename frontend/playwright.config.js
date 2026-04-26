@@ -1,24 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const isCI = !!process.env.CI;
-const mode = process.env.PW_MODE ?? 'preview';
-
-const isDevMode = mode === 'dev';
-
-const port = isDevMode ? 5173 : 4173;
+const port = 4173;
 const host = '127.0.0.1';
 const baseURL = `http://${host}:${port}`;
-
-const webServerCommand = isDevMode
-  ? `npm run dev -- --host ${host} --port ${port}`
-  : `npm run build && npm run preview -- --host ${host} --port ${port}`;
 
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  workers: isCI ? 1 : undefined,
-  forbidOnly: isCI,
-  retries: isCI ? 2 : 0,
+  workers:!!process.env.CI ? 1 : undefined,
+  forbidOnly: !!process.env.CI,
+  retries: !!process.env.CI ? 2 : 0,
   reporter: 'html',
   use: {
     baseURL,
@@ -35,9 +26,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: webServerCommand,
+    command: `npm run build && npm run preview -- --host ${host} --port ${port}`,
     url: baseURL,
-    reuseExistingServer: !isCI,
+    reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
 });

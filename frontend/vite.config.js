@@ -19,6 +19,9 @@ export default defineConfig({
     }
   },
   plugins: [react(), tailwindcss()],
+  build: {
+    chunkSizeWarningLimit: 1000
+  },
   server: {
     host: true,
     // Isso aqui libera o acesso externo (0.0.0.0)
@@ -32,9 +35,19 @@ export default defineConfig({
     projects: [{
       extends: true,
       test: {
+        name: 'unit',
         environment: "jsdom",
         globals: true,
-        setupFiles: "./src/test/setup.js"
+        setupFiles: "./src/test/setup.js",
+        include: [
+          'src/**/*.{test,spec}.{js,jsx,ts,tsx}'
+        ],
+        exclude: [
+          'node_modules/**',
+          'dist/**',
+          'e2e/**',
+          '**/*.e2e.*'
+        ]
       }
     }, {
       extends: true,
@@ -46,6 +59,9 @@ export default defineConfig({
       })],
       test: {
         name: 'storybook',
+        maxWorkers: 1,
+        filesParallelism: true,
+        testTimeout: 30000,
         browser: {
           enabled: true,
           headless: true,
