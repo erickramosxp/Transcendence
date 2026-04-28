@@ -28,7 +28,7 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-          
+
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
@@ -46,9 +46,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-        
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -56,14 +53,29 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      # lint omitido até o ESLint do projeto estar limpo (npm run lint)
-      - name: Install, test and build
+      - name: Install dependencies
         working-directory: frontend
-        run: |
-          npm ci
-          npx playwright install --with-deps
-          npx vitest run
-          npm run build
+        run: npm ci --include=dev
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Run unit tests
+        working-directory: frontend
+        run: npm run test
+
+      - name: Run Storybook tests (chromium + firefox)
+        working-directory: frontend
+        run: npm run test:storybook
+
+      - name: Run E2E tests (chromium + firefox)
+        working-directory: frontend
+        run: npm run test:e2e
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
