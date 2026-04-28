@@ -6,6 +6,8 @@ import {
 } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
+import { useChatStore } from "../store/useChatStore";
+import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 
 export function useChatConversation(currentChat, options = {}) {
 	const { onAfterMessageSent } = options;
@@ -30,6 +32,26 @@ export function useChatConversation(currentChat, options = {}) {
 			: "") ||
 		(currentChat?.chatName ?? "").trim() ||
 		t("peerFallback");
+
+	// const messages = useChatStore(
+	// 	(state) => state.messages
+	// )
+
+	// const setMessages = useChatStore(
+	// 	(state) => state.setMessages
+	// )
+
+	const clearCurrentChat = useChatStore(
+		(state) => state.clearCurrentChat
+	)
+
+	const setActiveChat = useChatStore(
+		(state) => state.setActiveChat
+	)
+
+	const send = useSocketStore(
+		(state) => state.send
+	)
 
 	useEffect(() => {
 		if (!currentChat) {

@@ -1,5 +1,6 @@
 package com.ft.transcendence.realtime.presence;
 
+import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.realtime.presence.dto.PresenceUpdatePayload;
 import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
@@ -23,6 +24,8 @@ public class RealtimePresenceHandler {
     PresenceService presenceService;
     @Inject
     RealtimeEventSender sender;
+    @Inject
+    StorageService storageService;
 
     private PresenceUpdatePayload getUserPayload(Long userId) {
         RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
@@ -42,6 +45,10 @@ public class RealtimePresenceHandler {
                 username = user.username;
                 avatarUrl = user.avatarUrl;
             }
+        }
+
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
         }
 
         return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
