@@ -20,7 +20,7 @@ export const ProgressBar = ({ value }) => {
     return (
         <div className="flex flex-col items-center gap-3 pt-5">
             <Progress.Root
-                className="relative h-[12px] w-[300px] overflow-hidden rounded-full bg-black/10"
+                className="relative h-3 min-w-60 max-w-75 overflow-hidden rounded-full bg-black/10"
                 value={displayValue}
             >
                 <Progress.Indicator

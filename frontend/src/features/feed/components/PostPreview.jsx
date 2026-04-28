@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Card, CardTitle, CardContent, CardHeader, Media, Avatar, LikeButton, TextWithLink, Separator } from '@/design-system';
 import { MessageSquare } from "lucide-react";
 import { cn } from '@/design-system/tokens/colors';
+import { useTranslation } from 'react-i18next';
 
 export const PostPreview = ({ content, file, user }) => {
 
     const [previewUrl, setPreviewUrl] = useState(null);
+    const { t } = useTranslation('feed'); 
 
     if (!content?.trim() && !file) return null;
 
@@ -30,7 +32,7 @@ export const PostPreview = ({ content, file, user }) => {
         <Card className='px-2 w-full'>
             <CardHeader>
                 <CardTitle>
-                    Post Preview
+                    {t('preview.title')}
                 </CardTitle>
                 <Separator />
             </CardHeader>
@@ -56,7 +58,7 @@ export const PostPreview = ({ content, file, user }) => {
                                 </span>
 
                                 <span className="text-muted-foreground">
-                                    now
+                                    {t('preview.time')}
                                 </span>
                             </div>
 
