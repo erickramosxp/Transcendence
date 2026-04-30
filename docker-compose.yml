@@ -20,11 +20,11 @@ services:
       QUARKUS_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
       QUARKUS_HTTP_PROXY_PROXY_ADDRESS_FORWARDING: "true"
       QUARKUS_MINIO_HOST: ${MINIO_API_ENDPOINT}
-      QUARKUS_MINIO_PORT: 80
+      QUARKUS_MINIO_PORT: 443
       QUARKUS_MINIO_ENDPOINT: http://minio:9000
       QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-      QUARKUS_MINIO_SECURE: "false"
+      QUARKUS_MINIO_SECURE: "true"
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
@@ -42,7 +42,7 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      MINIO_SERVER_URL: http://${MINIO_API_ENDPOINT}
+      MINIO_SERVER_URL: https://${MINIO_API_ENDPOINT}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
@@ -64,9 +64,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    # volumes:
-    #   - /etc/letsencrypt/live/SEU_DOMINIO/fullchain.pem:/etc/nginx/certs/nginx.crt:ro
-    #   - /etc/letsencrypt/live/SEU_DOMINIO/privkey.pem:/etc/nginx/certs/nginx.key:ro
+    volumes:
+      - /home/deploy/certs/config/live/143.198.185.76.nip.io/fullchain.pem:/etc/nginx/certs/nginx.crt:ro
+      - /home/deploy/certs/config/live/143.198.185.76.nip.io/privkey.pem:/etc/nginx/certs/nginx.key:ro
     restart: unless-stopped
     depends_on:
       backend:
