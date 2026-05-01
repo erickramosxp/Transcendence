@@ -48,7 +48,7 @@ public class CommentService {
 
 
         String avatarUrl  = comment.user.avatarUrl;
-        if (avatarUrl != null && !avatarUrl.isBlank() && !(avatarUrl.contains("http") || avatarUrl.contains("blob"))) {
+        if (avatarUrl != null && !avatarUrl.isBlank()) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
 
@@ -56,7 +56,7 @@ public class CommentService {
     }
 
     public CommentsByPostResponse commentsByPost(Long userId, Long postId) {
-        List<Comment> comments = Comment.find("post.id = ?1 order by createdAt desc", postId).list();
+        List<Comment> comments = Comment.find("post.id = ?1 and deletedAt is null order by createdAt desc", postId).list();
 
         List<Long> commentsIds = comments.stream().map(c -> c.id).toList();
 

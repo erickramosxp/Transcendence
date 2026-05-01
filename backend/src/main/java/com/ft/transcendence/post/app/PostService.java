@@ -1,5 +1,6 @@
 package com.ft.transcendence.post.app;
 
+import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.common.exception.PayloadTooLargeException;
 import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import com.ft.transcendence.common.media.MediaAnalysis;
@@ -14,8 +15,11 @@ import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.NotSupportedException;
 
 import java.io.IOException;
@@ -95,7 +99,7 @@ public class PostService {
             post.mediaUrl = path;
             mediaUrl = path;
 
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank()) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
         }
@@ -133,7 +137,7 @@ public class PostService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("order by createdAt desc")
+        List<Post> posts = Post.find("deletedAt is null order by createdAt desc")
                 .range(start, end).list();
 
         boolean hasMore = posts.size() > size;
@@ -154,12 +158,12 @@ public class PostService {
 
             String mediaUrl = p.mediaUrl;
 
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank()) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
 
             String avatarUrl  = p.user.avatarUrl;
-            if (avatarUrl != null) {
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
                 avatarUrl = avatarCache.computeIfAbsent(
                         avatarUrl,
                         storageService::generateUrl
@@ -176,4 +180,34 @@ public class PostService {
     }
 
 
+    @Transactional
+    public void deletePost(long userId, Long postId) {
+
+        Post post = Post.findById(postId, LockModeType.PESSIMISTIC_WRITE);
+
+        if (post == null) {
+            throw new NotFoundException();
+        }
+
+        User user = post.user;
+        System.out.println("Verificando id do usuario e do dono do post");
+        System.out.println("Dono: " + user.id + " Dono da requisição: " + userId);
+        if (user.id != userId) {
+            throw new ForbiddenException();
+        }
+
+        if (post.deletedAt != null) {
+            return;
+        }
+
+        var now = OffsetDateTime.now();
+
+        post.deletedAt = now;
+
+        Comment.update("deletedAt = ?1 where post.id = ?2", now, postId);
+
+        Like.delete("post.id = ?1", postId);
+
+        Like.delete("comment.post.id = ?1", postId);
+    }
 }
