@@ -74,12 +74,10 @@
   --chat-list-item-selected: #dee4ee;
 
   /* Painel principal do chat (vazio + conversa): light usa brilho suave; dark fica uniforme */
-  --chat-window-surface: radial-gradient(
-    ellipse 100% 72% at 50% 0%,
-    var(--yale-blue-50) 0%,
-    var(--background) 52%,
-    var(--background) 100%
-  );
+  --chat-window-surface: radial-gradient(ellipse 100% 72% at 50% 0%,
+      var(--yale-blue-50) 0%,
+      var(--background) 52%,
+      var(--background) 100%);
 
   /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -393,6 +391,7 @@
 
 /* Chat: layout e peças reutilizáveis (evita longas strings de utilitários nos .jsx) */
 @layer components {
+
   .ds-emoji-flag {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     @apply inline-flex items-center justify-center align-middle leading-none;
@@ -401,12 +400,13 @@
   .ds-chat-window-surface {
     background: var(--chat-window-surface);
   }
+
   .ds-chat-layout {
     @apply flex h-full min-h-0 w-full flex-col overflow-hidden bg-background md:flex-row;
   }
 
   .ds-chat-sidebar {
-    @apply flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%,20rem)] md:max-w-[380px] md:shrink-0 md:border-r;
+    @apply flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%, 20rem)] md:max-w-[380px] md:shrink-0 md:border-r;
   }
 
   .ds-chat-main {
@@ -562,7 +562,7 @@
   }
 
   .ds-chat-bubble {
-    @apply relative max-w-[min(85%,28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
+    @apply relative max-w-[min(85%, 28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
   }
 
   .ds-chat-bubble--mine {
