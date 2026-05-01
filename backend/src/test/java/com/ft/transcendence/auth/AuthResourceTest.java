@@ -144,4 +144,83 @@ public class AuthResourceTest extends BaseApiTest {
                 .then()
                 .statusCode(401);
     }
+
+    @Test
+    public void testChangePasswordSuccess() {
+        UserTestContext user = createUser();
+
+        auth(user)
+                .body("""
+                {
+                  "currentPassword": "123456",
+                  "newPassword": "newpassword123"
+                }
+                """)
+                .when()
+                .patch("/auth/password")
+                .then()
+                .statusCode(204);
+
+        given()
+                .contentType("application/json")
+                .body("""
+                {
+                  "username": "%s",
+                  "password": "newpassword123"
+                }
+                """.formatted(user.email))
+                .post("/auth/login")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testChangePasswordWrongCurrentPassword() {
+        UserTestContext user = createUser();
+
+        auth(user)
+                .body("""
+                {
+                  "currentPassword": "wrongpassword",
+                  "newPassword": "newpassword123"
+                }
+                """)
+                .when()
+                .patch("/auth/password")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testChangePasswordTooShort() {
+        UserTestContext user = createUser();
+
+        auth(user)
+                .body("""
+                {
+                  "currentPassword": "123456",
+                  "newPassword": "short"
+                }
+                """)
+                .when()
+                .patch("/auth/password")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testChangePasswordRequiresAuth() {
+        given()
+                .contentType("application/json")
+                .body("""
+                {
+                  "currentPassword": "123456",
+                  "newPassword": "newpassword123"
+                }
+                """)
+                .when()
+                .patch("/auth/password")
+                .then()
+                .statusCode(401);
+    }
 }
