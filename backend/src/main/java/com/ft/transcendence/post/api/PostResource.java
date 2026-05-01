@@ -75,7 +75,6 @@ public class PostResource {
     @Authenticated
     public Response deletePost(@PathParam("postId") Long postId) {
 
-        System.out.println("Entrei aqui");
         long userId = currentUser.id();
         postService.deletePost(userId, postId);
         return Response.noContent().build();

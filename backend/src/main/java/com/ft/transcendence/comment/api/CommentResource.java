@@ -56,4 +56,14 @@ public class CommentResource {
         likeService.unlikeComment(userId, commentId);
         return Response.noContent().build();
     }
+
+    @DELETE
+    @Path("{commentId}")
+    @Authenticated
+    public Response deleteComment(@PathParam("commentId") Long commentId) {
+
+        long userId = currentUser.id();
+        commentService.deleteComment(userId, commentId);
+        return Response.noContent().build();
+    }
 }

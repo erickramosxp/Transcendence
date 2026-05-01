@@ -181,7 +181,7 @@ public class PostService {
 
 
     @Transactional
-    public void deletePost(long userId, Long postId) {
+    public void deletePost(Long userId, Long postId) {
 
         Post post = Post.findById(postId, LockModeType.PESSIMISTIC_WRITE);
 
@@ -190,8 +190,6 @@ public class PostService {
         }
 
         User user = post.user;
-        System.out.println("Verificando id do usuario e do dono do post");
-        System.out.println("Dono: " + user.id + " Dono da requisição: " + userId);
         if (user.id != userId) {
             throw new ForbiddenException();
         }

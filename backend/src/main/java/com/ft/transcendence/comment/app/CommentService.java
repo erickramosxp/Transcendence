@@ -9,10 +9,13 @@ import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -79,5 +82,31 @@ public class CommentService {
             return CommentResponse.of(c, likedCommentIds.contains(c.id), avatarUrl);
         }).toList();
         return resp;
+    }
+
+    @Transactional
+    public void deleteComment(Long userId, Long commentId) {
+
+        Comment comment = Comment.findById(commentId, LockModeType.PESSIMISTIC_WRITE);
+
+        if (comment == null) {
+            throw new NotFoundException();
+        }
+        User user = comment.user;
+
+        if (user.id != userId) {
+            throw new ForbiddenException();
+        }
+
+        if (comment.deletedAt != null) {
+            return;
+        }
+
+        var now = OffsetDateTime.now();
+
+        comment.deletedAt = now;
+        Post.update("commentCount = commentCount - 1 where id = ?1", comment.post.id);
+        Like.delete("comment.id = ?1", commentId);
+
     }
 }
