@@ -65,6 +65,14 @@ export const useChatStore = create((set) => ({
     addMessage: (message) =>
 
         set((state) => {
+            // evita entrar
+            if (
+                state.activeChatId != null &&
+                message.chatId != null &&
+                Number(message.chatId) !== Number(state.activeChatId)
+            ) {
+                return state;
+            }
             // evita duplicata
             const alreadyExists = state.messages.some(
                 (msg) => msg.id === message.id
@@ -111,10 +119,15 @@ export const useChatStore = create((set) => ({
             activeChatId: null,
             messages: [],
             typingUsers: []
-        })
+        }),
+
+    prependMessages: (olderMessages) =>
+        set((state) => ({
+            messages: [...olderMessages, ...state.messages],
+        })),
 }))
 
 // const messages = useChatStore(...)
-messages: []
-activeConversation: 42
-typingUsers: []
+// messages: []
+// activeConversation: 42
+// typingUsers: []

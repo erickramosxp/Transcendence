@@ -1,20 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	getConversation,
-	sendMessages,
-} from "@/features/chat/services/chatService";
+import { getConversation, sendMessages } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
 import { useChatStore } from "../store/useChatStore";
 import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
+import { withChatId } from "@/features/chat/utils/mapMessagesWithChatId.js";
+import { WS_SEND_EVENTS } from "@/shared/constants/websocket";
 
 export function useChatConversation(currentChat, options = {}) {
 	const { onAfterMessageSent } = options;
 	const { t } = useTranslation("chat");
 	const listRef = useRef(null);
 
-	const [messages, setMessages] = useState([]);
+	// const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [nextOlderPage, setNextOlderPage] = useState(null);
@@ -33,21 +32,29 @@ export function useChatConversation(currentChat, options = {}) {
 		(currentChat?.chatName ?? "").trim() ||
 		t("peerFallback");
 
-	// const messages = useChatStore(
-	// 	(state) => state.messages
-	// )
+	const messages = useChatStore(
+		(state) => state.messages
+	);
 
-	// const setMessages = useChatStore(
-	// 	(state) => state.setMessages
-	// )
+	const addMessage = useChatStore(
+		(state) => state.addMessage
+	);
+
+	const setMessages = useChatStore(
+		(state) => state.setMessages
+	);
+
+	const prependMessages = useChatStore(
+		(state) => state.prependMessages
+	);
 
 	const clearCurrentChat = useChatStore(
 		(state) => state.clearCurrentChat
-	)
+	);
 
 	const setActiveChat = useChatStore(
 		(state) => state.setActiveChat
-	)
+	);
 
 	const send = useSocketStore(
 		(state) => state.send
@@ -55,7 +62,7 @@ export function useChatConversation(currentChat, options = {}) {
 
 	useEffect(() => {
 		if (!currentChat) {
-			setMessages([]);
+			clearCurrentChat();
 			setNextOlderPage(null);
 			setError(null);
 			return;
@@ -69,13 +76,15 @@ export function useChatConversation(currentChat, options = {}) {
 			setError(null);
 			setNextOlderPage(null);
 			shouldScrollToBottomRef.current = true;
+			setActiveChat(convId);
+			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, {chatId: convId });
 			try {
 				const data = await getConversation(convId, { page: 0, size: 20 });
 				if (cancelled) return;
 				const ui = data.messages.map((m) =>
 					mapMessageSenderData(m, currentUserId, peerName),
 				);
-				setMessages(ui);
+				setMessages(withChatId(ui, convId));
 				setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			} catch (e) {
 				if (!cancelled) setError(e?.message ?? t("errors.load"));
@@ -86,8 +95,9 @@ export function useChatConversation(currentChat, options = {}) {
 
 		return () => {
 			cancelled = true;
+			send(WS_SEND_EVENTS.CHAT_UNSUBSCRIBE, {chatId: convId });
 		};
-	}, [currentChat?.id, currentUserId, peerName, t]);
+	}, [currentChat?.id, send, clearCurrentChat, currentUserId, peerName, t]);
 
 	useEffect(() => {
 		if (!shouldScrollToBottomRef.current) return;
@@ -115,7 +125,7 @@ export function useChatConversation(currentChat, options = {}) {
 			const ui = data.messages.map((m) =>
 				mapMessageSenderData(m, currentUserId, peerName),
 			);
-			setMessages((prev) => [...ui, ...prev]);
+			prependMessages(withChatId(ui, currentChat.id));
 			setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			requestAnimationFrame(() => {
 				if (el) el.scrollTop = el.scrollHeight - prevH;
@@ -144,7 +154,7 @@ export function useChatConversation(currentChat, options = {}) {
 					currentUserId,
 				);
 				const ui = mapMessageSenderData(created, currentUserId, peerName);
-				setMessages((prev) => [...prev, ui]);
+				addMessage({ ...ui, chatId: currentChat.id });
 				const createdAt =
 					created.createdAt ?? ui.timestamp;
 				onAfterMessageSent?.({

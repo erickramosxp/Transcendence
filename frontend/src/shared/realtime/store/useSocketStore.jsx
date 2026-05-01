@@ -76,6 +76,7 @@ export const useSocketStore = create((set, get) => ({
         }
 
         const handleMessageCreated = (message) => {
+            if (!message.id) return;
             useChatStore
                 .getState()
                 .addMessage(message)
@@ -94,9 +95,11 @@ export const useSocketStore = create((set, get) => ({
                 case WS_SEND_EVENTS.PING:
                     get().send(WS_INCOMING_EVENTS.PONG);
                     break;
-                case WS_INCOMING_EVENTS.MESSAGE_CREATED:
-                    handleMessageCreated(data);
+                case WS_INCOMING_EVENTS.MESSAGE_CREATED: {
+                    const payload = data.payload ?? data;
+                    handleMessageCreated(payload);
                     break;
+                }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:
                     console.log("presença atualizada ", data);
                     usePresenceStore
