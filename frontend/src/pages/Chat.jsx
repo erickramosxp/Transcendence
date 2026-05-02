@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
@@ -7,6 +7,7 @@ import { sortChatsByRecency, applyChatListFocus } from "@/features/chat/utils/so
 import { Loading } from "@/design-system";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { useChatStore } from "@/features/chat/store/useChatStore";
 
 export function Chat() {
 	const { t } = useTranslation("chat");
@@ -103,6 +104,11 @@ export function Chat() {
 			return { ...sel, lastMessage };
 		});
 	}, []);
+
+	useLayoutEffect(() => {
+		useChatStore.getState().setListBumpHandler(bumpChatAfterMessage);
+		return () => useChatStore.getState().setListBumpHandler(null);
+	}, [bumpChatAfterMessage]);
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {

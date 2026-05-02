@@ -17,7 +17,7 @@ export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) 
 		currentUserId,
 	} = useChatConversation(currentChat, { onAfterMessageSent });
 
-	
+
 	if (!currentChat) {
 		return <ChatEmptyState />;
 	}

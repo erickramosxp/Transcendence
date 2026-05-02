@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getConversation, sendMessages } from "@/features/chat/services/chatService";
+import { getConversation } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
 import { useChatStore } from "../store/useChatStore";
@@ -8,17 +8,26 @@ import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 import { withChatId } from "@/features/chat/utils/mapMessagesWithChatId.js";
 import { WS_SEND_EVENTS } from "@/shared/constants/websocket";
 
+const NEAR_BOTTOM_PX = 100;
+
+function updateStickToBottom(el) {
+	if (!el) return false;
+	const { scrollTop, scrollHeight, clientHeight } = el;
+	const distanceFromBottom = scrollHeight - clientHeight - scrollTop;
+	return distanceFromBottom <= NEAR_BOTTOM_PX;
+}
+
 export function useChatConversation(currentChat, options = {}) {
-	const { onAfterMessageSent } = options;
+	const { onAfterMessageSent, scrollToBottomOnOpen = true } = options;
 	const { t } = useTranslation("chat");
 	const listRef = useRef(null);
 
-	// const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [nextOlderPage, setNextOlderPage] = useState(null);
 	const [loadingOlder, setLoadingOlder] = useState(false);
 	const shouldScrollToBottomRef = useRef(false);
+	const stickToBottomRef = useRef(true);
 
 	const currentUserId = readCurrentUserId();
 	const peerName =
@@ -34,10 +43,6 @@ export function useChatConversation(currentChat, options = {}) {
 
 	const messages = useChatStore(
 		(state) => state.messages
-	);
-
-	const addMessage = useChatStore(
-		(state) => state.addMessage
 	);
 
 	const setMessages = useChatStore(
@@ -75,9 +80,14 @@ export function useChatConversation(currentChat, options = {}) {
 			setLoading(true);
 			setError(null);
 			setNextOlderPage(null);
-			shouldScrollToBottomRef.current = true;
+			if (scrollToBottomOnOpen) {
+				shouldScrollToBottomRef.current = true;
+				stickToBottomRef.current = true;
+			} else {
+				shouldScrollToBottomRef.current = false;
+				stickToBottomRef.current = false;
+			}
 			setActiveChat(convId);
-			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, {chatId: convId });
 			try {
 				const data = await getConversation(convId, { page: 0, size: 20 });
 				if (cancelled) return;
@@ -95,20 +105,38 @@ export function useChatConversation(currentChat, options = {}) {
 
 		return () => {
 			cancelled = true;
-			send(WS_SEND_EVENTS.CHAT_UNSUBSCRIBE, {chatId: convId });
 		};
-	}, [currentChat?.id, send, clearCurrentChat, currentUserId, peerName, t]);
+	}, [
+		currentChat?.id,
+		clearCurrentChat,
+		setActiveChat,
+		setMessages,
+		currentUserId,
+		peerName,
+		t,
+		scrollToBottomOnOpen,
+	]);
 
 	useEffect(() => {
-		if (!shouldScrollToBottomRef.current) return;
-		if (!listRef.current) return;
+		if (loading) return;
+		const el = listRef.current;
+		if (!el) return;
+
+		const shouldScroll =
+			shouldScrollToBottomRef.current || stickToBottomRef.current;
+
+		if (!shouldScroll) return;
+
 		requestAnimationFrame(() => {
-			if (listRef.current) {
-				listRef.current.scrollTop = listRef.current.scrollHeight;
+			requestAnimationFrame(() => {
+				const node = listRef.current;
+				if (!node) return;
+				node.scrollTop = node.scrollHeight;
 				shouldScrollToBottomRef.current = false;
-			}
+				stickToBottomRef.current = true;
+			});
 		});
-	}, [messages]);
+	}, [messages, loading]);
 
 	const loadOlder = useCallback(async () => {
 		if (!currentChat || !nextOlderPage || loadingOlder) return;
@@ -135,44 +163,48 @@ export function useChatConversation(currentChat, options = {}) {
 		} finally {
 			setLoadingOlder(false);
 		}
-	}, [currentChat, nextOlderPage, loadingOlder, currentUserId, peerName, t]);
+	}, [
+		currentChat,
+		nextOlderPage,
+		loadingOlder,
+		currentUserId,
+		peerName,
+		t,
+		prependMessages,
+	]);
 
 	const onScroll = useCallback(
 		(e) => {
-			if (e.target.scrollTop < 80) loadOlder();
+			const el = e.target;
+			stickToBottomRef.current = updateStickToBottom(el);
+			if (el.scrollTop < 80) loadOlder();
 		},
 		[loadOlder],
 	);
 
 	const handleSendMessage = useCallback(
-		async (text) => {
+		(text) => {
 			if (!currentChat) return;
-			try {
-				const created = await sendMessages(
-					currentChat.id,
-					text,
-					currentUserId,
-				);
-				const ui = mapMessageSenderData(created, currentUserId, peerName);
-				addMessage({ ...ui, chatId: currentChat.id });
-				const createdAt =
-					created.createdAt ?? ui.timestamp;
-				onAfterMessageSent?.({
-					chatId: currentChat.id,
-					lastMessage: {
-						text: created.text ?? text,
-						createdAt,
-					},
-				});
-				requestAnimationFrame(() => {
-					if (listRef.current)
-						listRef.current.scrollTop = listRef.current.scrollHeight;
-				});
-			} catch (e) {
-				setError(e?.message ?? t("errors.send"));
-			}
+			const trimmed = (text ?? "").trim();
+			if (!trimmed) return;
+
+			stickToBottomRef.current = true;
+			shouldScrollToBottomRef.current = true;
+
+			send(WS_SEND_EVENTS.SEND_MESSAGE, {
+				chatId: currentChat.id,
+				text: trimmed,
+			});
+
+			onAfterMessageSent?.({
+				chatId: currentChat.id,
+				lastMessage: {
+					text: trimmed,
+					createdAt: new Date().toISOString(),
+				},
+			});
 		},
-		[currentChat, currentUserId, peerName, t, onAfterMessageSent],
+		[currentChat, send, onAfterMessageSent],
 	);
 
 	return {

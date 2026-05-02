@@ -17,6 +17,11 @@
 
 import { create } from 'zustand'
 
+function sameMessageId(a, b) {
+	if (a == null || b == null) return false
+	return Number(a) === Number(b)
+}
+
 const updateConversationPreview = (
     conversations,
     message,
@@ -44,12 +49,33 @@ const updateConversationPreview = (
     )
 }
 
-export const useChatStore = create((set) => ({
+export const useChatStore = create((set, get) => ({
 
     activeChatId: null,
     messages: [],
     typingUsers: [],
     conversations: [],
+    listBumpHandler: null,
+    pendingListBumps: [],
+    setListBumpHandler: (fn) => {
+        const pending = [...(get().pendingListBumps ?? [])]
+        set({ listBumpHandler: fn, pendingListBumps: [] })
+        if (typeof fn === 'function' && pending.length > 0) {
+            queueMicrotask(() => {
+                pending.forEach((p) => fn(p))
+            })
+        }
+    },
+    dispatchListBump: (payload) => {
+        const h = get().listBumpHandler
+        if (typeof h === 'function') {
+            h(payload)
+        } else {
+            set((s) => ({
+                pendingListBumps: [...(s.pendingListBumps ?? []), payload],
+            }))
+        }
+    },
 
     setActiveChat: (chatId) =>
         set({
@@ -74,8 +100,8 @@ export const useChatStore = create((set) => ({
                 return state;
             }
             // evita duplicata
-            const alreadyExists = state.messages.some(
-                (msg) => msg.id === message.id
+            const alreadyExists = state.messages.some((msg) =>
+                sameMessageId(msg.id, message.id),
             )
 
             if (alreadyExists) {
@@ -131,3 +157,4 @@ export const useChatStore = create((set) => ({
 // messages: []
 // activeConversation: 42
 // typingUsers: []
+

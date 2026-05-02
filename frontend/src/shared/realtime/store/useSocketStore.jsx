@@ -11,6 +11,8 @@
 
 import { create } from 'zustand'
 import { useChatStore } from '@/features/chat/store/useChatStore'
+import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
+import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
@@ -75,19 +77,49 @@ export const useSocketStore = create((set, get) => ({
             ws.close();
         }
 
-        const handleMessageCreated = (message) => {
-            if (!message.id) return;
-            useChatStore
-                .getState()
-                .addMessage(message)
+        const handleMessageCreated = (payload) => {
+            if (!payload?.id) return
+
+            const peerFallback =
+                payload.user?.name?.trim() ||
+                (payload.user?.username
+                    ? `@${payload.user.username}`
+                    : 'User')
+
+            const ui = mapMessageSenderData(
+                payload,
+                readCurrentUserId(),
+                peerFallback
+            )
+
+            useChatStore.getState().addMessage({
+                ...ui,
+                chatId: payload.chatId
+            })
+
+            if (payload.chatId != null) {
+                const createdAt =
+                    payload.createdAt != null
+                        ? String(payload.createdAt)
+                        : new Date().toISOString()
+                useChatStore.getState().dispatchListBump({
+                    chatId: payload.chatId,
+                    lastMessage: {
+                        text: payload.text ?? '',
+                        createdAt,
+                    },
+                })
+            }
         }
 
         ws.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-
-            // console.log("evento chegando");
-            // console.log(event);
-
+            let data
+            try {
+                data = JSON.parse(event.data)
+            } catch (e) {
+                console.error('[WS] JSON inválido', e)
+                return
+            }
 
             switch (data.type) {
                 case WS_INCOMING_EVENTS.PONG:
@@ -110,6 +142,7 @@ export const useSocketStore = create((set, get) => ({
                     console.log("lista inicial de onlines", data);
                     break;
                 case WS_INCOMING_EVENTS.ERROR:
+                    console.warn('[WS] ERROR', data.payload)
                     break;
                 // case WS_ERROR_CODES.UNAUTHORIZED_CHAT_ACCESS:
                 //     break;
