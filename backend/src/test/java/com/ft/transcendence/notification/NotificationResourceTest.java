@@ -28,6 +28,7 @@ public class NotificationResourceTest extends BaseApiTest {
     private void likePost(UserTestContext liker, Long postId) {
         given()
                 .header("Authorization", "Bearer " + liker.token)
+                .contentType("application/json")
                 .when()
                 .post("/posts/" + postId + "/like")
                 .then()
