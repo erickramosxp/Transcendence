@@ -6,13 +6,14 @@ import com.ft.transcendence.comment.dto.CommentResponse;
 import com.ft.transcendence.comment.dto.CommentsByPostResponse;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.inject.Inject;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -24,6 +25,9 @@ public class CommentService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    NotificationDispatcher notificationDispatcher;
 
     @Transactional
     public CommentResponse create(Long userId, CommentRequest req) {
@@ -46,11 +50,12 @@ public class CommentService {
 
         post.commentCount = post.commentCount + 1;
 
-
-        String avatarUrl  = comment.user.avatarUrl;
+        String avatarUrl = comment.user.avatarUrl;
         if (avatarUrl != null && !avatarUrl.isBlank() && !(avatarUrl.contains("http") || avatarUrl.contains("blob"))) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
+
+        notificationDispatcher.onComment(comment.user, comment);
 
         return CommentResponse.of(comment, false, avatarUrl);
     }
@@ -68,7 +73,7 @@ public class CommentService {
         Map<String, String> avatarCache = new HashMap<>();
         resp.items = comments.stream().map(c -> {
 
-            String avatarUrl  = c.user.avatarUrl;
+            String avatarUrl = c.user.avatarUrl;
             if (avatarUrl != null && !avatarUrl.isBlank() && !(avatarUrl.contains("http") || avatarUrl.contains("blob"))) {
                 avatarUrl = avatarCache.computeIfAbsent(
                         avatarUrl,

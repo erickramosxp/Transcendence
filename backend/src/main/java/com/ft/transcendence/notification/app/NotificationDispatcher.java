@@ -1,0 +1,115 @@
+package com.ft.transcendence.notification.app;
+
+import com.ft.transcendence.comment.domain.Comment;
+import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.notification.domain.Notification;
+import com.ft.transcendence.notification.domain.NotificationType;
+import com.ft.transcendence.notification.dto.NotificationContent;
+import com.ft.transcendence.notification.dto.NotificationResponse;
+import com.ft.transcendence.post.domain.Post;
+import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
+import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
+import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
+import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
+import com.ft.transcendence.user.domain.User;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+@ApplicationScoped
+public class NotificationDispatcher {
+
+    @Inject
+    NotificationService notificationService;
+    @Inject
+    RealtimeSessionRegistry sessionRegistry;
+    @Inject
+    RealtimeEventSender eventSender;
+    @Inject
+    StorageService storageService;
+
+    public void onLikePost(User actor, Post post) {
+        if (actor.id.equals(post.user.id))
+            return;
+
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.postId = post.id;
+        content.preview = truncate(post.text);
+
+        dispatch(post.user.id, actor.id, NotificationType.LIKE_POST, content);
+    }
+
+    public void onLikeComment(User actor, Comment comment) {
+        if (actor.id.equals(comment.user.id))
+            return;
+
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.commentId = comment.id;
+        content.postId = comment.post.id;
+        content.preview = truncate(comment.text);
+
+        dispatch(comment.user.id, actor.id, NotificationType.LIKE_COMMENT, content);
+    }
+
+    public void onComment(User actor, Comment comment) {
+        if (actor.id.equals(comment.post.user.id))
+            return;
+
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.postId = comment.post.id;
+        content.commentId = comment.id;
+        content.preview = truncate(comment.text);
+
+        dispatch(comment.post.user.id, actor.id, NotificationType.COMMENT_POST, content);
+    }
+
+    public void onFriendRequest(User actor, Long targetUserId, Long friendshipId) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.friendshipId = friendshipId;
+
+        dispatch(targetUserId, actor.id, NotificationType.FRIEND_REQUEST, content);
+    }
+
+    public void onFriendAccepted(User actor, Long originalSenderId) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content);
+    }
+
+    private void dispatch(Long receiverId, Long senderId, NotificationType type, NotificationContent content) {
+        Notification saved = notificationService.create(receiverId, senderId, type, content);
+
+        if (sessionRegistry.isUserOnline(receiverId)) {
+            RealtimeConnection connection = sessionRegistry.getAnyConnectionByUserId(receiverId);
+            if (connection != null) {
+                String avatarUrl = content.avatarUrl;
+
+                if (avatarUrl != null && !avatarUrl.isEmpty())
+                    avatarUrl = storageService.generateUrl(content.avatarUrl);
+
+                NotificationResponse payload = NotificationResponse.of(saved, avatarUrl);
+                eventSender.send(connection.connectionId, RealtimeEventType.NOTIFICATION_RECEIVED, payload);
+            }
+        }
+    }
+
+    private String truncate(String text) {
+        if (text == null || text.isBlank())
+            return null;
+        return text.length() <= 60 ? text : text.substring(0, 60) + "...";
+    }
+}

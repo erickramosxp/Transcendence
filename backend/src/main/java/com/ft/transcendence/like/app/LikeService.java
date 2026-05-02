@@ -2,9 +2,11 @@ package com.ft.transcendence.like.app;
 
 import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -12,6 +14,9 @@ import java.time.OffsetDateTime;
 
 @ApplicationScoped
 public class LikeService {
+
+    @Inject
+    NotificationDispatcher notificationDispatcher;
 
     @Transactional
     public void likePost(long userId, long postId) {
@@ -31,6 +36,8 @@ public class LikeService {
         like.persist();
 
         post.likeCount = post.likeCount + 1;
+
+        notificationDispatcher.onLikePost(like.user, post);
     }
 
     @Transactional
@@ -66,6 +73,8 @@ public class LikeService {
         like.persist();
 
         comment.likeCount = comment.likeCount + 1;
+
+        notificationDispatcher.onLikeComment(like.user, comment);
     }
 
     @Transactional
