@@ -188,7 +188,7 @@ public class AuthResourceTest extends BaseApiTest {
                 .when()
                 .patch("/auth/password")
                 .then()
-                .statusCode(401);
+                .statusCode(422);
     }
 
     @Test
