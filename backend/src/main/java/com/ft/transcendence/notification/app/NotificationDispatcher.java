@@ -90,6 +90,24 @@ public class NotificationDispatcher {
         dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content);
     }
 
+    public void onFriendReject(User actor, Long originalSenderId) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_REJECTED, content);
+    }
+
+    public void onFriendBroken(User actor, Long originalSenderId) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_BROKEN, content);
+    }
+
     private void dispatch(Long receiverId, Long senderId, NotificationType type, NotificationContent content) {
         Notification saved = notificationService.create(receiverId, senderId, type, content);
 

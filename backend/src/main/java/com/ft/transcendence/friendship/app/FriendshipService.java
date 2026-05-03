@@ -137,6 +137,9 @@ public class FriendshipService {
 
         Friendship request = getAndValidatePendingRequest(friendshipId, currentUserId);
         request.delete();
+
+        User actor = User.findById(currentUserId);
+        notificationDispatcher.onFriendReject(actor, request.userId);
     }
 
     @Transactional
@@ -153,6 +156,9 @@ public class FriendshipService {
                 "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
                 friendship.userId, friendship.friendId
         );
+
+        User actor = User.findById(currentUserId);
+        notificationDispatcher.onFriendBroken(actor, friendship.friendId);
     }
 
     public List<FriendshipDTO> searchFriends(Long myId, String query) {
