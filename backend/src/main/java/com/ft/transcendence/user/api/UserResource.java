@@ -142,6 +142,12 @@ public class UserResource {
     }
 
     @GET
+    @Path("/me/auth-type")
+    @Authenticated
+    public AuthTypeResponse getAuthType() {
+        return userService.getAuthType(currentUser.id());
+    }
+
     @Path("/me/avatar")
     public UserAvatarResponse getMyAvatar() {
         long userId = currentUser.id();
