@@ -1,12 +1,23 @@
+# Environment variables
 .env
 .vscode
 
+# Node modules
 node_modules/
 
+# Backend artifacts
 backend/target/
 backend/.idea
 
+# Private keys
 **/*private*.pem
 **/*.key
 
+# Storybook artifacts
 storybook-static/
+
+# Playwright artifacts
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/.playwright/

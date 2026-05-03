@@ -2,11 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
-import {
-	getMyChats,
-	CHAT_LIST_PAGE_SIZE,
-} from "@/features/chat/services/chatService";
-import { sortChatsByRecency } from "@/features/chat/utils/sortChatsByRecency";
+import { getMyChats, CHAT_LIST_PAGE_SIZE } from "@/features/chat/services/chatService";
+import { sortChatsByRecency, applyChatListFocus } from "@/features/chat/utils/sortChatsByRecency";
 import { Loading } from "@/design-system";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -26,14 +23,17 @@ export function Chat() {
 		loading: false,
 	});
 
-	const resetAndFetchChats = useCallback(async () => {
+	const resetAndFetchChats = useCallback(async (options = {}) => {
+		const { listFocusChatId } = options;
 		const resp = await getMyChats({ page: 0, size: CHAT_LIST_PAGE_SIZE });
-		const items = resp.items ?? [];
+		const rawItems = resp.items ?? [];
+		const items = applyChatListFocus(rawItems, listFocusChatId);
+		const sorted = sortChatsByRecency(items);
 		const more = Boolean(resp.hasMore);
-		setMyChats(sortChatsByRecency(items));
+		setMyChats(sorted);
 		setChatListHasMore(more);
 		listFetchRef.current = { page: 0, hasMore: more, loading: false };
-		return resp;
+		return { response: resp, sortedChats: sorted };
 	}, []);
 
 	useEffect(() => {
@@ -106,15 +106,25 @@ export function Chat() {
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {
+			let sortedChats;
 			try {
-				await resetAndFetchChats();
+				({ sortedChats } = await resetAndFetchChats({
+					listFocusChatId: apiChat?.id,
+				}));
 			} catch (e) {
 				console.error(e);
 				toast.error(t("errors.load"));
 				return;
 			}
+			const fromList = sortedChats.find(
+				(c) => c?.id != null && Number(c.id) === Number(apiChat?.id),
+			);
 			const name = meta?.peerLabel ?? apiChat?.chatName ?? undefined;
-			setSelectedChat(name != null ? { ...apiChat, name } : apiChat);
+			if (fromList) {
+				setSelectedChat(fromList);
+			} else {
+				setSelectedChat(name != null ? { ...apiChat, name } : apiChat);
+			}
 			toast.success(t("list.add.createSuccess"));
 		},
 		[resetAndFetchChats, t],
@@ -131,8 +141,6 @@ export function Chat() {
             </p>
         </div>
     }
-	console.log(selectedChat);
-
 	return (
 		<div className="ds-chat-layout">
 			<aside

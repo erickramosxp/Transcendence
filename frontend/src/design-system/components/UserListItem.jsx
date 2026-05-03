@@ -29,7 +29,7 @@ export function UserListItem({ user, onClick }) {
             name={user?.name}
             username={user?.username}
             src={user?.avatarUrl}
-            status='online'
+            status={user?.online ? 'online': 'offline'}
          />
          <div className="flex-1 overflow-hidden text-left">
             <p className="font-medium truncate leading-none">

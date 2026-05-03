@@ -14,32 +14,40 @@ import {
     Loading,
     UserListItem
 } from "@/design-system";
+import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
 
 export function Feed() {
 
     const [posts, setPosts] = useState([]);
-    const [usersOnline, setUsersOnline] = useState(null);
+    // const [usersOnline, setUsersOnline] = useState(null);
     const [loadingUsersOnline, setLoadingUsersOnline] = useState(true);
+    const usersPresence = usePresenceStore((state) => state.usersPresence);
+
+    const usersOnline = Object.values(usersPresence)
 
     const { t } = useTranslation('feed');
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const getOnlineUsers = async () => {
+    //     // const getOnlineUsers = async () => {
 
-            try {
-                const resp = await getListOnlineFriends();
-                setUsersOnline(resp.data.items);
-            } finally {
-                setLoadingUsersOnline(false);
-            }
-        }
+    //     //     // :{"userId":6,"name":"teste2","username":"teste2","avatarUrl":null,"online":true,"lastSeenAt":"2026-04-24T19:40:22.388376212Z"}
+    //     //     try {
+    //     //         const resp = await getListOnlineFriends();
+    //     //         setUsersOnline(resp.data.items);
+    //     //     } finally {
+    //     //         setLoadingUsersOnline(false);
+    //     //     }
+    //     // }
 
-        getOnlineUsers();
+    //     // getOnlineUsers();
 
-    }, []);
+    //     setUsersOnline(Object.values(usersPresence));
+    //     setLoadingUsersOnline(false)
 
-    async function addPost(postData) {
+    // }, [usersPresence]);
+
+    async function addPost(postData, setLoadingPercent) {
 
         const formData = new FormData();
 
@@ -52,7 +60,7 @@ export function Feed() {
 
         try {
 
-            const resp = await createPost(formData);
+            const resp = await createPost(formData, setLoadingPercent);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
             let message = t("common:errors.post.createFailed");
@@ -84,9 +92,9 @@ export function Feed() {
                                 <CardTitle>{t('sections.onlineFriends')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {usersOnline && usersOnline.map((user) => (
+                                {usersOnline && usersOnline.map((user, index) => (
                                     <UserListItem 
-                                        key={user?.friendshipId}
+                                        key={user?.userId + index}
                                         user={user}
                                         onClick={() => {}}
                                     />
