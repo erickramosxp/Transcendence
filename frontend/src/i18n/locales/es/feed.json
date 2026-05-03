@@ -39,5 +39,9 @@
     "sections": {
         "onlineFriends": "Amigos en línea",
         "trending": "Tendencias"
+    },
+    "preview": {
+        "title": "Vista previa",
+        "time": "ahora"
     }
 }

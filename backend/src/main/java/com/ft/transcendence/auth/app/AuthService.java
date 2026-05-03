@@ -2,6 +2,8 @@ package com.ft.transcendence.auth.app;
 
 import java.time.OffsetDateTime;
 
+import com.ft.transcendence.auth.dto.ChangePasswordRequest;
+import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
@@ -95,5 +97,20 @@ public class AuthService {
             throw new BadRequestException("Username is required");
         if (req.password == null || req.password.isBlank())
             throw new BadRequestException("Password is required");
+    }
+
+    @Transactional
+    public void changePassword(Long currentUserId, ChangePasswordRequest req) {
+        AuthProvider local = AuthProvider.findLocalByUserId(currentUserId);
+        if (local == null)
+            throw new BadRequestException("Password change not available for this account type");
+
+        if (!BcryptUtil.matches(req.currentPassword, local.passwordHash))
+            throw new UnprocessableEntityException("Current password is incorrect");
+
+        if (req.newPassword == null || req.newPassword.isBlank() || req.newPassword.length() < 8)
+            throw new BadRequestException("New password must be at least 8 characters");
+
+        local.passwordHash = BcryptUtil.bcryptHash(req.newPassword);
     }
 }

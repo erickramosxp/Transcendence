@@ -140,4 +140,18 @@ public class UserResource {
             throw new NotFoundException("User not found");
         return userService.getFollowing(user.id);
     }
+
+    @GET
+    @Path("/me/auth-type")
+    @Authenticated
+    public AuthTypeResponse getAuthType() {
+        return userService.getAuthType(currentUser.id());
+    }
+
+    @Path("/me/avatar")
+    public UserAvatarResponse getMyAvatar() {
+        long userId = currentUser.id();
+        UserAvatarResponse avatarResponse = userService.getAvatar(userId);
+        return avatarResponse;
+    }
 }

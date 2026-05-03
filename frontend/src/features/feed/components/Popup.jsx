@@ -14,8 +14,8 @@ function Popup({ open, onClose, children }) {
 			onClose={onClose}
 			title={t('popup.title')}
 			size="md"
-			scrollable={false}
-			scrollMode="none"
+			scrollable={true}
+			scrollMode="dialog"
 		>
 			<p className="mt-1 text-sm text-muted-foreground">
 				{t('popup.description')}

@@ -92,7 +92,7 @@ export function LanguageSwitcher({activeToastNotification = false}) {
         ref={buttonRef}
       >
         <Languages className="h-5 w-5" />
-        <span className="absolute -top-1 -right-1 text-xs leading-none">
+        <span className="ds-emoji-flag absolute -top-1 -right-1 text-xs">
           {current.flag}
         </span>
         <span className="absolute -bottom-1 -right-1 text-xs leading-none">
@@ -116,7 +116,7 @@ export function LanguageSwitcher({activeToastNotification = false}) {
               className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
             >
               <span className="flex items-center gap-2">
-                <span>{lang.flag}</span>
+                <span className="ds-emoji-flag">{lang.flag}</span>
                 <span>{lang.label}</span>
               </span>
 

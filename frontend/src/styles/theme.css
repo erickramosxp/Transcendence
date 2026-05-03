@@ -393,6 +393,11 @@
 
 /* Chat: layout e peças reutilizáveis (evita longas strings de utilitários nos .jsx) */
 @layer components {
+  .ds-emoji-flag {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    @apply inline-flex items-center justify-center align-middle leading-none;
+  }
+
   .ds-chat-window-surface {
     background: var(--chat-window-surface);
   }
@@ -705,4 +710,19 @@
   @media (min-width: 1024px) {
     display: block;
   }
+}
+
+/* Chrome, Safari */
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+/* Firefox */
+.scrollbar-hide {
+	scrollbar-width: none;
+}
+
+/* IE/Edge antigo */
+.scrollbar-hide {
+	-ms-overflow-style: none;
 }

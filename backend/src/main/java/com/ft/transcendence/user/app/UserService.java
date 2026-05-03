@@ -1,5 +1,7 @@
 package com.ft.transcendence.user.app;
 
+import com.ft.transcendence.auth.domain.AuthProvider;
+import com.ft.transcendence.auth.domain.AuthProviderType;
 import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.media.MediaAnalysis;
@@ -102,6 +104,14 @@ public class UserService {
         user.websiteUrl = normalize(req.websiteUrl);
 
         return UpdateUserProfileResponse.of(user);
+    }
+
+    public AuthTypeResponse getAuthType(long userId) {
+        List<AuthProvider> providers = AuthProvider.list("user.id", userId);
+        List<AuthProviderType> types = providers.stream()
+                .map(ap -> ap.providerType)
+                .toList();
+        return AuthTypeResponse.of(types);
     }
 
     public UserPostsResponse getPostsLikedByUser(long userId, long currentUserId, int page, int size) {
@@ -335,5 +345,20 @@ public class UserService {
         return Response.ok(
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
+    }
+
+    public UserAvatarResponse getAvatar(long userId) {
+
+        UserAvatarResponse avatarResponse = User.find(
+                "id",
+                userId
+        ).project(UserAvatarResponse.class).firstResult();
+
+        String presignedUrl = avatarResponse.avatarUrl;
+        if (presignedUrl != null && !presignedUrl.isEmpty()) {
+            presignedUrl = storageService.generateUrl(avatarResponse.avatarUrl);
+        }
+
+        return new UserAvatarResponse(presignedUrl);
     }
 }
