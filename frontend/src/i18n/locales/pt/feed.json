@@ -39,5 +39,10 @@
     "sections": {
         "onlineFriends": "Amigos Online",
         "trending": "Em Alta"
+    },
+    "preview": {
+        "title": "Pré-visualização",
+        "time": "agora"
     }
+
 }

@@ -6,8 +6,15 @@ export async function getFeed(page = 0, size = 10) {
     return response;
 }
 
-export async function createPost(data) {
-    const response = await api.post("/posts", data);
+export async function createPost(data, setLoadingPercent) {
+    const response = await api.post("/posts", data, {
+        onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setLoadingPercent(percentCompleted);
+        }
+    });
 
     return response.data;
 }

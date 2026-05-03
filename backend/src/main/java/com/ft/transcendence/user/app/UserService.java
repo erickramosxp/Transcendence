@@ -336,4 +336,19 @@ public class UserService {
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
     }
+
+    public UserAvatarResponse getAvatar(long userId) {
+
+        UserAvatarResponse avatarResponse = User.find(
+                "id",
+                userId
+        ).project(UserAvatarResponse.class).firstResult();
+
+        String presignedUrl = avatarResponse.avatarUrl;
+        if (presignedUrl != null && !presignedUrl.isEmpty()) {
+            presignedUrl = storageService.generateUrl(avatarResponse.avatarUrl);
+        }
+
+        return new UserAvatarResponse(presignedUrl);
+    }
 }

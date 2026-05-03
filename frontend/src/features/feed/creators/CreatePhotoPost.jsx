@@ -9,10 +9,15 @@ import { useFloatingEmojiPicker } from "../hooks/useFloatingEmojiPicker";
 import {
 	Card,
 	CardContent,
+	CardFooter,
 	Textarea,
 	Button,
 	FileUploadButton,
+	ProgressBar
 } from "@/design-system";
+
+import { PostPreview } from "../components/PostPreview";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 function CreatePhotoPost({ onAddPost, onClose }) {
 	const {
@@ -23,14 +28,16 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 		handleSubmit,
 		handleChange,
 		handleEmojiSelect,
+		uploadPercent,
+		avatarUrl
 	} = useCreatePost(onAddPost, onClose, "photo");
 
 	const { t } = useTranslation('feed');
 	const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
-
+	const { user } = useAuth();
 
 	return (
-		<Card className="border-border bg-card/90 backdrop-blur-xl shadow-xl">
+		<Card className="border-border bg-card/90 backdrop-blur-xl shadow-xl gap-2">
 			<CardContent className="p-4 sm:p-6">
 				<div className="flex gap-3 sm:gap-4">
 					<div className="relative min-w-0 flex-1 space-y-3 sm:space-y-4">
@@ -118,14 +125,29 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 								</div>
 							</div>
 
-							<Button onClick={handleSubmit} variant="primary" size="sm">
+							<Button onClick={handleSubmit} variant="primary" size="sm" disabled={(uploadPercent !== null)}>
 								<Send className="mr-2 h-4 w-4" />
 								{t('createPost.photo.submit')}
 							</Button>
 						</div>
 					</div>
 				</div>
+				{(uploadPercent !== null) &&
+					<ProgressBar value={uploadPercent}/>
+				}
 			</CardContent>
+			{file && (uploadPercent == null) &&
+			<CardFooter className='px-2.5'>
+				<PostPreview 
+					content={text}
+					file={file}
+					user={{
+						...user,
+						avatarUrl
+					}}
+				/>
+			</CardFooter>
+			}
 		</Card>
 	);
 }
