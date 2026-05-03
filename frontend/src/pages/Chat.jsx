@@ -88,22 +88,30 @@ export function Chat() {
 		}
 	}, [t]);
 
-	const bumpChatAfterMessage = useCallback(({ chatId, lastMessage }) => {
-		setMyChats((prev) => {
-			const idx = prev.findIndex(
-				(c) => c?.id != null && Number(c.id) === Number(chatId),
-			);
-			if (idx < 0) return prev;
-			const next = prev.map((c, i) =>
-				i === idx ? { ...c, lastMessage } : c,
-			);
-			return sortChatsByRecency(next);
-		});
-		setSelectedChat((sel) => {
-			if (sel?.id == null || Number(sel.id) !== Number(chatId)) return sel;
-			return { ...sel, lastMessage };
-		});
-	}, []);
+	const bumpChatAfterMessage = useCallback(
+		({ chatId, lastMessage }) => {
+			setMyChats((prev) => {
+				const idx = prev.findIndex(
+					(c) => c?.id != null && Number(c.id) === Number(chatId),
+				);
+				if (idx < 0) {
+					resetAndFetchChats({ listFocusChatId: chatId }).catch((err) =>
+						console.error(err),
+					);
+					return prev;
+				}
+				const next = prev.map((c, i) =>
+					i === idx ? { ...c, lastMessage } : c,
+				);
+				return sortChatsByRecency(next);
+			});
+			setSelectedChat((sel) => {
+				if (sel?.id == null || Number(sel.id) !== Number(chatId)) return sel;
+				return { ...sel, lastMessage };
+			});
+		},
+		[resetAndFetchChats],
+	);
 
 	useLayoutEffect(() => {
 		useChatStore.getState().setListBumpHandler(bumpChatAfterMessage);
