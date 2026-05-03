@@ -16,6 +16,7 @@
 // typingUsers
 
 import { create } from 'zustand'
+import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 
 function sameMessageId(a, b) {
 	if (a == null || b == null) return false
@@ -80,6 +81,7 @@ export const useChatStore = create((set, get) => ({
     setActiveChat: (chatId) =>
         set({
             activeChatId: chatId,
+            typingUsers: [],
             messages: []
         }),
 
@@ -151,10 +153,50 @@ export const useChatStore = create((set, get) => ({
         set((state) => ({
             messages: [...olderMessages, ...state.messages],
         })),
+
+    applyTypingStart: (payload) =>
+        set((state) => {
+            if (payload?.chatId == null || payload?.userId == null) return state
+            if (state.activeChatId == null) return state
+            if (Number(payload.chatId) !== Number(state.activeChatId)) return state
+            if (Number(payload.userId) === Number(readCurrentUserId())) return state
+
+            const nextUser = {
+                userId: payload.userId,
+                username:
+                    (payload.username ?? '').trim() ||
+                    String(payload.userId),
+            }
+
+            const without = state.typingUsers.filter(
+                (u) => Number(u.userId) !== Number(nextUser.userId),
+            )
+
+            return {
+                typingUsers: [...without, nextUser],
+            }
+        }),
+
+    applyTypingStop: (payload) =>
+        set((state) => {
+            if (payload?.chatId == null || payload?.userId == null) return state
+            if (state.activeChatId == null) return state
+            if (Number(payload.chatId) !== Number(state.activeChatId)) return state
+
+            return {
+                typingUsers: state.typingUsers.filter(
+                    (u) => Number(u.userId) !== Number(payload.userId),
+                ),
+            }
+        }),
+
+    removeUserFromTyping: (userId) =>
+        set((state) => {
+            if (userId == null) return state
+            return {
+                typingUsers: state.typingUsers.filter(
+                    (u) => Number(u.userId) !== Number(userId),
+                ),
+            }
+        }),
 }))
-
-// const messages = useChatStore(...)
-// messages: []
-// activeConversation: 42
-// typingUsers: []
-

@@ -97,6 +97,10 @@ export const useSocketStore = create((set, get) => ({
                 chatId: payload.chatId
             })
 
+            if (payload.senderId != null) {
+                useChatStore.getState().removeUserFromTyping(payload.senderId)
+            }
+
             if (payload.chatId != null) {
                 const createdAt =
                     payload.createdAt != null
@@ -133,11 +137,20 @@ export const useSocketStore = create((set, get) => ({
                     break;
                 }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:
-                    console.log("presença atualizada ", data);
                     usePresenceStore
                         .getState()
                         .updatePresence(data.payload)
                     break;
+                case WS_INCOMING_EVENTS.TYPING_START:{
+                    const payload = data.payload ?? data;
+                    useChatStore.getState().applyTypingStart(payload);
+                    break;
+                }
+                case WS_INCOMING_EVENTS.TYPING_STOP:{
+                    const payload = data.payload ?? data;
+                    useChatStore.getState().applyTypingStop(payload);
+                    break;
+                }
                 case "LIST_PRESENCE":
                     console.log("lista inicial de onlines", data);
                     break;

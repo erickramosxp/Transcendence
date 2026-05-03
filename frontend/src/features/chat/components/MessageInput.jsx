@@ -5,15 +5,20 @@ import { Input } from "@/design-system";
 import { Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { useChatTypingPresence } from "@/features/chat/hooks/useChatTypingPresence";
 import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
-export default function MessageInput({ onSendMessage }) {
+export default function MessageInput({ currentChat, onSendMessage }) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const emojiPickerAreaRef = useRef(null);
 	const { preview: draftLinkPreview, loading: draftLinkPreviewLoading } =
 		useMessageLinkPreview(text);
+
+	const { notifyDraftChanged, stopTypingSession } = useChatTypingPresence(
+		currentChat?.id,
+	);
 
 	useEffect(() => {
 		const mq = window.matchMedia("(min-width: 1024px)");
@@ -44,12 +49,19 @@ export default function MessageInput({ onSendMessage }) {
 	function handleSendMessage(e) {
 		e.preventDefault();
 		if (!text.trim()) return;
+
+		stopTypingSession();
 		onSendMessage(text);
 		setText("");
 	}
 
 	function handleEmojiSelect(emojiData) {
-		setText((prev) => prev + emojiData.emoji);
+		onTextChange(text + emojiData.emoji);
+	}
+
+	function onTextChange(next) {
+		setText(next);
+		notifyDraftChanged(next);
 	}
 
 	return (
@@ -69,53 +81,53 @@ export default function MessageInput({ onSendMessage }) {
 				</div>
 			)}
 			<form onSubmit={handleSendMessage} className="ds-chat-input-form">
-			<Button
-				variant="outline"
-				size="icon"
-				type="button"
-				className="ds-chat-input-icon-btn"
-			>
-				<Paperclip className="ds-chat-icon-input" />
-			</Button>
+				<Button
+					variant="outline"
+					size="icon"
+					type="button"
+					className="ds-chat-input-icon-btn"
+				>
+					<Paperclip className="ds-chat-icon-input" />
+				</Button>
 
-			<div className="relative min-w-0 flex-1">
-				<Input
-					value={text}
-					onChange={(e) => setText(e.target.value)}
-					onFocus={() => setShowEmojiPicker(false)}
-					className="ds-chat-input-field"
-					placeholder={t("input.placeholder")}
-				/>
-				<div ref={emojiPickerAreaRef} className="hidden lg:contents">
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon"
-						className="ds-chat-input-emoji-btn"
-						tabIndex={-1}
-						onClick={() => {
-							setShowEmojiPicker(!showEmojiPicker);
-						}}
-					>
-						<Smile className="size-4" />
-					</Button>
-					{showEmojiPicker && (
-						<div className="ds-chat-input-emoji-pop">
-							<EmojiPicker onEmojiClick={handleEmojiSelect} />
-						</div>
-					)}
+				<div className="relative min-w-0 flex-1">
+					<Input
+						value={text}
+						onChange={(e) => onTextChange(e.target.value)}
+						onFocus={() => setShowEmojiPicker(false)}
+						className="ds-chat-input-field"
+						placeholder={t("input.placeholder")}
+					/>
+					<div ref={emojiPickerAreaRef} className="hidden lg:contents">
+						<Button
+							type="button"
+							variant="ghost"
+							size="icon"
+							className="ds-chat-input-emoji-btn"
+							tabIndex={-1}
+							onClick={() => {
+								setShowEmojiPicker(!showEmojiPicker);
+							}}
+						>
+							<Smile className="size-4" />
+						</Button>
+						{showEmojiPicker && (
+							<div className="ds-chat-input-emoji-pop">
+								<EmojiPicker onEmojiClick={handleEmojiSelect} />
+							</div>
+						)}
+					</div>
 				</div>
-			</div>
 
-			<Button
-				onClick={handleSendMessage}
-				size="icon"
-				type="submit"
-				className="ds-chat-input-icon-btn"
-			>
-				<Send className="ds-chat-icon-input" />
-			</Button>
-		</form>
+				<Button
+					onClick={handleSendMessage}
+					size="icon"
+					type="submit"
+					className="ds-chat-input-icon-btn"
+				>
+					<Send className="ds-chat-icon-input" />
+				</Button>
+			</form>
 		</div>
 	);
 }

@@ -59,7 +59,10 @@
   },
   "thread": {
     "empty": "Nenhuma mensagem nesta conversa ainda.",
-    "unknownSender": "Desconhecido"
+    "unknownSender": "Desconhecido",
+    "typingOne": "{{name}} está digitando…",
+    "typingTwo": "{{a}} e {{b}} estão digitando…",
+    "typingMany": "{{a}}, {{b}} e outras pessoas estão digitando…"
   },
   "input": {
     "placeholder": "Digite sua mensagem..."

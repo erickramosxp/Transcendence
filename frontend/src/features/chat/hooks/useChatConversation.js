@@ -87,6 +87,7 @@ export function useChatConversation(currentChat, options = {}) {
 				shouldScrollToBottomRef.current = false;
 				stickToBottomRef.current = false;
 			}
+			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, {chatId: convId });
 			setActiveChat(convId);
 			try {
 				const data = await getConversation(convId, { page: 0, size: 20 });
@@ -105,6 +106,7 @@ export function useChatConversation(currentChat, options = {}) {
 
 		return () => {
 			cancelled = true;
+			send(WS_SEND_EVENTS.CHAT_UNSUBSCRIBE, {chatId: convId });
 		};
 	}, [
 		currentChat?.id,
@@ -114,6 +116,7 @@ export function useChatConversation(currentChat, options = {}) {
 		currentUserId,
 		peerName,
 		t,
+		send,
 		scrollToBottomOnOpen,
 	]);
 

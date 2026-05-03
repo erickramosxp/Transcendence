@@ -1,6 +1,7 @@
 import { Separator } from "@/design-system";
 import ChatEmptyState from "@/features/chat/components/ChatEmptyState";
 import ChatThreadHeader from "@/features/chat/components/ChatThreadHeader";
+import ChatTypingIndicator from "@/features/chat/components/ChatTypingIndicator";
 import MessageInput from "@/features/chat/components/MessageInput";
 import MessageThread from "@/features/chat/components/MessageThread";
 import { useChatConversation } from "@/features/chat/hooks/useChatConversation";
@@ -36,8 +37,9 @@ export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) 
 				loading={loading}
 				error={error}
 			/>
+			<ChatTypingIndicator />
 			<div className="ds-chat-composer">
-				<MessageInput onSendMessage={handleSendMessage} />
+				<MessageInput currentChat={currentChat} onSendMessage={handleSendMessage} />
 			</div>
 		</div>
 	);
