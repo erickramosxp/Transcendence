@@ -22,6 +22,7 @@ import {
     WS_INCOMING_EVENTS,
     WS_ERROR_CODES
 } from '@/shared/constants/websocket'
+import { resolveRealtimeWebSocketUrl } from '@/shared/realtime/resolveRealtimeWebSocketUrl'
 
 export const useSocketStore = create((set, get) => ({
     socket: null,
@@ -41,9 +42,7 @@ export const useSocketStore = create((set, get) => ({
             return;
         }
 
-        const ws = new WebSocket(
-            `${import.meta.env.VITE_BACKEND_URL}/ws/realtime?token=${token}`
-        )
+        const ws = new WebSocket(resolveRealtimeWebSocketUrl(token))
 
         ws.onopen = () => {
             set({
