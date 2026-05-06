@@ -16,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
@@ -335,5 +336,22 @@ public class UserService {
         return Response.ok(
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
+    }
+
+    @Transactional
+    public void removeAvatar(long currentUserId) {
+
+        User user = User.findById(currentUserId);
+
+        if (user == null)
+            throw new NotFoundException();
+
+        if (user.avatarUrl == null || user.avatarUrl.isBlank())
+            return;
+
+        storageService.delete(user.avatarUrl);
+
+        user.avatarUrl = null;
+
     }
 }

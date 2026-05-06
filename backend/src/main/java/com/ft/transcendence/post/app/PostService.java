@@ -7,12 +7,14 @@ import com.ft.transcendence.common.media.MediaAnalysis;
 import com.ft.transcendence.common.media.MediaKind;
 import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.job.app.JobService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.LockModeType;
@@ -39,6 +41,9 @@ public class PostService {
 
     @Inject
     MediaValidationService mediaValidationService;
+
+    @Inject
+    JobService jobService;
 
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
@@ -203,9 +208,16 @@ public class PostService {
         post.deletedAt = now;
 
         Comment.update("deletedAt = ?1 where post.id = ?2", now, postId);
-
         Like.delete("post.id = ?1", postId);
-
         Like.delete("comment.post.id = ?1", postId);
+
+        if (post.mediaUrl != null && !post.mediaUrl.isBlank()) {
+            try {
+                jobService.createDeletePostMediaJob(postId, userId);
+            } catch (Exception e) {
+                Log.info("Error creating job", e);
+            }
+        }
+
     }
 }

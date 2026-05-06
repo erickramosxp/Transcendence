@@ -406,7 +406,7 @@
   }
 
   .ds-chat-sidebar {
-    @apply flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%, 20rem)] md:max-w-[380px] md:shrink-0 md:border-r;
+    @apply flex min-h-0 w-full flex-col border-border bg-card md:w-[min(100%,20rem)] md:max-w-[380px] md:shrink-0 md:border-r;
   }
 
   .ds-chat-main {
@@ -562,7 +562,7 @@
   }
 
   .ds-chat-bubble {
-    @apply relative max-w-[min(85%, 28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
+    @apply relative max-w-[min(85%,28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
   }
 
   .ds-chat-bubble--mine {

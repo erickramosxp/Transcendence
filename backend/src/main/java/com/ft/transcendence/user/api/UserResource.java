@@ -140,4 +140,14 @@ public class UserResource {
             throw new NotFoundException("User not found");
         return userService.getFollowing(user.id);
     }
+
+    @DELETE
+    @Path("/avatar")
+    @Authenticated
+    public Response deleteProfileAvatar() {
+        long currentUserId = currentUser.id();
+
+        userService.removeAvatar(currentUserId);
+        return Response.noContent().build();
+    }
 }

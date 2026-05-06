@@ -40,6 +40,7 @@ const dropdownItemVariants = cva(
 /**
  * <Dropdown items="{meusItens}"/> 
  * 
+ * @example
  *  <Dropdown
  *      variant = "default | glass"
  *      items={[
