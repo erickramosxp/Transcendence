@@ -4,11 +4,10 @@ import { ChevronLeft, Phone } from "lucide-react";
 import { AvatarWithStatus, Button } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 import { VoiceCallModal } from "@/features/chat/components/VoiceCallModal";
+import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
 
 export default function ChatThreadHeader({ currentChat, onBack }) {
 	const { t } = useTranslation("chat");
-	const status = currentChat.status ?? "online";
-	const online = status === "online";
 	// Fase `incoming` virá do sinal (WebSocket/WebRTC); por ora o ícone de telefone abre só `outgoing`.
 	const [voiceCall, setVoiceCall] = useState({
 		open: false,
@@ -26,6 +25,12 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 
 	const isGroup = currentChat.type === "group";
 	const peer = currentChat.user;
+	const peerId = peer?.id;
+	const peerOnline = usePresenceStore((s) => {
+		if (isGroup || peerId == null) return false;
+		return !!s.usersPresence[peerId]?.online;
+	});
+	const status = peerOnline ? "online" : "offline";
 	const groupTitle = (
 		currentChat.chatName ??
 		currentChat.name ??
@@ -57,20 +62,23 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 				// src={currentChat.user.avatarUrl}
 				name={headerTitle}
 				status={status}
+				showStatus={!isGroup}
 				size="lg"
 			/>
 			<div className="min-w-0 flex-1 space-y-1">
 				<h3 className="ds-chat-thread-title">{headerTitle}</h3>
-				<span
-					className={cn(
-						"ds-chat-thread-status",
-						online
-							? "ds-chat-thread-status--online"
-							: "ds-chat-thread-status--offline",
-					)}
-				>
-					{online ? t("status.online") : t("status.offline")}
-				</span>
+				{!isGroup && (
+					<span
+						className={cn(
+							"ds-chat-thread-status",
+							peerOnline
+								? "ds-chat-thread-status--online"
+								: "ds-chat-thread-status--offline",
+						)}
+					>
+						{peerOnline ? t("status.online") : t("status.offline")}
+					</span>
+				)}
 			</div>
 			<div className="ds-chat-thread-actions">
 				<Button
