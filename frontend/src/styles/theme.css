@@ -711,3 +711,18 @@
     display: block;
   }
 }
+
+/* Chrome, Safari */
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+/* Firefox */
+.scrollbar-hide {
+	scrollbar-width: none;
+}
+
+/* IE/Edge antigo */
+.scrollbar-hide {
+	-ms-overflow-style: none;
+}

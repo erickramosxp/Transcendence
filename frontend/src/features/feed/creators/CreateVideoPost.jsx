@@ -4,25 +4,29 @@ import { useCreatePost } from "./useCreatePost";
 import { createPortal } from "react-dom";
 import { useFloatingEmojiPicker } from "../hooks/useFloatingEmojiPicker";
 
-import { Button, Card, CardContent, Textarea, FileUploadButton } from "@/design-system";
-
+import { Button, Card, CardContent, CardFooter, Textarea, FileUploadButton, ProgressBar } from "@/design-system";
+import { PostPreview } from "../components/PostPreview";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 
 function CreateVideoPost({ onAddPost, onClose }) {
-	
+
 	const {
 		text,
 		file, setFile,
 		showEmojiPicker,
 		handleSubmit,
 		handleChange,
-		handleEmojiSelect
+		handleEmojiSelect,
+		avatarUrl,
+		uploadPercent
 	} = useCreatePost(onAddPost, onClose, "video");
 
 	const { t } = useTranslation('feed');
 
 	const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
+	const { user } = useAuth();
 
 	return (
 		<Card className="border-border bg-card/90 backdrop-blur-xl shadow-xl">
@@ -41,7 +45,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 							}}
 							placeholder={t('createPost.video.placeholder')}
 							className="min-h-[80px] resize-none sm:min-h-[100px]"
-							/>
+						/>
 						<div ref={anchorRef} />
 						<p className="text-sm text-muted-foreground text-right">
 							{text.length}/500
@@ -94,7 +98,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 						)}
 						<div className="flex items-center justify-between gap-2">
 							<div className="flex gap-1 sm:gap-2 items-center">
-								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" maxMBSize={20}/>
+								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" maxMBSize={20} />
 								<div className="text-xs text-muted-foreground">
 									<span>Max size (20MB)</span>
 								</div>
@@ -105,6 +109,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 									variant="primary"
 									size="sm"
 									className="h-9"
+									disabled={(uploadPercent !== null)}
 								>
 									<Send className="h-4 w-4 mr-2 " />
 									{t('createPost.video.submit')}
@@ -113,7 +118,22 @@ function CreateVideoPost({ onAddPost, onClose }) {
 						</div>
 					</div>
 				</div>
+				{(uploadPercent !== null) &&
+					<ProgressBar value={uploadPercent} />
+				}
 			</CardContent>
+			{file && (uploadPercent == null) &&
+				<CardFooter className='px-2.5'>
+					<PostPreview
+						content={text}
+						file={file}
+						user={{
+							...user,
+							avatarUrl
+						}}
+					/>
+				</CardFooter>
+			}
 		</Card>
 	);
 }

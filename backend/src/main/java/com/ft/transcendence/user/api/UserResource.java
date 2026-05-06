@@ -150,4 +150,21 @@ public class UserResource {
         userService.removeAvatar(currentUserId);
         return Response.noContent().build();
     }
+
+
+    @GET
+    @Path("/me/auth-type")
+    @Authenticated
+    public AuthTypeResponse getAuthType() {
+        return userService.getAuthType(currentUser.id());
+    }
+
+    @GET
+    @Path("/me/avatar")
+    @Authenticated
+    public UserAvatarResponse getMyAvatar() {
+        long userId = currentUser.id();
+        UserAvatarResponse avatarResponse = userService.getAvatar(userId);
+        return avatarResponse;
+    }
 }
