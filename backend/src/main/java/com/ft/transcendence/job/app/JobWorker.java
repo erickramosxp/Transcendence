@@ -17,11 +17,14 @@ public class JobWorker {
     @Inject
     JobProcessor jobProcessor;
 
+    @Inject
+    JobStateService stateService;
+
 
     // colocar Scheduled aqui
     @Scheduled(every = "10s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     @Transactional
-    void processJobs() {
+    public void processJobs() {
 
         // lógica aqui
         // buscar os jobs
@@ -44,15 +47,16 @@ public class JobWorker {
                 job.lastError = null;
             } catch (Exception e) {
 
-                job.attempts++;
-                job.lastError = e.getMessage();
-
-                if (job.attempts >= job.maxAttempts) {
-                    job.status = JobStatus.FAILED;
-                    job.finishedAt = OffsetDateTime.now();
+                int nextAttempts = job.attempts + 1;
+                if (nextAttempts >= job.maxAttempts) {
+                    stateService.markFailed(job.id, e.getMessage(), nextAttempts);
                 } else {
-                    job.status = JobStatus.PENDING;
-                    job.availableAt = OffsetDateTime.now().plusSeconds(calculateBackoff(job.attempts));
+                    stateService.markRetry(
+                            job.id,
+                            e.getMessage(),
+                            nextAttempts,
+                            OffsetDateTime.now().plusSeconds(calculateBackoff(nextAttempts))
+                    );
                 }
             }
         }
