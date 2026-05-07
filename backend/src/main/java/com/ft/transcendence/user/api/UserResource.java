@@ -142,7 +142,7 @@ public class UserResource {
     }
 
     @DELETE
-    @Path("/avatar")
+    @Path("/me/avatar")
     @Authenticated
     public Response deleteProfileAvatar() {
         long currentUserId = currentUser.id();

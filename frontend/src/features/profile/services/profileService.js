@@ -82,3 +82,9 @@ export async function getMyProfileAvatar() {
   const response = await api.get(`/user/me/avatar`);
   return response.data;
 }
+
+export async function deleteMyProfileAvatar() {
+
+  const response = await api.delete(`/user/me/avatar`);
+  return response.data;
+}

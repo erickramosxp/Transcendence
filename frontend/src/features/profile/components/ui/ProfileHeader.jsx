@@ -139,7 +139,7 @@ export const ProfileHeader = () => {
 					<Modal
 						open={settingsOpen}
 						onClose={() => setSettingsOpen(false)}
-						title={'Settings'}
+						title={t('settings:popup.title')}
 					>
 						<SettingsContent />
 					</Modal>
@@ -149,7 +149,7 @@ export const ProfileHeader = () => {
 
 						<div className="h-full flex flex-col">
 							<div className="p-4 flex items-center justify-between border-b">
-								<h2>Configurações</h2>
+								<h2>{t('settings:popup.title')}</h2>
 								<button onClick={() => setSettingsOpen(false)}>✕</button>
 							</div>
 

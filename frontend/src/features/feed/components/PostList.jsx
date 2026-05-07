@@ -102,7 +102,7 @@ function PostList({ posts, setPosts }) {
             }
         } catch (err) {
             console.error(err);
-            toast.error("Falha ao atualizar curtida");
+            toast.error(t('errors.updateLike'));
 
             setPosts((prev) =>
                 prev.map((p) =>
@@ -139,9 +139,9 @@ function PostList({ posts, setPosts }) {
             await deletePost(postId);
 
             setPosts(prev => prev.filter(p => p.id !== postId));
-            toast.success("Post deletado !")
+            toast.success(t('posts.deleteSuccess'))
         } catch (err) {
-            toast.error("Erro ao excluir. Tente novamente.");
+            toast.error(t('errors.deletePost'));
             throw err;
         }
     };

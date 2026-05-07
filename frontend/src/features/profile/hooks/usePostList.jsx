@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { toast } from "react-toastify";
 import { likePost, unlikePost, deletePost } from "@/features/feed/feedService";
+import { useTranslation } from "react-i18next";
 
 
 export function usePostList(fetchFn) {
@@ -12,6 +13,7 @@ export function usePostList(fetchFn) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
   const sentinelRef = useRef(null);
+  const { t } = useTranslation();
 
   async function loadInitial() {
     const data = await fetchFn(0, 10);
@@ -34,7 +36,7 @@ export function usePostList(fetchFn) {
       setPage(data.page + 1);
       setHasMore(data.hasMore);
     } catch {
-      toast.error("Falha ao carregar os posts");
+      toast.error(t('feed:list.loadError'));
     } finally {
       setIsLoadingMore(false);
     }
@@ -73,9 +75,9 @@ export function usePostList(fetchFn) {
       await deletePost(postId);
 
       setPosts(prev => prev.filter(p => p.id !== postId));
-      toast.success("Post deletado !")
+      toast.success(t('feed:posts.deleteSuccess'))
     } catch (err) {
-      toast.error("Erro ao excluir. Tente novamente.");
+      toast.error(t('feed:errors.deletePost'));
       throw err;
     }
   };

@@ -5,6 +5,7 @@ import { getCurrentTime } from "@/shared/getCurrentTime";
 import CommentCard from "@/features/feed/components/CommentCard";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/design-system/tokens/colors";
+import { useTranslation } from "react-i18next";
 
 import { Card, Avatar, TextWithLink, Media, LikeButton, Dropdown } from "@/design-system";
 import { useAuth } from "@/app/providers/AuthProvider";
@@ -25,6 +26,7 @@ function PostCard({
 	const commentsOpen = activeCommentsPostId === post.id;
 	const { user } = useAuth();
 	const [isDeleting, setIsDeleting] = useState(false);
+	const { t } = useTranslation('feed');
 
 	const handleDelete = () => {
 		setIsDeleting(true);
@@ -41,7 +43,7 @@ function PostCard({
 
 	const dowpDownItems = [
 		user.username === post.username && {
-			label: "Excluir",
+			label: t('posts.dropdown.delete'),
 			onClick: handleDelete,
 			danger: true,
 			icon: <Trash2 size="16" />,

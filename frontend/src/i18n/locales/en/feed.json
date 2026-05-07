@@ -25,6 +25,16 @@
             "charCount": "{{count}}/500"
         }
     },
+    "posts": {
+        "dropdown": {
+            "delete": "Delete"
+        },
+        "deleteSuccess": "Post deleted!"
+    },
+    "errors": {
+        "updateLike": "Failed to update like.",
+        "deletePost": "Error deleting post. Please try again."
+    },
     "comments": {
         "empty": "No comments yet",
         "placeholder": "Write a comment..."
