@@ -1,7 +1,5 @@
 package com.ft.transcendence.chat.dto;
 
-import com.ft.transcendence.chat.domain.Chat;
-
 import java.util.List;
 
 public class ListChatResponse {

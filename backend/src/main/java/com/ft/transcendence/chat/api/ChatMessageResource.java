@@ -5,6 +5,7 @@ import com.ft.transcendence.chat.dto.ChatMessagePageResponse;
 import com.ft.transcendence.chat.dto.ChatMessageRequest;
 import com.ft.transcendence.chat.dto.ChatMessageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
+import com.ft.transcendence.common.storage.StorageService;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -20,6 +21,8 @@ public class ChatMessageResource {
     CurrentUser currentUser;
     @Inject
     ChatMessageService chatMessageService;
+    @Inject
+    StorageService storageService;
 
     @POST
     @Authenticated
@@ -34,6 +37,6 @@ public class ChatMessageResource {
                                 @QueryParam("page") @DefaultValue("0") int page,
                                 @QueryParam("size") @DefaultValue("20") int size) {
         ChatMessagePageResponse messages = chatMessageService.listMessages(currentUser.id(), chatId, page, size);
-        return Response.status(Response.Status.ACCEPTED).entity(messages).build();
+        return Response.status(Response.Status.OK).entity(messages).build();
     }
 }
