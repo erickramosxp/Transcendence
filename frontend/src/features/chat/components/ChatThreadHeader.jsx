@@ -64,7 +64,7 @@ export default function ChatThreadHeader({
 				</Button>
 			)}
 			<AvatarWithStatus
-				// src={currentChat.user.avatarUrl}
+				src={currentChat.user?.avatarUrl}
 				name={headerTitle}
 				status={status}
 				showStatus={!isGroup}
