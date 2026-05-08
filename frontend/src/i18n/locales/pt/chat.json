@@ -81,27 +81,6 @@
     "loading": "Carregando prévia do link…"
   },
   "a11y": {
-    "back": "Voltar para a lista de conversas",
-    "call": "Iniciar chamada de voz"
-  },
-  "call": {
-    "title": {
-      "incoming": "Ligação recebida",
-      "outgoing": "Chamada de voz",
-      "active": "Em chamada"
-    },
-    "hint": {
-      "incoming": "{{name}} está te ligando",
-      "outgoing": "Chamando {{name}}…",
-      "active": "Conexão ativa — o áudio vai pelo dispositivo"
-    },
-    "cancelOutgoing": "Cancelar ligação",
-    "a11y": {
-      "accept": "Atender ligação",
-      "decline": "Recusar ligação",
-      "hangUp": "Encerrar chamada",
-      "mute": "Desligar microfone",
-      "unmute": "Ligar microfone"
-    }
+    "back": "Voltar para a lista de conversas"
   }
 }
