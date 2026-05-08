@@ -65,7 +65,17 @@
     "typingMany": "{{a}}, {{b}} e outras pessoas estão digitando…"
   },
   "input": {
-    "placeholder": "Digite sua mensagem..."
+    "placeholder": "Digite sua mensagem...",
+    "placeholderOffline": "Reconectando o chat..."
+  },
+  "realtime": {
+    "barNoNetwork": "Sem internet. Verifique sua conexão.",
+    "connecting": "Conexão com o chat indisponível. Reconectando...",
+    "barNoWs": "Conexão com o chat indisponível. Reconectando...",
+    "retryNow": "Tentar agora",
+    "presenceUnavailable": "Presença indisponível",
+    "cannotSendNoWs": "Não é possível enviar sem WebSocket.",
+    "cannotSendNoNetwork": "Sem internet. Verifique sua conexão."
   },
   "linkPreview": {
     "loading": "Carregando prévia do link…"

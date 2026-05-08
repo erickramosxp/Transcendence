@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { getConversation } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
@@ -65,6 +66,58 @@ export function useChatConversation(currentChat, options = {}) {
 		(state) => state.send
 	)
 
+	const connected = useSocketStore((state) => state.connected)
+	const navigatorOnline = useSocketStore((state) => state.navigatorOnline)
+	const realtimeConnected = connected && navigatorOnline
+	const prevConnectedRef = useRef(connected)
+
+	const fetchFirstPage = useCallback(
+		async (convId) => {
+			const data = await getConversation(convId, { page: 0, size: 20 })
+			const ui = data.messages.map((m) =>
+				mapMessageSenderData(m, currentUserId, peerName),
+			)
+			setMessages(withChatId(ui, convId))
+			setNextOlderPage(data.hasMore ? data.page + 1 : null)
+		},
+		[currentUserId, peerName, setMessages],
+	)
+
+	useEffect(() => {
+		if (!currentChat?.id || !connected) return
+		send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, { chatId: currentChat.id })
+	}, [currentChat?.id, connected, send])
+
+	useEffect(() => {
+		const wasConnected = prevConnectedRef.current
+		prevConnectedRef.current = connected
+
+		if (!currentChat?.id) return
+		if (!connected || wasConnected) return
+
+		let cancelled = false
+		;(async () => {
+			setLoading(true)
+			setLoadingOlder(false)
+			setNextOlderPage(null)
+			shouldScrollToBottomRef.current = true
+			stickToBottomRef.current = true
+			try {
+				await fetchFirstPage(currentChat.id)
+				if (cancelled) return
+				setError(null)
+			} catch (e) {
+				if (!cancelled) setError(e?.message ?? t("errors.load"))
+			} finally {
+				if (!cancelled) setLoading(false)
+			}
+		})()
+
+		return () => {
+			cancelled = true
+		}
+	}, [connected, currentChat?.id, fetchFirstPage, t])
+
 	useEffect(() => {
 		if (!currentChat) {
 			clearCurrentChat();
@@ -87,16 +140,11 @@ export function useChatConversation(currentChat, options = {}) {
 				shouldScrollToBottomRef.current = false;
 				stickToBottomRef.current = false;
 			}
-			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, {chatId: convId });
 			setActiveChat(convId);
+			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, { chatId: convId });
 			try {
-				const data = await getConversation(convId, { page: 0, size: 20 });
+				await fetchFirstPage(convId);
 				if (cancelled) return;
-				const ui = data.messages.map((m) =>
-					mapMessageSenderData(m, currentUserId, peerName),
-				);
-				setMessages(withChatId(ui, convId));
-				setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			} catch (e) {
 				if (!cancelled) setError(e?.message ?? t("errors.load"));
 			} finally {
@@ -112,9 +160,7 @@ export function useChatConversation(currentChat, options = {}) {
 		currentChat?.id,
 		clearCurrentChat,
 		setActiveChat,
-		setMessages,
-		currentUserId,
-		peerName,
+		fetchFirstPage,
 		t,
 		send,
 		scrollToBottomOnOpen,
@@ -191,6 +237,15 @@ export function useChatConversation(currentChat, options = {}) {
 			const trimmed = (text ?? "").trim();
 			if (!trimmed) return;
 
+			if (!useSocketStore.getState().connected) {
+				toast.warning(t("realtime.cannotSendNoWs"));
+				return;
+			}
+			if (!useSocketStore.getState().navigatorOnline) {
+				toast.warning(t("realtime.cannotSendNoNetwork"));
+				return;
+			}
+
 			stickToBottomRef.current = true;
 			shouldScrollToBottomRef.current = true;
 
@@ -207,7 +262,7 @@ export function useChatConversation(currentChat, options = {}) {
 				},
 			});
 		},
-		[currentChat, send, onAfterMessageSent],
+		[currentChat, send, onAfterMessageSent, t],
 	);
 
 	return {
@@ -219,5 +274,6 @@ export function useChatConversation(currentChat, options = {}) {
 		onScroll,
 		handleSendMessage,
 		currentUserId,
+		realtimeConnected,
 	};
 }

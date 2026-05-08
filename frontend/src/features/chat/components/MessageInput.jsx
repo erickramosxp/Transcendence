@@ -8,7 +8,11 @@ import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPrevi
 import { useChatTypingPresence } from "@/features/chat/hooks/useChatTypingPresence";
 import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
-export default function MessageInput({ currentChat, onSendMessage }) {
+export default function MessageInput({
+	currentChat,
+	onSendMessage,
+	realtimeConnected = true,
+}) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -49,6 +53,7 @@ export default function MessageInput({ currentChat, onSendMessage }) {
 	function handleSendMessage(e) {
 		e.preventDefault();
 		if (!text.trim()) return;
+		if (!realtimeConnected) return;
 
 		stopTypingSession();
 		onSendMessage(text);
@@ -96,7 +101,12 @@ export default function MessageInput({ currentChat, onSendMessage }) {
 						onChange={(e) => onTextChange(e.target.value)}
 						onFocus={() => setShowEmojiPicker(false)}
 						className="ds-chat-input-field"
-						placeholder={t("input.placeholder")}
+						placeholder={
+							realtimeConnected
+								? t("input.placeholder")
+								: t("input.placeholderOffline")
+						}
+						disabled={!realtimeConnected}
 					/>
 					<div ref={emojiPickerAreaRef} className="hidden lg:contents">
 						<Button
@@ -124,6 +134,7 @@ export default function MessageInput({ currentChat, onSendMessage }) {
 					size="icon"
 					type="submit"
 					className="ds-chat-input-icon-btn"
+					disabled={!realtimeConnected}
 				>
 					<Send className="ds-chat-icon-input" />
 				</Button>

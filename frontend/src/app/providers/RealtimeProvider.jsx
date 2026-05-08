@@ -6,6 +6,22 @@ const RealtimeProvider = ({ children }) => {
     const disconnect = useSocketStore((state) => state.disconnect)
 
     useEffect(() => {
+        const syncNavigator = () => {
+            useSocketStore.setState({
+                navigatorOnline:
+                    typeof navigator !== 'undefined' ? navigator.onLine : true,
+            })
+        }
+        syncNavigator()
+        window.addEventListener('online', syncNavigator)
+        window.addEventListener('offline', syncNavigator)
+        return () => {
+            window.removeEventListener('online', syncNavigator)
+            window.removeEventListener('offline', syncNavigator)
+        }
+    }, [])
+
+    useEffect(() => {
         connect()
 
         return () => {

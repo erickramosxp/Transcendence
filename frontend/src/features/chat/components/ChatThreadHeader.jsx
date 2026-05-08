@@ -6,7 +6,11 @@ import { cn } from "@/design-system/tokens/colors";
 import { VoiceCallModal } from "@/features/chat/components/VoiceCallModal";
 import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
 
-export default function ChatThreadHeader({ currentChat, onBack }) {
+export default function ChatThreadHeader({
+	currentChat,
+	onBack,
+	realtimeOk = true,
+}) {
 	const { t } = useTranslation("chat");
 	// Fase `incoming` virá do sinal (WebSocket/WebRTC); por ora o ícone de telefone abre só `outgoing`.
 	const [voiceCall, setVoiceCall] = useState({
@@ -30,7 +34,8 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 		if (isGroup || peerId == null) return false;
 		return !!s.usersPresence[peerId]?.online;
 	});
-	const status = peerOnline ? "online" : "offline";
+	const status =
+		!realtimeOk ? "offline" : peerOnline ? "online" : "offline";
 	const groupTitle = (
 		currentChat.chatName ??
 		currentChat.name ??
@@ -71,12 +76,16 @@ export default function ChatThreadHeader({ currentChat, onBack }) {
 					<span
 						className={cn(
 							"ds-chat-thread-status",
-							peerOnline
+							realtimeOk && peerOnline
 								? "ds-chat-thread-status--online"
 								: "ds-chat-thread-status--offline",
 						)}
 					>
-						{peerOnline ? t("status.online") : t("status.offline")}
+						{!realtimeOk
+							? t("status.offline")
+							: peerOnline
+								? t("status.online")
+								: t("status.offline")}
 					</span>
 				)}
 			</div>

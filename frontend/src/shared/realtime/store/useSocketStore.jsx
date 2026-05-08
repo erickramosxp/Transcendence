@@ -24,51 +24,133 @@ import {
 } from '@/shared/constants/websocket'
 import { resolveRealtimeWebSocketUrl } from '@/shared/realtime/resolveRealtimeWebSocketUrl'
 
+const WS_CONNECT_TIMEOUT_MS = 10000
+const WS_HEARTBEAT_MS = 15000
+const WS_PONG_TIMEOUT_MS = 8000
+
 export const useSocketStore = create((set, get) => ({
     socket: null,
     connected: false,
+    connecting: false,
     reconnectAttempts: 0,
+    intentionalDisconnect: false,
+    reconnectTimeoutId: null,
+    navigatorOnline:
+        typeof navigator !== "undefined" ? navigator.onLine : true,
 
     connect: () => {
         const token = localStorage.getItem('@trascendence:token')
 
         if (!token) {
+            set({ connecting: false })
             return;
         }
+
+        clearTimeout(get().reconnectTimeoutId)
+        set({ reconnectTimeoutId: null })
 
         const { socket } = get();
 
         if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
             return;
         }
-
+        set({ connecting: true })
         const ws = new WebSocket(resolveRealtimeWebSocketUrl(token))
+        let connectTimeoutId = null
+        let heartbeatIntervalId = null
+        let pongTimeoutId = null
+
+        const sendOnWire = (sock, type, payload = {}) => {
+            if (sock.readyState !== WebSocket.OPEN) return
+            sock.send(JSON.stringify({ type, payload }))
+        }
+
+        const clearWsTimers = () => {
+            clearTimeout(connectTimeoutId)
+            clearInterval(heartbeatIntervalId)
+            clearTimeout(pongTimeoutId)
+            connectTimeoutId = null
+            heartbeatIntervalId = null
+            pongTimeoutId = null
+        }
+
+        const schedulePongTimeout = () => {
+            clearTimeout(pongTimeoutId)
+            pongTimeoutId = setTimeout(() => {
+                if (ws.readyState === WebSocket.OPEN) {
+                    console.warn('[WS] PONG timeout, fechando conexão para reconectar')
+                    ws.close()
+                }
+            }, WS_PONG_TIMEOUT_MS)
+        }
+
+        const startHeartbeat = () => {
+            clearInterval(heartbeatIntervalId)
+            heartbeatIntervalId = setInterval(() => {
+                if (ws.readyState !== WebSocket.OPEN) return
+                sendOnWire(ws, WS_SEND_EVENTS.PING)
+                schedulePongTimeout()
+            }, WS_HEARTBEAT_MS)
+        }
+
+        // Evita ficar preso em CONNECTING quando o servidor está indisponível.
+        connectTimeoutId = setTimeout(() => {
+            if (ws.readyState === WebSocket.CONNECTING) {
+                console.warn('[WS] Timeout ao conectar, forçando fechamento para nova tentativa')
+                ws.close()
+            }
+        }, WS_CONNECT_TIMEOUT_MS)
 
         ws.onopen = () => {
+            clearTimeout(connectTimeoutId)
+            clearTimeout(get().reconnectTimeoutId)
             set({
                 socket: ws,
                 connected: true,
-                reconnectAttempts: 0
+                connecting: false,
+                reconnectAttempts: 0,
+                reconnectTimeoutId: null,
             })
-            get().send('LIST_PRESENCE')
+
+            // Handshake desta ligação: servidor não herda subscrições do socket anterior.
+            sendOnWire(ws, 'LIST_PRESENCE')
+            const activeChatId = useChatStore.getState().activeChatId
+            if (activeChatId != null) {
+                sendOnWire(ws, WS_SEND_EVENTS.CHAT_SUBSCRIBE, {
+                    chatId: activeChatId,
+                })
+            }
+            startHeartbeat()
         }
 
         ws.onclose = () => {
+            const intentional = get().intentionalDisconnect
+
+            clearWsTimers()
+            clearTimeout(get().reconnectTimeoutId)
+
             set({
                 socket: null,
-                connected: false
+                connected: false,
+                connecting: false,
+                intentionalDisconnect: false,
+                reconnectTimeoutId: null,
             })
 
-            const attempts = get().reconnectAttempts;
-            if (attempts < 10) { // Limite opcional de tentativas
-                const timeout = Math.min(1000 * Math.pow(2, attempts), 30000); // Max 30s
-                console.log(`Reconectando em ${timeout / 1000}s...`);
+            if (intentional) return
 
-                setTimeout(() => {
-                    set({ reconnectAttempts: attempts + 1 });
-                    get().connect();
-                }, timeout);
-            }
+            const attempts = get().reconnectAttempts
+            const timeout = Math.min(1000 * Math.pow(2, attempts), 30000); // Max 30s
+            console.log(`Reconectando em ${timeout / 1000}s...`);
+
+            const id = setTimeout(() => {
+                set((s) => ({
+                    reconnectAttempts: s.reconnectAttempts + 1,
+                    reconnectTimeoutId: null,
+                }))
+                get().connect()
+            }, timeout)
+            set({ reconnectTimeoutId: id })
         }
 
         ws.onerror = () => {
@@ -126,8 +208,10 @@ export const useSocketStore = create((set, get) => ({
 
             switch (data.type) {
                 case WS_INCOMING_EVENTS.PONG:
+                    clearTimeout(pongTimeoutId)
                     break;
                 case WS_SEND_EVENTS.PING:
+                    clearTimeout(pongTimeoutId)
                     get().send(WS_INCOMING_EVENTS.PONG);
                     break;
                 case WS_INCOMING_EVENTS.MESSAGE_CREATED: {
@@ -167,15 +251,25 @@ export const useSocketStore = create((set, get) => ({
     },
 
     disconnect: () => {
+        clearTimeout(get().reconnectTimeoutId)
+
         const socket = get().socket
 
         if (socket) {
+            set({
+                intentionalDisconnect: true,
+                reconnectTimeoutId: null,
+             })
             socket.close()
+            return
         }
 
         set({
             socket: null,
-            connected: false
+            connected: false,
+            connecting: false,
+            intentionalDisconnect: false,
+            reconnectTimeoutId: null,
         })
     },
 
@@ -194,5 +288,14 @@ export const useSocketStore = create((set, get) => ({
                 payload
             })
         )
-    }
+    },
+
+    retryNow: () => {
+        clearTimeout(get().reconnectTimeoutId)
+        set({
+            reconnectTimeoutId: null,
+            reconnectAttempts: 0,
+        })
+        get().connect()
+    },
 }))

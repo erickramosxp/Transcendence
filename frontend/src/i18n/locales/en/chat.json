@@ -65,7 +65,17 @@
     "typingMany": "{{a}}, {{b}} and others are typing…"
   },
   "input": {
-    "placeholder": "Type a message..."
+    "placeholder": "Type a message...",
+    "placeholderOffline": "Reconnecting chat..."
+  },
+  "realtime": {
+    "barNoNetwork": "You are offline. Chat will reconnect when network is back.",
+    "connecting": "Reconnecting chat...",
+    "barNoWs": "Chat connection is unstable. Retrying ({{n}}).",
+    "retryNow": "Try now",
+    "presenceUnavailable": "Presence unavailable",
+    "cannotSendNoWs": "Cannot send without WebSocket.",
+    "cannotSendNoNetwork": "No network — cannot send."
   },
   "linkPreview": {
     "loading": "Loading link preview…"

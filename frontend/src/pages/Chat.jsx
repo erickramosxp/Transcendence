@@ -8,6 +8,7 @@ import { Loading } from "@/design-system";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "@/features/chat/store/useChatStore";
+import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 
 export function Chat() {
 	const { t } = useTranslation("chat");
@@ -23,6 +24,10 @@ export function Chat() {
 		hasMore: false,
 		loading: false,
 	});
+	const initialChatListLoadedRef = useRef(false);
+	const prevWsConnectedRef = useRef(useSocketStore.getState().connected);
+
+	const wsConnected = useSocketStore((s) => s.connected);
 
 	const resetAndFetchChats = useCallback(async (options = {}) => {
 		const { listFocusChatId } = options;
@@ -47,11 +52,27 @@ export function Chat() {
 				setNotFounded(true);
 				toast.error(t("errors.load"));
 			} finally {
+				initialChatListLoadedRef.current = true;
 				setLoadHeader(false);
 			}
 		};
 		fetchMyChats();
 	}, [t, resetAndFetchChats]);
+
+	useEffect(() => {
+		const wasConnected = prevWsConnectedRef.current;
+		prevWsConnectedRef.current = wsConnected;
+
+		if (!initialChatListLoadedRef.current || notFounded) return;
+		if (!wsConnected || wasConnected) return;
+
+		resetAndFetchChats({
+			listFocusChatId: selectedChat?.id,
+		}).catch((err) => {
+			console.error(err);
+			toast.error(t("errors.load"));
+		});
+	}, [wsConnected, notFounded, resetAndFetchChats, t, selectedChat?.id]);
 
 	const loadMoreChats = useCallback(async () => {
 		const s = listFetchRef.current;
