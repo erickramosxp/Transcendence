@@ -354,7 +354,7 @@ public class ChatResourceTest extends BaseApiTest {
                 .when()
                 .get("/chats/{chatId}/messages?page=0&size=3", chatId)
                 .then()
-                .statusCode(202)
+                .statusCode(200)
                 .body("items.size()", Matchers.equalTo(3))
                 .body("hasMore", Matchers.equalTo(true));
     }
