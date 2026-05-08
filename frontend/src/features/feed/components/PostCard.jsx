@@ -56,6 +56,7 @@ function PostCard({
 
 	return (
 		<Card
+			data-testid="post-card"
 			className={cn(
 				!isModal && "border-border bg-card/90 backdrop-blur-xl shadow-xl p-3 sm:p-4 ",
 				!isModal && "transform-gpu transition-all duration-700 ease-in-out origin-top",
