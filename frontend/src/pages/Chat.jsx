@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
@@ -28,6 +28,7 @@ export function Chat() {
 	const prevWsConnectedRef = useRef(useSocketStore.getState().connected);
 
 	const wsConnected = useSocketStore((s) => s.connected);
+	const listBumpSeq = useChatStore((s) => s.listBumpSeq ?? 0);
 
 	const resetAndFetchChats = useCallback(async (options = {}) => {
 		const { listFocusChatId } = options;
@@ -134,10 +135,11 @@ export function Chat() {
 		[resetAndFetchChats],
 	);
 
-	useLayoutEffect(() => {
-		useChatStore.getState().setListBumpHandler(bumpChatAfterMessage);
-		return () => useChatStore.getState().setListBumpHandler(null);
-	}, [bumpChatAfterMessage]);
+	useEffect(() => {
+		if (!listBumpSeq) return;
+		const batch = useChatStore.getState().drainListBumpQueue();
+		batch.forEach((p) => bumpChatAfterMessage(p));
+	}, [listBumpSeq, bumpChatAfterMessage]);
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {

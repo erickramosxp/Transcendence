@@ -1,20 +1,3 @@
-// lista de conversas
-// mensagens da conversa atual
-// última mensagem
-// unread count
-// typing status
-// read receipts
-
-// MESSAGE_CREATED
-// TYPING_START
-// TYPING_STOP
-// CHAT_SUBSCRIBED
-
-// activeChatId
-// subscribedChats
-// messages
-// typingUsers
-
 import { create } from 'zustand'
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 
@@ -23,59 +6,28 @@ function sameMessageId(a, b) {
 	return Number(a) === Number(b)
 }
 
-const updateConversationPreview = (
-    conversations,
-    message,
-    incrementUnread = false
-) => {
-    const updated = conversations.map((chat) => {
-        if (chat.chatId !== message.chatId) {
-            return chat
-        }
-
-        return {
-            ...chat,
-            lastMessage: message.text,
-            lastMessageAt: message.createdAt,
-            unreadCount: incrementUnread
-                ? (chat.unreadCount || 0) + 1
-                : chat.unreadCount
-        }
-    })
-
-    return updated.sort(
-        (a, b) =>
-            new Date(b.lastMessageAt) -
-            new Date(a.lastMessageAt)
-    )
-}
-
-export const useChatStore = create((set, get) => ({
+export const useChatStore = create((set) => ({
 
     activeChatId: null,
     messages: [],
     typingUsers: [],
-    conversations: [],
-    listBumpHandler: null,
-    pendingListBumps: [],
-    setListBumpHandler: (fn) => {
-        const pending = [...(get().pendingListBumps ?? [])]
-        set({ listBumpHandler: fn, pendingListBumps: [] })
-        if (typeof fn === 'function' && pending.length > 0) {
-            queueMicrotask(() => {
-                pending.forEach((p) => fn(p))
-            })
-        }
-    },
-    dispatchListBump: (payload) => {
-        const h = get().listBumpHandler
-        if (typeof h === 'function') {
-            h(payload)
-        } else {
-            set((s) => ({
-                pendingListBumps: [...(s.pendingListBumps ?? []), payload],
-            }))
-        }
+    listBumpQueue: [],
+    listBumpSeq: 0,
+    dispatchListBump: (payload) =>
+        set((s) => ({
+            listBumpQueue: [...(s.listBumpQueue ?? []), payload],
+            listBumpSeq: (s.listBumpSeq ?? 0) + 1,
+        })),
+
+    drainListBumpQueue: () => {
+        let batch = []
+        set((s) => {
+            const q = s.listBumpQueue ?? []
+            if (!q.length) return {}
+            batch = [...q]
+            return { listBumpQueue: [] }
+        })
+        return batch
     },
 
     setActiveChat: (chatId) =>
@@ -93,7 +45,6 @@ export const useChatStore = create((set, get) => ({
     addMessage: (message) =>
 
         set((state) => {
-            // evita entrar
             if (
                 state.activeChatId != null &&
                 message.chatId != null &&
@@ -101,7 +52,6 @@ export const useChatStore = create((set, get) => ({
             ) {
                 return state;
             }
-            // evita duplicata
             const alreadyExists = state.messages.some((msg) =>
                 sameMessageId(msg.id, message.id),
             )
@@ -112,33 +62,6 @@ export const useChatStore = create((set, get) => ({
 
             return {
                 messages: [...state.messages, message]
-            }
-        }),
-
-    handleIncomingMessage: (message) =>
-        set((state) => {
-            const isCurrentChat =
-                state.activeChatId === message.chatId
-
-            let updatedMessages = state.messages
-
-            if (isCurrentChat) {
-                updatedMessages = [
-                    ...state.messages,
-                    message
-                ]
-            }
-
-            const updatedConversations =
-                updateConversationPreview(
-                    state.conversations,
-                    message,
-                    !isCurrentChat
-                )
-
-            return {
-                messages: updatedMessages,
-                conversations: updatedConversations
             }
         }),
 
