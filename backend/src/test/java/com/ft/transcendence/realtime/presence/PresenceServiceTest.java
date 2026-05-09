@@ -22,26 +22,29 @@ public class PresenceServiceTest extends BaseApiTest {
     RealtimeSessionRegistry registry;
 
     @Test
-    public void testResolveDefaultTargetUserIdsReturnsOnlyMutualFriends() {
+    public void testResolveDefaultTargetUserIdsReturnsOnlyFriends() {
         UserTestContext user1 = createUser();
         UserTestContext user2 = createUser();
         UserTestContext user3 = createUser();
 
         auth(user1)
-                .post("/user/{username}/follow", user2.username)
+                .post("/friendships/request/" + user2.id)
                 .then()
-                .statusCode(200);
+                .statusCode(201);
+
+        Long friendshipId = ((Number) auth(user2)
+                .get("/friendships/requests/pending")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].friendshipId"))
+                .longValue();
 
         auth(user2)
-                .post("/user/{username}/follow", user1.username)
+                .post("/friendships/accept/" + friendshipId)
                 .then()
                 .statusCode(200);
-
-        auth(user1)
-                .post("/user/{username}/follow", user3.username)
-                .then()
-                .statusCode(200);
-
+        
         Set<Long> ids = presenceService.resolveDefaultTargetUserIds(user1.id);
 
         assertTrue(ids.contains(user2.id));

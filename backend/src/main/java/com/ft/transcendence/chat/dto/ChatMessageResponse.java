@@ -1,7 +1,6 @@
 package com.ft.transcendence.chat.dto;
 
 import com.ft.transcendence.chat.domain.ChatMessage;
-import com.ft.transcendence.chat.dto.UserMessageResponse;
 
 import java.time.OffsetDateTime;
 
