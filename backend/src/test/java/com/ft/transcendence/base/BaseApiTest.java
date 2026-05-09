@@ -58,6 +58,26 @@ public abstract class BaseApiTest {
         return ctx;
     }
 
+    protected void makeFriends(UserTestContext userA, UserTestContext userB) {
+        io.restassured.response.Response response = given()
+                .header("Authorization", "Bearer " + userA.token)
+                .post("/friendships/request/" + userB.id)
+                .then()
+                .extract()
+                .response();
+
+        if (response.statusCode() == 409)
+            return; // amizade já existe e já está aceita
+
+        long friendshipId = ((Number) response.jsonPath().get("friendshipId")).longValue();
+
+        given()
+                .header("Authorization", "Bearer " + userB.token)
+                .post("/friendships/accept/" + friendshipId)
+                .then()
+                .statusCode(200);
+    }
+
     protected RequestSpecification auth(UserTestContext user) {
         return given()
                 .header("Authorization", "Bearer " + user.token)
