@@ -15,6 +15,7 @@ import static io.restassured.RestAssured.given;
 public class ChatResourceTest extends BaseApiTest {
 
     private Long createDirectChat(UserTestContext userA, UserTestContext userB) {
+        makeFriends(userA, userB);
         return ((Number) given()
                 .header("Authorization", "Bearer " + userA.token)
                 .contentType("application/json")
@@ -31,7 +32,10 @@ public class ChatResourceTest extends BaseApiTest {
                 .path("id")).longValue();
     }
 
-    private Long createGroupChat(UserTestContext owner, List<Long> participantIds) {
+    private Long createGroupChat(UserTestContext owner, List<Long> participantIds, List<UserTestContext> participants) {
+        for (UserTestContext participant : participants) {
+            makeFriends(owner, participant);
+        }
         String participantsJson = participantIds.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
@@ -60,7 +64,7 @@ public class ChatResourceTest extends BaseApiTest {
         UserTestContext user3 = createUser();
 
         Long chatId = createDirectChat(user1, user2);
-        Long chatId2 = createGroupChat(user1, List.of(user2.id, user3.id));
+        Long chatId2 = createGroupChat(user1, List.of(user2.id, user3.id), List.of(user2, user3));
 
         given()
                 .header("Authorization", "Bearer " + user1.token)
@@ -76,6 +80,8 @@ public class ChatResourceTest extends BaseApiTest {
     public void testCreateDirectChat() {
         UserTestContext user1 = createUser();
         UserTestContext user2 = createUser();
+
+        makeFriends(user1, user2);
 
         given()
                 .header("Authorization", "Bearer " + user1.token)
@@ -116,6 +122,9 @@ public class ChatResourceTest extends BaseApiTest {
         UserTestContext owner = createUser();
         UserTestContext member1 = createUser();
         UserTestContext member2 = createUser();
+
+        makeFriends(owner, member1);
+        makeFriends(owner, member2);
 
         given()
                 .header("Authorization", "Bearer " + owner.token)
