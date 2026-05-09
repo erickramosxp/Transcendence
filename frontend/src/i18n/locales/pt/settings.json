@@ -1,11 +1,20 @@
 {
+    "popup": {
+        "title": "Configurações"
+    },
     "tabs": {
         "account": "Conta",
         "security": "Segurança",
         "appearance": "Aparência"
     },
     "account": {
+        "removeProfilePhoto": "Remover foto de perfil:",
+        "remove": "Remover",
         "logout": "Sair"
+    },
+    "profilePhoto": {
+        "deleteSuccess": "Foto de perfil deletada.",
+        "deleteError": "Falha ao deletar foto de perfil."
     },
     "security": {
         "title": "Alterar senha",
