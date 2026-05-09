@@ -77,7 +77,13 @@
     "retryNow": "Intentar ahora",
     "presenceUnavailable": "Presencia no disponible",
     "cannotSendNoWs": "No se puede enviar sin WebSocket.",
-    "cannotSendNoNetwork": "Sin red — no se puede enviar."
+    "cannotSendNoNetwork": "Sin red — no se puede enviar.",
+    "wsErrors": {
+      "forbiddenSubscribe": "No tienes acceso en tiempo real a esta conversación. Se cerró.",
+      "subscribeFailed": "No se pudo unirse al canal en tiempo real de esta conversación.",
+      "sendNotParticipant": "No participas en esta conversación.",
+      "sendFailed": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+    }
   },
   "linkPreview": {
     "loading": "Cargando vista previa del enlace…"

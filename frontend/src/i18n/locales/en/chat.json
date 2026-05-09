@@ -77,7 +77,13 @@
     "retryNow": "Try now",
     "presenceUnavailable": "Presence unavailable",
     "cannotSendNoWs": "Cannot send without WebSocket.",
-    "cannotSendNoNetwork": "No network — cannot send."
+    "cannotSendNoNetwork": "No network — cannot send.",
+    "wsErrors": {
+      "forbiddenSubscribe": "You don't have realtime access to this conversation. It was closed.",
+      "subscribeFailed": "Could not join the realtime channel for this conversation.",
+      "sendNotParticipant": "You are not a participant in this conversation.",
+      "sendFailed": "Could not send the message. Please try again."
+    }
   },
   "linkPreview": {
     "loading": "Loading link preview…"

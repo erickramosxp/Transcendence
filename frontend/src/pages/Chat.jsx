@@ -29,6 +29,9 @@ export function Chat() {
 
 	const wsConnected = useSocketStore((s) => s.connected);
 	const listBumpSeq = useChatStore((s) => s.listBumpSeq ?? 0);
+	const subscribeAccessDeniedSeq = useChatStore(
+		(s) => s.subscribeAccessDeniedSeq ?? 0,
+	);
 
 	const resetAndFetchChats = useCallback(async (options = {}) => {
 		const { listFocusChatId } = options;
@@ -140,6 +143,11 @@ export function Chat() {
 		const batch = useChatStore.getState().drainListBumpQueue();
 		batch.forEach((p) => bumpChatAfterMessage(p));
 	}, [listBumpSeq, bumpChatAfterMessage]);
+
+	useEffect(() => {
+		if (!subscribeAccessDeniedSeq) return;
+		setSelectedChat(null);
+	}, [subscribeAccessDeniedSeq]);
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {

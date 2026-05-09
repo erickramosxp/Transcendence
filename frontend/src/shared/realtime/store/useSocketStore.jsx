@@ -1,15 +1,6 @@
-// socket atual
-// conectado ou não
-// reconnect status
-// erro de conexão
-// talvez lastSeen
-// abrir conexão
-// fechar conexão
-// status connected/disconnected
-// send()
-// reconnect
-
 import { create } from 'zustand'
+import { toast } from 'react-toastify'
+import i18n from '@/i18n'
 import { useChatStore } from '@/features/chat/store/useChatStore'
 import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
@@ -35,6 +26,7 @@ export const useSocketStore = create((set, get) => ({
     reconnectAttempts: 0,
     intentionalDisconnect: false,
     reconnectTimeoutId: null,
+    pendingChatSubscribeId: null,
     navigatorOnline:
         typeof navigator !== "undefined" ? navigator.onLine : true,
 
@@ -72,6 +64,68 @@ export const useSocketStore = create((set, get) => ({
             connectTimeoutId = null
             heartbeatIntervalId = null
             pongTimeoutId = null
+        }
+
+        const handleIncomingWsError = (payload) => {
+            const code = payload?.code
+            const originalType = payload?.originalType
+            const pendingId = get().pendingChatSubscribeId
+            const chatState = useChatStore.getState()
+
+            if (originalType === WS_SEND_EVENTS.CHAT_SUBSCRIBE) {
+                set({ pendingChatSubscribeId: null })
+
+                const activeId = chatState.activeChatId
+                const sameChat =
+                    pendingId != null &&
+                    activeId != null &&
+                    Number(pendingId) === Number(activeId)
+
+                if (code === WS_ERROR_CODES.FORBIDDEN && sameChat) {
+                    chatState.resetActiveChatAfterWsAccessDenied()
+                    toast.error(
+                        i18n.t('chat:realtime.wsErrors.forbiddenSubscribe'),
+                    )
+                    return
+                }
+
+                if (sameChat) {
+                    toast.warning(
+                        i18n.t('chat:realtime.wsErrors.subscribeFailed'),
+                    )
+                    return
+                }
+                return
+            }
+
+            if (
+                code === WS_ERROR_CODES.NOT_SUBSCRIBED &&
+                (originalType === WS_SEND_EVENTS.TYPING_START ||
+                    originalType === WS_SEND_EVENTS.TYPING_STOP)
+            ) {
+                const chatId = chatState.activeChatId
+                if (chatId != null) {
+                    get().send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, {
+                        chatId,
+                    })
+                }
+                return
+            }
+
+            if (originalType === WS_SEND_EVENTS.SEND_MESSAGE) {
+                if (code === WS_ERROR_CODES.NON_PARTICIPANT) {
+                    toast.error(
+                        i18n.t('chat:realtime.wsErrors.sendNotParticipant'),
+                    )
+                    return
+                }
+                if (code === WS_ERROR_CODES.INTERNAL_ERROR) {
+                    toast.error(i18n.t('chat:realtime.wsErrors.sendFailed'))
+                    return
+                }
+            }
+
+            console.warn('[WS] ERROR', payload)
         }
 
         const schedulePongTimeout = () => {
@@ -118,6 +172,9 @@ export const useSocketStore = create((set, get) => ({
             if (activeChatId != null) {
                 sendOnWire(ws, WS_SEND_EVENTS.CHAT_SUBSCRIBE, {
                     chatId: activeChatId,
+                })
+                set({
+                    pendingChatSubscribeId: Number(activeChatId),
                 })
             }
             startHeartbeat()
@@ -238,14 +295,8 @@ export const useSocketStore = create((set, get) => ({
                     console.log("lista inicial de onlines", data);
                     break;
                 case WS_INCOMING_EVENTS.ERROR:
-                    console.warn('[WS] ERROR', data.payload)
+                    handleIncomingWsError(data.payload ?? {})
                     break;
-                // case WS_ERROR_CODES.UNAUTHORIZED_CHAT_ACCESS:
-                //     break;
-                // case WS_ERROR_CODES.INVALID_PAYLOAD:
-                //     break;
-                // case WS_ERROR_CODES.UNKNOWN_EVENT_TYPE:
-                //     break;
             }
         }
     },
@@ -288,6 +339,15 @@ export const useSocketStore = create((set, get) => ({
                 payload
             })
         )
+
+        if (
+            type === WS_SEND_EVENTS.CHAT_SUBSCRIBE &&
+            payload?.chatId != null
+        ) {
+            set({
+                pendingChatSubscribeId: Number(payload.chatId),
+            })
+        }
     },
 
     retryNow: () => {

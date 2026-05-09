@@ -9,6 +9,7 @@ function sameMessageId(a, b) {
 export const useChatStore = create((set) => ({
 
     activeChatId: null,
+    subscribeAccessDeniedSeq: 0,
     messages: [],
     typingUsers: [],
     listBumpQueue: [],
@@ -71,6 +72,14 @@ export const useChatStore = create((set) => ({
             messages: [],
             typingUsers: []
         }),
+
+    resetActiveChatAfterWsAccessDenied: () =>
+        set((s) => ({
+            activeChatId: null,
+            messages: [],
+            typingUsers: [],
+            subscribeAccessDeniedSeq: (s.subscribeAccessDeniedSeq ?? 0) + 1,
+        })),
 
     prependMessages: (olderMessages) =>
         set((state) => ({
