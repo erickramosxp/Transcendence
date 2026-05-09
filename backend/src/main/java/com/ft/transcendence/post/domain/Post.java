@@ -35,6 +35,9 @@ public class Post extends PanacheEntityBase {
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
 
+    @Column(name = "deleted_at")
+    public OffsetDateTime deletedAt;
+
     public static Post findById(Long id) {
         return find("id", id).firstResult();
     }

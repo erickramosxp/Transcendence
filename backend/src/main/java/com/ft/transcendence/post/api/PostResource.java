@@ -69,4 +69,14 @@ public class PostResource {
         likeService.unlikePost(userId, postId);
         return Response.status(200).build();
     }
+
+    @DELETE
+    @Path("/{postId}")
+    @Authenticated
+    public Response deletePost(@PathParam("postId") Long postId) {
+
+        long userId = currentUser.id();
+        postService.deletePost(userId, postId);
+        return Response.noContent().build();
+    }
 }

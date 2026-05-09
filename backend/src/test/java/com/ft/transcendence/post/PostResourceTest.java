@@ -2,6 +2,10 @@ package com.ft.transcendence.post;
 
 import com.ft.transcendence.base.BaseApiTest;
 import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.job.domain.Job;
+import com.ft.transcendence.job.enums.JobStatus;
+import com.ft.transcendence.job.enums.JobType;
+import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.UserTestContext;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -248,5 +252,69 @@ public class PostResourceTest extends BaseApiTest {
                 .post("/posts/" + postId + "/like")
                 .then()
                 .statusCode(200);
+    }
+
+    @Test
+    @DisplayName("Should soft delete post and create delete media job")
+    void testDeletePostCreatesDeleteMediaJob() {
+        UserTestContext user = createUser();
+
+        Long postId =
+                ((Number) given()
+                        .header("Authorization", "Bearer " + user.token)
+                        .contentType("multipart/form-data")
+                        .multiPart("file", new File("src/test/resources/test-image.jpg"))
+                        .multiPart("text", "Post com imagem")
+                        .when()
+                        .post("/posts")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .path("id"))
+                        .longValue();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .when()
+                .delete("/posts/" + postId)
+                .then()
+                .statusCode(204);
+
+        Post post = Post.findById(postId);
+        assertNotNull(post.deletedAt);
+
+        Job job = Job.find("type = ?1 and status = ?2", JobType.DELETE_POST_MEDIA, JobStatus.PENDING)
+                .firstResult();
+
+        assertNotNull(job);
+    }
+
+    @Test
+    @DisplayName("Should not delete media synchronously on post delete")
+    void testDeletePostDoesNotCallStorageDirectly() {
+        UserTestContext user = createUser();
+
+        Long postId =
+                ((Number) given()
+                        .header("Authorization", "Bearer " + user.token)
+                        .contentType("multipart/form-data")
+                        .multiPart("file", new File("src/test/resources/test-image.jpg"))
+                        .multiPart("text", "Post com imagem")
+                        .when()
+                        .post("/posts")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .path("id"))
+                        .longValue();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .when()
+                .delete("/posts/" + postId)
+                .then()
+                .statusCode(204);
+
+        Mockito.verify(storageService, Mockito.never()).delete(Mockito.anyString());
     }
 }
