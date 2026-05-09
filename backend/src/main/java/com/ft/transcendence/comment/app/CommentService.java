@@ -16,8 +16,6 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -112,6 +110,5 @@ public class CommentService {
         comment.deletedAt = now;
         Post.update("commentCount = commentCount - 1 where id = ?1", comment.post.id);
         Like.delete("comment.id = ?1", commentId);
-
     }
 }
