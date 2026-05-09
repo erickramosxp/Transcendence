@@ -25,6 +25,16 @@
             "charCount": "{{count}}/500"
         }
     },
+    "posts": {
+        "dropdown": {
+            "delete": "Eliminar"
+        },
+        "deleteSuccess": "¡Publicación eliminada!"
+    },
+    "errors": {
+        "updateLike": "No se pudo actualizar el me gusta.",
+        "deletePost": "Error al eliminar la publicación. Inténtalo de nuevo."
+    },
     "comments": {
         "empty": "Sin comentarios",
         "placeholder": "Escribe un comentario..."

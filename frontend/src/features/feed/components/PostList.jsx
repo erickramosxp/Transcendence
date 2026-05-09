@@ -5,11 +5,12 @@ import {
     getFeed,
     likePost,
     unlikePost,
+    deletePost
 } from "@/features/feed/feedService";
 import { toast } from "react-toastify";
 
 import { useTranslation } from "react-i18next";
-import { Card, Loading } from "@/design-system";
+import { Loading } from "@/design-system";
 
 
 function PostList({ posts, setPosts }) {
@@ -24,7 +25,7 @@ function PostList({ posts, setPosts }) {
     const { t } = useTranslation('feed');
 
     useEffect(() => {
-        
+
         async function loadInitialFeed() {
             try {
                 const data = await getFeed(0, 10);
@@ -101,7 +102,7 @@ function PostList({ posts, setPosts }) {
             }
         } catch (err) {
             console.error(err);
-            toast.error("Falha ao atualizar curtida");
+            toast.error(t('errors.updateLike'));
 
             setPosts((prev) =>
                 prev.map((p) =>
@@ -131,6 +132,20 @@ function PostList({ posts, setPosts }) {
         );
     }
 
+
+    const handleDelete = async (postId) => {
+
+        try {
+            await deletePost(postId);
+
+            setPosts(prev => prev.filter(p => p.id !== postId));
+            toast.success(t('posts.deleteSuccess'))
+        } catch (err) {
+            toast.error(t('errors.deletePost'));
+            throw err;
+        }
+    };
+
     if (isLoadingInitialFeed) {
         return <Loading className="py-10" />;
     }
@@ -147,18 +162,15 @@ function PostList({ posts, setPosts }) {
                 <>
                     {posts &&
                         posts.map((post) => (
-                            <Card
+                            <PostCard
                                 key={post.id}
-                                className="border-border bg-card/90 backdrop-blur-xl shadow-xl"
-                            >
-                                <PostCard
-                                    post={post}
-                                    onLike={handleLike}
-                                    onToggleComments={toggleComments}
-                                    activeCommentsPostId={activeCommentsPostId}
-                                    incrementCommentCount={incrementCommentCount}
-                                />
-                            </Card>
+                                post={post}
+                                onLike={handleLike}
+                                onToggleComments={toggleComments}
+                                activeCommentsPostId={activeCommentsPostId}
+                                incrementCommentCount={incrementCommentCount}
+                                onDelete={handleDelete}
+                            />
                         ))}
 
                     <div ref={sentinelRef} className="h-4" aria-hidden />

@@ -146,6 +146,17 @@ public class UserResource {
         return userService.getFollowing(user.id, page, size);
     }
 
+    @DELETE
+    @Path("/me/avatar")
+    @Authenticated
+    public Response deleteProfileAvatar() {
+        long currentUserId = currentUser.id();
+
+        userService.removeAvatar(currentUserId);
+        return Response.noContent().build();
+    }
+
+
     @GET
     @Path("/me/auth-type")
     @Authenticated
@@ -153,7 +164,9 @@ public class UserResource {
         return userService.getAuthType(currentUser.id());
     }
 
+    @GET
     @Path("/me/avatar")
+    @Authenticated
     public UserAvatarResponse getMyAvatar() {
         long userId = currentUser.id();
         UserAvatarResponse avatarResponse = userService.getAvatar(userId);

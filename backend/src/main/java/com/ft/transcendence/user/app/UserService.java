@@ -20,6 +20,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
@@ -123,7 +124,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Like> likes = Like.find("user.id = ?1 and post is not null order by createdAt desc", userId)
+        List<Like> likes = Like.find("user.id = ?1 and post is not null and post.deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -175,7 +176,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -224,7 +225,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 and mediaUrl is not null order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null and mediaUrl is not null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -236,7 +237,7 @@ public class UserService {
         resp.items = posts.stream().map(p -> {
             
             String mediaUrl = p.mediaUrl;
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank()) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
             return MediaResponse.of(p, mediaUrl);
@@ -377,6 +378,22 @@ public class UserService {
         return Response.ok(
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
+    }
+
+    @Transactional
+    public void removeAvatar(long currentUserId) {
+
+        User user = User.findById(currentUserId);
+
+        if (user == null)
+            throw new NotFoundException();
+
+        if (user.avatarUrl == null || user.avatarUrl.isBlank())
+            return;
+
+        storageService.delete(user.avatarUrl);
+
+        user.avatarUrl = null;
     }
 
     public UserAvatarResponse getAvatar(long userId) {
