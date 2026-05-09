@@ -25,6 +25,16 @@
             "charCount": "{{count}}/500"
         }
     },
+    "posts": {
+        "dropdown": {
+            "delete": "Excluir"
+        },
+        "deleteSuccess": "Post deletado!"
+    },
+    "errors": {
+        "updateLike": "Falha ao atualizar curtida.",
+        "deletePost": "Erro ao excluir. Tente novamente."
+    },
     "comments": {
         "empty": "Sem comentários",
         "placeholder": "Escreva um comentário..."
@@ -39,5 +49,9 @@
     "sections": {
         "onlineFriends": "Amigos Online",
         "trending": "Em Alta"
+    },
+    "preview": {
+        "title": "Pré-visualização",
+        "time": "agora"
     }
 }

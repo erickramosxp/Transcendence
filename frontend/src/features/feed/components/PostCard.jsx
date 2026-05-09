@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Trash2 } from "lucide-react";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import CommentCard from "@/features/feed/components/CommentCard";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/design-system/tokens/colors";
+import { useTranslation } from "react-i18next";
 
-import { Avatar, TextWithLink, Media, LikeButton } from "@/design-system";
+import { Card, Avatar, TextWithLink, Media, LikeButton, Dropdown } from "@/design-system";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 
 function PostCard({
@@ -16,13 +18,53 @@ function PostCard({
 	activeCommentsPostId,
 	incrementCommentCount,
 	className,
+	isModal = false,
+	onDelete
 }) {
 
 	const { currentLanguage } = useLanguage();
 	const commentsOpen = activeCommentsPostId === post.id;
+	const { user } = useAuth();
+	const [isDeleting, setIsDeleting] = useState(false);
+	const { t } = useTranslation('feed');
+
+	const handleDelete = () => {
+		setIsDeleting(true);
+
+		setTimeout(async () => {
+			try {
+				await onDelete(post.id);
+
+			} catch {
+				setIsDeleting(false);
+			}
+		}, 700);
+	};
+
+	const dowpDownItems = [
+		user.username === post.username && {
+			label: t('posts.dropdown.delete'),
+			onClick: handleDelete,
+			danger: true,
+			icon: <Trash2 size="16" />,
+		},
+	].filter(Boolean);
+
+	const deleteAnimationClass = isDeleting
+		? "opacity-0 blur-md scale-95 max-h-0 !p-0 !m-0 !border-transparent pointer-events-none"
+		: "opacity-100 blur-0 scale-100 max-h-[1500px]";
 
 	return (
-		<div className={cn("rounded-2xl bg-card p-3 shadow-md sm:p-4", className)}>
+		<Card
+			data-testid="post-card"
+			className={cn(
+				!isModal && "border-border bg-card/90 backdrop-blur-xl shadow-xl p-3 sm:p-4 ",
+				!isModal && "transform-gpu transition-all duration-700 ease-in-out origin-top",
+				deleteAnimationClass,
+				isModal && "border-none shadow-none bg-transparent",
+				className
+			)}
+		>
 			<div className="flex min-w-0 gap-3 sm:gap-4">
 				<div>
 					<Avatar
@@ -35,25 +77,34 @@ function PostCard({
 				</div>
 
 				<div className="min-w-0 flex-1">
-					<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
-						<span className="max-w-[120px] truncate text-foreground transition-colors hover:text-primary sm:max-w-none">
-							<Link className="truncate" to={`/${post.username}`}>
-								{post.name}
-							</Link>
-						</span>
+					<div className="flex items-center">
+						<div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
+							<span className="max-w-[120px] truncate text-foreground transition-colors hover:text-primary sm:max-w-none">
+								<Link className="truncate" to={`/${post.username}`}>
+									{post.name}
+								</Link>
+							</span>
 
-						<span
-							className="max-w-[100px] truncate text-muted-foreground sm:max-w-none"
-							title={`@${post.username}`}
-						>
-							@{post.username}
-						</span>
-						<span
-							title={new Date(post.created_at).toLocaleString()}
-							className="shrink-0 truncate text-muted-foreground"
-						>
-							{getCurrentTime(post.created_at, currentLanguage)}
-						</span>
+							<span
+								className="max-w-[100px] truncate text-muted-foreground sm:max-w-none"
+								title={`@${post.username}`}
+							>
+								@{post.username}
+							</span>
+							<span
+								title={new Date(post.created_at).toLocaleString()}
+								className="shrink-0 truncate text-muted-foreground"
+							>
+								{getCurrentTime(post.created_at, currentLanguage)}
+							</span>
+						</div>
+						<div className="ml-auto mr-2">
+							{!isModal &&
+								<Dropdown
+									items={dowpDownItems}
+								/>
+							}
+						</div>
 					</div>
 
 					<div className="mt-2 break-words overflow-hidden leading-relaxed text-foreground">
@@ -128,7 +179,7 @@ function PostCard({
 				</div>
 			)
 			}
-		</div >
+		</Card>
 	);
 }
 

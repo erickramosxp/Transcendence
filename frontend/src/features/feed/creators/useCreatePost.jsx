@@ -5,6 +5,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { validImageFile, validVideoFile, validateImageContent } from "@/features/profile/utils/validFile";
 import { toast } from 'react-toastify'
 import { useTranslation } from "react-i18next";
+import { getMyProfileAvatar } from "@/features/profile/services/profileService";
 
 const LINK_PREVIEW_DEBOUNCE_MS = 600;
 
@@ -17,10 +18,29 @@ export function useCreatePost(onAddPost, onClose, postType) {
 	const [linkPreview, setLinkPreview] = useState(null);
 	const [linkPreviewLoading, setLinkPreviewLoading] = useState(false);
 	const [linkPreviewError, setLinkPreviewError] = useState(null);
+	const [uploadPercent, setUploadPercent] = useState(null);
+	const [avatarUrl, setAvatarUrl] = useState(null);
 
 
 
 	const debouncedText = useDebounce(text, LINK_PREVIEW_DEBOUNCE_MS);
+
+	useEffect(() => {
+
+
+		const getMyAvatar = async () => {
+
+			try {
+				const resp = await getMyProfileAvatar();
+				setAvatarUrl(resp.avatarUrl);
+			} catch {
+
+			}
+		}
+
+		getMyAvatar();
+
+	}, []);
 
 	useEffect(() => {
 		const url = extractUrl(debouncedText);
@@ -60,13 +80,14 @@ export function useCreatePost(onAddPost, onClose, postType) {
 			toast.error(t("common:errors.post.empty"));
 			return;
 		}
-		
+
 		if ((postType === "photo" || postType === "video") && file == null) {
 			const msg = postType === "photo" ? t("common:errors.post.emptyImage") : t("common:errors.post.emptyVideo");
 			toast.error(msg);
 			return;
-		} 
+		}
 
+		setUploadPercent(0);
 		if (file) {
 			let validation;
 			if (postType == "photo") {
@@ -86,15 +107,22 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		}
 
 		try {
-			onAddPost({
+			await onAddPost({
 				text: text,
 				file: file,
 				fileType: typeof postType === "string" ? postType : postType?.type || "",
 				linkPreview: linkPreview,
-			});
-		} finally {
+			}, setUploadPercent);
+
+			setUploadPercent(100);
+
 			cleanAllInput();
-			onClose();
+			setTimeout(() => {
+				setUploadPercent(null);
+				onClose();
+			}, 300);
+		} finally {
+
 		}
 	}
 
@@ -120,6 +148,8 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		linkPreview,
 		linkPreviewLoading,
 		linkPreviewError,
+		uploadPercent,
+		avatarUrl,
 		file,
 		setFile,
 		showEmojiPicker,

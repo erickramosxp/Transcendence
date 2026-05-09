@@ -18,6 +18,7 @@ function CreateTextPost({ onAddPost, onClose }) {
     linkPreview,
     linkPreviewLoading,
     linkPreviewError,
+    uploadPercent
   } = useCreatePost(onAddPost, onClose, "text");
 
   const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
@@ -87,7 +88,7 @@ function CreateTextPost({ onAddPost, onClose }) {
               )}
 
             <div className="flex items-center justify-end gap-2">
-              <Button onClick={handleSubmit} variant="primary" size="sm">
+              <Button onClick={handleSubmit} variant="primary" size="sm" disabled={uploadPercent !== null}>
                 <Send className="mr-2 h-4 w-4" />
                 {t('createPost.text.submit')}
               </Button>

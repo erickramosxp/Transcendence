@@ -1,5 +1,7 @@
 package com.ft.transcendence.user.app;
 
+import com.ft.transcendence.auth.domain.AuthProvider;
+import com.ft.transcendence.auth.domain.AuthProviderType;
 import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.media.MediaAnalysis;
@@ -16,6 +18,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
@@ -104,6 +107,14 @@ public class UserService {
         return UpdateUserProfileResponse.of(user);
     }
 
+    public AuthTypeResponse getAuthType(long userId) {
+        List<AuthProvider> providers = AuthProvider.list("user.id", userId);
+        List<AuthProviderType> types = providers.stream()
+                .map(ap -> ap.providerType)
+                .toList();
+        return AuthTypeResponse.of(types);
+    }
+
     public UserPostsResponse getPostsLikedByUser(long userId, long currentUserId, int page, int size) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
@@ -111,7 +122,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Like> likes = Like.find("user.id = ?1 and post is not null order by createdAt desc", userId)
+        List<Like> likes = Like.find("user.id = ?1 and post is not null and post.deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -163,7 +174,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -212,7 +223,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 and mediaUrl is not null order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null and mediaUrl is not null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -224,7 +235,7 @@ public class UserService {
         resp.items = posts.stream().map(p -> {
             
             String mediaUrl = p.mediaUrl;
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank()) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
             return MediaResponse.of(p, mediaUrl);
@@ -335,5 +346,36 @@ public class UserService {
         return Response.ok(
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
+    }
+
+    @Transactional
+    public void removeAvatar(long currentUserId) {
+
+        User user = User.findById(currentUserId);
+
+        if (user == null)
+            throw new NotFoundException();
+
+        if (user.avatarUrl == null || user.avatarUrl.isBlank())
+            return;
+
+        storageService.delete(user.avatarUrl);
+
+        user.avatarUrl = null;
+    }
+
+    public UserAvatarResponse getAvatar(long userId) {
+
+        UserAvatarResponse avatarResponse = User.find(
+                "id",
+                userId
+        ).project(UserAvatarResponse.class).firstResult();
+
+        String presignedUrl = avatarResponse.avatarUrl;
+        if (presignedUrl != null && !presignedUrl.isEmpty()) {
+            presignedUrl = storageService.generateUrl(avatarResponse.avatarUrl);
+        }
+
+        return new UserAvatarResponse(presignedUrl);
     }
 }

@@ -69,17 +69,6 @@ export function MediaGrid({ username }) {
             <MediaGridRenderer 
               item={item}
             />
-            {/* { resolveMediaTypeSync(item?.mediaUrl) === 'video' ?
-              <VideoThumbnail thumbnailUrl={item.mediaUrl} />
-            :
-              <img
-                src={item?.mediaUrl || null}
-                alt={item.alt ?? "mídia"}
-                width={300} height={300}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            } */}
           </div>
         ))}
       </div>
@@ -95,6 +84,7 @@ export function MediaGrid({ username }) {
             onToggleComments={toggleComments}
             activeCommentsPostId={activeCommentsPostId}
             incrementCommentCount={incrementCommentCount}
+            isModal={true}
           className="p-0! shadow-none! border-none! rounded-none!"
           post={selected}
           />

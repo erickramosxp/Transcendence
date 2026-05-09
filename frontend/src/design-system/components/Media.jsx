@@ -54,6 +54,7 @@ export function Media({ url, mimeType }) {
     if (mediaType === 'video') {
         return (
             <video
+                key={url}
                 controls
                 className="rounded-lg lx:max-w-lg mt-3 max-w-xl w-full sm:max-h-[400px]"
                 ref={videoRef}

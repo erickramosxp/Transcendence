@@ -140,4 +140,31 @@ public class UserResource {
             throw new NotFoundException("User not found");
         return userService.getFollowing(user.id);
     }
+
+    @DELETE
+    @Path("/me/avatar")
+    @Authenticated
+    public Response deleteProfileAvatar() {
+        long currentUserId = currentUser.id();
+
+        userService.removeAvatar(currentUserId);
+        return Response.noContent().build();
+    }
+
+
+    @GET
+    @Path("/me/auth-type")
+    @Authenticated
+    public AuthTypeResponse getAuthType() {
+        return userService.getAuthType(currentUser.id());
+    }
+
+    @GET
+    @Path("/me/avatar")
+    @Authenticated
+    public UserAvatarResponse getMyAvatar() {
+        long userId = currentUser.id();
+        UserAvatarResponse avatarResponse = userService.getAvatar(userId);
+        return avatarResponse;
+    }
 }

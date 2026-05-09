@@ -1,6 +1,6 @@
 package com.ft.transcendence.realtime.presence;
 
-import com.ft.transcendence.follow.domain.Follow;
+import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,17 +21,12 @@ public class PresenceService {
     private final Map<Long, Set<String>> watchersByTargetUser = new ConcurrentHashMap<>();
 
     public Set<Long> resolveDefaultTargetUserIds(Long userId) {
-        List<Long> ids = Follow.find(
+        List<Long> ids = Friendship.find(
                 """
-                select f.followee.id
-                from Follow f
-                where f.follower.id = ?1
-                  and exists (
-                      select 1
-                      from Follow reverse
-                      where reverse.follower.id = f.followee.id
-                        and reverse.followee.id = ?1
-                  )
+                select case when f.userId = ?1 then f.friendId else f.userId end
+                from Friendship f
+                where f.status = com.ft.transcendence.friendship.domain.FriendshipStatus.ACCEPTED
+                  and (f.userId = ?1 or f.friendId = ?1)
                 """,
                 userId
         ).project(Long.class).list();

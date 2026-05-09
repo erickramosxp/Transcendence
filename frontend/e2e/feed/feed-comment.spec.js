@@ -96,9 +96,10 @@ test('comenta em um post no feed', async ({ page }) => {
   await page.getByRole('button', { name: /Entrar|Login|Iniciar sesi[oó]n/i }).click();
   await expect(page).toHaveURL(/\/feed$/, { timeout: 15_000 });
 
-  const postCard = page.locator('.feed-grid').locator('div.rounded-2xl').filter({
+  const postCard = page.getByTestId('post-card').filter({
     has: page.getByText('Post seed E2E', { exact: true }),
   });
+  
   await expect(postCard).toBeVisible();
 
   await postCard.locator('button:has(svg.lucide-message-square)').click();

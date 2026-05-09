@@ -47,7 +47,7 @@ export function Feed() {
 
     // }, [usersPresence]);
 
-    async function addPost(postData) {
+    async function addPost(postData, setLoadingPercent) {
 
         const formData = new FormData();
 
@@ -60,7 +60,7 @@ export function Feed() {
 
         try {
 
-            const resp = await createPost(formData);
+            const resp = await createPost(formData, setLoadingPercent);
             setPosts((prev) => [resp, ...prev]);
         } catch (err) {
             let message = t("common:errors.post.createFailed");
