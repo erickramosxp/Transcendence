@@ -10,8 +10,8 @@ import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.LockModeType;
 import jakarta.inject.Inject;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
@@ -52,7 +52,7 @@ public class CommentService {
 
         post.commentCount = post.commentCount + 1;
 
-        String avatarUrl  = comment.user.avatarUrl;
+        String avatarUrl = comment.user.avatarUrl;
         if (avatarUrl != null && !avatarUrl.isBlank()) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
