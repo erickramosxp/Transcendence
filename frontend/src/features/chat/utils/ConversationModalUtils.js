@@ -20,11 +20,3 @@ export function getFriendDisplayLabel(friend) {
 	const name = friend?.name?.trim();
 	return name ? `${name} (@${username})` : `@${username}`;
 }
-
-export function getProfileDisplayLabel(user, fallbackUsername) {
-	const uname = user?.username ?? fallbackUsername;
-	const display = user?.name?.trim()
-		? `${user.name} (@${uname})`
-		: `@${uname}`;
-	return { username: uname, displayLabel: display };
-}

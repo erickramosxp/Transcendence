@@ -12,16 +12,19 @@ export function mergeChatMessagesWithPending(
 			Number(m.chatId) === Number(chatId),
 	);
 
-	const serverTextsFromMe = new Set(
+	const serverKeysFromMe = new Set(
 		serverMessages
 			.filter((s) => String(s.senderId) === me)
-			.map((s) => String(s.text ?? "").trim()),
+			.map(
+				(s) =>
+					`${String(s.text ?? "").trim()}\0${s.replyToId ?? ""}`,
+			),
 	);
 
 	const keepPendings = pendings.filter((p) => {
-		const t = String(p.text ?? "").trim();
+		const key = `${String(p.text ?? "").trim()}\0${p.replyToId ?? ""}`;
 		if (p.deliveryStatus === "failed") return true;
-		return !serverTextsFromMe.has(t);
+		return !serverKeysFromMe.has(key);
 	});
 
 	const combined = [...serverMessages, ...keepPendings];

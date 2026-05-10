@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system";
 import { Input } from "@/design-system";
-import { Paperclip, Send, Smile } from "lucide-react";
+import { Paperclip, Send, Smile, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
 import { useChatTypingPresence } from "@/features/chat/hooks/useChatTypingPresence";
@@ -11,6 +11,8 @@ import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewC
 export default function MessageInput({
 	currentChat,
 	onSendMessage,
+	replyTarget = null,
+	onCancelReply,
 	networkOnline = true,
 }) {
 	const { t } = useTranslation("chat");
@@ -50,14 +52,14 @@ export default function MessageInput({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [showEmojiPicker]);
 
-	function handleSendMessage(e) {
+	async function handleSendMessage(e) {
 		e.preventDefault();
 		if (!text.trim()) return;
 		if (!networkOnline) return;
 
 		stopTypingSession();
-		onSendMessage(text);
-		setText("");
+		const ok = await onSendMessage(text);
+		if (ok !== false) setText("");
 	}
 
 	function handleEmojiSelect(emojiData) {
@@ -69,8 +71,38 @@ export default function MessageInput({
 		notifyDraftChanged(next);
 	}
 
+	const replyName =
+		(replyTarget?.senderDisplayName ?? "").trim() || t("thread.unknownSender");
+	const replySnippet =
+		(replyTarget?.text ?? "").trim() || t("thread.replyPreviewEmpty");
+
 	return (
 		<div className="w-full space-y-2">
+			{replyTarget && (
+				<div
+					className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-left"
+					role="status"
+				>
+					<div className="min-w-0 flex-1">
+						<p className="text-[11px] font-medium text-muted-foreground sm:text-xs">
+							{t("thread.replyingTo", { name: replyName })}
+						</p>
+						<p className="mt-0.5 line-clamp-2 text-xs text-foreground sm:text-sm">
+							{replySnippet}
+						</p>
+					</div>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="size-8 shrink-0"
+						aria-label={t("thread.cancelReply")}
+						onClick={() => onCancelReply?.()}
+					>
+						<X className="size-4" />
+					</Button>
+				</div>
+			)}
 			{(draftLinkPreviewLoading || draftLinkPreview) && (
 				<div className="space-y-1">
 					{draftLinkPreviewLoading && (

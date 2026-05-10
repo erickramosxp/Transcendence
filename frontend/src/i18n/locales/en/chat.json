@@ -64,6 +64,11 @@
     "sending": "Sending…",
     "sendFailed": "Not sent",
     "unknownSender": "Unknown",
+    "reply": "Reply to message",
+    "replyingTo": "Replying to {{name}}",
+    "cancelReply": "Cancel reply",
+    "replyUnavailable": "Original message unavailable",
+    "replyPreviewEmpty": "(no text)",
     "typingOne": "{{name}} is typing…",
     "typingTwo": "{{a}} and {{b}} are typing…",
     "typingMany": "{{a}}, {{b}} and others are typing…"
@@ -76,9 +81,6 @@
     "barNoNetwork": "You are offline. Chat will reconnect when network is back.",
     "connecting": "Reconnecting chat...",
     "barNoWs": "Chat connection is unstable. Retrying ({{n}}).",
-    "retryNow": "Try now",
-    "presenceUnavailable": "Presence unavailable",
-    "cannotSendNoWs": "Cannot send without WebSocket.",
     "cannotSendNoNetwork": "No network — cannot send.",
     "wsErrors": {
       "forbiddenSubscribe": "You don't have realtime access to this conversation. It was closed.",

@@ -64,6 +64,11 @@
     "sending": "Enviando…",
     "sendFailed": "No enviado",
     "unknownSender": "Desconocido",
+    "reply": "Responder al mensaje",
+    "replyingTo": "Respondiendo a {{name}}",
+    "cancelReply": "Cancelar respuesta",
+    "replyUnavailable": "Mensaje original no disponible",
+    "replyPreviewEmpty": "(sin texto)",
     "typingOne": "{{name}} está escribiendo…",
     "typingTwo": "{{a}} y {{b}} están escribiendo…",
     "typingMany": "{{a}}, {{b}} y otras personas están escribiendo…"
@@ -76,9 +81,6 @@
     "barNoNetwork": "No tienes internet. El chat se reconectará al volver la red.",
     "connecting": "Reconectando el chat...",
     "barNoWs": "Conexión inestable del chat. Reintentando ({{n}}).",
-    "retryNow": "Intentar ahora",
-    "presenceUnavailable": "Presencia no disponible",
-    "cannotSendNoWs": "No se puede enviar sin WebSocket.",
     "cannotSendNoNetwork": "Sin red — no se puede enviar.",
     "wsErrors": {
       "forbiddenSubscribe": "No tienes acceso en tiempo real a esta conversación. Se cerró.",

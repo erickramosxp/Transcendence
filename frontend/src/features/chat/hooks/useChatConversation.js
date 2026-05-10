@@ -8,6 +8,7 @@ import { useChatStore } from "../store/useChatStore";
 import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 import { withChatId } from "@/features/chat/utils/mapMessagesWithChatId.js";
 import { mergeChatMessagesWithPending } from "@/features/chat/utils/mergeChatMessagesWithPending.js";
+import { replyQuoteFromMessageRow } from "@/features/chat/utils/replyQuote";
 import { WS_SEND_EVENTS } from "@/shared/constants/websocket";
 
 const NEAR_BOTTOM_PX = 100;
@@ -254,15 +255,39 @@ export function useChatConversation(currentChat, options = {}) {
 	);
 
 	const handleSendMessage = useCallback(
-		async (text) => {
-			if (!currentChat) return;
+		async (text, { replyToId: replyToIdOpt } = {}) => {
+			if (!currentChat) return false;
 			const trimmed = (text ?? "").trim();
-			if (!trimmed) return;
+			if (!trimmed) return false;
 
 			if (!useSocketStore.getState().navigatorOnline) {
 				toast.warning(t("realtime.cannotSendNoNetwork"));
-				return;
+				return false;
 			}
+
+			const replyToId =
+				replyToIdOpt != null ? Number(replyToIdOpt) : null;
+			const replyParent =
+				replyToId != null
+					? useChatStore
+							.getState()
+							.messages.find(
+								(m) =>
+									m.id != null &&
+									Number(m.id) === Number(replyToId),
+							)
+					: null;
+			const replyQuote =
+				replyParent != null
+					? replyQuoteFromMessageRow(replyParent)
+					: replyToId != null
+						? {
+								id: replyToId,
+								text: null,
+								senderDisplayName: null,
+								unavailable: true,
+							}
+						: null;
 
 			stickToBottomRef.current = true;
 			shouldScrollToBottomRef.current = true;
@@ -273,6 +298,7 @@ export function useChatConversation(currentChat, options = {}) {
 				chatId: currentChat.id,
 				text: trimmed,
 				peerName,
+				...(replyToId != null ? { replyToId, replyQuote } : {}),
 			});
 
 			const socket = useSocketStore.getState().socket;
@@ -283,6 +309,7 @@ export function useChatConversation(currentChat, options = {}) {
 					chatId: currentChat.id,
 					text: trimmed,
 					clientMessageId,
+					...(replyToId != null ? { replyToId } : {}),
 				});
 
 				if (sentViaWs) {
@@ -294,12 +321,14 @@ export function useChatConversation(currentChat, options = {}) {
 							createdAt: new Date().toISOString(),
 						},
 					});
-					return;
+					return true;
 				}
 			}
 
 			try {
-				const data = await sendMessages(currentChat.id, trimmed);
+				const data = await sendMessages(currentChat.id, trimmed, {
+					...(replyToId != null ? { replyToId } : {}),
+				});
 				const done = completeOutboundWithClientToken(
 					clientMessageId,
 					data,
@@ -331,6 +360,7 @@ export function useChatConversation(currentChat, options = {}) {
 						createdAt,
 					},
 				});
+				return true;
 			} catch (e) {
 				markOutboundFailedByClientId(clientMessageId);
 				const msg =
@@ -338,6 +368,7 @@ export function useChatConversation(currentChat, options = {}) {
 					e?.message ??
 					t("errors.send");
 				toast.error(msg);
+				return false;
 			}
 		},
 		[

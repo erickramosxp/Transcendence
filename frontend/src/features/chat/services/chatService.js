@@ -23,10 +23,10 @@ export async function getConversation(conversationId, { page = 0, size = MESSAGE
 	return { ...rest, messages };
 }
 
-export async function sendMessages(conversationId, text, _senderId) {
-	const { data } = await api.post(`/chats/${conversationId}/messages`, {
-		text,
-	});
+export async function sendMessages(conversationId, text, { replyToId } = {}) {
+	const body = { text };
+	if (replyToId != null) body.replyToId = replyToId;
+	const { data } = await api.post(`/chats/${conversationId}/messages`, body);
 	return data;
 }
 

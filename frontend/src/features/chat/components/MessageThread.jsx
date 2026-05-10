@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/useLanguage";
 import Message from "@/features/chat/components/Message";
 import ChatDaySeparator from "@/features/chat/components/ChatDaySeparator";
+import { resolveReplyQuoteForDisplay } from "@/features/chat/utils/replyQuote";
 import {
 	formatChatDaySeparatorLabel,
 	isSameChatDay,
@@ -17,6 +18,7 @@ export default function MessageThread({
 	loadingOlder,
 	loading,
 	error,
+	onReply,
 }) {
 	const { t } = useTranslation("chat");
 	const { currentLanguage } = useLanguage();
@@ -67,6 +69,11 @@ export default function MessageThread({
 										currentUserId={currentUserId}
 										message={msg}
 										showSenderName={showSenderName}
+										replyQuote={resolveReplyQuoteForDisplay(
+											messages,
+											msg,
+										)}
+										onReply={onReply}
 									/>
 								</Fragment>
 							);

@@ -69,7 +69,14 @@ export const useChatStore = create((set) => ({
             }
         }),
 
-    addOptimisticOutbound: ({ clientMessageId, chatId, text, peerName }) =>
+    addOptimisticOutbound: ({
+        clientMessageId,
+        chatId,
+        text,
+        peerName,
+        replyToId,
+        replyQuote,
+    }) =>
         set((state) => {
             if (
                 state.activeChatId == null ||
@@ -85,6 +92,7 @@ export const useChatStore = create((set) => ({
                     senderId: me,
                     text,
                     createdAt: now,
+                    replyToId: replyToId ?? undefined,
                     user: {
                         id: me,
                         name: null,
@@ -102,6 +110,7 @@ export const useChatStore = create((set) => ({
                         chatId,
                         clientMessageId,
                         deliveryStatus: 'sending',
+                        ...(replyQuote ? { replyQuote } : {}),
                     },
                 ],
             }
@@ -119,11 +128,13 @@ export const useChatStore = create((set) => ({
         set((state) => {
             const textT = String(payload.text ?? '').trim()
             const chatId = payload.chatId
+            const replyToPayload = payload.replyToId ?? payload.reply_to_id
             const idx = state.messages.findIndex(
                 (m) =>
                     m.deliveryStatus === 'sending' &&
                     Number(m.chatId) === Number(chatId) &&
-                    String(m.text ?? '').trim() === textT,
+                    String(m.text ?? '').trim() === textT &&
+                    Number(m.replyToId ?? 0) === Number(replyToPayload ?? 0),
             )
             if (idx === -1) return state
 

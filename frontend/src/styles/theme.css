@@ -506,7 +506,7 @@
   }
 
   .ds-chat-thread-scroll {
-    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-1 sm:px-5;
+    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-2 pt-0.5 sm:px-5;
   }
 
   .ds-chat-thread-loading-more {
@@ -518,7 +518,7 @@
   }
 
   .ds-chat-composer {
-    @apply shrink-0 border-t border-border bg-card/80 px-3 py-2.5 backdrop-blur-sm sm:px-5;
+    @apply shrink-0 border-t border-border bg-card/80 px-3 py-2 backdrop-blur-sm sm:px-5;
   }
 
   .ds-chat-empty-shell {
@@ -538,7 +538,7 @@
   }
 
   .ds-chat-day-wrap {
-    @apply flex justify-center py-3 sm:py-4;
+    @apply flex justify-center py-2 sm:py-3;
   }
 
   .ds-chat-day-pill {
@@ -546,7 +546,7 @@
   }
 
   .ds-chat-msg-row {
-    @apply mb-2 flex px-2 py-1 sm:px-3 sm:py-1.5;
+    @apply mb-1 flex px-2 py-0.5 sm:px-3 sm:py-1;
   }
 
   .ds-chat-msg-row--mine {
@@ -557,20 +557,52 @@
     @apply justify-start;
   }
 
+  .ds-chat-msg-actions-trigger {
+    @apply size-6 min-h-6 min-w-6 shrink-0 sm:size-7 sm:min-h-7 sm:min-w-7;
+  }
+
+  .ds-chat-bubble-body {
+    @apply relative min-w-0;
+  }
+
+  .ds-chat-bubble-reply {
+    @apply mb-2 rounded-md border-l-[3px] px-3 py-2 pl-4 text-left sm:mb-2.5 sm:px-4 sm:py-2.5 sm:pl-5;
+  }
+
+  .ds-chat-bubble-reply--mine {
+    @apply border-primary-foreground/50 bg-primary-foreground/8;
+  }
+
+  .ds-chat-bubble-reply--theirs {
+    @apply border-primary/50 bg-muted/50;
+  }
+
+  .ds-chat-bubble-reply-author {
+    @apply text-[11px] font-semibold leading-snug sm:text-xs;
+  }
+
+  .ds-chat-bubble-reply-text {
+    @apply mt-1 line-clamp-2 text-[11px] leading-relaxed opacity-90 sm:text-xs;
+  }
+
+  .ds-chat-bubble-reply-text--muted {
+    @apply italic opacity-75;
+  }
+
   .ds-chat-bubble {
-    @apply relative max-w-[min(85%,28rem)] rounded-[1.125rem] px-4 py-2.5 text-left shadow-sm sm:py-3;
+    @apply relative max-w-[min(92%,36rem)] rounded-xl px-3.5 py-2.5 text-left shadow-sm sm:rounded-2xl sm:px-4 sm:py-3;
   }
 
   .ds-chat-bubble--mine {
-    @apply rounded-tr-md bg-primary text-primary-foreground;
+    @apply rounded-br-md rounded-tr-md bg-primary text-primary-foreground;
   }
 
   .ds-chat-bubble--theirs {
-    @apply rounded-tl-md bg-card text-card-foreground ring-1 ring-border;
+    @apply rounded-bl-md rounded-tl-md bg-card text-card-foreground ring-1 ring-border;
   }
 
   .ds-chat-bubble-sender {
-    @apply mb-1 text-left text-[11px] font-semibold leading-tight sm:text-xs;
+    @apply mb-1 text-left text-[11px] font-semibold leading-snug sm:text-xs;
   }
 
   .ds-chat-bubble-sender--theirs {
@@ -578,23 +610,27 @@
   }
 
   .ds-chat-bubble-text {
-    @apply min-w-0 whitespace-pre-wrap break-words text-sm leading-normal;
+    @apply min-w-0 whitespace-pre-wrap break-words text-sm leading-relaxed;
   }
 
-  .ds-chat-bubble-meta {
-    @apply mt-1 flex items-center justify-end gap-1;
+  .ds-chat-msg-reply-outside {
+    @apply flex shrink-0 self-center;
   }
 
-  .ds-chat-bubble-meta--mine {
-    @apply text-primary-foreground/80;
+  .ds-chat-bubble-meta-row {
+    @apply mt-2 flex w-full items-center justify-end gap-1 sm:mt-2.5;
   }
 
-  .ds-chat-bubble-meta--theirs {
+  .ds-chat-bubble-meta-row--mine {
+    @apply text-primary-foreground/75;
+  }
+
+  .ds-chat-bubble-meta-row--theirs {
     @apply text-muted-foreground;
   }
 
   .ds-chat-bubble-time {
-    @apply text-[11px] sm:text-xs tabular-nums;
+    @apply text-[11px] leading-none tabular-nums sm:text-xs;
   }
 
   .ds-chat-bubble-status {
