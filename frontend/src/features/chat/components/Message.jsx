@@ -4,6 +4,7 @@ import { formatChatBubbleTime } from "@/features/chat/utils/formatChatDates";
 import { cn } from "@/design-system/tokens/colors";
 import { TextWithLink, Button } from "@/design-system";
 import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { useMessageReplyLongPress } from "@/features/chat/hooks/useMessageReplyLongPress";
 import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 import { Reply } from "lucide-react";
 
@@ -13,6 +14,9 @@ export default function Message({
 	showSenderName,
 	replyQuote,
 	onReply,
+	touchReplyVisible = false,
+	onTouchReplyReveal,
+	onTouchReplyDismiss,
 }) {
 	const { currentLanguage } = useLanguage();
 	const { t } = useTranslation("chat");
@@ -28,19 +32,17 @@ export default function Message({
 	const canReply = Boolean(onReply && message.id != null);
 	const showReplyQuote = Boolean(replyQuote && message.replyToId != null);
 
+	const { touchPrimary, longPressBubbleHandlers } = useMessageReplyLongPress({
+		canReply,
+		onReveal: onTouchReplyReveal,
+	});
+
 	const replyTriggerClass = cn(
 		"ds-chat-msg-actions-trigger",
 		"border-0 bg-transparent shadow-none",
 		"hover:!bg-transparent active:!bg-transparent focus-visible:!bg-transparent",
 		"focus-visible:!ring-0 focus-visible:!ring-offset-0",
 		"text-muted-foreground hover:text-foreground",
-	);
-
-	const replyOutsideWrap = cn(
-		"ds-chat-msg-reply-outside transition-opacity duration-150",
-		"pointer-events-none opacity-0",
-		"group-hover:pointer-events-auto group-hover:opacity-100",
-		"focus-within:pointer-events-auto focus-within:opacity-100",
 	);
 
 	return (
@@ -59,8 +61,10 @@ export default function Message({
 				<div
 					className={cn(
 						"ds-chat-bubble min-w-0",
+						touchPrimary && canReply && "ds-chat-msg-longpress-target",
 						isMine ? "ds-chat-bubble--mine" : "ds-chat-bubble--theirs",
 					)}
+					{...longPressBubbleHandlers}
 				>
 					{showHeading && (
 						<div className="ds-chat-bubble-sender ds-chat-bubble-sender--theirs">
@@ -107,13 +111,13 @@ export default function Message({
 								{t("linkPreview.loading")}
 							</p>
 						)}
-					<ChatLinkPreviewCard
-						preview={linkPreview}
-						className={cn(
-							"mb-1.5",
-							showReplyQuote ? "mt-0.5" : showHeading ? "mt-0.5" : "mt-0",
-						)}
-					/>
+						<ChatLinkPreviewCard
+							preview={linkPreview}
+							className={cn(
+								"mb-1.5",
+								showReplyQuote ? "mt-0.5" : showHeading ? "mt-0.5" : "mt-0",
+							)}
+						/>
 
 						<div
 							className={cn(
@@ -151,7 +155,10 @@ export default function Message({
 								</span>
 							)}
 							{isMine && message.deliveryStatus === "failed" && (
-								<span className="ds-chat-bubble-status ds-chat-bubble-status--failed" role="status">
+								<span
+									className="ds-chat-bubble-status ds-chat-bubble-status--failed"
+									role="status"
+								>
 									{t("thread.sendFailed")}
 								</span>
 							)}
@@ -160,14 +167,24 @@ export default function Message({
 				</div>
 
 				{canReply && (
-					<div className={replyOutsideWrap}>
+					<div
+						className={cn(
+							"ds-chat-msg-reply-outside",
+							touchPrimary &&
+								touchReplyVisible &&
+								"ds-chat-msg-reply-outside--revealed",
+						)}
+					>
 						<Button
 							type="button"
 							variant="ghost"
 							size="icon"
 							aria-label={t("thread.reply")}
 							className={replyTriggerClass}
-							onClick={() => onReply(message)}
+							onClick={() => {
+								onReply(message);
+								onTouchReplyDismiss?.();
+							}}
 						>
 							<Reply className="size-3.5 sm:size-4" strokeWidth={2} />
 						</Button>

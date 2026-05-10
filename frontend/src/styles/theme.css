@@ -613,8 +613,41 @@
     @apply min-w-0 whitespace-pre-wrap break-words text-sm leading-relaxed;
   }
 
+  /* Reply ao lado da bolha: desktop = só com hover/foco no grupo; touch = oculto até long press (--revealed) */
   .ds-chat-msg-reply-outside {
-    @apply flex shrink-0 self-center;
+    @apply flex shrink-0 self-center opacity-100 transition-opacity duration-150;
+    pointer-events: auto;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ds-chat-msg-reply-outside {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .group:hover .ds-chat-msg-reply-outside,
+    .group:focus-within .ds-chat-msg-reply-outside {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  @media (hover: none),
+  (pointer: coarse) {
+    .ds-chat-msg-reply-outside {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .ds-chat-msg-reply-outside.ds-chat-msg-reply-outside--revealed {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .ds-chat-msg-longpress-target {
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
   }
 
   .ds-chat-bubble-meta-row {
