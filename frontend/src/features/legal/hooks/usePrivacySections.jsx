@@ -77,7 +77,18 @@ export function usePrivacySections() {
             value: "contact",
             title:  t('sections.contact.title'),
             icon: Mail,
-            content: `${t('sections.contact.content')}`,
+            content: (
+            <>
+                <p>{t('sections.contact.content')}</p>
+
+                <a
+                    href="mailto:contato@videa.com"
+                    className="underline text-primary"
+                >
+                    contato@videa.com
+                </a>
+            </>
+            ),
         },
     ]
 }
