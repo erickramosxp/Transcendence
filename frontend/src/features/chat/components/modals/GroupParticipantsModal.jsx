@@ -25,6 +25,8 @@ function isAdminRole(role) {
 	return String(role ?? "").toLowerCase() === "admin";
 }
 
+const PARTICIPANT_LIST_SCROLL_AFTER = 5;
+
 export default function GroupParticipantsModal({ open, onClose, chatId }) {
 	const { t } = useTranslation("chat");
 	const fieldId = useId();
@@ -363,71 +365,83 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 				)}
 
 				{items.length > 0 && (
-					<ul className="space-y-2">
-						{items.map((p) => {
-							const isSelf = Number(p.id) === Number(currentUserId);
-							const label =
-								(p.name ?? "").trim() ||
-								(p.username ? `@${p.username}` : "");
-							const showRemove = isAdmin && !isSelf && !resolvingRole;
+					<div
+						className={cn(
+							items.length > PARTICIPANT_LIST_SCROLL_AFTER &&
+								"max-h-72 min-h-0 overflow-y-auto overscroll-contain rounded-lg border border-border/50 py-1",
+						)}
+					>
+						<ul
+							className={cn(
+								"space-y-2",
+								items.length > PARTICIPANT_LIST_SCROLL_AFTER && "px-1",
+							)}
+						>
+							{items.map((p) => {
+								const isSelf = Number(p.id) === Number(currentUserId);
+								const label =
+									(p.name ?? "").trim() ||
+									(p.username ? `@${p.username}` : "");
+								const showRemove = isAdmin && !isSelf && !resolvingRole;
 
-							return (
-								<li
-									key={p.id}
-									className="flex items-center gap-3 rounded-lg border border-border/60 px-2 py-2"
-								>
-									<Avatar
-										src={p.avatarUrl}
-										name={label}
-										username={p.username}
-										size="sm"
-									/>
-									<div className="min-w-0 flex-1">
-										<p className="truncate text-sm font-medium">
-											{label}
-											{isSelf && (
-												<span className="ml-1 text-muted-foreground font-normal">
-													({t("participants.you")})
-												</span>
-											)}
-										</p>
-										{p.username && (
-											<p className="truncate text-xs text-muted-foreground">
-												@{p.username}
-											</p>
-										)}
-									</div>
-									<span
-										className={cn(
-											"shrink-0 rounded-md px-2 py-0.5 text-xs",
-											isAdminRole(p.role)
-												? "bg-primary/15 text-primary"
-												: "bg-muted text-muted-foreground",
-										)}
+								return (
+									<li
+										key={p.id}
+										className="flex items-center gap-3 rounded-lg border border-border/60 px-2 py-2"
 									>
-										{isAdminRole(p.role)
-											? t("participants.roleAdmin")
-											: t("participants.roleMember")}
-									</span>
-									{showRemove && (
-										<Button
-											type="button"
-											variant="ghost"
-											size="icon"
-											className="size-8 shrink-0"
-											disabled={removingId === p.id}
-											onClick={() => handleRemove(p.id)}
-											aria-label={t("participants.removeAria", {
-												username: p.username ?? p.id,
-											})}
+										<Avatar
+											src={p.avatarUrl}
+											name={label}
+											username={p.username}
+											size="sm"
+										/>
+										<div className="min-w-0 flex-1">
+											<p className="truncate text-sm font-medium">
+												{label}
+												{isSelf && (
+													<span className="ml-1 text-muted-foreground font-normal">
+														({t("participants.you")})
+													</span>
+												)}
+											</p>
+											{p.username && (
+												<p className="truncate text-xs text-muted-foreground">
+													@{p.username}
+												</p>
+											)}
+										</div>
+										<span
+											className={cn(
+												"shrink-0 rounded-md px-2 py-0.5 text-xs",
+												isAdminRole(p.role)
+													? "bg-primary/15 text-primary"
+													: "bg-muted text-muted-foreground",
+											)}
 										>
-											<X className="size-4" aria-hidden />
-										</Button>
-									)}
-								</li>
-							);
-						})}
-					</ul>
+											{isAdminRole(p.role)
+												? t("participants.roleAdmin")
+												: t("participants.roleMember")}
+										</span>
+										{showRemove && (
+											<Button
+												type="button"
+												variant="ghost"
+												size="icon"
+												className="size-8 shrink-0"
+												disabled={removingId === p.id}
+												onClick={() => handleRemove(p.id)}
+												aria-label={t("participants.removeAria", {
+													username: p.username ?? p.id,
+												})}
+											>
+												<X className="size-4" aria-hidden />
+											</Button>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</div>
 				)}
 
 				{hasMore && (
