@@ -90,5 +90,24 @@
   },
   "a11y": {
     "back": "Back to conversation list"
+  },
+  "participants": {
+    "title": "Group participants",
+    "openAria": "View group participants",
+    "loading": "Loading participants…",
+    "empty": "No participants found.",
+    "loadMore": "Load more",
+    "you": "you",
+    "roleAdmin": "Admin",
+    "roleMember": "Member",
+    "addSectionTitle": "Add a friend to the group",
+    "addPlaceholder": "Username (friends only)",
+    "addFriendAria": "Add friend to group",
+    "removeAria": "Remove {{username}} from the group",
+    "addSuccess": "Participant added.",
+    "removeSuccess": "Participant removed.",
+    "errorLoad": "Could not load participants.",
+    "errorAdd": "Could not add participant.",
+    "errorRemove": "Could not remove participant."
   }
 }

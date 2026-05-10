@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Users } from "lucide-react";
 import { AvatarWithStatus, Button } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
+import GroupParticipantsModal from "@/features/chat/components/modals/GroupParticipantsModal";
 
 export default function ChatThreadHeader({
 	currentChat,
@@ -10,6 +12,7 @@ export default function ChatThreadHeader({
 	realtimeOk = true,
 }) {
 	const { t } = useTranslation("chat");
+	const [participantsOpen, setParticipantsOpen] = useState(false);
 
 	const isGroup = currentChat.type === "group";
 	const peer = currentChat.user;
@@ -73,6 +76,25 @@ export default function ChatThreadHeader({
 					</span>
 				)}
 			</div>
+			{isGroup && currentChat?.id != null && (
+				<>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="shrink-0"
+						onClick={() => setParticipantsOpen(true)}
+						aria-label={t("participants.openAria")}
+					>
+						<Users className="size-5" aria-hidden />
+					</Button>
+					<GroupParticipantsModal
+						open={participantsOpen}
+						onClose={() => setParticipantsOpen(false)}
+						chatId={currentChat.id}
+					/>
+				</>
+			)}
 		</div>
 	);
 }

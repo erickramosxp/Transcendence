@@ -2,6 +2,7 @@ import api from "@/shared/api/httpClient";
 
 export const CHAT_LIST_PAGE_SIZE = 20;
 export const MESSAGE_LIST_PAGE_SIZE = 20;
+export const CHAT_PARTICIPANTS_PAGE_SIZE = 20;
 
 export async function getMyChats({ page = 0, size = CHAT_LIST_PAGE_SIZE } = {}) {
 	const response = await api.get(`/chats`, { params: { page, size } });
@@ -44,4 +45,20 @@ export async function createGroup(chatName, participantIds) {
 	return data;
 }
 
+export async function getChatParticipants(
+	chatId,
+	{ page = 0, size = CHAT_PARTICIPANTS_PAGE_SIZE } = {},
+) {
+	const { data } = await api.get(`/chats/${chatId}/participants`, {
+		params: { page, size },
+	});
+	return data;
+}
 
+export async function addChatParticipant(chatId, userId) {
+	await api.post(`/chats/${chatId}/participants`, { userId });
+}
+
+export async function removeChatParticipant(chatId, userId) {
+	await api.delete(`/chats/${chatId}/participants/${userId}`);
+}

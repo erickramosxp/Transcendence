@@ -90,5 +90,24 @@
   },
   "a11y": {
     "back": "Voltar para a lista de conversas"
+  },
+  "participants": {
+    "title": "Participantes do grupo",
+    "openAria": "Ver participantes do grupo",
+    "loading": "Carregando participantes…",
+    "empty": "Nenhum participante encontrado.",
+    "loadMore": "Carregar mais",
+    "you": "você",
+    "roleAdmin": "Admin",
+    "roleMember": "Membro",
+    "addSectionTitle": "Adicionar amigo ao grupo",
+    "addPlaceholder": "Nome de usuário (apenas amigos)",
+    "addFriendAria": "Adicionar amigo ao grupo",
+    "removeAria": "Remover {{username}} do grupo",
+    "addSuccess": "Participante adicionado.",
+    "removeSuccess": "Participante removido.",
+    "errorLoad": "Não foi possível carregar os participantes.",
+    "errorAdd": "Não foi possível adicionar o participante.",
+    "errorRemove": "Não foi possível remover o participante."
   }
 }
