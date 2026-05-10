@@ -76,12 +76,16 @@ export default function Message({ currentUserId, message, showSenderName }) {
 					>
 						{timeLabel}
 					</time>
-					{/* TODO: Adicionar check de envio */}
-					{/* {isMine && (
-						<span className="text-xs" aria-hidden>
-							&#10003;&#10003;
+					{isMine && message.deliveryStatus === "sending" && (
+						<span className="ds-chat-bubble-status" aria-live="polite">
+							{t("thread.sending")}
 						</span>
-					)} */}
+					)}
+					{isMine && message.deliveryStatus === "failed" && (
+						<span className="ds-chat-bubble-status ds-chat-bubble-status--failed" role="status">
+							{t("thread.sendFailed")}
+						</span>
+					)}
 				</div>
 			</div>
 		</div>

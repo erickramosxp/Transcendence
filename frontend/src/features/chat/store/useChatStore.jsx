@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
+import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
 
 function sameMessageId(a, b) {
 	if (a == null || b == null) return false
@@ -53,17 +54,145 @@ export const useChatStore = create((set) => ({
             ) {
                 return state;
             }
-            const alreadyExists = state.messages.some((msg) =>
-                sameMessageId(msg.id, message.id),
-            )
+            if (message.id != null) {
+                const alreadyExists = state.messages.some((msg) =>
+                    sameMessageId(msg.id, message.id),
+                )
 
-            if (alreadyExists) {
-                return state
+                if (alreadyExists) {
+                    return state
+                }
             }
 
             return {
                 messages: [...state.messages, message]
             }
+        }),
+
+    addOptimisticOutbound: ({ clientMessageId, chatId, text, peerName }) =>
+        set((state) => {
+            if (
+                state.activeChatId == null ||
+                Number(state.activeChatId) !== Number(chatId)
+            ) {
+                return state
+            }
+            const me = readCurrentUserId()
+            const now = new Date().toISOString()
+            const ui = mapMessageSenderData(
+                {
+                    id: null,
+                    senderId: me,
+                    text,
+                    createdAt: now,
+                    user: {
+                        id: me,
+                        name: null,
+                        username: null,
+                    },
+                },
+                me,
+                peerName,
+            )
+            return {
+                messages: [
+                    ...state.messages,
+                    {
+                        ...ui,
+                        chatId,
+                        clientMessageId,
+                        deliveryStatus: 'sending',
+                    },
+                ],
+            }
+        }),
+
+    /**
+     * Substitui a primeira bolha "enviando" que coincide com chat + texto pela mensagem persistida.
+     * @returns {boolean} true se houve substituição
+     */
+    completeOutboundWithServerPayload: (payload, peerFallback) => {
+        const me = readCurrentUserId()
+        if (String(payload.senderId) !== String(me)) return false
+
+        let replaced = false
+        set((state) => {
+            const textT = String(payload.text ?? '').trim()
+            const chatId = payload.chatId
+            const idx = state.messages.findIndex(
+                (m) =>
+                    m.deliveryStatus === 'sending' &&
+                    Number(m.chatId) === Number(chatId) &&
+                    String(m.text ?? '').trim() === textT,
+            )
+            if (idx === -1) return state
+
+            const ui = mapMessageSenderData(payload, me, peerFallback)
+            const next = [...state.messages]
+            next[idx] = { ...ui, chatId }
+            replaced = true
+            return { messages: next }
+        })
+        return replaced
+    },
+
+    /** Confirma envio HTTP: localiza a bolha otimista pelo id gerado no cliente. */
+    completeOutboundWithClientToken: (clientMessageId, payload, peerFallback) => {
+        const me = readCurrentUserId()
+        if (String(payload.senderId) !== String(me)) return false
+
+        let replaced = false
+        set((state) => {
+            const idx = state.messages.findIndex(
+                (m) =>
+                    m.clientMessageId === clientMessageId &&
+                    m.deliveryStatus === 'sending',
+            )
+            if (idx === -1) return state
+
+            const ui = mapMessageSenderData(payload, me, peerFallback)
+            const next = [...state.messages]
+            next[idx] = { ...ui, chatId: payload.chatId }
+            replaced = true
+            return { messages: next }
+        })
+        return replaced
+    },
+
+    removeOptimisticByClientId: (clientMessageId) =>
+        set((state) => ({
+            messages: state.messages.filter(
+                (m) => m.clientMessageId !== clientMessageId,
+            ),
+        })),
+
+    markOutboundFailedByClientId: (clientMessageId) =>
+        set((state) => ({
+            messages: state.messages.map((m) =>
+                m.clientMessageId === clientMessageId
+                    ? { ...m, deliveryStatus: 'failed' }
+                    : m,
+            ),
+        })),
+
+    markLatestSendingOutboundFailed: (chatId) =>
+        set((state) => {
+            if (chatId == null) return state
+            let lastIdx = -1
+            for (let i = state.messages.length - 1; i >= 0; i--) {
+                const m = state.messages[i]
+                if (
+                    m.deliveryStatus === 'sending' &&
+                    Number(m.chatId) === Number(chatId)
+                ) {
+                    lastIdx = i
+                    break
+                }
+            }
+            if (lastIdx === -1) return state
+            const next = [...state.messages]
+            next[lastIdx] = { ...next[lastIdx], deliveryStatus: 'failed' }
+            return { messages: next }
         }),
 
     clearCurrentChat: () =>

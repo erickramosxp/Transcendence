@@ -11,7 +11,7 @@ import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewC
 export default function MessageInput({
 	currentChat,
 	onSendMessage,
-	realtimeConnected = true,
+	networkOnline = true,
 }) {
 	const { t } = useTranslation("chat");
 	const [text, setText] = useState("");
@@ -53,7 +53,7 @@ export default function MessageInput({
 	function handleSendMessage(e) {
 		e.preventDefault();
 		if (!text.trim()) return;
-		if (!realtimeConnected) return;
+		if (!networkOnline) return;
 
 		stopTypingSession();
 		onSendMessage(text);
@@ -102,11 +102,11 @@ export default function MessageInput({
 						onFocus={() => setShowEmojiPicker(false)}
 						className="ds-chat-input-field"
 						placeholder={
-							realtimeConnected
-								? t("input.placeholder")
-								: t("input.placeholderOffline")
+							!networkOnline
+								? t("input.placeholderOffline")
+								: t("input.placeholder")
 						}
-						disabled={!realtimeConnected}
+						disabled={!networkOnline}
 					/>
 					<div ref={emojiPickerAreaRef} className="hidden lg:contents">
 						<Button
@@ -134,7 +134,7 @@ export default function MessageInput({
 					size="icon"
 					type="submit"
 					className="ds-chat-input-icon-btn"
-					disabled={!realtimeConnected}
+					disabled={!networkOnline}
 				>
 					<Send className="ds-chat-icon-input" />
 				</Button>

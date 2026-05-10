@@ -61,7 +61,7 @@ export default function MessageThread({
 									)
 								: null;
 							return (
-								<Fragment key={msg.id}>
+								<Fragment key={msg.clientMessageId ?? msg.id}>
 									{showDay && <ChatDaySeparator label={dayLabel} />}
 									<Message
 										currentUserId={currentUserId}

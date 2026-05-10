@@ -61,6 +61,8 @@
   },
   "thread": {
     "empty": "Aún no hay mensajes en esta conversación.",
+    "sending": "Enviando…",
+    "sendFailed": "No enviado",
     "unknownSender": "Desconocido",
     "typingOne": "{{name}} está escribiendo…",
     "typingTwo": "{{a}} y {{b}} están escribiendo…",

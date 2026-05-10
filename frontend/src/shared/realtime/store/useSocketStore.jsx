@@ -113,6 +113,10 @@ export const useSocketStore = create((set, get) => ({
             }
 
             if (originalType === WS_SEND_EVENTS.SEND_MESSAGE) {
+                const activeId = chatState.activeChatId
+                if (activeId != null) {
+                    chatState.markLatestSendingOutboundFailed(activeId)
+                }
                 if (code === WS_ERROR_CODES.NON_PARTICIPANT) {
                     toast.error(
                         i18n.t('chat:realtime.wsErrors.sendNotParticipant'),
@@ -123,6 +127,8 @@ export const useSocketStore = create((set, get) => ({
                     toast.error(i18n.t('chat:realtime.wsErrors.sendFailed'))
                     return
                 }
+                console.warn('[WS] ERROR', payload)
+                return
             }
 
             console.warn('[WS] ERROR', payload)
@@ -224,19 +230,27 @@ export const useSocketStore = create((set, get) => ({
                     ? `@${payload.user.username}`
                     : 'User')
 
-            const ui = mapMessageSenderData(
+            const chat = useChatStore.getState()
+            const resolved = chat.completeOutboundWithServerPayload(
                 payload,
-                readCurrentUserId(),
-                peerFallback
+                peerFallback,
             )
 
-            useChatStore.getState().addMessage({
-                ...ui,
-                chatId: payload.chatId
-            })
+            if (!resolved) {
+                const ui = mapMessageSenderData(
+                    payload,
+                    readCurrentUserId(),
+                    peerFallback,
+                )
+
+                chat.addMessage({
+                    ...ui,
+                    chatId: payload.chatId,
+                })
+            }
 
             if (payload.senderId != null) {
-                useChatStore.getState().removeUserFromTyping(payload.senderId)
+                chat.removeUserFromTyping(payload.senderId)
             }
 
             if (payload.chatId != null) {
@@ -244,7 +258,7 @@ export const useSocketStore = create((set, get) => ({
                     payload.createdAt != null
                         ? String(payload.createdAt)
                         : new Date().toISOString()
-                useChatStore.getState().dispatchListBump({
+                chat.dispatchListBump({
                     chatId: payload.chatId,
                     lastMessage: {
                         text: payload.text ?? '',
@@ -327,10 +341,10 @@ export const useSocketStore = create((set, get) => ({
     send: (type, payload = {}) => {
         const socket = get().socket
 
-        if (!socket) return
+        if (!socket) return false
 
         if (socket.readyState !== WebSocket.OPEN) {
-            return
+            return false
         }
 
         socket.send(
@@ -348,6 +362,8 @@ export const useSocketStore = create((set, get) => ({
                 pendingChatSubscribeId: Number(payload.chatId),
             })
         }
+
+        return true
     },
 
     retryNow: () => {
@@ -359,3 +375,11 @@ export const useSocketStore = create((set, get) => ({
         get().connect()
     },
 }))
+
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+    window.__chatRealtimeDebug = {
+        disconnect: () => useSocketStore.getState().disconnect(),
+        reconnect: () => useSocketStore.getState().retryNow(),
+        getState: () => useSocketStore.getState(),
+    }
+}

@@ -597,6 +597,14 @@
     @apply text-[11px] sm:text-xs tabular-nums;
   }
 
+  .ds-chat-bubble-status {
+    @apply max-w-[10rem] truncate text-[11px] sm:text-xs;
+  }
+
+  .ds-chat-bubble-status--failed {
+    @apply font-medium text-destructive;
+  }
+
   .ds-chat-input-form {
     @apply relative m-0 flex items-center gap-2 rounded-xl py-1 sm:gap-2.5;
   }

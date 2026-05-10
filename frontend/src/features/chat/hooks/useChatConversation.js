@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { getConversation } from "@/features/chat/services/chatService";
+import { getConversation, sendMessages } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
 import { useChatStore } from "../store/useChatStore";
 import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 import { withChatId } from "@/features/chat/utils/mapMessagesWithChatId.js";
+import { mergeChatMessagesWithPending } from "@/features/chat/utils/mergeChatMessagesWithPending.js";
 import { WS_SEND_EVENTS } from "@/shared/constants/websocket";
 
 const NEAR_BOTTOM_PX = 100;
@@ -62,6 +63,19 @@ export function useChatConversation(currentChat, options = {}) {
 		(state) => state.setActiveChat
 	);
 
+	const addMessage = useChatStore((state) => state.addMessage);
+	const dispatchListBump = useChatStore((state) => state.dispatchListBump);
+	const addOptimisticOutbound = useChatStore((state) => state.addOptimisticOutbound);
+	const completeOutboundWithClientToken = useChatStore(
+		(state) => state.completeOutboundWithClientToken,
+	);
+	const markOutboundFailedByClientId = useChatStore(
+		(state) => state.markOutboundFailedByClientId,
+	);
+	const removeOptimisticByClientId = useChatStore(
+		(state) => state.removeOptimisticByClientId,
+	);
+
 	const send = useSocketStore(
 		(state) => state.send
 	)
@@ -73,11 +87,19 @@ export function useChatConversation(currentChat, options = {}) {
 
 	const fetchFirstPage = useCallback(
 		async (convId) => {
+			const prev = useChatStore.getState().messages
 			const data = await getConversation(convId, { page: 0, size: 20 })
 			const ui = data.messages.map((m) =>
 				mapMessageSenderData(m, currentUserId, peerName),
 			)
-			setMessages(withChatId(ui, convId))
+			const withIds = withChatId(ui, convId)
+			const merged = mergeChatMessagesWithPending(
+				withIds,
+				prev,
+				convId,
+				currentUserId,
+			)
+			setMessages(merged)
 			setNextOlderPage(data.hasMore ? data.page + 1 : null)
 		},
 		[currentUserId, peerName, setMessages],
@@ -232,15 +254,11 @@ export function useChatConversation(currentChat, options = {}) {
 	);
 
 	const handleSendMessage = useCallback(
-		(text) => {
+		async (text) => {
 			if (!currentChat) return;
 			const trimmed = (text ?? "").trim();
 			if (!trimmed) return;
 
-			if (!useSocketStore.getState().connected) {
-				toast.warning(t("realtime.cannotSendNoWs"));
-				return;
-			}
 			if (!useSocketStore.getState().navigatorOnline) {
 				toast.warning(t("realtime.cannotSendNoNetwork"));
 				return;
@@ -249,20 +267,93 @@ export function useChatConversation(currentChat, options = {}) {
 			stickToBottomRef.current = true;
 			shouldScrollToBottomRef.current = true;
 
-			send(WS_SEND_EVENTS.SEND_MESSAGE, {
+			const clientMessageId = crypto.randomUUID();
+			addOptimisticOutbound({
+				clientMessageId,
 				chatId: currentChat.id,
 				text: trimmed,
+				peerName,
 			});
 
-			onAfterMessageSent?.({
-				chatId: currentChat.id,
-				lastMessage: {
+			const socket = useSocketStore.getState().socket;
+			const wsOpen = socket?.readyState === WebSocket.OPEN;
+
+			if (wsOpen) {
+				const sentViaWs = send(WS_SEND_EVENTS.SEND_MESSAGE, {
+					chatId: currentChat.id,
 					text: trimmed,
-					createdAt: new Date().toISOString(),
-				},
-			});
+					clientMessageId,
+				});
+
+				if (sentViaWs) {
+
+					onAfterMessageSent?.({
+						chatId: currentChat.id,
+						lastMessage: {
+							text: trimmed,
+							createdAt: new Date().toISOString(),
+						},
+					});
+					return;
+				}
+			}
+
+			try {
+				const data = await sendMessages(currentChat.id, trimmed);
+				const done = completeOutboundWithClientToken(
+					clientMessageId,
+					data,
+					peerName,
+				);
+				if (!done) {
+					removeOptimisticByClientId(clientMessageId);
+					const ui = mapMessageSenderData(data, currentUserId, peerName);
+					addMessage({
+						...ui,
+						chatId: data.chatId ?? currentChat.id,
+					});
+				}
+				const createdAt =
+					data.createdAt != null
+						? String(data.createdAt)
+						: new Date().toISOString();
+				dispatchListBump({
+					chatId: data.chatId ?? currentChat.id,
+					lastMessage: {
+						text: data.text ?? trimmed,
+						createdAt,
+					},
+				});
+				onAfterMessageSent?.({
+					chatId: currentChat.id,
+					lastMessage: {
+						text: data.text ?? trimmed,
+						createdAt,
+					},
+				});
+			} catch (e) {
+				markOutboundFailedByClientId(clientMessageId);
+				const msg =
+					e?.response?.data?.message ??
+					e?.message ??
+					t("errors.send");
+				toast.error(msg);
+			}
 		},
-		[currentChat, send, onAfterMessageSent, t],
+		[
+			currentChat,
+			send,
+			onAfterMessageSent,
+			t,
+			currentUserId,
+			peerName,
+			addMessage,
+			dispatchListBump,
+			addOptimisticOutbound,
+			completeOutboundWithClientToken,
+			markOutboundFailedByClientId,
+			removeOptimisticByClientId,
+		],
 	);
 
 	return {

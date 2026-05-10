@@ -66,7 +66,7 @@ export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) 
 				<MessageInput
 					currentChat={currentChat}
 					onSendMessage={handleSendMessage}
-					realtimeConnected={realtimeConnected}
+					networkOnline={wsNavigatorOnline}
 				/>
 			</div>
 		</div>
