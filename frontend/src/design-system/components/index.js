@@ -13,3 +13,5 @@ export * from './UserListItem';
 export * from './LikeButton';
 export * from './Dropdown'
 export * from './ProgressBar'
+export * from './Accordion'
+export * from './Header'

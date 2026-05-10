@@ -7,12 +7,15 @@ import { Search } from '@/pages/Search';
 import { Profile } from '@/pages/Profile';
 import { Friends } from '@/pages/Friends';
 import { Notifications } from '@/pages/Notifications';
+import { PrivacyPolicy } from '@/pages/LegalPrivacy';
+import { TermsOfService } from '@/pages/LegalTerms';
 import { PrivateLayout } from '@/app/layouts/PrivateLayout';
 import { PublicLayout } from '@/app/layouts/PublicLayout';
 import { PublicRoute } from '@/app/routes/PublicRoute';
 import { PrivateRoute } from '@/app/routes/PrivateRoute';
 import { ThemeShowcase } from '@/pages/dev/ThemeShowcase';
 import './App.css'
+import { NotFound } from '@/pages/NotFound';
 
 function App() {
 
@@ -32,6 +35,8 @@ function App() {
             </PublicRoute>
           }
         />
+        <Route path='/legal/privacy' element={<PrivacyPolicy />} />
+        <Route path='/legal/terms' element={<TermsOfService />}/>
       </Route>
 
 
@@ -53,6 +58,8 @@ function App() {
 
 
       </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

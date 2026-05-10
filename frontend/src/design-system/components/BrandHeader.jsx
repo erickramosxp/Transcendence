@@ -26,12 +26,14 @@ export function BrandHeader({
                 "rotate-6 hover:rotate-12 transition-transform",
                 size === "default" && "h-16 w-16 sm:h-20 sm:w-20",
                 size === "sm" && "h-10 w-10",
+                size === "md" && "h-16 w-16",
                 size === "lg" && "h-24 w-24",
             )}>
                 <Sparkles className={cn(
                     "text-white",
                     size === "default" && "w-8 h-8 sm:h-10 sm:w-10",
                     size === "sm" && "w-5 h-5",
+                    size === "md" && "w-8 h-8",
                     size === "lg" && "w-12 h-12",
                 )} />
             </div>
@@ -41,6 +43,7 @@ export function BrandHeader({
                 "font-bold bg-gradient-title bg-clip-text text-transparent",
                 size === "default" && "text-5xl sm:text-6xl lg:text-7xl xl:text-8xl",
                 size === "sm" && "text-3xl",
+                size === "md" && "text-6xl",
                 size === "lg" && "text-8xl",
             )}>
                 Videa
