@@ -1,31 +1,32 @@
 import React from 'react'
 import { LegalLayout } from '../components/LegalLayout'
 import { usePrivacySections } from '../hooks/usePrivacySections';
-import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionTrigger, Header, Separator } from '@/design-system';
+import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionTrigger, Header, Separator, TopBar } from '@/design-system';
 import { LegalPageHeader } from '../components/LegalPageHeader';
 import { Shield } from 'lucide-react';
 import { LegalSection } from '../components/LegalSection';
 import { LegalNavigation } from '../components/LegalNavigation';
+import { useTranslation } from 'react-i18next';
 export function PrivacyPolicyPage() {
 
+    const { t } = useTranslation('privacyPolicy');
     const sections = usePrivacySections();
 
     return (
-        <div className='p-2'>
+        <div className='p-2 relative'>
+            <TopBar />
             <Header />
             <Separator />
             <LegalLayout>
                 <LegalPageHeader
-                    title="Política de Privacidade"
-                    description="Última atualização: 08 de maio de 2026"
+                    title={t('pageTitle')}
+                    description={t('lastUpdated')}
                     icon={<Shield className='text-primary' size={28} />}
                 />
                 <LegalNavigation />
                 <div>
                     <p>
-                        Esta Política de Privacidade descreve como o Videa coleta,
-                        utiliza e armazena informações relacionadas aos usuários
-                        da plataforma.
+                        {t('intro')}
                     </p>
                 </div>
                 <LegalSection>

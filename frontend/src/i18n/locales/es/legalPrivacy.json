@@ -1,0 +1,43 @@
+{
+    "pageTitle": "Política de Privacidad",
+    "lastUpdated": "Última actualización: 8 de mayo de 2026",
+    "intro": "Esta Política de Privacidad describe cómo Videa recopila, utiliza y almacena información relacionada con los usuarios de la plataforma.",
+    "sections": {
+        "collection": {
+            "title": "Información recopilada",
+            "content": "• Nombre de usuario\n• Nombre para mostrar\n• Dirección de correo electrónico\n• Contraseña almacenada de forma segura\n• Foto de perfil\n• Biografía, ubicación y sitio web (opcionales)\n• Publicaciones y comentarios\n• Me gusta y amistades\n• Mensajes enviados en el chat\n• Archivos subidos (imágenes y videos)\n• Preferencias de la cuenta, como tema e idioma"
+        },
+        "usage": {
+            "title": "Cómo se utiliza la información",
+            "content": "Los datos recopilados se utilizan para:\n\n• Crear y mantener cuentas\n• Permitir interacciones sociales\n• Mostrar publicaciones, comentarios y perfiles\n• Enviar notificaciones en tiempo real\n• Mejorar la estabilidad y la seguridad\n• Prevenir el abuso de la plataforma"
+        },
+        "sharing": {
+            "title": "Compartición de datos",
+            "content": "No vendemos la información personal de los usuarios.\n\nAlgunos datos pueden ser procesados por servicios utilizados por la plataforma, como alojamiento, bases de datos y almacenamiento de medios."
+        },
+        "storage": {
+            "title": "Almacenamiento de medios",
+            "content": "Las imágenes, videos y archivos subidos por los usuarios pueden almacenarse en servicios externos utilizados por la plataforma."
+        },
+        "auth": {
+            "title": "Cookies y autenticación",
+            "content": "La plataforma puede utilizar cookies, tokens o tecnologías similares para mantener las sesiones autenticadas y mejorar la experiencia del usuario."
+        },
+        "security": {
+            "title": "Seguridad",
+            "content": "Adoptamos medidas razonables para proteger la información de los usuarios, pero ningún sistema es completamente seguro."
+        },
+        "rights": {
+            "title": "Derechos del usuario",
+            "content": "El usuario puede editar o eliminar el contenido publicado, además de solicitar la eliminación de la cuenta cuando esté disponible."
+        },
+        "retention": {
+            "title": "Retención de datos",
+            "content": "Algunos contenidos pueden permanecer almacenados temporalmente incluso después de su eliminación, por motivos técnicos, de auditoría o de integridad del sistema."
+        },
+        "contact": {
+            "title": "Contacto",
+            "content": "Para consultas relacionadas con la privacidad:\n\n[contato@videa.com](mailto:contato@videa.com)"
+        }
+    }
+}

@@ -10,107 +10,74 @@ import {
     Archive,
     Mail
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function usePrivacySections() {
+
+    const { t } = useTranslation('privacyPolicy');
 
     return [
         {
             value: "collection",
-            title: "Informações coletadas",
+            title: t('sections.collection.title'),
             icon: Database,
-            content: `• Nome de usuário
-• Nome de exibição
-• Endereço de e-mail
-• Senha armazenada de forma protegida
-• Foto de perfil
-• Bio, localização e site (opcionais)
-• Publicações e comentários
-• Curtidas e amizades
-• Mensagens enviadas no chat
-• Arquivos enviados (imagens e vídeos)
-• Preferências da conta, como tema e idioma
-        `,
+            content: `${t('sections.collection.content')}`,
         },
 
         {
             value: "usage",
-            title: "Como as informações são utilizadas",
+            title: t('sections.usage.title'),
             icon: Settings,
-            content: `Os dados coletados são utilizados para:
-
-• Criar e manter contas
-• Permitir interações sociais
-• Exibir posts, comentários e perfis
-• Enviar notificações em tempo real
-• Melhorar estabilidade e segurança
-• Prevenir abuso da plataforma
-        `,
+            content: `${t('sections.usage.content')}`,
         },
 
         {
             value: "sharing",
-            title: "Compartilhamento de dados",
+            title: t('sections.sharing.title'),
             icon: Share2,
-            content: `Não vendemos informações pessoais dos usuários.
-
-Alguns dados podem ser processados por serviços utilizados pela plataforma,
-como hospedagem, banco de dados e armazenamento de mídia.
-        `,
+            content: `${t('sections.sharing.content')}`,
         },
 
         {
             value: "storage",
-            title: "Armazenamento de mídia",
+            title: t('sections.storage.title'),
             icon: ImagePlus,
-            content: `Imagens, vídeos e arquivos enviados pelos usuários
-podem ser armazenados em serviços externos utilizados pela plataforma.
-        `,
+            content: `${t('sections.storage.content')}`,
         },
 
         {
             value: "auth",
-            title: "Cookies e autenticação",
+            title: t('sections.auth.title'),
             icon: KeyRound,
-            content: `A plataforma pode utilizar cookies, tokens ou tecnologias semelhantes
-para manter sessões autenticadas e melhorar a experiência do usuário.
-        `,
+            content: `${t('sections.auth.content')}`,
         },
 
         {
             value: "security",
-            title: "Segurança",
+            title: t('sections.security.title'),
             icon: Shield,
-            content: `Adotamos medidas razoáveis para proteger informações dos usuários,
-mas nenhum sistema é completamente seguro.
-        `,
+            content: `${t('sections.security.content')}`,
         },
 
         {
             value: "rights",
-            title: "Direitos do usuário",
+            title: t('sections.rights.title'),
             icon: UserCheck,
-            content: `O usuário pode editar ou remover conteúdos publicados,
-além de solicitar exclusão da conta quando disponível.
-        `,
+            content: `${t('sections.rights.content')}`,
         },
 
         {
             value: "retention",
-            title: "Retenção de dados",
+            title: t('sections.retention.title'),
             icon: Archive,
-            content: `Alguns conteúdos podem permanecer armazenados temporariamente
-mesmo após remoção, por motivos técnicos, auditoria ou integridade do sistema.
-        `,
+            content: `${t('sections.retention.content')}`,
         },
 
         {
             value: "contact",
-            title: "Contato",
+            title:  t('sections.contact.title'),
             icon: Mail,
-            content: `Para dúvidas relacionadas à privacidade:
-
-contato@videa.com
-        `,
+            content: `${t('sections.contact.content')}`,
         },
     ]
 }

@@ -5,8 +5,10 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/design-system"
+import { useTranslation } from "react-i18next"
 
 export function LegalNavigation() {
+    const { t } = useTranslation('legalNavigation');
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -28,12 +30,12 @@ export function LegalNavigation() {
             className="mt-5 mb-5"
         >
             <TabsList>
-                <TabsTrigger value="privacy">
-                    Política de Privacidade
-                </TabsTrigger>
-
                 <TabsTrigger value="terms">
-                    Termos de Serviço
+                    {t('terms')}
+                </TabsTrigger>
+                
+                <TabsTrigger value="privacy">
+                    {t('privacy')}
                 </TabsTrigger>
             </TabsList>
         </Tabs>

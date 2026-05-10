@@ -19,6 +19,7 @@ import { NotFound } from '@/pages/NotFound';
 
 function App() {
 
+
   return (
     <Routes>
 
@@ -46,6 +47,8 @@ function App() {
           </PrivateRoute>
         }>
 
+
+        <Route path='/' element={<Feed/>}/> 
         <Route path='/feed' element={<Feed/>}/> 
         <Route path='/search' element={<Search />}/>
         <Route path='/profile' element={<Profile />}/>

@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom"
 import { SearchX } from "lucide-react"
-import { BrandHeader, Button } from "@/design-system"
+import { BrandHeader } from "@/design-system"
+import { useTranslation } from "react-i18next"
 
 export function NotFound() {
+
+    const { t } = useTranslation('notFound');
+
     return (
         <>
             <div className="min-h-screen flex-col flex items-center justify-center p-4">
@@ -21,12 +25,11 @@ export function NotFound() {
                     </h1>
 
                     <p className="text-lg font-medium mb-2">
-                        Página não encontrada
+                        {t('title')}
                     </p>
 
                     <p className="text-sm text-muted-foreground mb-6">
-                        A página que você tentou acessar não existe
-                        ou foi removida.
+                        {t('description')}
                     </p>
 
                     <div className="flex gap-2">
@@ -34,8 +37,7 @@ export function NotFound() {
                                 to="/feed"
                                 className="flex-1 text-primary-foreground bg-primary rounded-sm"
                             >
-                                Feed
-
+                                {t('feed')}
                             </Link>
 
 
@@ -44,7 +46,7 @@ export function NotFound() {
                                 to="/"
                                 className="flex-1 text-primary-foreground bg-primary rounded-sm"
                             >
-                                Início
+                                {t('home')}
                             </Link>
                     </div>
 

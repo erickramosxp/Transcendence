@@ -8,71 +8,67 @@ import {
     Server,
     RefreshCcw
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function useTermsSections() {
+
+    const { t } = useTranslation('termsOfService');
 
     return [
         {
             value: "user",
-            title: "Conta do usuário",
+            title: t('sections.user.title'),
             icon: User ,
             content:
-                "O usuário é responsável pelas atividades realizadas em sua conta. É responsabilidade do usuário manter suas credenciais seguras e não compartilhar acesso com terceiros.",
+                t('sections.user.content'),
         },
         {
             value: "posts",
-            title: "Conteúdo publicado",
+            title: t('sections.posts.title'),
             icon: Image ,
             content:
-                "Os usuários podem publicar conteúdos como textos, imagens, vídeos, comentários e mensagens. Cada usuário é integralmente responsável pelos conteúdos publicados em sua conta.",
+                t('sections.posts.content'),
         },
         {
             value: "interaction",
-            title: "Interações sociais",
+            title: t('sections.interaction.title'),
             icon: HeartHandshake ,
             content:
-                "A plataforma permite interações entre usuários, incluindo curtidas, comentários, solicitações de amizade e troca de mensagens. Os usuários devem manter comportamento respeitoso durante essas interações.",
+                t('sections.interaction.content'),
         },
         {
             value: "ban",
-            title: "Uso proibido",
+            title: t('sections.ban.title'),
             icon: ShieldAlert,
-            content: `• Spam ou envio excessivo de mensagens
-            • Assédio ou ameaças
-            • Conteúdo ilegal
-            • Conteúdo extremamente ofensivo
-            • Tentativas de explorar falhas da plataforma
-            • Upload de arquivos maliciosos
-            • Uso automatizado não autorizado
-        `,
+            content: `${t('sections.ban.content')}`,
         },
         {
             value: "upload",
-            title: "Upload e armazenamento de mídia",
+            title:  t('sections.upload.title'),
             icon: CloudUpload,
             content:
-                "Imagens, vídeos e outros arquivos enviados pelos usuários podem ser armazenados em serviços utilizados pela plataforma. O usuário é responsável pelos arquivos enviados.",
+                t('sections.upload.content'),
         },
         {
             value: "delete",
-            title: "Remoção de conteúdo",
+            title: t('sections.delete.title'),
             icon: Trash2 ,
             content:
-                "Conteúdos podem ser removidos pela plataforma em caso de violação destes termos. Alguns dados podem permanecer temporariamente armazenados por motivos técnicos, auditoria ou integridade do sistema.",
+                t('sections.delete.content'),
         },
         {
             value: "service",
-            title: "Disponibilidade dos serviços",
+            title: t('sections.service.title'),
             icon: Server,
             content:
-                "O serviço pode sofrer interrupções temporárias, manutenções, falhas técnicas ou instabilidades.",
+                t('sections.service.content'),
         },
         {
             value: "limitation",
-            title: "Alterações nos termos",
+            title: t('sections.limitation.title'),
             icon: RefreshCcw ,
             content:
-                "Os Termos de Serviço podem ser atualizados futuramente. O uso contínuo da plataforma após alterações representa aceitação dos novos termos.",
+                t('sections.limitation.content'),
         },
     ]
 }
