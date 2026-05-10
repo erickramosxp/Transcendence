@@ -6,6 +6,8 @@ import com.ft.transcendence.chat.domain.ChatMessage;
 import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.friendship.domain.Friendship;
+import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -75,6 +77,9 @@ public class ChatService {
         if (userA == null || userB == null)
             throw new NotFoundException("User not found");
 
+        if (!areFriends(currentUserId, userBId))
+            throw new ForbiddenException("You can only start a conversation with friends");
+
         Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent()) {
             UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
@@ -106,7 +111,9 @@ public class ChatService {
         for (Long userId : req.participantIds) {
             User user = User.findById(userId);
             if (user == null)
-                throw new NotFoundException("User whit id=" + userId + " not found");
+                throw new NotFoundException("User with id=" + userId + " not found");
+            if (!areFriends(currentUserId, userId))
+                throw new ForbiddenException("User with id=" + userId + " is not your friend");
             ChatParticipant.create(chat, user, "member");
         }
 
@@ -199,6 +206,13 @@ public class ChatService {
             throw new NotFoundException("User is not a participant of this chat");
 
         target.delete();
+    }
+
+    private boolean areFriends(Long userAId, Long userBId) {
+        return Friendship.count(
+                "(userId = ?1 and friendId = ?2 and status = ?3) or (userId = ?2 and friendId = ?1 and status = ?3)",
+                userAId, userBId, FriendshipStatus.ACCEPTED
+        ) > 0;
     }
 
     private UserMessageResponse userWithAvatarUrlAssigned(User u) {

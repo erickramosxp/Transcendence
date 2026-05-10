@@ -10,9 +10,12 @@ import static org.hamcrest.Matchers.*;
 @QuarkusTest
 public class ChatParticipantResourceTest extends BaseApiTest {
 
-    private Long createGroupChat(UserTestContext admin, Long... participantIds) {
-        String ids = java.util.Arrays.stream(participantIds)
-                .map(String::valueOf)
+    private Long createGroupChat(UserTestContext admin, UserTestContext... participants) {
+        String ids = java.util.Arrays.stream(participants)
+                .map(p -> {
+                    makeFriends(admin, p);
+                    return String.valueOf(p.id);
+                })
                 .collect(java.util.stream.Collectors.joining(","));
 
         return ((Number) auth(admin)
@@ -37,7 +40,7 @@ public class ChatParticipantResourceTest extends BaseApiTest {
         UserTestContext memberA = createUser();
         UserTestContext memberB = createUser();
 
-        Long chatId = createGroupChat(admin, memberA.id, memberB.id);
+        Long chatId = createGroupChat(admin, memberA, memberB);
 
         auth(admin)
                 .when()
@@ -54,7 +57,9 @@ public class ChatParticipantResourceTest extends BaseApiTest {
         UserTestContext memberA = createUser();
         UserTestContext newMember = createUser();
 
-        Long chatId = createGroupChat(admin, memberA.id);
+        Long chatId = createGroupChat(admin, memberA);
+
+        makeFriends(admin, newMember);
 
         auth(admin)
                 .body("""
@@ -80,7 +85,7 @@ public class ChatParticipantResourceTest extends BaseApiTest {
         UserTestContext memberA = createUser();
         UserTestContext memberB = createUser();
 
-        Long chatId = createGroupChat(admin, memberA.id, memberB.id);
+        Long chatId = createGroupChat(admin, memberA, memberB);
 
         auth(admin)
                 .when()

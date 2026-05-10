@@ -9,13 +9,13 @@ import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -27,6 +27,8 @@ public class CommentService {
 
     @Inject
     StorageService storageService;
+    @Inject
+    EntityManager entityManager;
 
     @Transactional
     public CommentResponse create(Long userId, CommentRequest req) {
@@ -47,8 +49,9 @@ public class CommentService {
         comment.updatedAt = now;
         comment.persist();
 
-        post.commentCount = post.commentCount + 1;
-
+        entityManager.createQuery(
+                "UPDATE Post SET commentCount = commentCount + 1 WHERE id = :id"
+        ).setParameter("id", req.postId).executeUpdate();
 
         String avatarUrl  = comment.user.avatarUrl;
         if (avatarUrl != null && !avatarUrl.isBlank()) {
@@ -107,6 +110,5 @@ public class CommentService {
         comment.deletedAt = now;
         Post.update("commentCount = commentCount - 1 where id = ?1", comment.post.id);
         Like.delete("comment.id = ?1", commentId);
-
     }
 }
