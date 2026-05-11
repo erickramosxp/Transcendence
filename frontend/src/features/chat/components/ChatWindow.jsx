@@ -65,7 +65,7 @@ export default function ChatWindow({ currentChat, onBack, onAfterMessageSent }) 
 			<Separator />
 			{!realtimeConnected && (
 				<p
-					className="ds-chat-thread-banner ds-chat-thread-banner--muted border-b border-border/60"
+					className="ds-chat-thread-banner ds-chat-thread-banner--muted ds-chat-thread-banner--sep"
 					role="status"
 					aria-live="polite"
 				>

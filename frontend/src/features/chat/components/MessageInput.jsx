@@ -77,19 +77,14 @@ export default function MessageInput({
 		(replyTarget?.text ?? "").trim() || t("thread.replyPreviewEmpty");
 
 	return (
-		<div className="w-full space-y-2">
+		<div className="ds-chat-composer-stack">
 			{replyTarget && (
-				<div
-					className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-left"
-					role="status"
-				>
+				<div className="ds-chat-reply-preview" role="status">
 					<div className="min-w-0 flex-1">
-						<p className="text-[11px] font-medium text-muted-foreground sm:text-xs">
+						<p className="ds-chat-reply-preview-label">
 							{t("thread.replyingTo", { name: replyName })}
 						</p>
-						<p className="mt-0.5 line-clamp-2 text-xs text-foreground sm:text-sm">
-							{replySnippet}
-						</p>
+						<p className="ds-chat-reply-preview-snippet">{replySnippet}</p>
 					</div>
 					<Button
 						type="button"
@@ -104,9 +99,9 @@ export default function MessageInput({
 				</div>
 			)}
 			{(draftLinkPreviewLoading || draftLinkPreview) && (
-				<div className="space-y-1">
+				<div className="ds-chat-draft-preview-stack">
 					{draftLinkPreviewLoading && (
-						<p className="text-xs text-muted-foreground">
+						<p className="ds-chat-draft-preview-loading">
 							{t("linkPreview.loading")}
 						</p>
 					)}

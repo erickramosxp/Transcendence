@@ -213,7 +213,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 				try {
 					const user = await getUserInfo(username);
 					const uid = user?.id;
-					if (uid != null && String(uid) === String(me)) {
+					if (uid != null && String(uid) === String(currentUserId)) {
 						setMemberError(t("list.add.memberErrorSelf"));
 						return;
 					}
@@ -267,6 +267,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 	}, [
 		addQuery,
 		chatId,
+		currentUserId,
 		mergeParticipants,
 		participantIdSet,
 		setAddSuggestions,
@@ -296,11 +297,11 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 			size="lg"
 			scrollMode="content"
 		>
-			<div className="space-y-4 px-2 pb-4 sm:px-4">
+			<div className="ds-chat-participants-modal-body">
 				{isAdmin && !resolvingRole && (
-					<div className="space-y-2 border-b border-border pb-4">
+					<div className="ds-chat-participants-add-section">
 						<Label htmlFor={fieldId}>{t("participants.addSectionTitle")}</Label>
-						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+						<div className="ds-chat-participants-add-row">
 							<Input
 								id={fieldId}
 								value={addQuery}
@@ -309,7 +310,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 									setMemberError(null);
 								}}
 								placeholder={t("participants.addPlaceholder")}
-								className="rounded-xl bg-input-background flex-1"
+								className="ds-chat-participants-add-input"
 								autoComplete="off"
 								disabled={addingMember}
 							/>
@@ -318,7 +319,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 								type="button"
 								onClick={handleAddMember}
 								disabled={addingMember}
-								className="h-10 px-3 shrink-0"
+								className="ds-chat-participants-add-submit"
 								aria-label={t("participants.addFriendAria")}
 							>
 								<UserPlus className="size-5" aria-hidden />
@@ -326,14 +327,14 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 						</div>
 
 						{addSuggestions.length > 0 && (
-							<ul className="space-y-1 text-sm">
+							<ul className="ds-chat-participants-suggestions">
 								{addSuggestions.map((friend) => {
 									const label = getFriendDisplayLabel(friend);
 									return (
 										<li key={friend.friendId}>
 											<button
 												type="button"
-												className="w-full rounded-lg border border-border/60 px-3 py-2 text-left text-foreground hover:bg-accent/50"
+												className="ds-chat-participants-suggestion-btn"
 												onClick={() => onSelectSuggestion(friend)}
 											>
 												{label}
@@ -345,7 +346,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 						)}
 
 						{memberError && (
-							<p className="text-sm text-destructive" role="alert">
+							<p className="ds-chat-participants-error-text" role="alert">
 								{memberError}
 							</p>
 						)}
@@ -353,13 +354,13 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 				)}
 
 				{loading && (
-					<p className="text-sm text-muted-foreground">
+					<p className="ds-chat-participants-muted-text">
 						{t("participants.loading")}
 					</p>
 				)}
 
 				{!loading && items.length === 0 && (
-					<p className="text-sm text-muted-foreground">
+					<p className="ds-chat-participants-muted-text">
 						{t("participants.empty")}
 					</p>
 				)}
@@ -368,13 +369,14 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 					<div
 						className={cn(
 							items.length > PARTICIPANT_LIST_SCROLL_AFTER &&
-								"max-h-72 min-h-0 overflow-y-auto overscroll-contain rounded-lg border border-border/50 py-1",
+								"ds-chat-participants-list-host--scroll",
 						)}
 					>
 						<ul
 							className={cn(
-								"space-y-2",
-								items.length > PARTICIPANT_LIST_SCROLL_AFTER && "px-1",
+								"ds-chat-participants-list",
+								items.length > PARTICIPANT_LIST_SCROLL_AFTER &&
+									"ds-chat-participants-list--inset",
 							)}
 						>
 							{items.map((p) => {
@@ -385,10 +387,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 								const showRemove = isAdmin && !isSelf && !resolvingRole;
 
 								return (
-									<li
-										key={p.id}
-										className="flex items-center gap-3 rounded-lg border border-border/60 px-2 py-2"
-									>
+									<li key={p.id} className="ds-chat-participants-row">
 										<Avatar
 											src={p.avatarUrl}
 											name={label}
@@ -396,26 +395,26 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 											size="sm"
 										/>
 										<div className="min-w-0 flex-1">
-											<p className="truncate text-sm font-medium">
+											<p className="ds-chat-participants-name">
 												{label}
 												{isSelf && (
-													<span className="ml-1 text-muted-foreground font-normal">
+													<span className="ds-chat-participants-you-suffix">
 														({t("participants.you")})
 													</span>
 												)}
 											</p>
 											{p.username && (
-												<p className="truncate text-xs text-muted-foreground">
+												<p className="ds-chat-participants-username">
 													@{p.username}
 												</p>
 											)}
 										</div>
 										<span
 											className={cn(
-												"shrink-0 rounded-md px-2 py-0.5 text-xs",
+												"ds-chat-participants-role",
 												isAdminRole(p.role)
-													? "bg-primary/15 text-primary"
-													: "bg-muted text-muted-foreground",
+													? "ds-chat-participants-role--admin"
+													: "ds-chat-participants-role--member",
 											)}
 										>
 											{isAdminRole(p.role)
@@ -427,7 +426,7 @@ export default function GroupParticipantsModal({ open, onClose, chatId }) {
 												type="button"
 												variant="ghost"
 												size="icon"
-												className="size-8 shrink-0"
+												className="ds-chat-participants-remove-btn"
 												disabled={removingId === p.id}
 												onClick={() => handleRemove(p.id)}
 												aria-label={t("participants.removeAria", {

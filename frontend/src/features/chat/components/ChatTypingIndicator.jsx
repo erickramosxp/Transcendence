@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "@/features/chat/store/useChatStore";
-import { cn } from "@/design-system/tokens/colors";
 
 export default function ChatTypingIndicator() {
 	const typingUsers = useChatStore((s) => s.typingUsers);
@@ -20,10 +19,7 @@ export default function ChatTypingIndicator() {
 
 	return (
 		<p
-			className={cn(
-				"shrink-0 border-b border-border/60 px-3 py-1.5 text-xs text-muted-foreground",
-				"min-h-[2rem]",
-			)}
+			className="ds-chat-typing-indicator"
 			aria-live="polite"
 			role="status"
 		>

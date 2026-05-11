@@ -37,14 +37,6 @@ export default function Message({
 		onReveal: onTouchReplyReveal,
 	});
 
-	const replyTriggerClass = cn(
-		"ds-chat-msg-actions-trigger",
-		"border-0 bg-transparent shadow-none",
-		"hover:!bg-transparent active:!bg-transparent focus-visible:!bg-transparent",
-		"focus-visible:!ring-0 focus-visible:!ring-offset-0",
-		"text-muted-foreground hover:text-foreground",
-	);
-
 	return (
 		<div
 			className={cn(
@@ -54,8 +46,8 @@ export default function Message({
 		>
 			<div
 				className={cn(
-					"group flex max-w-full min-w-0 items-center gap-1",
-					isMine && "flex-row-reverse",
+					"group ds-chat-msg-group",
+					isMine && "ds-chat-msg-group--mine",
 				)}
 			>
 				<div
@@ -102,10 +94,10 @@ export default function Message({
 						{linkPreviewLoading && !linkPreview && (
 							<p
 								className={cn(
-									"mb-1 text-[11px] sm:text-xs",
+									"ds-chat-link-preview-loading-line",
 									isMine
-										? "text-primary-foreground/75"
-										: "text-muted-foreground",
+										? "ds-chat-link-preview-loading-line--mine"
+										: "ds-chat-link-preview-loading-line--theirs",
 								)}
 							>
 								{t("linkPreview.loading")}
@@ -114,23 +106,22 @@ export default function Message({
 						<ChatLinkPreviewCard
 							preview={linkPreview}
 							className={cn(
-								"mb-1.5",
-								showReplyQuote ? "mt-0.5" : showHeading ? "mt-0.5" : "mt-0",
+								"ds-chat-link-preview-slot",
+								(showReplyQuote || showHeading) &&
+									"ds-chat-link-preview-slot--tight-top",
 							)}
 						/>
 
 						<div
 							className={cn(
 								"ds-chat-bubble-text min-w-0",
-								isMine && "text-right",
+								isMine && "ds-chat-bubble-text--mine",
 							)}
 						>
 							<TextWithLink
 								text={message.text ?? ""}
 								linkClassName={
-									isMine
-										? "text-primary-foreground underline decoration-primary-foreground/70 underline-offset-2 break-all hover:opacity-90"
-										: undefined
+									isMine ? "ds-chat-bubble-inline-link--mine" : undefined
 								}
 							/>
 						</div>
@@ -180,7 +171,7 @@ export default function Message({
 							variant="ghost"
 							size="icon"
 							aria-label={t("thread.reply")}
-							className={replyTriggerClass}
+							className="ds-chat-msg-actions-trigger ds-chat-msg-reply-trigger"
 							onClick={() => {
 								onReply(message);
 								onTouchReplyDismiss?.();

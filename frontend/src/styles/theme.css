@@ -497,6 +497,10 @@
     @apply text-muted-foreground;
   }
 
+  .ds-chat-thread-banner--sep {
+    @apply border-b border-border/60;
+  }
+
   .ds-chat-realtime-bar {
     @apply relative z-20 flex shrink-0 flex-wrap items-center justify-between gap-2 border-b-2 border-amber-500/70 bg-amber-400/25 px-4 py-3 text-sm text-amber-950 shadow-md dark:border-amber-400/50 dark:bg-amber-950/50 dark:text-amber-50 sm:px-6;
   }
@@ -696,6 +700,204 @@
 
   .ds-chat-icon-input {
     @apply size-4 sm:size-5;
+  }
+
+  /* Composer: pré-visualização de resposta e rascunho */
+  .ds-chat-composer-stack {
+    @apply w-full space-y-2;
+  }
+
+  .ds-chat-reply-preview {
+    @apply flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-left;
+  }
+
+  .ds-chat-reply-preview-label {
+    @apply text-[11px] font-medium text-muted-foreground sm:text-xs;
+  }
+
+  .ds-chat-reply-preview-snippet {
+    @apply mt-0.5 line-clamp-2 text-xs text-foreground sm:text-sm;
+  }
+
+  .ds-chat-draft-preview-stack {
+    @apply space-y-1;
+  }
+
+  .ds-chat-draft-preview-loading {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ds-chat-typing-indicator {
+    @apply min-h-[2rem] shrink-0 border-b border-border/60 px-3 py-1.5 text-xs text-muted-foreground;
+  }
+
+  /* Mensagem: grupo da bolha + botão responder */
+  .ds-chat-msg-group {
+    @apply flex max-w-full min-w-0 items-center gap-1;
+  }
+
+  .ds-chat-msg-group--mine {
+    @apply flex-row-reverse;
+  }
+
+  .ds-chat-msg-reply-trigger {
+    @apply border-0 bg-transparent shadow-none text-muted-foreground hover:text-foreground;
+    @apply hover:!bg-transparent active:!bg-transparent focus-visible:!bg-transparent;
+    @apply focus-visible:!ring-0 focus-visible:!ring-offset-0;
+  }
+
+  .ds-chat-bubble-text--mine {
+    @apply text-right;
+  }
+
+  .ds-chat-bubble-inline-link--mine {
+    @apply break-all text-primary-foreground underline decoration-primary-foreground/70 underline-offset-2 hover:opacity-90;
+  }
+
+  .ds-chat-link-preview-loading-line {
+    @apply mb-1 text-[11px] sm:text-xs;
+  }
+
+  .ds-chat-link-preview-loading-line--mine {
+    @apply text-primary-foreground/75;
+  }
+
+  .ds-chat-link-preview-loading-line--theirs {
+    @apply text-muted-foreground;
+  }
+
+  .ds-chat-link-preview-slot {
+    @apply mb-1.5 mt-0;
+  }
+
+  .ds-chat-link-preview-slot--tight-top {
+    @apply mt-0.5;
+  }
+
+  /* Cartão de link (rich preview) */
+  .ds-chat-link-preview-card {
+    @apply mt-2 block min-w-0 overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-colors hover:bg-accent/40;
+  }
+
+  .ds-chat-link-preview-card-inner {
+    @apply flex gap-3 p-3;
+  }
+
+  .ds-chat-link-preview-card-inner--compact {
+    @apply p-2;
+  }
+
+  .ds-chat-link-preview-thumb {
+    @apply h-20 w-20 shrink-0 rounded-md object-cover;
+  }
+
+  .ds-chat-link-preview-thumb--compact {
+    @apply h-10 w-10;
+  }
+
+  .ds-chat-link-preview-title {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .ds-chat-link-preview-title--multiline {
+    @apply line-clamp-2;
+  }
+
+  .ds-chat-link-preview-title--compact {
+    @apply truncate;
+  }
+
+  .ds-chat-link-preview-desc {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ds-chat-link-preview-desc--multiline {
+    @apply mt-0.5 line-clamp-2;
+  }
+
+  .ds-chat-link-preview-desc--compact {
+    @apply line-clamp-1;
+  }
+
+  /* Modal de participantes do grupo */
+  .ds-chat-participants-modal-body {
+    @apply space-y-4 px-2 pb-4 sm:px-4;
+  }
+
+  .ds-chat-participants-add-section {
+    @apply space-y-2 border-b border-border pb-4;
+  }
+
+  .ds-chat-participants-add-row {
+    @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2;
+  }
+
+  .ds-chat-participants-add-input {
+    @apply flex-1 rounded-xl bg-input-background;
+  }
+
+  .ds-chat-participants-add-submit {
+    @apply h-10 shrink-0 px-3;
+  }
+
+  .ds-chat-participants-suggestions {
+    @apply space-y-1 text-sm;
+  }
+
+  .ds-chat-participants-suggestion-btn {
+    @apply w-full rounded-lg border border-border/60 px-3 py-2 text-left text-foreground hover:bg-accent/50;
+  }
+
+  .ds-chat-participants-muted-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ds-chat-participants-error-text {
+    @apply text-sm text-destructive;
+  }
+
+  .ds-chat-participants-list-host--scroll {
+    @apply max-h-72 min-h-0 overflow-y-auto overscroll-contain rounded-lg border border-border/50 py-1;
+  }
+
+  .ds-chat-participants-list {
+    @apply space-y-2;
+  }
+
+  .ds-chat-participants-list--inset {
+    @apply px-1;
+  }
+
+  .ds-chat-participants-row {
+    @apply flex items-center gap-3 rounded-lg border border-border/60 px-2 py-2;
+  }
+
+  .ds-chat-participants-name {
+    @apply truncate text-sm font-medium;
+  }
+
+  .ds-chat-participants-you-suffix {
+    @apply ml-1 font-normal text-muted-foreground;
+  }
+
+  .ds-chat-participants-username {
+    @apply truncate text-xs text-muted-foreground;
+  }
+
+  .ds-chat-participants-role {
+    @apply shrink-0 rounded-md px-2 py-0.5 text-xs;
+  }
+
+  .ds-chat-participants-role--admin {
+    @apply bg-primary/15 text-primary;
+  }
+
+  .ds-chat-participants-role--member {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .ds-chat-participants-remove-btn {
+    @apply size-8 shrink-0;
   }
 
 }
