@@ -75,18 +75,21 @@ function AvatarWithStatus({
 	username,
 	size = "md",
 	status = "online",
+	showStatus = true,
 	className = "",
 }) {
 	return (
 		<div className={cn("relative inline-block", className)}>
 			<Avatar src={src} name={name} username={username} size={size} />
-			<span
-				className={cn(
-					"absolute bottom-0 right-0 rounded-full border-2 border-card",
-					statusColors[status] || statusColors.offline,
-					statusSizes[size] || statusSizes.md
-				)}
-			/>
+			{showStatus && (
+				<span
+					className={cn(
+						"absolute bottom-0 right-0 rounded-full border-2 border-card",
+						statusColors[status] || statusColors.offline,
+						statusSizes[size] || statusSizes.md
+					)}
+				/>
+			)}
 		</div>
 	);
 }

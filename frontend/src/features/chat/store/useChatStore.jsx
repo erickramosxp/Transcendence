@@ -1,59 +1,41 @@
-// lista de conversas
-// mensagens da conversa atual
-// última mensagem
-// unread count
-// typing status
-// read receipts
-
-// MESSAGE_CREATED
-// TYPING_START
-// TYPING_STOP
-// CHAT_SUBSCRIBED
-
-// activeChatId
-// subscribedChats
-// messages
-// typingUsers
-
 import { create } from 'zustand'
+import { readCurrentUserId } from '@/features/chat/utils/currentUser'
+import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
 
-const updateConversationPreview = (
-    conversations,
-    message,
-    incrementUnread = false
-) => {
-    const updated = conversations.map((chat) => {
-        if (chat.chatId !== message.chatId) {
-            return chat
-        }
-
-        return {
-            ...chat,
-            lastMessage: message.text,
-            lastMessageAt: message.createdAt,
-            unreadCount: incrementUnread
-                ? (chat.unreadCount || 0) + 1
-                : chat.unreadCount
-        }
-    })
-
-    return updated.sort(
-        (a, b) =>
-            new Date(b.lastMessageAt) -
-            new Date(a.lastMessageAt)
-    )
+function sameMessageId(a, b) {
+	if (a == null || b == null) return false
+	return Number(a) === Number(b)
 }
 
 export const useChatStore = create((set) => ({
 
     activeChatId: null,
+    subscribeAccessDeniedSeq: 0,
     messages: [],
     typingUsers: [],
-    conversations: [],
+    listBumpQueue: [],
+    listBumpSeq: 0,
+    dispatchListBump: (payload) =>
+        set((s) => ({
+            listBumpQueue: [...(s.listBumpQueue ?? []), payload],
+            listBumpSeq: (s.listBumpSeq ?? 0) + 1,
+        })),
+
+    drainListBumpQueue: () => {
+        let batch = []
+        set((s) => {
+            const q = s.listBumpQueue ?? []
+            if (!q.length) return {}
+            batch = [...q]
+            return { listBumpQueue: [] }
+        })
+        return batch
+    },
 
     setActiveChat: (chatId) =>
         set({
             activeChatId: chatId,
+            typingUsers: [],
             messages: []
         }),
 
@@ -65,13 +47,21 @@ export const useChatStore = create((set) => ({
     addMessage: (message) =>
 
         set((state) => {
-            // evita duplicata
-            const alreadyExists = state.messages.some(
-                (msg) => msg.id === message.id
-            )
+            if (
+                state.activeChatId != null &&
+                message.chatId != null &&
+                Number(message.chatId) !== Number(state.activeChatId)
+            ) {
+                return state;
+            }
+            if (message.id != null) {
+                const alreadyExists = state.messages.some((msg) =>
+                    sameMessageId(msg.id, message.id),
+                )
 
-            if (alreadyExists) {
-                return state
+                if (alreadyExists) {
+                    return state
+                }
             }
 
             return {
@@ -79,31 +69,141 @@ export const useChatStore = create((set) => ({
             }
         }),
 
-    handleIncomingMessage: (message) =>
+    addOptimisticOutbound: ({
+        clientMessageId,
+        chatId,
+        text,
+        peerName,
+        replyToId,
+        replyQuote,
+    }) =>
         set((state) => {
-            const isCurrentChat =
-                state.activeChatId === message.chatId
-
-            let updatedMessages = state.messages
-
-            if (isCurrentChat) {
-                updatedMessages = [
-                    ...state.messages,
-                    message
-                ]
+            if (
+                state.activeChatId == null ||
+                Number(state.activeChatId) !== Number(chatId)
+            ) {
+                return state
             }
-
-            const updatedConversations =
-                updateConversationPreview(
-                    state.conversations,
-                    message,
-                    !isCurrentChat
-                )
-
+            const me = readCurrentUserId()
+            const now = new Date().toISOString()
+            const ui = mapMessageSenderData(
+                {
+                    id: null,
+                    senderId: me,
+                    text,
+                    createdAt: now,
+                    replyToId: replyToId ?? undefined,
+                    user: {
+                        id: me,
+                        name: null,
+                        username: null,
+                    },
+                },
+                me,
+                peerName,
+            )
             return {
-                messages: updatedMessages,
-                conversations: updatedConversations
+                messages: [
+                    ...state.messages,
+                    {
+                        ...ui,
+                        chatId,
+                        clientMessageId,
+                        deliveryStatus: 'sending',
+                        ...(replyQuote ? { replyQuote } : {}),
+                    },
+                ],
             }
+        }),
+
+    /**
+     * Substitui a primeira bolha "enviando" que coincide com chat + texto pela mensagem persistida.
+     * @returns {boolean} true se houve substituição
+     */
+    completeOutboundWithServerPayload: (payload, peerFallback) => {
+        const me = readCurrentUserId()
+        if (String(payload.senderId) !== String(me)) return false
+
+        let replaced = false
+        set((state) => {
+            const textT = String(payload.text ?? '').trim()
+            const chatId = payload.chatId
+            const replyToPayload = payload.replyToId ?? payload.reply_to_id
+            const idx = state.messages.findIndex(
+                (m) =>
+                    m.deliveryStatus === 'sending' &&
+                    Number(m.chatId) === Number(chatId) &&
+                    String(m.text ?? '').trim() === textT &&
+                    Number(m.replyToId ?? 0) === Number(replyToPayload ?? 0),
+            )
+            if (idx === -1) return state
+
+            const ui = mapMessageSenderData(payload, me, peerFallback)
+            const next = [...state.messages]
+            next[idx] = { ...ui, chatId }
+            replaced = true
+            return { messages: next }
+        })
+        return replaced
+    },
+
+    /** Confirma envio HTTP: localiza a bolha otimista pelo id gerado no cliente. */
+    completeOutboundWithClientToken: (clientMessageId, payload, peerFallback) => {
+        const me = readCurrentUserId()
+        if (String(payload.senderId) !== String(me)) return false
+
+        let replaced = false
+        set((state) => {
+            const idx = state.messages.findIndex(
+                (m) =>
+                    m.clientMessageId === clientMessageId &&
+                    m.deliveryStatus === 'sending',
+            )
+            if (idx === -1) return state
+
+            const ui = mapMessageSenderData(payload, me, peerFallback)
+            const next = [...state.messages]
+            next[idx] = { ...ui, chatId: payload.chatId }
+            replaced = true
+            return { messages: next }
+        })
+        return replaced
+    },
+
+    removeOptimisticByClientId: (clientMessageId) =>
+        set((state) => ({
+            messages: state.messages.filter(
+                (m) => m.clientMessageId !== clientMessageId,
+            ),
+        })),
+
+    markOutboundFailedByClientId: (clientMessageId) =>
+        set((state) => ({
+            messages: state.messages.map((m) =>
+                m.clientMessageId === clientMessageId
+                    ? { ...m, deliveryStatus: 'failed' }
+                    : m,
+            ),
+        })),
+
+    markLatestSendingOutboundFailed: (chatId) =>
+        set((state) => {
+            if (chatId == null) return state
+            let lastIdx = -1
+            for (let i = state.messages.length - 1; i >= 0; i--) {
+                const m = state.messages[i]
+                if (
+                    m.deliveryStatus === 'sending' &&
+                    Number(m.chatId) === Number(chatId)
+                ) {
+                    lastIdx = i
+                    break
+                }
+            }
+            if (lastIdx === -1) return state
+            const next = [...state.messages]
+            next[lastIdx] = { ...next[lastIdx], deliveryStatus: 'failed' }
+            return { messages: next }
         }),
 
     clearCurrentChat: () =>
@@ -111,10 +211,64 @@ export const useChatStore = create((set) => ({
             activeChatId: null,
             messages: [],
             typingUsers: []
-        })
-}))
+        }),
 
-// const messages = useChatStore(...)
-messages: []
-activeConversation: 42
-typingUsers: []
+    resetActiveChatAfterWsAccessDenied: () =>
+        set((s) => ({
+            activeChatId: null,
+            messages: [],
+            typingUsers: [],
+            subscribeAccessDeniedSeq: (s.subscribeAccessDeniedSeq ?? 0) + 1,
+        })),
+
+    prependMessages: (olderMessages) =>
+        set((state) => ({
+            messages: [...olderMessages, ...state.messages],
+        })),
+
+    applyTypingStart: (payload) =>
+        set((state) => {
+            if (payload?.chatId == null || payload?.userId == null) return state
+            if (state.activeChatId == null) return state
+            if (Number(payload.chatId) !== Number(state.activeChatId)) return state
+            if (Number(payload.userId) === Number(readCurrentUserId())) return state
+
+            const nextUser = {
+                userId: payload.userId,
+                username:
+                    (payload.username ?? '').trim() ||
+                    String(payload.userId),
+            }
+
+            const without = state.typingUsers.filter(
+                (u) => Number(u.userId) !== Number(nextUser.userId),
+            )
+
+            return {
+                typingUsers: [...without, nextUser],
+            }
+        }),
+
+    applyTypingStop: (payload) =>
+        set((state) => {
+            if (payload?.chatId == null || payload?.userId == null) return state
+            if (state.activeChatId == null) return state
+            if (Number(payload.chatId) !== Number(state.activeChatId)) return state
+
+            return {
+                typingUsers: state.typingUsers.filter(
+                    (u) => Number(u.userId) !== Number(payload.userId),
+                ),
+            }
+        }),
+
+    removeUserFromTyping: (userId) =>
+        set((state) => {
+            if (userId == null) return state
+            return {
+                typingUsers: state.typingUsers.filter(
+                    (u) => Number(u.userId) !== Number(userId),
+                ),
+            }
+        }),
+}))

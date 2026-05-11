@@ -3,6 +3,7 @@ import { AvatarWithStatus } from "@/design-system";
 import { cn } from "@/design-system/tokens/colors";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatChatListTime } from "@/features/chat/utils/formatChatDates";
+import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
 
 export default function ChatItem({ chat, isSelected, onClick }) {
 	const { t } = useTranslation("chat");
@@ -22,6 +23,13 @@ export default function ChatItem({ chat, isSelected, onClick }) {
 		? directLabel || t("list.fallbackDm")
 		: groupTitle || t("list.fallbackGroup");
 
+	const peerId = peer?.id;
+	const peerOnline = usePresenceStore((s) => {
+		if (!isDirect || peerId == null) return false;
+		return !!s.usersPresence[peerId]?.online;
+	});
+	const avatarStatus = peerOnline ? "online" : "offline";
+
     return (
         <button
             type="button"
@@ -34,7 +42,8 @@ export default function ChatItem({ chat, isSelected, onClick }) {
             <AvatarWithStatus
                 src={isDirect ? (peer?.avatarUrl ?? peer?.avatarURL ?? null) : null}
                 name={rowTitle}
-                // status={chat.status ?? "online"}
+                status={avatarStatus}
+                showStatus={isDirect}
                 size="sm"
                 className="shrink-0"
             />
