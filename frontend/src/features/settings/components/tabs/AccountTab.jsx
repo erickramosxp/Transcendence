@@ -45,19 +45,19 @@ export const AccountTab = () => {
                 <Separator />
                 <div className='flex flex-col text-start justify-start gap-2.5'>
                     <p>
-                        Documentos legais:
+                        {t('account.legalDocuments')}
                     </p>
                     <div className='text-muted-foreground'>
                         <Link to="/legal/privacy" target='_blank' rel="noopener noreferrer" className='flex items-center gap-2 hover:underline'>
                             <ExternalLink size={16} />
                             <span>
-                                Política de Privacidade
+                                {t('account.privacyPolicy')}
                             </span>
                         </Link>
                         <Link to="/legal/privacy" target='_blank' rel="noopener noreferrer" className='flex items-center gap-2 hover:underline'>
                             <ExternalLink size={16} />
                             <span>
-                                Termos de Serviço
+                                {t('account.termsOfService')}
                             </span>
                         </Link>
                     </div>

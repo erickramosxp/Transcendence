@@ -49,21 +49,21 @@ export const SecurityTab = () => {
         e.preventDefault()
 
         if (!currentPassword) {
-            toast.warn("Por favor insira a senha atual");
+            toast.warn(t('security.warnCurrentPassword'));
             return;
         }
 
         if (!newPassword || !confirmNewPassword) {
-            toast.warn("Insira e confirme a nova senha");
+            toast.warn(t('security.warnNewPassword'));
             return;
         }
         setDisableButton(true);
         try {
             await changePassword({currentPassword, newPassword, confirmNewPassword});
-            toast.success("Senha alterada com sucesso");
+            toast.success(t('security.successChanged'));
             cleanInput();
         } catch {
-            toast.error("Falha ao alterar senha");
+            toast.error(t('security.errorChanged'));
         } finally {
             setDisableButton(false);
         }
@@ -83,7 +83,7 @@ export const SecurityTab = () => {
                 <span className='flex justify-center items-center gap-2'>
                     <GoogleIcon />
                     <p className='text-muted-foreground'>
-                        Sessão feita com google, troca de senha desabilitada.
+                        {t('security.oauthMessage')}
                     </p>
                 </span>
             </div>
@@ -140,12 +140,12 @@ export const SecurityTab = () => {
                     {confirmNewPassword.trim().length > 0 &&
                         newPassword !== confirmNewPassword && (
                             <p>
-                                A confirmação da senha não corresponde
+                                {t('security.passwordMismatch')}
                             </p>
                         )}
                     {newPassword.length > 0 && newPassword.length < 8 &&
                         <p>
-                            Senha com menos de 8 caracteres
+                            {t('security.passwordTooShort')}
                         </p>
                     }
                 </div>

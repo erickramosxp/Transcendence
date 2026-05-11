@@ -29,7 +29,7 @@ export function RegisterForm({ onSubmit }) {
     }
 
     if (!acceptTerms) {
-      toast.warn("Necessário aceitar os termos");
+      toast.warn(t('register.acceptTermsRequired'));
       return;
     }
 
@@ -133,18 +133,18 @@ export function RegisterForm({ onSubmit }) {
                 htmlFor="accept-terms"
                 className="h-6"
               >
-                Eu aceito os termos legais
+                {t('register.acceptTerms')}
               </Label>
 
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Ao continuar, você concorda com os{" "}
+              {t('register.termsNoticePrefix') + " "}
               <Link to="/legal/terms" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-                Termos de Uso
+                {t('register.termsOfUse')}
               </Link>{" "}
-              e com a{" "}
+              {t('register.termsNoticeMiddle')}{" "}
               <Link to="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-                Política de Privacidade
+                {t('register.privacyPolicy')}
               </Link>
               .
             </p>
