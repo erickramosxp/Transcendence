@@ -1,5 +1,6 @@
 package com.ft.transcendence.user.api;
 
+import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.user.app.UserService;
@@ -124,21 +125,25 @@ public class UserResource {
     @GET
     @Path("/{username}/followers")
     @Authenticated
-    public UserFollowListResponse followers(@PathParam("username") String username) {
+    public PageResponse<UserFollowResponse> followers(@PathParam("username") String username,
+                                                      @QueryParam("page") @DefaultValue("0") int page,
+                                                      @QueryParam("size") @DefaultValue("20") int size) {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
-        return userService.getFollowers(user.id);
+        return userService.getFollowers(user.id, page, size);
     }
 
     @GET
     @Path("/{username}/following")
     @Authenticated
-    public UserFollowListResponse following(@PathParam("username") String username) {
+    public PageResponse<UserFollowResponse> following(@PathParam("username") String username,
+                                            @QueryParam("page") @DefaultValue("0") int page,
+                                            @QueryParam("size") @DefaultValue("20") int size) {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
-        return userService.getFollowing(user.id);
+        return userService.getFollowing(user.id, page, size);
     }
 
     @DELETE

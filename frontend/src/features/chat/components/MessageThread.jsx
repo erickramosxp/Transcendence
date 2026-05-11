@@ -1,8 +1,9 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/useLanguage";
 import Message from "@/features/chat/components/Message";
 import ChatDaySeparator from "@/features/chat/components/ChatDaySeparator";
+import { resolveReplyQuoteForDisplay } from "@/features/chat/utils/replyQuote";
 import {
 	formatChatDaySeparatorLabel,
 	isSameChatDay,
@@ -17,9 +18,23 @@ export default function MessageThread({
 	loadingOlder,
 	loading,
 	error,
+	onReply,
 }) {
 	const { t } = useTranslation("chat");
 	const { currentLanguage } = useLanguage();
+	const [touchReplyMessageKey, setTouchReplyMessageKey] = useState(null);
+
+	useEffect(() => {
+		const el = listRef?.current;
+		const close = () => setTouchReplyMessageKey(null);
+		if (el) el.addEventListener("scroll", close, { passive: true });
+		window.addEventListener("resize", close);
+		return () => {
+			if (el) el.removeEventListener("scroll", close);
+			window.removeEventListener("resize", close);
+		};
+	}, [listRef]);
+
 	return (
 		<>
 			{error && (
@@ -60,13 +75,29 @@ export default function MessageThread({
 										},
 									)
 								: null;
+							const msgKey = msg.clientMessageId ?? msg.id;
 							return (
-								<Fragment key={msg.id}>
+								<Fragment key={msgKey}>
 									{showDay && <ChatDaySeparator label={dayLabel} />}
 									<Message
 										currentUserId={currentUserId}
 										message={msg}
 										showSenderName={showSenderName}
+										replyQuote={resolveReplyQuoteForDisplay(
+											messages,
+											msg,
+										)}
+										onReply={onReply}
+										touchReplyVisible={
+											touchReplyMessageKey != null &&
+											String(touchReplyMessageKey) === String(msgKey)
+										}
+										onTouchReplyReveal={() =>
+											setTouchReplyMessageKey(msgKey)
+										}
+										onTouchReplyDismiss={() =>
+											setTouchReplyMessageKey(null)
+										}
 									/>
 								</Fragment>
 							);

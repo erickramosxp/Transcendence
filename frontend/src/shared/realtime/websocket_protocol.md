@@ -267,7 +267,7 @@ Enviado a todos os participantes inscritos após uma mensagem ser persistida com
 | `payload.senderId` | `number` | ID do remetente |
 | `payload.createdAt` | `string` (ISO 8601) | Data/hora de criação |
 
-**Store atualizado:** `useChatStore.addMessage(payload)` (ou `handleIncomingMessage` após migração completa)
+**Cliente:** `useChatStore.addMessage` (mensagens do chat aberto) e `useChatStore.dispatchListBump` (fila + `listBumpSeq`; `Chat.jsx` drena com `drainListBumpQueue` e atualiza a lista).
 
 ---
 

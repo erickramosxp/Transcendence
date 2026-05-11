@@ -2,6 +2,8 @@ package com.ft.transcendence.user.app;
 
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
+import com.ft.transcendence.chat.dto.ChatParticipantResponse;
+import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.media.MediaAnalysis;
@@ -287,20 +289,50 @@ public class UserService {
         Follow.delete("follower.id = ?1 and followee.id = ?2", currentUserId, followedUser.id);
     }
 
-    public UserFollowListResponse getFollowers(long userId) {
-        List<Follow> follows = Follow.find("followee.id = ?1 order by createdAt desc", userId).list();
+    public PageResponse<UserFollowResponse> getFollowers(long userId, int page, int size) {
+        int start = page * size;
+        int end = start + size;
 
-        UserFollowListResponse list = new UserFollowListResponse();
-        list.items = follows.stream().map(UserFollowResponse::ofFollowers).toList();
-        return list;
+        List<Follow> follows = Follow.find("followee.id = ?1 order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = follows.size() > size;
+        if (hasMore)
+            follows = follows.subList(0, size);
+
+        List<UserFollowResponse> items = follows.stream()
+                .map(f -> {
+                    String avatarUrl = f.follower.avatarUrl;
+                    if (avatarUrl != null && !avatarUrl.isBlank())
+                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    return UserFollowResponse.ofFollowers(f, avatarUrl);
+                }).toList();
+
+        return new PageResponse<>(items, page, items.size(), hasMore);
     }
 
-    public UserFollowListResponse getFollowing(long userId) {
-        List<Follow> follows = Follow.find("follower.id = ?1 order by createdAt desc", userId).list();
+    public PageResponse<UserFollowResponse> getFollowing(long userId, int page, int size) {
+        int start = page * size;
+        int end = start + size;
 
-        UserFollowListResponse list = new UserFollowListResponse();
-        list.items = follows.stream().map(UserFollowResponse::ofFollowing).toList();
-        return list;
+        List<Follow> follows = Follow.find("follower.id = ?1 order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = follows.size() > size;
+        if (hasMore)
+            follows = follows.subList(0, size);
+
+        List<UserFollowResponse> items = follows.stream()
+                .map(f -> {
+                    String avatarUrl = f.followee.avatarUrl;
+                    if (avatarUrl != null && !avatarUrl.isBlank())
+                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    return UserFollowResponse.ofFollowing(f, avatarUrl);
+                }).toList();
+
+        return new PageResponse<>(items, page, items.size(), hasMore);
     }
 
     @Transactional

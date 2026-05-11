@@ -7,9 +7,9 @@ import { getUserInfo } from "@/features/profile/services/profileService";
 import {
 	axiosErrorMessage,
 	getFriendDisplayLabel,
-	getProfileDisplayLabel,
 	normalizeUsername,
 } from "@/features/chat/utils/ConversationModalUtils";
+import { resolveFriendForChat } from "@/features/chat/utils/resolveFriendForChat";
 import { useDebouncedFriendSuggestions } from "@/features/chat/hooks/useDebouncedFriendSuggestions";
 
 export const ADD_CONVERSATION_TAB = {
@@ -114,14 +114,25 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 
 		setAddingMember(true);
 		try {
-			const user = await getUserInfo(username);
-			const id = user?.id;
+			const friend = await resolveFriendForChat(username);
+			let id = friend?.friendId;
 			if (id == null) {
-				setMemberError(t("list.add.memberErrorNotFound", { username }));
-				return;
-			}
-			if (String(id) === String(me)) {
-				setMemberError(t("list.add.memberErrorSelf"));
+				try {
+					const user = await getUserInfo(username);
+					const uid = user?.id;
+					if (uid != null && String(uid) === String(me)) {
+						setMemberError(t("list.add.memberErrorSelf"));
+						return;
+					}
+				} catch (e) {
+					if (e?.response?.status === 404) {
+						setMemberError(t("list.add.memberErrorNotFound", { username }));
+					} else {
+						setMemberError(t("list.add.memberErrorGeneric"));
+					}
+					return;
+				}
+				setMemberError(t("list.add.memberErrorNotFriend", { username }));
 				return;
 			}
 			if (groupMembers.some((m) => String(m.id) === String(id))) {
@@ -129,17 +140,14 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 				return;
 			}
 
-			const { username: uname, displayLabel } = getProfileDisplayLabel(user, username);
+			const uname = friend.username ?? username;
+			const displayLabel = getFriendDisplayLabel(friend);
 
 			setGroupMembers((prev) => [...prev, { id: Number(id), username: uname, displayLabel }]);
 			setGroupQuery("");
 			setSubmitError(null);
 		} catch (e) {
-			if (e?.response?.status === 404) {
-				setMemberError(t("list.add.memberErrorNotFound", { username }));
-			} else {
-				setMemberError(t("list.add.memberErrorGeneric"));
-			}
+			setMemberError(t("list.add.memberErrorGeneric"));
 		} finally {
 			setAddingMember(false);
 		}
@@ -157,32 +165,43 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 			}
 			setSubmitting(true);
 			try {
-				let user;
+				let friend;
 				try {
-					user = await getUserInfo(username);
-				} catch (e) {
-					if (e?.response?.status === 404) {
-						setSubmitError(t("list.add.memberErrorNotFound", { username }));
-					} else {
-						setSubmitError(t("list.add.memberErrorGeneric"));
-					}
+					friend = await resolveFriendForChat(username);
+				} catch {
+					setSubmitError(t("list.add.memberErrorGeneric"));
 					return;
 				}
-				const otherId = user?.id;
+				let otherId = friend?.friendId;
 				if (otherId == null) {
-					setSubmitError(t("list.add.memberErrorNotFound", { username }));
-					return;
-				}
-				if (String(otherId) === String(me)) {
-					setSubmitError(t("list.add.createErrorDmSelf"));
+					try {
+						const user = await getUserInfo(username);
+						const uid = user?.id;
+						if (uid != null && String(uid) === String(me)) {
+							setSubmitError(t("list.add.createErrorDmSelf"));
+							return;
+						}
+					} catch (e) {
+						if (e?.response?.status === 404) {
+							setSubmitError(t("list.add.memberErrorNotFound", { username }));
+						} else {
+							setSubmitError(t("list.add.memberErrorGeneric"));
+						}
+						return;
+					}
+					setSubmitError(t("list.add.memberErrorNotFriend", { username }));
 					return;
 				}
 				const chat = await createDM(Number(otherId));
-				const { displayLabel: peerLabel } = getProfileDisplayLabel(user, username);
+				const peerLabel = getFriendDisplayLabel(friend);
 				onChatCreated?.(chat, { peerLabel });
 				handleClose();
 			} catch (e) {
-				setSubmitError(axiosErrorMessage(e) ?? t("list.add.createErrorGeneric"));
+				if (e?.response?.status === 403) {
+					setSubmitError(t("list.add.createErrorForbidden"));
+				} else {
+					setSubmitError(axiosErrorMessage(e) ?? t("list.add.createErrorGeneric"));
+				}
 			} finally {
 				setSubmitting(false);
 			}
@@ -206,7 +225,11 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 			onChatCreated?.(chat);
 			handleClose();
 		} catch (e) {
-			setSubmitError(axiosErrorMessage(e) ?? t("list.add.createErrorGeneric"));
+			if (e?.response?.status === 403) {
+				setSubmitError(t("list.add.createErrorForbidden"));
+			} else {
+				setSubmitError(axiosErrorMessage(e) ?? t("list.add.createErrorGeneric"));
+			}
 		} finally {
 			setSubmitting(false);
 		}
