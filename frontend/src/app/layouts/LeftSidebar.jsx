@@ -1,24 +1,29 @@
-import { Link } from "react-router-dom"
+import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
+
 import { useAuth } from "@/app/providers/AuthProvider"
 
-import { Button, ThemeToggle, LanguageSwitcher, SideBarNav } from "@/design-system";
-import { LogOut } from "lucide-react"
+import { Button, ThemeToggle, LanguageSwitcher, SideBarNav } from "@/design-system"
+import { Bell, Home, LogOut, MessageCircle, User, Users } from "lucide-react"
 
 export function LeftSidebar() {
+    const { logout } = useAuth()
+    const { t } = useTranslation("common")
 
-    const { logout } = useAuth();
-    const SideBarItems = [
-        { label: 'Home', to: '/' },
-        { label: 'Feed', to: '/feed' },
-        { label: 'Chat', to: '/chat' },
-        { label: 'Friends', to: '/friends' },
-        { label: 'Profile', to: '/profile' },
-        { label: 'Edit Profile', to: '/editProfile' },
-    ];
+    const sideBarItems = useMemo(
+        () => [
+            { label: t("nav.feed"), icon: Home, to: "/feed", end: true },
+            { label: t("nav.messages"), icon: MessageCircle, to: "/chat", end: false },
+            { label: t("nav.notifications"), icon: Bell, to: "/notifications", end: true },
+            { label: t("nav.friends"), icon: Users, to: "/friends", end: true },
+            { label: t("nav.profile"), icon: User, to: "/profile", end: true },
+        ],
+        [t],
+    )
     return (
         <>
             <SideBarNav
-                items={SideBarItems}
+                items={sideBarItems}
                     actions={
                         <div className="w-full">
                             <div className="flex items-center justify-evenly w-full">

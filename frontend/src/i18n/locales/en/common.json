@@ -1,4 +1,11 @@
 {
+    "nav": {
+        "feed": "Feed",
+        "messages": "Messages",
+        "notifications": "Notifications",
+        "friends": "Friends",
+        "profile": "Profile"
+    },
     "postsUI": {
         "empty": "Nothing here yet.",
         "loadMore": "Loading more…",
