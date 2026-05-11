@@ -1,0 +1,162 @@
+import {
+    Button,
+    Input,
+    Label,
+    Loading,
+} from '@/design-system'
+import { GoogleIcon } from '@/features/auth/components/GoogleIcon';
+
+import { changePassword, getMyAuthType } from '@/features/profile/services/profileService';
+import { useEffect, useState } from 'react';
+
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify';
+
+export const SecurityTab = () => {
+
+    const { t } = useTranslation('settings');
+    const [loading, setLoading] = useState(true);
+    const [isOAuth, setIsOAuth] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const [disableButton, setDisableButton] = useState(false);
+
+    useEffect(() => {
+
+        const getAuthType = async () => {
+            setLoading(true);
+            try {
+                const resp = await getMyAuthType();
+                if (!resp.providers.includes("LOCAL")) {
+                    setIsOAuth(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        getAuthType();
+    }, []);
+
+    const cleanInput = () => {
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+    }
+
+    const handleSettingsSubmit = async (e) => {
+        e.preventDefault()
+
+        if (!currentPassword) {
+            toast.warn("Por favor insira a senha atual");
+            return;
+        }
+
+        if (!newPassword || !confirmNewPassword) {
+            toast.warn("Insira e confirme a nova senha");
+            return;
+        }
+        setDisableButton(true);
+        try {
+            await changePassword({currentPassword, newPassword, confirmNewPassword});
+            toast.success("Senha alterada com sucesso");
+            cleanInput();
+        } catch {
+            toast.error("Falha ao alterar senha");
+        } finally {
+            setDisableButton(false);
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className='py-20'>
+                <Loading className='m-auto' />
+            </div>
+        )
+    }
+
+    if (isOAuth) {
+        return (
+            <div className='flex justify-center items-center py-20 h-20'>
+                <span className='flex justify-center items-center gap-2'>
+                    <GoogleIcon />
+                    <p className='text-muted-foreground'>
+                        Sessão feita com google, troca de senha desabilitada.
+                    </p>
+                </span>
+            </div>
+        );
+    }
+
+    return (
+        <div className='p-4 text-center'>
+            <h2>{t('security.title')}</h2>
+
+            <form
+                className='flex flex-col gap-3'
+                onSubmit={handleSettingsSubmit}
+            >
+                <div>
+                    <Label htmlFor="currentPassword">
+                        {t('security.currentPassword')}
+                    </Label>
+
+                    <Input
+                        id="currentPassword"
+                        type="password"
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        value={currentPassword}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="newPassword">
+                        {t('security.newPassword')}
+                    </Label>
+
+                    <Input
+                        id="newPassword"
+                        type="password"
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        value={newPassword}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="confirmNewPassword">
+                        {t('security.confirmPassword')}
+                    </Label>
+
+                    <Input
+                        id="confirmNewPassword"
+                        type="password"
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                        value={confirmNewPassword}
+                    />
+                </div>
+                <div className='text-left pl-3 text-sm text-red-600'>
+                    {confirmNewPassword.trim().length > 0 &&
+                        newPassword !== confirmNewPassword && (
+                            <p>
+                                A confirmação da senha não corresponde
+                            </p>
+                        )}
+                    {newPassword.length > 0 && newPassword.length < 8 &&
+                        <p>
+                            Senha com menos de 8 caracteres
+                        </p>
+                    }
+                </div>
+                    
+
+                <div>
+                    <Button type='submit' disabled={disableButton}>
+                        {t('security.submit')}
+                    </Button>
+                </div>
+            </form>
+        </div>
+    )
+}

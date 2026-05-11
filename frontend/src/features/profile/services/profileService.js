@@ -88,3 +88,20 @@ export async function deleteMyProfileAvatar() {
   const response = await api.delete(`/user/me/avatar`);
   return response.data;
 }
+
+export async function changePassword(params) {
+
+  const response = await api.patch(`/auth/password`, params, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+  });
+  return response.data;
+}
+
+export async function getMyAuthType() {
+
+  const response = await api.get(`/user/me/auth-type`);
+  return response.data;
+}

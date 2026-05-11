@@ -14,7 +14,8 @@ import { ImageCropModal } from "@/features/profile/components/modals/ImageCropMo
 
 
 import { useTranslation } from "react-i18next";
-import { SettingsContent } from "../SettingsContent";
+import { SettingsContent } from "@/features/settings/components/SettingsContent";
+// import { SettingsContent } from "../SettingsContent";
 
 import { Button, Modal } from "@/design-system";
 import { AvatarEditable } from "./AvatarEditable";
