@@ -11,6 +11,7 @@ import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
@@ -27,6 +28,9 @@ public class CommentService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    EntityManager entityManager;
 
     @Inject
     NotificationDispatcher notificationDispatcher;
@@ -50,14 +54,16 @@ public class CommentService {
         comment.updatedAt = now;
         comment.persist();
 
-        post.commentCount = post.commentCount + 1;
+        entityManager.createQuery(
+                "UPDATE Post SET commentCount = commentCount + 1 WHERE id = :id"
+        ).setParameter("id", req.postId).executeUpdate();
 
-        String avatarUrl = comment.user.avatarUrl;
+        String avatarUrl  = comment.user.avatarUrl;
         if (avatarUrl != null && !avatarUrl.isBlank()) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
 
-        notificationDispatcher.onComment(comment.user, comment);
+        notificationDispatcher.onComment(comment.user, comment, avatarUrl);
 
         return CommentResponse.of(comment, false, avatarUrl);
     }
@@ -98,7 +104,7 @@ public class CommentService {
         }
         User user = comment.user;
 
-        if (user.id != userId) {
+        if (user.id.equals(userId)) {
             throw new ForbiddenException();
         }
 

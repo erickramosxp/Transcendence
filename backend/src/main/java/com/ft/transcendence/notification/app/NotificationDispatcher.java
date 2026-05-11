@@ -27,7 +27,7 @@ public class NotificationDispatcher {
     @Inject
     StorageService storageService;
 
-    public void onLikePost(User actor, Post post) {
+    public void onLikePost(Long userId, Post post) {
         if (actor.id.equals(post.user.id))
             return;
 
@@ -41,7 +41,7 @@ public class NotificationDispatcher {
         dispatch(post.user.id, actor.id, NotificationType.LIKE_POST, content);
     }
 
-    public void onLikeComment(User actor, Comment comment) {
+    public void onLikeComment(Long userId, Comment comment) {
         if (actor.id.equals(comment.user.id))
             return;
 
@@ -56,14 +56,14 @@ public class NotificationDispatcher {
         dispatch(comment.user.id, actor.id, NotificationType.LIKE_COMMENT, content);
     }
 
-    public void onComment(User actor, Comment comment) {
+    public void onComment(User actor, Comment comment, String avatarUrl) {
         if (actor.id.equals(comment.post.user.id))
             return;
 
         NotificationContent content = new NotificationContent();
         content.name = actor.name;
         content.username = actor.username;
-        content.avatarUrl = actor.avatarUrl;
+        content.avatarUrl = avatarUrl;
         content.postId = comment.post.id;
         content.commentId = comment.id;
         content.preview = truncate(comment.text);

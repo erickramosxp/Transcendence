@@ -7,6 +7,7 @@ import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -14,6 +15,8 @@ import java.time.OffsetDateTime;
 
 @ApplicationScoped
 public class LikeService {
+    @Inject
+    EntityManager entityManager;
 
     @Inject
     NotificationDispatcher notificationDispatcher;
@@ -24,20 +27,22 @@ public class LikeService {
         if (post == null)
             throw new NotFoundException("Post not found");
 
-        boolean alreadyLiked = Like.find("user.id = ?1 and post.id = ?2", userId, postId)
-                .firstResultOptional().isPresent();
-        if (alreadyLiked)
-            return;
+        int inserted = entityManager.createNativeQuery(
+                        "INSERT INTO likes (user_id, post_id, created_at) " +
+                                "VALUES (?1, ?2, ?3) ON CONFLICT (user_id, post_id) DO NOTHING"
+                )
+                .setParameter(1, userId)
+                .setParameter(2, postId)
+                .setParameter(3, OffsetDateTime.now())
+                .executeUpdate();
 
-        Like like = new Like();
-        like.user = User.findById(userId);
-        like.post = post;
-        like.createdAt = OffsetDateTime.now();
-        like.persist();
+        if (inserted > 0) {
+            entityManager.createQuery(
+                    "UPDATE Post SET likeCount = likeCount + 1 WHERE id = :id"
+            ).setParameter("id", postId).executeUpdate();
+        }
 
-        post.likeCount = post.likeCount + 1;
-
-        notificationDispatcher.onLikePost(like.user, post);
+        notificationDispatcher.onLikePost(userId, post);
     }
 
     @Transactional
@@ -46,13 +51,18 @@ public class LikeService {
         if (post == null)
             throw new NotFoundException("Post not found");
 
-        Like like = Like.find("user.id = ?1 and post.id = ?2", userId, postId)
-                .firstResult();
-        if (like == null)
-            return;
+        int deleted = entityManager.createQuery(
+                        "DELETE FROM Like WHERE user.id = :uid AND post.id = :pid"
+                )
+                .setParameter("uid", userId)
+                .setParameter("pid", postId)
+                .executeUpdate();
 
-        like.delete();
-        post.likeCount = Math.max(0, post.likeCount - 1);
+        if (deleted > 0) {
+            entityManager.createQuery(
+                    "UPDATE Post SET likeCount = GREATEST(likeCount - 1, 0) WHERE id = :id"
+            ).setParameter("id", postId).executeUpdate();
+        }
     }
 
     @Transactional
@@ -61,20 +71,22 @@ public class LikeService {
         if (comment == null)
             throw new NotFoundException("Comment not found");
 
-        boolean alreadyLiked = Like.find("user.id = ?1 and comment.id = ?2", userId, commentId)
-                .firstResultOptional().isPresent();
-        if (alreadyLiked)
-            return;
+        int inserted = entityManager.createNativeQuery(
+                        "INSERT INTO likes (user_id, comment_id, created_at) " +
+                                "VALUES (?1, ?2, ?3) ON CONFLICT (user_id, comment_id) DO NOTHING"
+                )
+                .setParameter(1, userId)
+                .setParameter(2, commentId)
+                .setParameter(3, OffsetDateTime.now())
+                .executeUpdate();
 
-        Like like = new Like();
-        like.user = User.findById(userId);
-        like.comment = comment;
-        like.createdAt = OffsetDateTime.now();
-        like.persist();
+        if (inserted > 0) {
+            entityManager.createQuery(
+                    "UPDATE Comment SET likeCount = likeCount + 1 WHERE id = :id"
+            ).setParameter("id", commentId).executeUpdate();
+        }
 
-        comment.likeCount = comment.likeCount + 1;
-
-        notificationDispatcher.onLikeComment(like.user, comment);
+        notificationDispatcher.onLikeComment(userId, comment);
     }
 
     @Transactional
@@ -83,12 +95,17 @@ public class LikeService {
         if (comment == null)
             throw new NotFoundException("Comment not found");
 
-        Like like = Like.find("user.id = ?1 and comment.id = ?2", userId, commentId)
-                .firstResult();
-        if (like == null)
-            return;
+        int deleted = entityManager.createQuery(
+                        "DELETE FROM Like WHERE user.id = :uid AND comment.id = :pid"
+                )
+                .setParameter("uid", userId)
+                .setParameter("pid", commentId)
+                .executeUpdate();
 
-        like.delete();
-        comment.likeCount = Math.max(0, comment.likeCount - 1);
+        if (deleted > 0) {
+            entityManager.createQuery(
+                    "UPDATE Comment SET likeCount = GREATEST(likeCount - 1, 0) WHERE id = :id"
+            ).setParameter("id", commentId).executeUpdate();
+        }
     }
 }
