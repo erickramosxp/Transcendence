@@ -8,21 +8,21 @@ public class UserFollowResponse {
     public String name;
     public String avatarUrl;
 
-    public static UserFollowResponse ofFollowers(Follow f) {
+    public static UserFollowResponse ofFollowers(Follow f, String avatarUrl) {
         UserFollowResponse r = new UserFollowResponse();
         r.id = f.follower.id;
         r.username = f.follower.username;
         r.name = f.follower.name;
-        r.avatarUrl = f.follower.avatarUrl;
+        r.avatarUrl = avatarUrl;
         return r;
     }
 
-    public static UserFollowResponse ofFollowing(Follow f) {
+    public static UserFollowResponse ofFollowing(Follow f, String avatarUrl) {
         UserFollowResponse r = new UserFollowResponse();
         r.id = f.followee.id;
         r.username = f.followee.username;
         r.name = f.followee.name;
-        r.avatarUrl = f.followee.avatarUrl;
+        r.avatarUrl = avatarUrl;
         return r;
     }
 }

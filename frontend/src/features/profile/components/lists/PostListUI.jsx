@@ -2,7 +2,6 @@ import React from "react";
 import PostCard from "@/features/feed/components/PostCard";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Card } from "@/design-system";
 
 export function PostListUI({
   posts,
@@ -13,6 +12,7 @@ export function PostListUI({
   handleLike,
   toggleComments,
   incrementCommentCount,
+  handleDelete
 }) {
 
   const { t } = useTranslation();
@@ -27,18 +27,15 @@ export function PostListUI({
       ) : (
         <>
           {posts?.map((post, index) => (
-            <Card
-              key={`${post.id}-${index}`}
-              className="border-border bg-card/90 backdrop-blur-xl shadow-xl"
-            >
               <PostCard
+                key={`${post.id}-${index}`}
                 post={post}
                 onLike={handleLike}
                 onToggleComments={toggleComments}
                 activeCommentsPostId={activeCommentsPostId}
                 incrementCommentCount={incrementCommentCount}
+                onDelete={handleDelete}
               />
-            </Card>
           ))}
 
           <div ref={sentinelRef} className="h-4" aria-hidden />

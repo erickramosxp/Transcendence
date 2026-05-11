@@ -96,8 +96,11 @@ public class RealtimePresenceHandler {
     private void notifyWatchers(RealtimeConnection targetConnection, boolean online, OffsetDateTime lastSeenAt) {
         Set<RealtimeConnection> watchers = presenceService.getWatchers(targetConnection.userId);
         for (RealtimeConnection watcher : watchers) {
+            String avatarUrl = targetConnection.avatarUrl;
+            if (avatarUrl != null && !avatarUrl.isBlank())
+                avatarUrl = storageService.generateUrl(avatarUrl);
             sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
-                    targetConnection.name, targetConnection.username, targetConnection.avatarUrl, online, lastSeenAt));
+                    targetConnection.name, targetConnection.username, avatarUrl, online, lastSeenAt));
         }
     }
 }

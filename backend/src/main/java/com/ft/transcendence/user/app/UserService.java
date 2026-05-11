@@ -2,6 +2,8 @@ package com.ft.transcendence.user.app;
 
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
+import com.ft.transcendence.chat.dto.ChatParticipantResponse;
+import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.storage.FileUploadForm;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.media.MediaAnalysis;
@@ -18,6 +20,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
@@ -121,7 +124,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Like> likes = Like.find("user.id = ?1 and post is not null order by createdAt desc", userId)
+        List<Like> likes = Like.find("user.id = ?1 and post is not null and post.deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -173,7 +176,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -222,7 +225,7 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 and mediaUrl is not null order by createdAt desc", userId)
+        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null and mediaUrl is not null order by createdAt desc", userId)
                 .range(start, end)
                 .list();
 
@@ -234,7 +237,7 @@ public class UserService {
         resp.items = posts.stream().map(p -> {
             
             String mediaUrl = p.mediaUrl;
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
+            if (mediaUrl != null && !mediaUrl.isBlank()) {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
             return MediaResponse.of(p, mediaUrl);
@@ -286,20 +289,50 @@ public class UserService {
         Follow.delete("follower.id = ?1 and followee.id = ?2", currentUserId, followedUser.id);
     }
 
-    public UserFollowListResponse getFollowers(long userId) {
-        List<Follow> follows = Follow.find("followee.id = ?1 order by createdAt desc", userId).list();
+    public PageResponse<UserFollowResponse> getFollowers(long userId, int page, int size) {
+        int start = page * size;
+        int end = start + size;
 
-        UserFollowListResponse list = new UserFollowListResponse();
-        list.items = follows.stream().map(UserFollowResponse::ofFollowers).toList();
-        return list;
+        List<Follow> follows = Follow.find("followee.id = ?1 order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = follows.size() > size;
+        if (hasMore)
+            follows = follows.subList(0, size);
+
+        List<UserFollowResponse> items = follows.stream()
+                .map(f -> {
+                    String avatarUrl = f.follower.avatarUrl;
+                    if (avatarUrl != null && !avatarUrl.isBlank())
+                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    return UserFollowResponse.ofFollowers(f, avatarUrl);
+                }).toList();
+
+        return new PageResponse<>(items, page, items.size(), hasMore);
     }
 
-    public UserFollowListResponse getFollowing(long userId) {
-        List<Follow> follows = Follow.find("follower.id = ?1 order by createdAt desc", userId).list();
+    public PageResponse<UserFollowResponse> getFollowing(long userId, int page, int size) {
+        int start = page * size;
+        int end = start + size;
 
-        UserFollowListResponse list = new UserFollowListResponse();
-        list.items = follows.stream().map(UserFollowResponse::ofFollowing).toList();
-        return list;
+        List<Follow> follows = Follow.find("follower.id = ?1 order by createdAt desc", userId)
+                .range(start, end)
+                .list();
+
+        boolean hasMore = follows.size() > size;
+        if (hasMore)
+            follows = follows.subList(0, size);
+
+        List<UserFollowResponse> items = follows.stream()
+                .map(f -> {
+                    String avatarUrl = f.followee.avatarUrl;
+                    if (avatarUrl != null && !avatarUrl.isBlank())
+                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    return UserFollowResponse.ofFollowing(f, avatarUrl);
+                }).toList();
+
+        return new PageResponse<>(items, page, items.size(), hasMore);
     }
 
     @Transactional
@@ -345,6 +378,22 @@ public class UserService {
         return Response.ok(
                 new UpdateAvatarResponse(avatarUrl)
         ).build();
+    }
+
+    @Transactional
+    public void removeAvatar(long currentUserId) {
+
+        User user = User.findById(currentUserId);
+
+        if (user == null)
+            throw new NotFoundException();
+
+        if (user.avatarUrl == null || user.avatarUrl.isBlank())
+            return;
+
+        storageService.delete(user.avatarUrl);
+
+        user.avatarUrl = null;
     }
 
     public UserAvatarResponse getAvatar(long userId) {

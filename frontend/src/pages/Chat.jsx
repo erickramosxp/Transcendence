@@ -7,6 +7,8 @@ import { sortChatsByRecency, applyChatListFocus } from "@/features/chat/utils/so
 import { Loading } from "@/design-system";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { useChatStore } from "@/features/chat/store/useChatStore";
+import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 
 export function Chat() {
 	const { t } = useTranslation("chat");
@@ -22,6 +24,14 @@ export function Chat() {
 		hasMore: false,
 		loading: false,
 	});
+	const initialChatListLoadedRef = useRef(false);
+	const prevWsConnectedRef = useRef(useSocketStore.getState().connected);
+
+	const wsConnected = useSocketStore((s) => s.connected);
+	const listBumpSeq = useChatStore((s) => s.listBumpSeq ?? 0);
+	const subscribeAccessDeniedSeq = useChatStore(
+		(s) => s.subscribeAccessDeniedSeq ?? 0,
+	);
 
 	const resetAndFetchChats = useCallback(async (options = {}) => {
 		const { listFocusChatId } = options;
@@ -46,11 +56,27 @@ export function Chat() {
 				setNotFounded(true);
 				toast.error(t("errors.load"));
 			} finally {
+				initialChatListLoadedRef.current = true;
 				setLoadHeader(false);
 			}
 		};
 		fetchMyChats();
 	}, [t, resetAndFetchChats]);
+
+	useEffect(() => {
+		const wasConnected = prevWsConnectedRef.current;
+		prevWsConnectedRef.current = wsConnected;
+
+		if (!initialChatListLoadedRef.current || notFounded) return;
+		if (!wsConnected || wasConnected) return;
+
+		resetAndFetchChats({
+			listFocusChatId: selectedChat?.id,
+		}).catch((err) => {
+			console.error(err);
+			toast.error(t("errors.load"));
+		});
+	}, [wsConnected, notFounded, resetAndFetchChats, t, selectedChat?.id]);
 
 	const loadMoreChats = useCallback(async () => {
 		const s = listFetchRef.current;
@@ -87,22 +113,41 @@ export function Chat() {
 		}
 	}, [t]);
 
-	const bumpChatAfterMessage = useCallback(({ chatId, lastMessage }) => {
-		setMyChats((prev) => {
-			const idx = prev.findIndex(
-				(c) => c?.id != null && Number(c.id) === Number(chatId),
-			);
-			if (idx < 0) return prev;
-			const next = prev.map((c, i) =>
-				i === idx ? { ...c, lastMessage } : c,
-			);
-			return sortChatsByRecency(next);
-		});
-		setSelectedChat((sel) => {
-			if (sel?.id == null || Number(sel.id) !== Number(chatId)) return sel;
-			return { ...sel, lastMessage };
-		});
-	}, []);
+	const bumpChatAfterMessage = useCallback(
+		({ chatId, lastMessage }) => {
+			setMyChats((prev) => {
+				const idx = prev.findIndex(
+					(c) => c?.id != null && Number(c.id) === Number(chatId),
+				);
+				if (idx < 0) {
+					resetAndFetchChats({ listFocusChatId: chatId }).catch((err) =>
+						console.error(err),
+					);
+					return prev;
+				}
+				const next = prev.map((c, i) =>
+					i === idx ? { ...c, lastMessage } : c,
+				);
+				return sortChatsByRecency(next);
+			});
+			setSelectedChat((sel) => {
+				if (sel?.id == null || Number(sel.id) !== Number(chatId)) return sel;
+				return { ...sel, lastMessage };
+			});
+		},
+		[resetAndFetchChats],
+	);
+
+	useEffect(() => {
+		if (!listBumpSeq) return;
+		const batch = useChatStore.getState().drainListBumpQueue();
+		batch.forEach((p) => bumpChatAfterMessage(p));
+	}, [listBumpSeq, bumpChatAfterMessage]);
+
+	useEffect(() => {
+		if (!subscribeAccessDeniedSeq) return;
+		setSelectedChat(null);
+	}, [subscribeAccessDeniedSeq]);
 
 	const handleChatCreated = useCallback(
 		async (apiChat, meta) => {
