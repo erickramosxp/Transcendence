@@ -1,25 +1,36 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	getConversation,
-	sendMessages,
-} from "@/features/chat/services/chatService";
+import { toast } from "react-toastify";
+import { getConversation, sendMessages } from "@/features/chat/services/chatService";
 import { readCurrentUserId } from "@/features/chat/utils/currentUser";
 import { mapMessageSenderData } from "@/features/chat/utils/mapMessageSenderData";
 import { useChatStore } from "../store/useChatStore";
 import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
+import { withChatId } from "@/features/chat/utils/mapMessagesWithChatId.js";
+import { mergeChatMessagesWithPending } from "@/features/chat/utils/mergeChatMessagesWithPending.js";
+import { replyQuoteFromMessageRow } from "@/features/chat/utils/replyQuote";
+import { WS_SEND_EVENTS } from "@/shared/constants/websocket";
+
+const NEAR_BOTTOM_PX = 100;
+
+function updateStickToBottom(el) {
+	if (!el) return false;
+	const { scrollTop, scrollHeight, clientHeight } = el;
+	const distanceFromBottom = scrollHeight - clientHeight - scrollTop;
+	return distanceFromBottom <= NEAR_BOTTOM_PX;
+}
 
 export function useChatConversation(currentChat, options = {}) {
-	const { onAfterMessageSent } = options;
+	const { onAfterMessageSent, scrollToBottomOnOpen = true } = options;
 	const { t } = useTranslation("chat");
 	const listRef = useRef(null);
 
-	const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [nextOlderPage, setNextOlderPage] = useState(null);
 	const [loadingOlder, setLoadingOlder] = useState(false);
 	const shouldScrollToBottomRef = useRef(false);
+	const stickToBottomRef = useRef(true);
 
 	const currentUserId = readCurrentUserId();
 	const peerName =
@@ -33,29 +44,106 @@ export function useChatConversation(currentChat, options = {}) {
 		(currentChat?.chatName ?? "").trim() ||
 		t("peerFallback");
 
-	// const messages = useChatStore(
-	// 	(state) => state.messages
-	// )
+	const messages = useChatStore(
+		(state) => state.messages
+	);
 
-	// const setMessages = useChatStore(
-	// 	(state) => state.setMessages
-	// )
+	const setMessages = useChatStore(
+		(state) => state.setMessages
+	);
+
+	const prependMessages = useChatStore(
+		(state) => state.prependMessages
+	);
 
 	const clearCurrentChat = useChatStore(
 		(state) => state.clearCurrentChat
-	)
+	);
 
 	const setActiveChat = useChatStore(
 		(state) => state.setActiveChat
-	)
+	);
+
+	const addMessage = useChatStore((state) => state.addMessage);
+	const dispatchListBump = useChatStore((state) => state.dispatchListBump);
+	const addOptimisticOutbound = useChatStore((state) => state.addOptimisticOutbound);
+	const completeOutboundWithClientToken = useChatStore(
+		(state) => state.completeOutboundWithClientToken,
+	);
+	const markOutboundFailedByClientId = useChatStore(
+		(state) => state.markOutboundFailedByClientId,
+	);
+	const removeOptimisticByClientId = useChatStore(
+		(state) => state.removeOptimisticByClientId,
+	);
 
 	const send = useSocketStore(
 		(state) => state.send
 	)
 
+	const connected = useSocketStore((state) => state.connected)
+	const navigatorOnline = useSocketStore((state) => state.navigatorOnline)
+	const realtimeConnected = connected && navigatorOnline
+	const prevConnectedRef = useRef(connected)
+
+	const fetchFirstPage = useCallback(
+		async (convId) => {
+			const prev = useChatStore.getState().messages
+			const data = await getConversation(convId, { page: 0, size: 20 })
+			const ui = data.messages.map((m) =>
+				mapMessageSenderData(m, currentUserId, peerName),
+			)
+			const withIds = withChatId(ui, convId)
+			const merged = mergeChatMessagesWithPending(
+				withIds,
+				prev,
+				convId,
+				currentUserId,
+			)
+			setMessages(merged)
+			setNextOlderPage(data.hasMore ? data.page + 1 : null)
+		},
+		[currentUserId, peerName, setMessages],
+	)
+
+	useEffect(() => {
+		if (!currentChat?.id || !connected) return
+		send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, { chatId: currentChat.id })
+	}, [currentChat?.id, connected, send])
+
+	useEffect(() => {
+		const wasConnected = prevConnectedRef.current
+		prevConnectedRef.current = connected
+
+		if (!currentChat?.id) return
+		if (!connected || wasConnected) return
+
+		let cancelled = false
+		;(async () => {
+			setLoading(true)
+			setLoadingOlder(false)
+			setNextOlderPage(null)
+			shouldScrollToBottomRef.current = true
+			stickToBottomRef.current = true
+			try {
+				await fetchFirstPage(currentChat.id)
+				if (cancelled) return
+				setError(null)
+			} catch (e) {
+				if (!cancelled) setError(e?.message ?? t("errors.load"))
+			} finally {
+				if (!cancelled) setLoading(false)
+			}
+		})()
+
+		return () => {
+			cancelled = true
+		}
+	}, [connected, currentChat?.id, fetchFirstPage, t])
+
 	useEffect(() => {
 		if (!currentChat) {
-			setMessages([]);
+			clearCurrentChat();
 			setNextOlderPage(null);
 			setError(null);
 			return;
@@ -68,15 +156,18 @@ export function useChatConversation(currentChat, options = {}) {
 			setLoading(true);
 			setError(null);
 			setNextOlderPage(null);
-			shouldScrollToBottomRef.current = true;
+			if (scrollToBottomOnOpen) {
+				shouldScrollToBottomRef.current = true;
+				stickToBottomRef.current = true;
+			} else {
+				shouldScrollToBottomRef.current = false;
+				stickToBottomRef.current = false;
+			}
+			setActiveChat(convId);
+			send(WS_SEND_EVENTS.CHAT_SUBSCRIBE, { chatId: convId });
 			try {
-				const data = await getConversation(convId, { page: 0, size: 20 });
+				await fetchFirstPage(convId);
 				if (cancelled) return;
-				const ui = data.messages.map((m) =>
-					mapMessageSenderData(m, currentUserId, peerName),
-				);
-				setMessages(ui);
-				setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			} catch (e) {
 				if (!cancelled) setError(e?.message ?? t("errors.load"));
 			} finally {
@@ -86,19 +177,38 @@ export function useChatConversation(currentChat, options = {}) {
 
 		return () => {
 			cancelled = true;
+			send(WS_SEND_EVENTS.CHAT_UNSUBSCRIBE, {chatId: convId });
 		};
-	}, [currentChat?.id, currentUserId, peerName, t]);
+	}, [
+		currentChat?.id,
+		clearCurrentChat,
+		setActiveChat,
+		fetchFirstPage,
+		t,
+		send,
+		scrollToBottomOnOpen,
+	]);
 
 	useEffect(() => {
-		if (!shouldScrollToBottomRef.current) return;
-		if (!listRef.current) return;
+		if (loading) return;
+		const el = listRef.current;
+		if (!el) return;
+
+		const shouldScroll =
+			shouldScrollToBottomRef.current || stickToBottomRef.current;
+
+		if (!shouldScroll) return;
+
 		requestAnimationFrame(() => {
-			if (listRef.current) {
-				listRef.current.scrollTop = listRef.current.scrollHeight;
+			requestAnimationFrame(() => {
+				const node = listRef.current;
+				if (!node) return;
+				node.scrollTop = node.scrollHeight;
 				shouldScrollToBottomRef.current = false;
-			}
+				stickToBottomRef.current = true;
+			});
 		});
-	}, [messages]);
+	}, [messages, loading]);
 
 	const loadOlder = useCallback(async () => {
 		if (!currentChat || !nextOlderPage || loadingOlder) return;
@@ -115,7 +225,7 @@ export function useChatConversation(currentChat, options = {}) {
 			const ui = data.messages.map((m) =>
 				mapMessageSenderData(m, currentUserId, peerName),
 			);
-			setMessages((prev) => [...ui, ...prev]);
+			prependMessages(withChatId(ui, currentChat.id));
 			setNextOlderPage(data.hasMore ? data.page + 1 : null);
 			requestAnimationFrame(() => {
 				if (el) el.scrollTop = el.scrollHeight - prevH;
@@ -125,44 +235,156 @@ export function useChatConversation(currentChat, options = {}) {
 		} finally {
 			setLoadingOlder(false);
 		}
-	}, [currentChat, nextOlderPage, loadingOlder, currentUserId, peerName, t]);
+	}, [
+		currentChat,
+		nextOlderPage,
+		loadingOlder,
+		currentUserId,
+		peerName,
+		t,
+		prependMessages,
+	]);
 
 	const onScroll = useCallback(
 		(e) => {
-			if (e.target.scrollTop < 80) loadOlder();
+			const el = e.target;
+			stickToBottomRef.current = updateStickToBottom(el);
+			if (el.scrollTop < 80) loadOlder();
 		},
 		[loadOlder],
 	);
 
 	const handleSendMessage = useCallback(
-		async (text) => {
-			if (!currentChat) return;
-			try {
-				const created = await sendMessages(
-					currentChat.id,
-					text,
-					currentUserId,
-				);
-				const ui = mapMessageSenderData(created, currentUserId, peerName);
-				setMessages((prev) => [...prev, ui]);
-				const createdAt =
-					created.createdAt ?? ui.timestamp;
-				onAfterMessageSent?.({
+		async (text, { replyToId: replyToIdOpt } = {}) => {
+			if (!currentChat) return false;
+			const trimmed = (text ?? "").trim();
+			if (!trimmed) return false;
+
+			if (!useSocketStore.getState().navigatorOnline) {
+				toast.warning(t("realtime.cannotSendNoNetwork"));
+				return false;
+			}
+
+			const replyToId =
+				replyToIdOpt != null ? Number(replyToIdOpt) : null;
+			const replyParent =
+				replyToId != null
+					? useChatStore
+							.getState()
+							.messages.find(
+								(m) =>
+									m.id != null &&
+									Number(m.id) === Number(replyToId),
+							)
+					: null;
+			const replyQuote =
+				replyParent != null
+					? replyQuoteFromMessageRow(replyParent)
+					: replyToId != null
+						? {
+								id: replyToId,
+								text: null,
+								senderDisplayName: null,
+								unavailable: true,
+							}
+						: null;
+
+			stickToBottomRef.current = true;
+			shouldScrollToBottomRef.current = true;
+
+			const clientMessageId = crypto.randomUUID();
+			addOptimisticOutbound({
+				clientMessageId,
+				chatId: currentChat.id,
+				text: trimmed,
+				peerName,
+				...(replyToId != null ? { replyToId, replyQuote } : {}),
+			});
+
+			const socket = useSocketStore.getState().socket;
+			const wsOpen = socket?.readyState === WebSocket.OPEN;
+
+			if (wsOpen) {
+				const sentViaWs = send(WS_SEND_EVENTS.SEND_MESSAGE, {
 					chatId: currentChat.id,
+					text: trimmed,
+					clientMessageId,
+					...(replyToId != null ? { replyToId } : {}),
+				});
+
+				if (sentViaWs) {
+
+					onAfterMessageSent?.({
+						chatId: currentChat.id,
+						lastMessage: {
+							text: trimmed,
+							createdAt: new Date().toISOString(),
+						},
+					});
+					return true;
+				}
+			}
+
+			try {
+				const data = await sendMessages(currentChat.id, trimmed, {
+					...(replyToId != null ? { replyToId } : {}),
+				});
+				const done = completeOutboundWithClientToken(
+					clientMessageId,
+					data,
+					peerName,
+				);
+				if (!done) {
+					removeOptimisticByClientId(clientMessageId);
+					const ui = mapMessageSenderData(data, currentUserId, peerName);
+					addMessage({
+						...ui,
+						chatId: data.chatId ?? currentChat.id,
+					});
+				}
+				const createdAt =
+					data.createdAt != null
+						? String(data.createdAt)
+						: new Date().toISOString();
+				dispatchListBump({
+					chatId: data.chatId ?? currentChat.id,
 					lastMessage: {
-						text: created.text ?? text,
+						text: data.text ?? trimmed,
 						createdAt,
 					},
 				});
-				requestAnimationFrame(() => {
-					if (listRef.current)
-						listRef.current.scrollTop = listRef.current.scrollHeight;
+				onAfterMessageSent?.({
+					chatId: currentChat.id,
+					lastMessage: {
+						text: data.text ?? trimmed,
+						createdAt,
+					},
 				});
+				return true;
 			} catch (e) {
-				setError(e?.message ?? t("errors.send"));
+				markOutboundFailedByClientId(clientMessageId);
+				const msg =
+					e?.response?.data?.message ??
+					e?.message ??
+					t("errors.send");
+				toast.error(msg);
+				return false;
 			}
 		},
-		[currentChat, currentUserId, peerName, t, onAfterMessageSent],
+		[
+			currentChat,
+			send,
+			onAfterMessageSent,
+			t,
+			currentUserId,
+			peerName,
+			addMessage,
+			dispatchListBump,
+			addOptimisticOutbound,
+			completeOutboundWithClientToken,
+			markOutboundFailedByClientId,
+			removeOptimisticByClientId,
+		],
 	);
 
 	return {
@@ -174,5 +396,6 @@ export function useChatConversation(currentChat, options = {}) {
 		onScroll,
 		handleSendMessage,
 		currentUserId,
+		realtimeConnected,
 	};
 }

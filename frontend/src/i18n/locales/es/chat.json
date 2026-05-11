@@ -29,12 +29,14 @@
       "memberErrorDuplicate": "Este usuario ya está en la lista.",
       "memberErrorSelf": "No puedes añadirte a ti mismo (ya eres administrador del grupo).",
       "memberErrorNotFound": "Usuario no encontrado: {{username}}",
+      "memberErrorNotFriend": "Solo puedes añadir amigos. {{username}} no está en tu lista de amigos.",
       "memberErrorGeneric": "No se pudo verificar el usuario.",
       "removeMemberAria": "Quitar a {{username}} de la lista",
       "createErrorGroupName": "Introduce el nombre del grupo.",
       "createErrorDmUsername": "Introduce el usuario del contacto.",
       "createErrorDmSelf": "No puedes abrir un chat solo contigo mismo.",
       "createErrorGeneric": "No se pudo crear la conversación.",
+      "createErrorForbidden": "No se pudo crear la conversación. Comprueba que esa persona sigue siendo tu amiga.",
       "createErrorNoMembers": "Añade al menos un miembro.",
       "createSuccess": "Conversación creada.",
       "creating": "Creando…"
@@ -59,36 +61,57 @@
   },
   "thread": {
     "empty": "Aún no hay mensajes en esta conversación.",
-    "unknownSender": "Desconocido"
+    "sending": "Enviando…",
+    "sendFailed": "No enviado",
+    "unknownSender": "Desconocido",
+    "reply": "Responder al mensaje",
+    "replyingTo": "Respondiendo a {{name}}",
+    "cancelReply": "Cancelar respuesta",
+    "replyUnavailable": "Mensaje original no disponible",
+    "replyPreviewEmpty": "(sin texto)",
+    "typingOne": "{{name}} está escribiendo…",
+    "typingTwo": "{{a}} y {{b}} están escribiendo…",
+    "typingMany": "{{a}}, {{b}} y otras personas están escribiendo…"
   },
   "input": {
-    "placeholder": "Escribe un mensaje..."
+    "placeholder": "Escribe un mensaje...",
+    "placeholderOffline": "Reconectando el chat..."
+  },
+  "realtime": {
+    "barNoNetwork": "No tienes internet. El chat se reconectará al volver la red.",
+    "connecting": "Reconectando el chat...",
+    "barNoWs": "Conexión inestable del chat. Reintentando ({{n}}).",
+    "cannotSendNoNetwork": "Sin red — no se puede enviar.",
+    "wsErrors": {
+      "forbiddenSubscribe": "No tienes acceso en tiempo real a esta conversación. Se cerró.",
+      "subscribeFailed": "No se pudo unirse al canal en tiempo real de esta conversación.",
+      "sendNotParticipant": "No participas en esta conversación.",
+      "sendFailed": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+    }
   },
   "linkPreview": {
     "loading": "Cargando vista previa del enlace…"
   },
   "a11y": {
-    "back": "Volver a la lista de conversaciones",
-    "call": "Iniciar llamada de voz"
+    "back": "Volver a la lista de conversaciones"
   },
-  "call": {
-    "title": {
-      "incoming": "Llamada entrante",
-      "outgoing": "Llamada de voz",
-      "active": "En llamada"
-    },
-    "hint": {
-      "incoming": "{{name}} te está llamando",
-      "outgoing": "Llamando a {{name}}…",
-      "active": "Conectado — el audio está activo"
-    },
-    "cancelOutgoing": "Cancelar llamada",
-    "a11y": {
-      "accept": "Contestar llamada",
-      "decline": "Rechazar llamada",
-      "hangUp": "Colgar",
-      "mute": "Silenciar micrófono",
-      "unmute": "Activar micrófono"
-    }
+  "participants": {
+    "title": "Participantes del grupo",
+    "openAria": "Ver participantes del grupo",
+    "loading": "Cargando participantes…",
+    "empty": "No se encontraron participantes.",
+    "loadMore": "Cargar más",
+    "you": "tú",
+    "roleAdmin": "Admin",
+    "roleMember": "Miembro",
+    "addSectionTitle": "Añadir amigo al grupo",
+    "addPlaceholder": "Nombre de usuario (solo amigos)",
+    "addFriendAria": "Añadir amigo al grupo",
+    "removeAria": "Quitar a {{username}} del grupo",
+    "addSuccess": "Participante añadido.",
+    "removeSuccess": "Participante eliminado.",
+    "errorLoad": "No se pudieron cargar los participantes.",
+    "errorAdd": "No se pudo añadir al participante.",
+    "errorRemove": "No se pudo eliminar al participante."
   }
 }

@@ -6,6 +6,8 @@ export function mapMessageSenderData(apiMsg, currentUserId, peerFallback) {
 		(apiMsg.user?.username ? `@${apiMsg.user.username}` : null);
 	const senderDisplayName = fromProfile ?? (!isMe ? peerFallback : null);
 
+	const replyToId = apiMsg.replyToId ?? apiMsg.reply_to_id ?? null;
+
 	return {
 		id: apiMsg.id,
 		text: apiMsg.text,
@@ -13,5 +15,6 @@ export function mapMessageSenderData(apiMsg, currentUserId, peerFallback) {
 		sender: isMe ? "me" : (senderDisplayName ?? peerFallback),
 		senderDisplayName,
 		timestamp: apiMsg.createdAt,
+		replyToId: replyToId != null ? Number(replyToId) : null,
 	};
 }

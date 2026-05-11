@@ -8,19 +8,21 @@ export function ChatLinkPreviewCard({ preview, className, compact = false }) {
 			href={preview.url}
 			target="_blank"
 			rel="noopener noreferrer"
-			className={cn(
-				"mt-2 block min-w-0 overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-colors hover:bg-accent/40",
-				className,
-			)}
+			className={cn("ds-chat-link-preview-card", className)}
 		>
-			<div className={cn("flex gap-3", compact ? "p-2" : "p-3")}>
+			<div
+				className={cn(
+					"ds-chat-link-preview-card-inner",
+					compact && "ds-chat-link-preview-card-inner--compact",
+				)}
+			>
 				{preview.image && (
 					<img
 						src={preview.image}
 						alt={preview.title}
 						className={cn(
-							"shrink-0 rounded-md object-cover",
-							compact ? "h-10 w-10" : "h-20 w-20",
+							"ds-chat-link-preview-thumb",
+							compact && "ds-chat-link-preview-thumb--compact",
 						)}
 					/>
 				)}
@@ -28,8 +30,10 @@ export function ChatLinkPreviewCard({ preview, className, compact = false }) {
 				<div className="min-w-0 flex-1">
 					<h3
 						className={cn(
-							"text-sm font-medium text-foreground",
-							compact ? "truncate" : "line-clamp-2",
+							"ds-chat-link-preview-title",
+							compact
+								? "ds-chat-link-preview-title--compact"
+								: "ds-chat-link-preview-title--multiline",
 						)}
 					>
 						{preview.title}
@@ -37,8 +41,10 @@ export function ChatLinkPreviewCard({ preview, className, compact = false }) {
 					{preview.description ? (
 						<p
 							className={cn(
-								"text-sm text-muted-foreground",
-								compact ? "line-clamp-1" : "mt-0.5 line-clamp-2",
+								"ds-chat-link-preview-desc",
+								compact
+									? "ds-chat-link-preview-desc--compact"
+									: "ds-chat-link-preview-desc--multiline",
 							)}
 						>
 							{preview.description}
