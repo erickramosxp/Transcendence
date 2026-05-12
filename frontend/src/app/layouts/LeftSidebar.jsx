@@ -30,8 +30,11 @@ export function LeftSidebar() {
                                 <ThemeToggle />
                                 <LanguageSwitcher />
                                 <Button
+                                    type="button"
                                     variant="ghost"
                                     size="icon"
+                                    data-testid="auth-logout"
+                                    aria-label={t("nav.logout")}
                                     className="h-9 w-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                     onClick={logout}
                                 >
