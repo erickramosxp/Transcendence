@@ -1,0 +1,39 @@
+{
+    "pageTitle": "Terms of Service",
+    "lastUpdated": "Last updated: May 8, 2026",
+    "intro": "By creating an account or using Videa, you agree to these Terms of Service. If you do not agree with any of these terms, do not use the platform.",
+    "sections": {
+        "user": {
+            "title": "User account",
+            "content": "The user is responsible for all activities carried out through their account. It is the user's responsibility to keep their credentials secure and not share access with third parties."
+        },
+        "posts": {
+            "title": "Published content",
+            "content": "Users may publish content such as texts, images, videos, comments, and messages. Each user is fully responsible for the content published through their account."
+        },
+        "interaction": {
+            "title": "Social interactions",
+            "content": "The platform allows interactions between users, including likes, comments, friend requests, and message exchanges. Users must maintain respectful behavior during these interactions."
+        },
+        "ban": {
+            "title": "Prohibited use",
+            "content": "• Spam or excessive message sending\n• Harassment or threats\n• Illegal content\n• Extremely offensive content\n• Attempts to exploit platform vulnerabilities\n• Uploading malicious files\n• Unauthorized automated use"
+        },
+        "upload": {
+            "title": "Media upload and storage",
+            "content": "Images, videos, and other files uploaded by users may be stored on services used by the platform. The user is responsible for the files they upload."
+        },
+        "delete": {
+            "title": "Content removal",
+            "content": "Content may be removed by the platform in case of violation of these terms. Some data may remain temporarily stored for technical reasons, auditing, or system integrity."
+        },
+        "service": {
+            "title": "Service availability",
+            "content": "The service may experience temporary interruptions, maintenance, technical failures, or instability."
+        },
+        "limitation": {
+            "title": "Changes to the terms",
+            "content": "The Terms of Service may be updated in the future. Continued use of the platform after changes are made constitutes acceptance of the new terms."
+        }
+    }
+}

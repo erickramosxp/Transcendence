@@ -18,6 +18,7 @@ export function BrandHeader({
     title = "Videa",
     className
 }) {
+    {/* Logo */ }
     const logoBox = (
         <div
             className={cn(
@@ -26,11 +27,12 @@ export function BrandHeader({
                    No sm, rounded-3xl num quadrado pequeno vira bolha — usar rounded-2xl proporcional. */
                 size === "sm" && "h-10 w-10 rounded-2xl",
                 size === "default" && "h-16 w-16 rounded-3xl sm:h-20 sm:w-20",
+                size === "md" && "h-16 w-16",
                 size === "lg" && "h-24 w-24 rounded-3xl",
                 layout === "inline" &&
-                    "-rotate-[11deg] shadow-md shadow-primary/30 transition-transform hover:-rotate-[15deg]",
+                "-rotate-[11deg] shadow-md shadow-primary/30 transition-transform hover:-rotate-[15deg]",
                 layout === "stack" &&
-                    "shadow-2xl shadow-primary/50 rotate-6 transition-transform hover:rotate-12",
+                "shadow-2xl shadow-primary/50 rotate-6 transition-transform hover:rotate-12",
             )}
         >
             <Sparkles
@@ -38,6 +40,7 @@ export function BrandHeader({
                     "text-white",
                     size === "default" && "h-8 w-8 sm:h-10 sm:w-10",
                     size === "sm" && "h-5 w-5",
+                    size === "md" && "w-8 h-8",
                     size === "lg" && "h-12 w-12",
                 )}
             />
@@ -50,6 +53,7 @@ export function BrandHeader({
                 "font-bold bg-gradient-title bg-clip-text text-transparent",
                 size === "default" && "text-5xl sm:text-6xl lg:text-7xl xl:text-8xl",
                 size === "sm" && (layout === "inline" ? "text-xl leading-tight" : "text-3xl"),
+                size === "md" && "text-6xl",
                 size === "lg" && "text-8xl",
             )}
         >

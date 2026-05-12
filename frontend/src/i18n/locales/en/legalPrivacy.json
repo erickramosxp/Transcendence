@@ -1,0 +1,43 @@
+{
+    "pageTitle": "Privacy Policy",
+    "lastUpdated": "Last updated: May 8, 2026",
+    "intro": "This Privacy Policy describes how Videa collects, uses, and stores information related to platform users.",
+    "sections": {
+        "collection": {
+            "title": "Collected information",
+            "content": "• Username\n• Display name\n• Email address\n• Password stored securely\n• Profile picture\n• Bio, location, and website (optional)\n• Posts and comments\n• Likes and friendships\n• Messages sent in chat\n• Uploaded files (images and videos)\n• Account preferences, such as theme and language"
+        },
+        "usage": {
+            "title": "How information is used",
+            "content": "The collected data is used to:\n\n• Create and maintain accounts\n• Enable social interactions\n• Display posts, comments, and profiles\n• Send real-time notifications\n• Improve stability and security\n• Prevent platform abuse"
+        },
+        "sharing": {
+            "title": "Data sharing",
+            "content": "We do not sell users' personal information.\n\nSome data may be processed by services used by the platform, such as hosting, databases, and media storage."
+        },
+        "storage": {
+            "title": "Media storage",
+            "content": "Images, videos, and files uploaded by users may be stored on external services used by the platform."
+        },
+        "auth": {
+            "title": "Cookies and authentication",
+            "content": "The platform may use cookies, tokens, or similar technologies to keep sessions authenticated and improve the user experience."
+        },
+        "security": {
+            "title": "Security",
+            "content": "We take reasonable measures to protect user information, but no system is completely secure."
+        },
+        "rights": {
+            "title": "User rights",
+            "content": "Users may edit or remove published content and may also request account deletion when available."
+        },
+        "retention": {
+            "title": "Data retention",
+            "content": "Some content may remain temporarily stored even after removal for technical reasons, auditing, or system integrity purposes."
+        },
+        "contact": {
+            "title": "Contact",
+            "content": "For privacy-related questions:\n\n"
+        }
+    }
+}

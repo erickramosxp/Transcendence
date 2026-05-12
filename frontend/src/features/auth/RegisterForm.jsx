@@ -4,35 +4,42 @@ import { toast } from 'react-toastify'
 import { useTranslation } from "react-i18next";
 import { SocialLogin } from "@/features/auth/components/SocialLogin";
 
-import { Button, TabsContent, Label, Input, Separator} from "@/design-system";
+import { Button, TabsContent, Label, Input, Separator } from "@/design-system";
+import { Link } from "react-router-dom";
 
 
 export function RegisterForm({ onSubmit }) {
 
-    const [name, setName] = useState('');
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [disableButton, setDisableButton] = useState(false);
-    const { t } = useTranslation('auth');
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
+  const { t } = useTranslation('auth');
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (!email || !username || !name || !password) {
-            toast.error(t('errors.fillAllFields'));
-            setDisableButton(false);
-            return;
-        }
-
-        try {
-          setDisableButton(true);
-          await onSubmit({name, username, email, password});
-        } finally {
-          setDisableButton(false);
-        }
+    if (!email || !username || !name || !password) {
+      toast.error(t('errors.fillAllFields'));
+      setDisableButton(false);
+      return;
     }
+
+    if (!acceptTerms) {
+      toast.warn(t('register.acceptTermsRequired'));
+      return;
+    }
+
+    try {
+      setDisableButton(true);
+      await onSubmit({ name, username, email, password, acceptTerms });
+    } finally {
+      setDisableButton(false);
+    }
+  }
 
 
   return (
@@ -112,6 +119,37 @@ export function RegisterForm({ onSubmit }) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        <div className="flex justify-start items-center gap-3">
+          <div>
+            <div className="flex items-center gap-3 ">
+              <Input
+                id="accept-terms"
+                type="checkbox"
+                className="max-w-4 max-h-4"
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
+              />
+              <Label
+                htmlFor="accept-terms"
+                className="h-6"
+              >
+                {t('register.acceptTerms')}
+              </Label>
+
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {t('register.termsNoticePrefix') + " "}
+              <Link to="/legal/terms" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                {t('register.termsOfUse')}
+              </Link>{" "}
+              {t('register.termsNoticeMiddle')}{" "}
+              <Link to="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                {t('register.privacyPolicy')}
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
 
         <Button
           variant="primary"
@@ -134,7 +172,7 @@ export function RegisterForm({ onSubmit }) {
             {t('register.or')}
           </span>
         </div>
-        <SocialLogin buttonTitle={t('register.googleSignup')}/>
+        <SocialLogin buttonTitle={t('register.googleSignup')} />
       </form>
     </TabsContent>
   );

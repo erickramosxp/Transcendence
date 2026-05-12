@@ -10,7 +10,10 @@
     "account": {
         "removeProfilePhoto": "Remove profile photo:",
         "remove": "Remove",
-        "logout": "Logout"
+        "logout": "Logout",
+        "legalDocuments": "Legal documents:",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service"
     },
     "profilePhoto": {
         "deleteSuccess": "Profile photo deleted.",
@@ -21,7 +24,14 @@
         "currentPassword": "Current password",
         "newPassword": "New password",
         "confirmPassword": "Confirm password",
-        "submit": "Change"
+        "submit": "Change",
+        "warnCurrentPassword": "Please enter your current password",
+        "warnNewPassword": "Enter and confirm the new password",
+        "successChanged": "Password changed successfully",
+        "errorChanged": "Failed to change password",
+        "oauthMessage": "Signed in with Google, password change disabled.",
+        "passwordMismatch": "Password confirmation does not match",
+        "passwordTooShort": "Password must be at least 8 characters"
     },
     "appearance": {
         "theme": "Theme",
