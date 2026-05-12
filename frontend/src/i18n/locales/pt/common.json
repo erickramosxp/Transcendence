@@ -48,5 +48,9 @@
     },
     "language": {
         "changed": "Idioma alterado com sucesso."
+    },
+    "privacyAndService": {
+        "privacy": "Privacidade",
+        "termsOfService": "Termos de Serviço"
     }
 }

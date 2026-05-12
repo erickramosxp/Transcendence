@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ShieldCheck, FileText } from 'lucide-react'
 import { cn } from '@/design-system/tokens/colors'
 import { buttonVariants } from '@/design-system/primitives/Button/Button'
 
 export function PrivacyAndService() {
+	const { t } = useTranslation('common')
+
 	return (
 		<div className="flex flex-col gap-0.5 mt-2">
 			<Link
@@ -14,7 +17,7 @@ export function PrivacyAndService() {
 				)}
 			>
 				<ShieldCheck className="size-4 shrink-0 stroke-[1.75]" aria-hidden />
-				Privacidade
+				{t('privacyAndService.privacy')}
 			</Link>
 			<Link
 				to="/"
@@ -24,7 +27,7 @@ export function PrivacyAndService() {
 				)}
 			>
 				<FileText className="size-4 shrink-0 stroke-[1.75]" aria-hidden />
-				Termos de Serviço
+				{t('privacyAndService.termsOfService')}
 			</Link>
 		</div>
 	);
