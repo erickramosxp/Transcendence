@@ -7,5 +7,7 @@ public enum NotificationType {
     FRIEND_REQUEST,
     FRIEND_ACCEPTED,
     FRIEND_REJECTED,
-    FRIEND_BROKEN
+    FRIEND_BROKEN,
+    ADDED_GROUP,
+    REMOVED_GROUP
 }

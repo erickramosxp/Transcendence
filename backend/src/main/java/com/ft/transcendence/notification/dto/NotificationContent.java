@@ -1,5 +1,7 @@
 package com.ft.transcendence.notification.dto;
 
+import java.time.OffsetDateTime;
+
 public class NotificationContent {
     public String name;
     public String username;
@@ -8,4 +10,6 @@ public class NotificationContent {
     public Long commentId;
     public Long friendshipId;
     public String preview;
+    public String chatName;
+    public OffsetDateTime created_at;
 }

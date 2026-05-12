@@ -63,7 +63,7 @@ public class CommentService {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
 
-        notificationDispatcher.onComment(comment.user, comment, avatarUrl);
+        notificationDispatcher.onComment(comment.user, comment);
 
         return CommentResponse.of(comment, false, avatarUrl);
     }

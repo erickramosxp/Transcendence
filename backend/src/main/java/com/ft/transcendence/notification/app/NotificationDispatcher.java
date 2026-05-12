@@ -1,5 +1,6 @@
 package com.ft.transcendence.notification.app;
 
+import com.ft.transcendence.chat.domain.Chat;
 import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.notification.domain.Notification;
@@ -15,6 +16,8 @@ import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.OffsetDateTime;
+
 @ApplicationScoped
 public class NotificationDispatcher {
 
@@ -28,6 +31,7 @@ public class NotificationDispatcher {
     StorageService storageService;
 
     public void onLikePost(Long userId, Post post) {
+        User actor = User.findById(userId);
         if (actor.id.equals(post.user.id))
             return;
 
@@ -37,11 +41,13 @@ public class NotificationDispatcher {
         content.avatarUrl = actor.avatarUrl;
         content.postId = post.id;
         content.preview = truncate(post.text);
+        content.created_at = OffsetDateTime.now();
 
         dispatch(post.user.id, actor.id, NotificationType.LIKE_POST, content);
     }
 
     public void onLikeComment(Long userId, Comment comment) {
+        User actor = User.findById(userId);
         if (actor.id.equals(comment.user.id))
             return;
 
@@ -52,21 +58,23 @@ public class NotificationDispatcher {
         content.commentId = comment.id;
         content.postId = comment.post.id;
         content.preview = truncate(comment.text);
+        content.created_at = OffsetDateTime.now();
 
         dispatch(comment.user.id, actor.id, NotificationType.LIKE_COMMENT, content);
     }
 
-    public void onComment(User actor, Comment comment, String avatarUrl) {
+    public void onComment(User actor, Comment comment) {
         if (actor.id.equals(comment.post.user.id))
             return;
 
         NotificationContent content = new NotificationContent();
         content.name = actor.name;
         content.username = actor.username;
-        content.avatarUrl = avatarUrl;
+        content.avatarUrl = actor.avatarUrl;
         content.postId = comment.post.id;
         content.commentId = comment.id;
         content.preview = truncate(comment.text);
+        content.created_at = OffsetDateTime.now();
 
         dispatch(comment.post.user.id, actor.id, NotificationType.COMMENT_POST, content);
     }
@@ -77,6 +85,7 @@ public class NotificationDispatcher {
         content.username = actor.username;
         content.avatarUrl = actor.avatarUrl;
         content.friendshipId = friendshipId;
+        content.created_at = OffsetDateTime.now();
 
         dispatch(targetUserId, actor.id, NotificationType.FRIEND_REQUEST, content);
     }
@@ -86,6 +95,7 @@ public class NotificationDispatcher {
         content.name = actor.name;
         content.username = actor.username;
         content.avatarUrl = actor.avatarUrl;
+        content.created_at = OffsetDateTime.now();
 
         dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content);
     }
@@ -95,6 +105,7 @@ public class NotificationDispatcher {
         content.name = actor.name;
         content.username = actor.username;
         content.avatarUrl = actor.avatarUrl;
+        content.created_at = OffsetDateTime.now();
 
         dispatch(originalSenderId, actor.id, NotificationType.FRIEND_REJECTED, content);
     }
@@ -104,8 +115,31 @@ public class NotificationDispatcher {
         content.name = actor.name;
         content.username = actor.username;
         content.avatarUrl = actor.avatarUrl;
+        content.created_at = OffsetDateTime.now();
 
         dispatch(originalSenderId, actor.id, NotificationType.FRIEND_BROKEN, content);
+    }
+
+    public void onAddedToGroup(User actor, Long targetUserId, Chat chat) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.chatName = chat.chatName;
+        content.created_at = OffsetDateTime.now();
+
+        dispatch(targetUserId, actor.id, NotificationType.ADDED_GROUP, content);
+    }
+
+    public void onRemovedFromGroup(User actor, Long targetUserId, Chat chat) {
+        NotificationContent content = new NotificationContent();
+        content.name = actor.name;
+        content.username = actor.username;
+        content.avatarUrl = actor.avatarUrl;
+        content.chatName = chat.chatName;
+        content.created_at = OffsetDateTime.now();
+
+        dispatch(targetUserId, actor.id, NotificationType.REMOVED_GROUP, content);
     }
 
     private void dispatch(Long receiverId, Long senderId, NotificationType type, NotificationContent content) {
