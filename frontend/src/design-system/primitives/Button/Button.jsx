@@ -14,7 +14,10 @@ const buttonVariants = cva(
         outline: "border border-border bg-transparent text-foreground hover:bg-accent",
         secondary: "bg-card text-foreground border border-border hover:bg-accent",
         ghost: "bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground",
-        "nav-active": "bg-primary text-primary-foreground",
+        "nav-active":
+          "border-0 bg-gradient-chat font-semibold text-white shadow-md shadow-primary/20 hover:opacity-95 [&_svg]:text-white",
+        "nav-inactive":
+          "border-0 bg-transparent font-medium text-[#4E5D78] shadow-none hover:bg-[var(--yale-blue-50)] dark:text-slate-300 dark:hover:bg-slate-800 [&_svg]:text-[#4E5D78] dark:[&_svg]:text-slate-300",
         destructive: "bg-destructive border border-border text-destructive-foreground hover:bg-destructive/80",
         link: "bg-transparent text-primary underline-offset-4 hover:underline p-0 h-auto cursor-pointer",
       },
@@ -24,7 +27,7 @@ const buttonVariants = cva(
         lg: "h-12 px-6 rounded-xl",
         icon: "h-9 w-9 rounded-lg",
         full: "h-11 sm:h-12 w-full px-4 rounded-md",
-        nav: "h-10 w-full px-3 rounded-lg justify-start",
+        nav: "h-auto min-h-11 w-full justify-start gap-3 rounded-lg px-5 py-3",
         rounded: "size-17 sm:size-18 rounded-full",
         follow: "h-8 px-3 text-sm rounded-lg min-w-[90px]"
       },
