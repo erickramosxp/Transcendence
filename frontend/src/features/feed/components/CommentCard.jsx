@@ -131,7 +131,7 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                     <div>
                                         <Avatar
                                             src={comment.avatarUrl}
-                                            username={comment.userName}
+                                            username={comment.username}
                                             name={comment.name}
                                             size="md"
                                         />
@@ -140,13 +140,13 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
                                             <span className="min-w-10 truncate text-foreground transition-colors hover:text-primary sm:truncate-none">
-                                                <Link className="truncate" to={`/${comment.userName}`}>
+                                                <Link className="truncate" to={`/${comment.username}`}>
                                                     {comment.name}
                                                 </Link>
                                             </span>
 
                                             <span className="truncate text-muted-foreground sm:truncate-none">
-                                                @{comment.userName}
+                                                @{comment.username}
                                             </span>
                                             <span
                                                 title={new Date(comment.created_at).toLocaleString()}

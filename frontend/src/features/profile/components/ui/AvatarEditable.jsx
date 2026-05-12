@@ -22,7 +22,7 @@ export const AvatarEditable = ({ user, canEdit = false, onChange }) => {
             <div className="relative group">
                 <Avatar
                     size="xl3"
-                    id={user?.userName}
+                    id={user?.username}
                     name={user?.name}
                     src={user?.avatarUrl}
                     className={canEdit ? "group-hover:brightness-75" : ""}

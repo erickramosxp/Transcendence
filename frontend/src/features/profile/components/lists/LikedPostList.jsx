@@ -37,7 +37,7 @@ export function LikedPostList({ username }) {
   useEffect(() => {
     setPosts(prev =>
       prev.map(post =>
-        post.userName === userData.username
+        post.username === userData.username
           ? {
             ...post,
             avatarUrl: userData.avatarUrl
