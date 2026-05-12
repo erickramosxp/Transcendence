@@ -48,6 +48,7 @@ export function LoginForm({onSubmit}) {
                     </Label>
                     <Input
                       id="login-email"
+                      data-testid="auth-login-email"
                       type="email"
                       placeholder={t('login.emailPlaceholder')}
                       value={username}
@@ -65,6 +66,7 @@ export function LoginForm({onSubmit}) {
                     </Label>
                     <Input
                       id="login-password"
+                      data-testid="auth-login-password"
                       type="password"
                       placeholder={t('login.passwordPlaceholder')}
                       value={password}
@@ -76,8 +78,10 @@ export function LoginForm({onSubmit}) {
                 </div>
 
                 <Button
+                  type="submit"
                   variant="primary"
                   size="full"
+                  data-testid="auth-login-submit"
                 >
                   {t('login.button')}
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
