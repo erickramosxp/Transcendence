@@ -3,6 +3,7 @@ import { cn } from '@/design-system/tokens/colors'
 import { Separator } from '../primitives'
 import { BrandHeader } from './BrandHeader'
 import { buttonVariants } from '../primitives/Button/Button'
+import { PrivacyAndService } from '@/app/layouts/PrivacyAndService'
 
 export function SideBarNav({ items, actions }) {
 	return (
@@ -35,8 +36,11 @@ export function SideBarNav({ items, actions }) {
 				})}
 			</div>
 
+			<PrivacyAndService />
 			<Separator className="my-3" />
 			<div className="mt-auto">{actions}</div>
 		</nav>
 	)
 }
+
+
