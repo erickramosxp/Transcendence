@@ -1,13 +1,23 @@
 package com.ft.transcendence.notification.domain;
 
 public enum NotificationType {
-    LIKE_POST,
-    LIKE_COMMENT,
-    COMMENT_POST,
-    FRIEND_REQUEST,
-    FRIEND_ACCEPTED,
-    FRIEND_REJECTED,
-    FRIEND_BROKEN,
-    ADDED_GROUP,
-    REMOVED_GROUP
+    LIKE_POST(true),
+    LIKE_COMMENT(true),
+    COMMENT_POST(false),
+    FRIEND_REQUEST(false),
+    FRIEND_ACCEPTED(false),
+    FRIEND_REJECTED(false),
+    FRIEND_BROKEN(false),
+    ADDED_GROUP(false),
+    REMOVED_GROUP(false);
+
+    private final boolean dedupable;
+
+    NotificationType(boolean dedupable) {
+        this.dedupable = dedupable;
+    }
+
+    public boolean isDedupable() {
+        return dedupable;
+    }
 }

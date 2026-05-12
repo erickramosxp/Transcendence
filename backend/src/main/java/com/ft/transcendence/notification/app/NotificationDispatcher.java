@@ -43,7 +43,7 @@ public class NotificationDispatcher {
         content.preview = truncate(post.text);
         content.created_at = OffsetDateTime.now();
 
-        dispatch(post.user.id, actor.id, NotificationType.LIKE_POST, content);
+        dispatch(post.user.id, actor.id, NotificationType.LIKE_POST, content, post.id);
     }
 
     public void onLikeComment(Long userId, Comment comment) {
@@ -60,7 +60,7 @@ public class NotificationDispatcher {
         content.preview = truncate(comment.text);
         content.created_at = OffsetDateTime.now();
 
-        dispatch(comment.user.id, actor.id, NotificationType.LIKE_COMMENT, content);
+        dispatch(comment.user.id, actor.id, NotificationType.LIKE_COMMENT, content, comment.id);
     }
 
     public void onComment(User actor, Comment comment) {
@@ -76,7 +76,7 @@ public class NotificationDispatcher {
         content.preview = truncate(comment.text);
         content.created_at = OffsetDateTime.now();
 
-        dispatch(comment.post.user.id, actor.id, NotificationType.COMMENT_POST, content);
+        dispatch(comment.post.user.id, actor.id, NotificationType.COMMENT_POST, content, comment.id);
     }
 
     public void onFriendRequest(User actor, Long targetUserId, Long friendshipId) {
@@ -87,7 +87,7 @@ public class NotificationDispatcher {
         content.friendshipId = friendshipId;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(targetUserId, actor.id, NotificationType.FRIEND_REQUEST, content);
+        dispatch(targetUserId, actor.id, NotificationType.FRIEND_REQUEST, content, null);
     }
 
     public void onFriendAccepted(User actor, Long originalSenderId) {
@@ -97,7 +97,7 @@ public class NotificationDispatcher {
         content.avatarUrl = actor.avatarUrl;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content);
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content, null);
     }
 
     public void onFriendReject(User actor, Long originalSenderId) {
@@ -107,7 +107,7 @@ public class NotificationDispatcher {
         content.avatarUrl = actor.avatarUrl;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_REJECTED, content);
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_REJECTED, content, null);
     }
 
     public void onFriendBroken(User actor, Long originalSenderId) {
@@ -117,7 +117,7 @@ public class NotificationDispatcher {
         content.avatarUrl = actor.avatarUrl;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_BROKEN, content);
+        dispatch(originalSenderId, actor.id, NotificationType.FRIEND_BROKEN, content, null);
     }
 
     public void onAddedToGroup(User actor, Long targetUserId, Chat chat) {
@@ -128,7 +128,7 @@ public class NotificationDispatcher {
         content.chatName = chat.chatName;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(targetUserId, actor.id, NotificationType.ADDED_GROUP, content);
+        dispatch(targetUserId, actor.id, NotificationType.ADDED_GROUP, content, null);
     }
 
     public void onRemovedFromGroup(User actor, Long targetUserId, Chat chat) {
@@ -139,11 +139,14 @@ public class NotificationDispatcher {
         content.chatName = chat.chatName;
         content.created_at = OffsetDateTime.now();
 
-        dispatch(targetUserId, actor.id, NotificationType.REMOVED_GROUP, content);
+        dispatch(targetUserId, actor.id, NotificationType.REMOVED_GROUP, content, null);
     }
 
-    private void dispatch(Long receiverId, Long senderId, NotificationType type, NotificationContent content) {
-        Notification saved = notificationService.create(receiverId, senderId, type, content);
+    private void dispatch(Long receiverId, Long senderId, NotificationType type, NotificationContent content, Long targetId) {
+        Notification saved = notificationService.create(receiverId, senderId, type, content, targetId);
+
+        if (saved == null)
+            return;
 
         if (sessionRegistry.isUserOnline(receiverId)) {
             RealtimeConnection connection = sessionRegistry.getAnyConnectionByUserId(receiverId);

@@ -34,6 +34,9 @@ public class Notification extends PanacheEntityBase {
     @Column(name = "content")
     public NotificationContent content;
 
+    @Column(name = "target_id")
+    public Long targetId;
+
     @Column(name = "is_read", nullable = false)
     public boolean isRead = false;
 

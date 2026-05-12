@@ -48,7 +48,7 @@ public class NotificationDispatcherTest  extends BaseApiTest {
         Notification saved = new Notification();
         saved.id = 99L;
 
-        when(notificationService.create(any(), any(), any(), any())).thenReturn(saved);
+        when(notificationService.create(any(), any(), any(), any(), any())).thenReturn(saved);
 
         when(sessionRegistry.isUserOnline(2L)).thenReturn(true);
 
@@ -71,12 +71,32 @@ public class NotificationDispatcherTest  extends BaseApiTest {
         Notification saved = new Notification();
         saved.id = 99L;
 
-        when(notificationService.create(any(), any(), any(), any())).thenReturn(saved);
+        when(notificationService.create(any(), any(), any(), any(), any())).thenReturn(saved);
 
         when(sessionRegistry.isUserOnline(2L)).thenReturn(false);
 
         dispatcher.onFriendRequest(actor, 2L, 10L);
 
         verify(eventSender, never()).send(eq("conn-test"), eq("NOTIFICATION_RECEIVED"), any());
+    }
+
+    @Test
+    public void testDoesNotEmitWhenDedupReturnsNull() {
+        User actor = new User();
+        actor.id = 1L;
+        actor.name = "Actor";
+        actor.username = "actor";
+        actor.avatarUrl = null;
+
+        // Simula que o NotificationService deduplicou (retornou null)
+        when(notificationService.create(any(), any(), any(), any(), any())).thenReturn(null);
+
+        when(sessionRegistry.isUserOnline(any())).thenReturn(true);
+        when(sessionRegistry.getAnyConnectionByUserId(any()))
+                .thenReturn(new RealtimeConnection("conn-test", 2L, "Test", "test", null));
+
+        dispatcher.onFriendRequest(actor, 2L, 10L);
+
+        verify(eventSender, never()).send(any(), any(), any());
     }
 }

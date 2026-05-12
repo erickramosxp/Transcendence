@@ -22,12 +22,22 @@ public class NotificationService {
     StorageService storageService;
 
     @Transactional
-    public Notification create(Long receiverId, Long senderId, NotificationType type, NotificationContent content) {
+    public Notification create(Long receiverId, Long senderId, NotificationType type, NotificationContent content, Long targetId) {
+        if (type.isDedupable() && targetId != null && senderId != null) {
+            long existing = Notification.count(
+                    "receiver.id = ?1 and sender.id = ?2 and type = ?3 and targetId = ?4",
+                    receiverId, senderId, type, targetId
+            );
+            if (existing > 0)
+                return null;
+        }
+
         Notification n = new Notification();
         n.receiver = User.findById(receiverId);
         n.sender = senderId != null ? User.findById(senderId) : null;
         n.type = type;
         n.content = content;
+        n.targetId = targetId;
         n.isRead = false;
         n.persist();
         return n;
