@@ -10,7 +10,9 @@ export function PrivacyAndService() {
 	return (
 		<div className="flex flex-col gap-0.5 mt-2">
 			<Link
-				to="/"
+				target="_blank"
+				to="/legal/privacy"
+				rel="noopener noreferrer"
 				className={cn(
 					buttonVariants({ size: "nav", variant: "ghost" }),
 					"text-xs font-normal text-muted-foreground px-2 py-1"
@@ -20,7 +22,9 @@ export function PrivacyAndService() {
 				{t('privacyAndService.privacy')}
 			</Link>
 			<Link
-				to="/"
+				target="_blank"
+				to="/legal/terms"
+				rel="noopener noreferrer"
 				className={cn(
 					buttonVariants({ size: "nav", variant: "ghost" }),
 					"text-xs font-normal text-muted-foreground px-2 py-1"
