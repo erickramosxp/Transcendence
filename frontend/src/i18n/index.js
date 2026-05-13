@@ -10,6 +10,10 @@ import enAuthProvider from "./locales/en/authProvider.json";
 import enChat from "./locales/en/chat.json";
 import enSettings from "./locales/en/settings.json";
 import enFriends from "./locales/en/friends.json";
+import enPrivacyPolicy from "./locales/en/legalPrivacy.json";
+import enTermsOfService from "./locales/en/termsOfService.json";
+import enNotFound from "./locales/en/notFound.json";
+import enLegalNavigation from "./locales/en/legalNavigation.json";
 
 import ptAuth from "./locales/pt/auth.json";
 import ptFeed from "./locales/pt/feed.json";
@@ -20,6 +24,10 @@ import ptAuthProvider from "./locales/pt/authProvider.json";
 import ptChat from "./locales/pt/chat.json";
 import ptSettings from "./locales/pt/settings.json";
 import ptFriends from "./locales/pt/friends.json";
+import ptPrivacyPolicy from "./locales/pt/legalPrivacy.json";
+import ptTermsOfService from "./locales/pt/termsOfService.json";
+import ptNotFound from "./locales/pt/notFound.json";
+import ptLegalNavigation from "./locales/pt/legalNavigation.json";
 
 import esAuth from "./locales/es/auth.json";
 import esFeed from "./locales/es/feed.json";
@@ -30,6 +38,10 @@ import esAuthProvider from "./locales/es/authProvider.json";
 import esChat from "./locales/es/chat.json";
 import esSettings from "./locales/es/settings.json";
 import esFriends from "./locales/es/friends.json";
+import esPrivacyPolicy from "./locales/es/legalPrivacy.json";
+import esTermsOfService from "./locales/es/termsOfService.json";
+import esNotFound from "./locales/es/notFound.json";
+import esLegalNavigation from "./locales/es/legalNavigation.json";
 
 const resources = {
     "en-US": {
@@ -41,7 +53,11 @@ const resources = {
         authProvider: enAuthProvider,
         chat: enChat,
         settings: enSettings,
-        friends: enFriends
+        friends: enFriends,
+        privacyPolicy: enPrivacyPolicy,
+        termsOfService: enTermsOfService,
+        notFound: enNotFound,
+        legalNavigation: enLegalNavigation
     },
     "pt-BR": {
         auth: ptAuth,
@@ -52,7 +68,11 @@ const resources = {
         authProvider: ptAuthProvider,
         chat: ptChat,
         settings: ptSettings,
-        friends: ptFriends
+        friends: ptFriends,
+        privacyPolicy: ptPrivacyPolicy,
+        termsOfService: ptTermsOfService,
+        notFound: ptNotFound,
+        legalNavigation: ptLegalNavigation
     },
     "es-ES": {
         auth: esAuth,
@@ -63,7 +83,11 @@ const resources = {
         authProvider: esAuthProvider,
         chat: esChat,
         settings: esSettings,
-        friends: esFriends
+        friends: esFriends,
+        privacyPolicy: esPrivacyPolicy,
+        termsOfService: esTermsOfService,
+        notFound: esNotFound,
+        legalNavigation: esLegalNavigation
     }
 }
 
@@ -71,7 +95,7 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        ns: ["common", "profile", "auth", "feed", "home", "authProvider", "chat"],
+        ns: ["common", "profile", "auth", "feed", "home", "authProvider", "chat", "privacyPolicy", "termsOfService", "notFound", "legalNavigation"],
         defaultNS: "common",
         fallbackLng: "pt-BR",
         lng: localStorage.getItem("lang") || "pt-BR",

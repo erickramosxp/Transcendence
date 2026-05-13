@@ -10,18 +10,28 @@
     "account": {
         "removeProfilePhoto": "Remover foto de perfil:",
         "remove": "Remover",
-        "logout": "Sair"
+        "logout": "Sair",
+        "legalDocuments": "Documentos legais:",
+        "privacyPolicy": "Política de Privacidade",
+        "termsOfService": "Termos de Serviço"
     },
     "profilePhoto": {
-        "deleteSuccess": "Foto de perfil deletada.",
-        "deleteError": "Falha ao deletar foto de perfil."
+        "deleteSuccess": "Foto de perfil removida.",
+        "deleteError": "Falha ao remover foto de perfil."
     },
     "security": {
         "title": "Alterar senha",
         "currentPassword": "Senha atual",
         "newPassword": "Nova senha",
         "confirmPassword": "Confirmar senha",
-        "submit": "Alterar"
+        "submit": "Alterar",
+        "warnCurrentPassword": "Por favor insira a senha atual",
+        "warnNewPassword": "Insira e confirme a nova senha",
+        "successChanged": "Senha alterada com sucesso",
+        "errorChanged": "Falha ao alterar senha",
+        "oauthMessage": "Sessão feita com Google, troca de senha desabilitada.",
+        "passwordMismatch": "A confirmação da senha não corresponde",
+        "passwordTooShort": "Senha com menos de 8 caracteres"
     },
     "appearance": {
         "theme": "Tema",

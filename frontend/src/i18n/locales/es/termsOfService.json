@@ -1,0 +1,39 @@
+{
+    "pageTitle": "Términos de Servicio",
+    "lastUpdated": "Última actualización: 8 de mayo de 2026",
+    "intro": "Al crear una cuenta o utilizar Videa, aceptas estos Términos de Servicio. Si no estás de acuerdo con alguno de los términos, no utilices la plataforma.",
+    "sections": {
+        "user": {
+            "title": "Cuenta del usuario",
+            "content": "El usuario es responsable de las actividades realizadas en su cuenta. Es responsabilidad del usuario mantener sus credenciales seguras y no compartir el acceso con terceros."
+        },
+        "posts": {
+            "title": "Contenido publicado",
+            "content": "Los usuarios pueden publicar contenidos como textos, imágenes, videos, comentarios y mensajes. Cada usuario es completamente responsable del contenido publicado en su cuenta."
+        },
+        "interaction": {
+            "title": "Interacciones sociales",
+            "content": "La plataforma permite interacciones entre usuarios, incluidas reacciones, comentarios, solicitudes de amistad e intercambio de mensajes. Los usuarios deben mantener un comportamiento respetuoso durante estas interacciones."
+        },
+        "ban": {
+            "title": "Uso prohibido",
+            "content": "• Spam o envío excesivo de mensajes\n• Acoso o amenazas\n• Contenido ilegal\n• Contenido extremadamente ofensivo\n• Intentos de explotar fallos de la plataforma\n• Subida de archivos maliciosos\n• Uso automatizado no autorizado"
+        },
+        "upload": {
+            "title": "Carga y almacenamiento de medios",
+            "content": "Las imágenes, videos y otros archivos enviados por los usuarios pueden almacenarse en servicios utilizados por la plataforma. El usuario es responsable de los archivos que envía."
+        },
+        "delete": {
+            "title": "Eliminación de contenido",
+            "content": "Los contenidos pueden ser eliminados por la plataforma en caso de incumplimiento de estos términos. Algunos datos pueden permanecer almacenados temporalmente por motivos técnicos, auditoría o integridad del sistema."
+        },
+        "service": {
+            "title": "Disponibilidad de los servicios",
+            "content": "El servicio puede sufrir interrupciones temporales, mantenimientos, fallos técnicos o inestabilidad."
+        },
+        "limitation": {
+            "title": "Cambios en los términos",
+            "content": "Los Términos de Servicio pueden actualizarse en el futuro. El uso continuo de la plataforma después de los cambios representa la aceptación de los nuevos términos."
+        }
+    }
+}

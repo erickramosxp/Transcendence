@@ -1,6 +1,6 @@
 {
     "popup": {
-        "title": "Ajustes"
+        "title": "Configuración"
     },
     "tabs": {
         "account": "Cuenta",
@@ -10,24 +10,34 @@
     "account": {
         "removeProfilePhoto": "Eliminar foto de perfil:",
         "remove": "Eliminar",
-        "logout": "Cerrar sesión"
+        "logout": "Cerrar sesión",
+        "legalDocuments": "Documentos legales:",
+        "privacyPolicy": "Política de Privacidad",
+        "termsOfService": "Términos de Servicio"
     },
     "profilePhoto": {
         "deleteSuccess": "Foto de perfil eliminada.",
-        "deleteError": "No se pudo eliminar la foto de perfil."
+        "deleteError": "Error al eliminar la foto de perfil."
     },
     "security": {
         "title": "Cambiar contraseña",
         "currentPassword": "Contraseña actual",
         "newPassword": "Nueva contraseña",
         "confirmPassword": "Confirmar contraseña",
-        "submit": "Cambiar"
+        "submit": "Cambiar",
+        "warnCurrentPassword": "Por favor ingrese su contraseña actual",
+        "warnNewPassword": "Ingrese y confirme la nueva contraseña",
+        "successChanged": "Contraseña cambiada con éxito",
+        "errorChanged": "Error al cambiar la contraseña",
+        "oauthMessage": "Sesión iniciada con Google, cambio de contraseña deshabilitado.",
+        "passwordMismatch": "La confirmación de contraseña no coincide",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
     },
     "appearance": {
         "theme": "Tema",
         "language": "Idioma"
     },
     "messages": {
-        "notImplemented": "Funcionalidad no implementada aún"
+        "notImplemented": "Función aún no implementada"
     }
 }

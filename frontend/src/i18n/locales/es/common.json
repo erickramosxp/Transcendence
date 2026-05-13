@@ -1,4 +1,11 @@
 {
+    "nav": {
+        "feed": "Feed",
+        "messages": "Mensajes",
+        "notifications": "Notificaciones",
+        "friends": "Amigos",
+        "profile": "Perfil"
+    },
     "postsUI": {
         "empty": "Nada por aquí aún.",
         "loadMore": "Cargando más…",
@@ -41,5 +48,9 @@
     },
     "language": {
         "changed": "Idioma cambiado con éxito."
+    },
+    "privacyAndService": {
+        "privacy": "Privacidad",
+        "termsOfService": "Términos del servicio"
     }
 }

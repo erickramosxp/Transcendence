@@ -6,10 +6,12 @@ export * from './Loading';
 export * from './Media';
 export * from './Modal';
 export * from './NotificationItem';
-export * from './SidebarNav';
+export * from './SideBarNav';
 export * from './ThemeToggle';
 export * from './TopBar';
 export * from './UserListItem';
 export * from './LikeButton';
 export * from './Dropdown'
 export * from './ProgressBar'
+export * from './Accordion'
+export * from './Header'

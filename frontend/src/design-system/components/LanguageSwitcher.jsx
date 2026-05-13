@@ -6,9 +6,9 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { createPortal } from "react-dom";
 import { toast } from 'react-toastify';
 import { Button } from "@/design-system"
-import { Brazil, Spain, UnitedStates } from "@/design-system/icons";
+import { Brazil, Spain, UnitedStates } from "@/design-system/icons"
+import { cn } from "@/design-system/tokens/colors"
 import i18n from "@/i18n";
-
 
 const languages = [
   { code: "pt-BR", label: "Português", flag: "🇧🇷", icon: <Brazil /> },
@@ -33,24 +33,24 @@ export function LanguageSwitcher({activeToastNotification = false}) {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
 
-      const dropdownWidth = 160; // ou estimativa
+      const dropdownWidth = 160;
       const padding = 8;
+      const gap = 6;
 
-      let left = rect.left + window.scrollX;
+      let left = rect.left;
 
-      // se ultrapassar a direita da tela
-      if (left + dropdownWidth > window.innerWidth) {
-        left = rect.right - dropdownWidth;
+      if (left + dropdownWidth > window.innerWidth - padding) {
+        left = Math.max(padding, rect.right - dropdownWidth);
       }
 
-      // se ultrapassar a esquerda
       if (left < padding) {
         left = padding;
       }
 
+      /* Abre para cima: borda inferior do menu fica acima do botão (viewport + fixed). */
       setPosition({
-        top: rect.bottom + window.scrollY,
         left,
+        bottom: window.innerHeight - rect.top + gap,
       });
     }
   }, [isOpen]);
@@ -83,7 +83,10 @@ export function LanguageSwitcher({activeToastNotification = false}) {
       <Button
         variant="ghost"
         size="icon"
-        className="relative"
+        className={cn(
+          "relative hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground",
+          "transition-colors",
+        )}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
@@ -101,13 +104,15 @@ export function LanguageSwitcher({activeToastNotification = false}) {
       </Button>
 
       {isOpen && position && createPortal(
-        <div style={{
-          position: "absolute",
-          top: position.top,
-          left: position.left,
-        }}
+        <div
+          style={{
+            position: "fixed",
+            left: position.left,
+            bottom: position.bottom,
+          }}
           ref={dropdownRef}
-          className="z-80 min-w-[140px] rounded-md border bg-background p-1 shadow-md">
+          className="z-80 min-w-[140px] rounded-md border bg-background p-1 shadow-md"
+        >
           {languages.map((lang) => (
             <button
               key={lang.code}
