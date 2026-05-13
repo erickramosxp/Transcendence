@@ -157,8 +157,12 @@ public class FriendshipService {
                 friendship.userId, friendship.friendId
         );
 
+        Long otherUserId = friendship.userId.equals(currentUserId)
+                ? friendship.friendId
+                : friendship.userId;
+
         User actor = User.findById(currentUserId);
-        notificationDispatcher.onFriendBroken(actor, friendship.friendId);
+        notificationDispatcher.onFriendBroken(actor, otherUserId);
     }
 
     public List<FriendshipDTO> searchFriends(Long myId, String query) {
