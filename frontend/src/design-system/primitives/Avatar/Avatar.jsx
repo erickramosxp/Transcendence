@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/design-system/tokens/colors";
+import { Loading } from "@/design-system/components";
 
 function getInitials(name = "") {
 	const names = name.trim().split(" ").filter(Boolean);
@@ -39,6 +40,7 @@ const statusColors = {
 
 function Avatar({ src, name, username, size = "md", className = "" }) {
 	const [hasError, setHasError] = useState(false);
+	const [loading, setLoading] = useState(!!src);
 	const dimension = avatarSizes[size] || avatarSizes.md;
 
 	const content = (
@@ -49,11 +51,21 @@ function Avatar({ src, name, username, size = "md", className = "" }) {
 				className
 			)}
 		>
+			{/* skeleton */}
+			{loading && src && (
+				<div className="flex justify-center items-center absolute inset-0 animate-pulse bg-muted">
+					<Loading size="sm" />
+				</div>
+			)}
 			{src && !hasError ? (
 				<img
 					src={src}
 					alt={name}
-					onError={() => setHasError(true)}
+					onLoad={() => setLoading(false)}
+					onError={ () => {
+						setHasError(true);
+						setLoading(false);
+					}}
 					className="block h-full w-full object-cover"
 				/>
 			) : (
