@@ -41,9 +41,11 @@ export default function ChatItem({ chat, isSelected, onClick }) {
         >
             <AvatarWithStatus
                 src={isDirect ? (peer?.avatarUrl ?? peer?.avatarURL ?? null) : null}
+
                 name={rowTitle}
                 status={avatarStatus}
                 showStatus={isDirect}
+                username={peer?.username}
                 size="sm"
                 className="shrink-0"
             />
