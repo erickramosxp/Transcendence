@@ -1,6 +1,4 @@
-
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { Languages, Check } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { createPortal } from "react-dom";
@@ -16,6 +14,48 @@ const languages = [
   { code: "es-ES", label: "Español", flag: "🇪🇸", icon: <Spain /> },
 ];
 
+const DROPDOWN_WIDTH = 160;
+const VIEWPORT_PADDING = 8;
+const GAP = 6;
+const MENU_ROW_EST = 40;
+
+function computeMenuPosition(buttonEl, menuHeight) {
+  const rect = buttonEl.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const spaceAbove = rect.top - VIEWPORT_PADDING;
+  const spaceBelow = vh - rect.bottom - VIEWPORT_PADDING;
+
+  const openDown = spaceBelow >= spaceAbove;
+
+  let top;
+  let maxHeight;
+
+  if (openDown) {
+    top = rect.bottom + GAP;
+    const roomBelow = vh - VIEWPORT_PADDING - top;
+    if (roomBelow < menuHeight) {
+      maxHeight = Math.max(roomBelow, 72);
+    }
+  } else {
+    top = rect.top - GAP - menuHeight;
+    if (top < VIEWPORT_PADDING) {
+      maxHeight = Math.max(rect.top - GAP - VIEWPORT_PADDING, 72);
+      top = VIEWPORT_PADDING;
+    }
+  }
+
+  let left = rect.left;
+  if (left + DROPDOWN_WIDTH > vw - VIEWPORT_PADDING) {
+    left = Math.max(VIEWPORT_PADDING, rect.right - DROPDOWN_WIDTH);
+  }
+  if (left < VIEWPORT_PADDING) {
+    left = VIEWPORT_PADDING;
+  }
+
+  return { left, top, maxHeight };
+}
+
 
 export function LanguageSwitcher({activeToastNotification = false}) {
 
@@ -29,34 +69,44 @@ export function LanguageSwitcher({activeToastNotification = false}) {
 
   const current = languages.find((lang) => lang.code === currentLanguage) || languages[0];
 
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
+  const closeMenu = useCallback(() => {
+    setIsOpen(false);
+    setPosition(null);
+  }, []);
 
-      const dropdownWidth = 160;
-      const padding = 8;
-      const gap = 6;
+  useLayoutEffect(() => {
+    if (!isOpen) return;
 
-      let left = rect.left;
+    const buttonEl = buttonRef.current;
+    if (!buttonEl) return;
 
-      if (left + dropdownWidth > window.innerWidth - padding) {
-        left = Math.max(padding, rect.right - dropdownWidth);
-      }
+    const measureAndSet = () => {
+      const estimated = languages.length * MENU_ROW_EST + 8;
+      const measured = dropdownRef.current?.offsetHeight;
+      const menuHeight =
+        measured && measured > 0 ? measured : estimated;
+      setPosition(computeMenuPosition(buttonEl, menuHeight));
+    };
 
-      if (left < padding) {
-        left = padding;
-      }
+    measureAndSet();
+    const rafIds = { outer: 0, inner: 0 };
+    rafIds.outer = requestAnimationFrame(() => {
+      rafIds.inner = requestAnimationFrame(measureAndSet);
+    });
 
-      /* Abre para cima: borda inferior do menu fica acima do botão (viewport + fixed). */
-      setPosition({
-        left,
-        bottom: window.innerHeight - rect.top + gap,
-      });
-    }
+    window.addEventListener("resize", measureAndSet);
+    document.addEventListener("scroll", measureAndSet, true);
+
+    return () => {
+      cancelAnimationFrame(rafIds.outer);
+      cancelAnimationFrame(rafIds.inner);
+      window.removeEventListener("resize", measureAndSet);
+      document.removeEventListener("scroll", measureAndSet, true);
+    };
   }, [isOpen]);
 
   function handleSelectLanguage(code) {
-    setIsOpen(false);
+    closeMenu();
     changeLanguage(code);
     if (activeToastNotification)
       toast.success(i18n.t('common:language.changed'));
@@ -67,7 +117,7 @@ export function LanguageSwitcher({activeToastNotification = false}) {
       if (wrapperRef.current &&
         !wrapperRef.current.contains(event.target) &&
         !dropdownRef.current?.contains(event.target)) {
-        setIsOpen(false);
+        closeMenu();
       }
     }
 
@@ -76,7 +126,7 @@ export function LanguageSwitcher({activeToastNotification = false}) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [closeMenu]);
 
   return (
     <div ref={wrapperRef} className="relative">
@@ -87,7 +137,10 @@ export function LanguageSwitcher({activeToastNotification = false}) {
           "relative hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground",
           "transition-colors",
         )}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => {
+          if (isOpen) closeMenu();
+          else setIsOpen(true);
+        }}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-label={`Idioma atual: ${current.label}`}
@@ -108,10 +161,13 @@ export function LanguageSwitcher({activeToastNotification = false}) {
           style={{
             position: "fixed",
             left: position.left,
-            bottom: position.bottom,
+            top: position.top,
+            ...(position.maxHeight != null
+              ? { maxHeight: position.maxHeight, overflowY: "auto" }
+              : {}),
           }}
           ref={dropdownRef}
-          className="z-80 min-w-[140px] rounded-md border bg-background p-1 shadow-md"
+          className="z-[100] min-w-[140px] rounded-md border bg-background p-1 shadow-md"
         >
           {languages.map((lang) => (
             <button
