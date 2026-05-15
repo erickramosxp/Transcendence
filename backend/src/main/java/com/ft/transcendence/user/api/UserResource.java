@@ -66,7 +66,7 @@ public class UserResource {
         User user = User.findByEmailOrUsername(username);
         if (user == null)
             throw new NotFoundException("User not found");
-        return userService.getUserPosts(user.id, page, size);
+        return userService.getUserPosts(user.id, currentUser.id(), page, size);
     }
 
     @GET

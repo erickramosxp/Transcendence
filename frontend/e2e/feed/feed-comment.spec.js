@@ -78,7 +78,7 @@ test.beforeEach(async ({ page }) => {
         id: Date.now(),
         postId: POST_ID,
         name: 'User E2E',
-        userName: 'e2euser',
+        username: 'e2euser',
         contents: text,
         avatarUrl: null,
         likedByMe: false,

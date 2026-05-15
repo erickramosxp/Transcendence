@@ -54,6 +54,7 @@ export default function ChatThreadHeader({
 				src={currentChat.user?.avatarUrl}
 				name={headerTitle}
 				status={status}
+				username={currentChat.user?.username}
 				showStatus={!isGroup}
 				size="lg"
 			/>
