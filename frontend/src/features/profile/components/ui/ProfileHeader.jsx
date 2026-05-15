@@ -15,7 +15,6 @@ import { ImageCropModal } from "@/features/profile/components/modals/ImageCropMo
 
 import { useTranslation } from "react-i18next";
 import { SettingsContent } from "@/features/settings/components/SettingsContent";
-// import { SettingsContent } from "../SettingsContent";
 
 import { Button, Loading, Modal } from "@/design-system";
 import { AvatarEditable } from "./AvatarEditable";
@@ -42,8 +41,7 @@ export const ProfileHeader = () => {
 			changeFields({ isFollowing: true });
 			changeFollowCount('follow');
 		} catch (err) {
-			console.error(err);
-			toast.error("Falha ao seguir")
+			toast.error(t("header.toast.follow_error"))
 		}
 	}
 
@@ -54,8 +52,7 @@ export const ProfileHeader = () => {
 			changeFields({ isFollowing: false });
 			changeFollowCount('unfollow');
 		} catch (err) {
-			console.error(err)
-			toast.error("Falha ao deixar de seguir")
+			toast.error(t("header.toast.unfollow_error"))
 		}
 	}
 

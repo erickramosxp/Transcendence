@@ -5,7 +5,7 @@
         "media": "Media",
         "likes": "Likes"
     },
-    "header" : {
+    "header": {
         "editProfile": "Edit Profile",
         "settings": "Settings",
         "follow": "Follow",
@@ -28,6 +28,10 @@
             "errorNameLength": "Name must be at least 3 characters long",
             "success": "Profile updated successfully",
             "error": "Failed to update profile"
+        },
+        "toast": {
+            "follow_error": "Failed to follow",
+            "unfollow_error": "Failed to unfollow"
         }
     },
     "info": {
