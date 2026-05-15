@@ -1,15 +1,21 @@
 import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useEffect, useState, useRef } from "react";
+import { MediaSkeleton } from "@/design-system";
 
 
 export function Media({ url, mimeType }) {
     const [mediaType, setMediaType] = useState(null);
     const [mediaLoaded, setMediaLoaded] = useState(false);
-
     const videoRef = useRef(null);
 
+    const mediaStyles = `
+        mt-3 rounded-lg
+        transition-opacity duration-500 ease-out
+        ${mediaLoaded ? "opacity-100 block" : "opacity-0 hidden"}
+    `;
+
     useEffect(() => {
-        if (videoRef.current) {
+        if (videoRef.current && mediaType === "video") {
             videoRef.current.volume = 0.3;
         }
     }, [mediaType]);
@@ -37,33 +43,18 @@ export function Media({ url, mimeType }) {
     if (!url) return null;
 
     return (
-        <div className="relative mt-3 rounded-lg overflow-hidden">
+        <>
 
-            {/* skeleton fica no fundo */}
-            <div
-                className={`
-                absolute inset-0
-                bg-muted
-                animate-pulse
-                transition-opacity duration-500 ease-out
-                ${mediaLoaded ? "opacity-0" : "opacity-100"}
-            `}
-            />
+            {!mediaLoaded && (
+                <MediaSkeleton  />
+            )}
 
-            {/* mídia entra por cima */}
             {mediaType === "image" && (
                 <img
                     src={url}
                     alt=""
                     onLoad={() => setMediaLoaded(true)}
-                    className={`
-                    relative z-10
-                    w-full
-                    max-h-[400px]
-                    object-contain
-                    transition-opacity duration-500 ease-out
-                    ${mediaLoaded ? "opacity-100" : "opacity-0"}
-                `}
+                    className={`${mediaStyles} max-h-100 max-w-full object-contain`}
                 />
             )}
 
@@ -73,18 +64,11 @@ export function Media({ url, mimeType }) {
                     controls
                     ref={videoRef}
                     onLoadedData={() => setMediaLoaded(true)}
-                    className={`
-                    relative z-10
-                    w-full
-                    max-h-[400px]
-                    object-contain
-                    transition-opacity duration-500 ease-out
-                    ${mediaLoaded ? "opacity-100" : "opacity-0"}
-                `}
+                    className={`${mediaStyles} lx:max-w-lg max-w-xl w-full sm:max-h-100`}
                 >
                     <source src={url} type="video/mp4" />
                 </video>
             )}
-        </div>
+        </>
     );
 }
