@@ -137,7 +137,9 @@ public class UserService {
                 .toList();
 
         List<Long> postIds = posts.stream().map(p -> p.id).toList();
-        List<Like> likesByMe = Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
+        List<Like> likesByMe = postIds.isEmpty()
+                ? List.of()
+                : Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
         var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
         UserPostsResponse resp = new UserPostsResponse();
@@ -169,7 +171,7 @@ public class UserService {
         return resp;
     }
 
-    public UserPostsResponse getUserPosts(long userId, int page, int size) {
+    public UserPostsResponse getUserPosts(long userId, long currentUserId, int page, int size) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
 
@@ -186,9 +188,11 @@ public class UserService {
 
         List<Long> postIds = posts.stream().map(p -> p.id).toList();
 
-        List<Like> likes = Like.find("user.id = ?1 and post.id in ?2", userId, postIds).list();
+        List<Like> likesByMe = postIds.isEmpty()
+                ? List.of()
+                : Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
 
-        var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
+        var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
 
         UserPostsResponse resp = new UserPostsResponse();
