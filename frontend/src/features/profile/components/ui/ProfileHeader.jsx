@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { SettingsContent } from "@/features/settings/components/SettingsContent";
 // import { SettingsContent } from "../SettingsContent";
 
-import { Button, Modal } from "@/design-system";
+import { Button, Loading, Modal } from "@/design-system";
 import { AvatarEditable } from "./AvatarEditable";
 import { validImageFile, validateImageContent } from "../../utils/validFile";
 import FriendshipButton from "@/features/friends/components/FriendshipButton";
@@ -28,6 +28,7 @@ export const ProfileHeader = () => {
 
 	const [editOpen, setEditOpen] = useState(false);
 	const [newImage, setNewImage] = useState(null);
+	const [disableFollowButton, setDisableFollowButton] = useState(false);
 	const { userData, changeFields, changeFollowCount, updateAvatar } = useProfile();
 
 	const [settingsOpen, setSettingsOpen] = useState(false);
@@ -43,8 +44,6 @@ export const ProfileHeader = () => {
 		} catch (err) {
 			console.error(err);
 			toast.error("Falha ao seguir")
-		} finally {
-
 		}
 	}
 
@@ -57,18 +56,18 @@ export const ProfileHeader = () => {
 		} catch (err) {
 			console.error(err)
 			toast.error("Falha ao deixar de seguir")
-		} finally {
-
 		}
 	}
 
 	const handleUserFollowrs = async (username, isFollowing) => {
 
+		setDisableFollowButton(true);
 		if (isFollowing) {
 			await handleUnfollowUser(username);
 		} else {
 			await handleFollowUser(username);
 		}
+		setDisableFollowButton(false);
 
 	}
 
@@ -180,9 +179,20 @@ export const ProfileHeader = () => {
 										{user?.id != userData?.id ?
 											(
 												<>
-													<Button variant='outline' className='cursor-pointer' onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
-														{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
-													</Button>
+													<div className="relative flex justify-center items-center">
+														{disableFollowButton &&
+															<Loading className="absolute text-muted-foreground" size="sm" />
+														}
+														<Button 
+															disabled={disableFollowButton} 
+															variant='outline' 
+															className={`transition-all
+																${disableFollowButton ? 'cursor-none blur-[1px] opacity-70' : 'cursor-pointer'}`
+															} 
+															onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
+															{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
+														</Button>
+													</div>
 													<FriendshipButton initialStatus={userData?.relationStatus} friendshipId={userData?.friendshipId} targetUserId={userData?.id}/>
 												</>
 											)
