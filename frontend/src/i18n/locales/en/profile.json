@@ -48,6 +48,7 @@
     "mediaGrid": {
         "getMidaError": "Failed to fetch user media",
         "getPostError": "Failed to fetch post information",
+        "postModalTitle": "Post",
         "empty": "No media yet."
     },
     "postList": {

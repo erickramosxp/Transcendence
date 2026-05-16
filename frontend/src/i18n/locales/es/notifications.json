@@ -6,13 +6,17 @@
     "loadMore": "Cargar más",
     "errors": {
         "load": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
-        "retry": "Intentar de nuevo"
+        "retry": "Intentar de nuevo",
+        "markRead": "No se pudo marcar la notificación como leída.",
+        "markAllRead": "No se pudieron marcar todas como leídas."
     },
     "toast": {
         "close": "Cerrar notificación",
+        "openNotifications": "Abrir página de notificaciones",
         "reason": "Motivo: {{reason}}"
     },
     "card": {
+        "openTarget": "Abrir destino de la notificación",
         "someone": "Alguien",
         "LIKE_POST": "<bold>{{name}}</bold> le gustó tu publicación.",
         "LIKE_COMMENT": "<bold>{{name}}</bold> le gustó tu comentario.",

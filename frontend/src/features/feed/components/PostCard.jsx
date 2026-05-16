@@ -19,7 +19,8 @@ function PostCard({
 	incrementCommentCount,
 	className,
 	isModal = false,
-	onDelete
+	onDelete,
+	highlightCommentId = null,
 }) {
 
 	const { currentLanguage } = useLanguage();
@@ -171,10 +172,12 @@ function PostCard({
 			</div >
 
 			{commentsOpen && (
-				<div className="px-4 pb-4">
+				<div className={isModal ? "pt-2" : "px-4 pb-4"}>
 					<CommentCard
 						postId={post.id}
 						incrementCommentCount={incrementCommentCount}
+						highlightCommentId={isModal ? highlightCommentId : null}
+						inModal={isModal}
 					/>
 				</div>
 			)

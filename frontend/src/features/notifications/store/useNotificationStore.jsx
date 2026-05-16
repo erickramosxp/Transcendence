@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { toast } from "react-toastify";
+import i18n from "@/i18n";
 import {
 	listNotifications as fetchNotificationsPage,
 	getUnreadCount,
@@ -85,12 +87,13 @@ export const useNotificationStore = create((set, get) => ({
 
 	markOneRead: async (id) => {
 		const { markingAllRead, markingReadId } = get();
-		if (markingAllRead || markingReadId != null) return;
+		if (markingAllRead || markingReadId != null) return false;
 
 		const snapList = [...get().notifications];
 		const snapUnread = get().unreadCount;
 		const target = snapList.find((n) => n?.id === id);
-		if (!target || target.isRead) return;
+		if (!target) return false;
+		if (target.isRead) return true;
 
 		const wasUnread = target.isRead === false;
 
@@ -107,8 +110,11 @@ export const useNotificationStore = create((set, get) => ({
 		try {
 			await markRead(id);
 			await get().refreshUnreadCount();
+			return true;
 		} catch {
 			set({ notifications: snapList, unreadCount: snapUnread });
+			toast.error(i18n.t("notifications:errors.markRead"));
+			return false;
 		} finally {
 			set({ markingReadId: null });
 		}
@@ -132,6 +138,7 @@ export const useNotificationStore = create((set, get) => ({
 			await get().refreshUnreadCount();
 		} catch {
 			set({ notifications: snapList, unreadCount: snapUnread });
+			toast.error(i18n.t("notifications:errors.markAllRead"));
 		} finally {
 			set({ markingAllRead: false });
 		}

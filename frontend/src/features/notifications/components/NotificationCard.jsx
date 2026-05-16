@@ -6,15 +6,21 @@ import {
 	resolveCardI18nKey,
 	resolveNotificationCardMeta,
 } from "../utils/notificationCardMeta";
+import { useNotificationActivation } from "../hooks/useNotificationActivation";
 
 export function NotificationCard({
 	notification,
 	markingReadId,
 	onMarkRead,
+	onOpenPost,
 }) {
 	const { t, i18n } = useTranslation("notifications");
-	const isMarking = markingReadId === notification.id;
-	const unread = notification.isRead === false;
+	const { activate, isMarking, unread } = useNotificationActivation({
+		notification,
+		onMarkRead,
+		markingReadId,
+		onOpenPost,
+	});
 
 	const meta = resolveNotificationCardMeta(notification.type);
 	const Icon = meta.icon;
@@ -53,9 +59,10 @@ export function NotificationCard({
 
 				<button
 					type="button"
-					className="flex min-w-0 flex-1 items-start gap-2 text-left"
-					disabled={isMarking || !unread}
-					onClick={() => onMarkRead?.(notification.id)}
+					className="flex min-w-0 flex-1 items-start gap-2 text-left transition-colors hover:bg-accent/30 rounded-lg -m-1 p-1 disabled:opacity-60"
+					disabled={isMarking}
+					onClick={activate}
+					aria-label={t("card.openTarget")}
 				>
 					<Icon
 						className={cn("mt-0.5 size-4 shrink-0", meta.iconClassName)}

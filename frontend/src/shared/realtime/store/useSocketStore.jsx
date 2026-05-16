@@ -299,7 +299,13 @@ export const useSocketStore = create((set, get) => ({
                     void useNotificationStore
                         .getState()
                         .prependIncomingNotification(notification);
-                    showNotificationToast(notification);
+
+                    const onNotificationsPage =
+                        typeof window !== 'undefined' &&
+                        window.location.pathname === '/notifications';
+                    if (!onNotificationsPage) {
+                        showNotificationToast(notification);
+                    }
                     break;
                 }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:

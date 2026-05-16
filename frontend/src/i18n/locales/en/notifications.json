@@ -6,13 +6,17 @@
     "loadMore": "Load more",
     "errors": {
         "load": "Could not load notifications. Please try again.",
-        "retry": "Try again"
+        "retry": "Try again",
+        "markRead": "Could not mark the notification as read.",
+        "markAllRead": "Could not mark all notifications as read."
     },
     "toast": {
         "close": "Close notification",
+        "openNotifications": "Open notifications page",
         "reason": "Reason: {{reason}}"
     },
     "card": {
+        "openTarget": "Open notification destination",
         "someone": "Someone",
         "LIKE_POST": "<bold>{{name}}</bold> liked your post.",
         "LIKE_COMMENT": "<bold>{{name}}</bold> liked your comment.",

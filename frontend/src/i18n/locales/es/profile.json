@@ -48,6 +48,7 @@
     "mediaGrid": {
         "getMidaError": "Error al buscar mídias do usuário",
         "getPostError": "Error al obter informações do post",
+        "postModalTitle": "Publicación",
         "empty": "Sin multimedia aún."
     },
     "postList": {
