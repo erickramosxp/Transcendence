@@ -5,7 +5,6 @@ import { useChatStore } from '@/features/chat/store/useChatStore'
 import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
-import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
 
 import {
