@@ -6,6 +6,7 @@ import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import com.ft.transcendence.common.media.MediaAnalysis;
 import com.ft.transcendence.common.media.MediaKind;
 import com.ft.transcendence.common.media.MediaValidationService;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.job.app.JobService;
 import com.ft.transcendence.like.domain.Like;
@@ -45,12 +46,14 @@ public class PostService {
     @Inject
     JobService jobService;
 
+    @Inject
+    SocialMetrics metrics;
+
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
         if ((req.text == null || req.text.isBlank()) && (req.file == null))
             throw new BadRequestException("Posts must contain text or images");
 
-        // file
         String contentType = null;
         long size = 0;
         MediaAnalysis analysis;
@@ -109,8 +112,9 @@ public class PostService {
             }
         }
 
+        metrics.recordPostCreated(req.file != null);
 
-        String avatarUrl  = post.user.avatarUrl;
+        String avatarUrl = post.user.avatarUrl;
         if (avatarUrl != null) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
@@ -128,7 +132,7 @@ public class PostService {
             mediaUrl = storageService.generateUrl(mediaUrl);
         }
 
-        String avatarUrl  = post.user.avatarUrl;
+        String avatarUrl = post.user.avatarUrl;
         if (avatarUrl != null) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
@@ -157,7 +161,6 @@ public class PostService {
 
         FeedResponse resp = new FeedResponse();
 
-
         Map<String, String> avatarCache = new HashMap<>();
         resp.items = posts.stream().map(p -> {
 
@@ -167,7 +170,7 @@ public class PostService {
                 mediaUrl = storageService.generateUrl(mediaUrl);
             }
 
-            String avatarUrl  = p.user.avatarUrl;
+            String avatarUrl = p.user.avatarUrl;
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
                 avatarUrl = avatarCache.computeIfAbsent(
                         avatarUrl,
@@ -175,7 +178,7 @@ public class PostService {
                 );
             }
 
-            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+            return PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
         }).toList();
 
         resp.page = page;
@@ -183,7 +186,6 @@ public class PostService {
         resp.hasMore = hasMore;
         return resp;
     }
-
 
     @Transactional
     public void deletePost(Long userId, Long postId) {
@@ -211,6 +213,8 @@ public class PostService {
         Like.delete("post.id = ?1", postId);
         Like.delete("comment.post.id = ?1", postId);
 
+        metrics.recordPostDeleted();
+
         if (post.mediaUrl != null && !post.mediaUrl.isBlank()) {
             try {
                 jobService.createDeletePostMediaJob(postId, userId);
@@ -218,6 +222,5 @@ public class PostService {
                 Log.info("Error creating job", e);
             }
         }
-
     }
 }

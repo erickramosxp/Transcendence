@@ -5,6 +5,7 @@ import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.domain.ChatMessage;
 import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.common.dto.PageResponse;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
@@ -17,10 +18,7 @@ import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.find;
 
@@ -29,6 +27,9 @@ public class ChatService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    SocialMetrics metrics;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
         if (page < 0 || size <= 0)
@@ -58,7 +59,7 @@ public class ChatService {
 
                     ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", chat.id).firstResult();
 
-                    return ChatResponse.of(chat, otherUser,lastMessage);
+                    return ChatResponse.of(chat, otherUser, lastMessage);
                 })
                 .toList();
 
@@ -83,7 +84,6 @@ public class ChatService {
         Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent()) {
             UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
-
             ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", existing.get().id).firstResult();
             return ChatResponse.of(existing.get(), otherUser, lastMessage);
         }
@@ -92,6 +92,8 @@ public class ChatService {
 
         ChatParticipant.create(chat, userA, "member");
         ChatParticipant.create(chat, userB, "member");
+
+        metrics.recordDirectChatCreated();
 
         UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
 
@@ -116,6 +118,8 @@ public class ChatService {
                 throw new ForbiddenException("User with id=" + userId + " is not your friend");
             ChatParticipant.create(chat, user, "member");
         }
+
+        metrics.recordGroupChatCreated();
 
         return ChatResponse.of(chat);
     }
@@ -219,7 +223,6 @@ public class ChatService {
         UserMessageResponse otherUser = UserMessageResponse.of(u);
         if (otherUser.avatarUrl != null && !otherUser.avatarUrl.isBlank())
             otherUser.avatarUrl = storageService.generateUrl(otherUser.avatarUrl);
-
         return otherUser;
     }
 }

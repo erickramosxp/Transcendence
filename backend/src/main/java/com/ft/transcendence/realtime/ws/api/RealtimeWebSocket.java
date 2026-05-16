@@ -1,5 +1,6 @@
 package com.ft.transcendence.realtime.ws.api;
 
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.realtime.ws.app.RealtimeEventDispatcher;
 import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.app.WsAuthService;
@@ -22,6 +23,8 @@ public class RealtimeWebSocket {
     RealtimeEventDispatcher dispatcher;
     @Inject
     WsAuthService authService;
+    @Inject
+    SocialMetrics metrics;
 
     @OnOpen
     @ActivateRequestContext
@@ -30,7 +33,9 @@ public class RealtimeWebSocket {
             AuthenticatedSocketUser user = authService.authenticate(socket);
             registry.add(new RealtimeConnection(socket.id(), user.userId, user.name, user.username, user.avatarUrl));
             dispatcher.handleConnected(socket.id());
+            metrics.recordWsConnected();
         } catch (NotAuthorizedException e) {
+            metrics.recordWsAuthFailure();
             socket.closeAndAwait(new CloseReason(1008, "Not authorized"));
         } catch (Exception e) {
             socket.closeAndAwait(new CloseReason(1011, "Internal error"));
@@ -46,6 +51,7 @@ public class RealtimeWebSocket {
     @OnClose
     @ActivateRequestContext
     public void onClose() {
+        metrics.recordWsDisconnected();
         dispatcher.handleDisconnected(socket.id());
     }
 }

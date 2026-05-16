@@ -5,7 +5,7 @@
   "timezone": "browser",
   "schemaVersion": 38,
   "refresh": "30s",
-  "time": { "from": "now-1h", "to": "now" },
+  "time": { "from": "now-7d", "to": "now" },
   "panels": [
     {
       "id": 1,
@@ -22,7 +22,7 @@
     },
     {
       "id": 2,
-      "title": "👥 Usuários Online (WebSocket)",
+      "title": "👥 Usuários Online agora",
       "type": "stat",
       "gridPos": { "x": 3, "y": 0, "w": 3, "h": 4 },
       "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
@@ -30,39 +30,39 @@
     },
     {
       "id": 3,
-      "title": "💬 Mensagens/min",
+      "title": "💬 Mensagens na semana",
       "type": "stat",
       "gridPos": { "x": 6, "y": 0, "w": 3, "h": 4 },
-      "targets": [{ "expr": "rate(social_messages_sent_total[1m]) * 60", "legendFormat": "msg/min" }],
+      "targets": [{ "expr": "increase(social_messages_sent_total[7d])", "legendFormat": "mensagens" }],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 4,
-      "title": "📝 Posts/hora",
+      "title": "📝 Posts na semana",
       "type": "stat",
       "gridPos": { "x": 9, "y": 0, "w": 3, "h": 4 },
-      "targets": [{ "expr": "rate(social_posts_created_total[1h]) * 3600", "legendFormat": "posts/h" }],
+      "targets": [{ "expr": "increase(social_posts_created_total[7d])", "legendFormat": "posts" }],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 5,
-      "title": "❤️ Likes/min",
+      "title": "❤️ Likes na semana",
       "type": "stat",
       "gridPos": { "x": 12, "y": 0, "w": 3, "h": 4 },
-      "targets": [{ "expr": "rate(social_likes_total{action=\"like\"}[1m]) * 60", "legendFormat": "likes/min" }],
+      "targets": [{ "expr": "increase(social_likes_total{action=\"like\"}[7d])", "legendFormat": "likes" }],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 6,
-      "title": "🤝 Amizades aceitas/hora",
+      "title": "🤝 Novos usuários na semana",
       "type": "stat",
       "gridPos": { "x": 15, "y": 0, "w": 3, "h": 4 },
-      "targets": [{ "expr": "rate(social_friendships_total{action=\"accepted\"}[1h]) * 3600", "legendFormat": "aceitas/h" }],
+      "targets": [{ "expr": "increase(social_auth_registrations_total[7d])", "legendFormat": "registros" }],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 7,
-      "title": "👥 Usuários Online ao longo do tempo",
+      "title": "👥 Usuários Online ao longo da semana",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
       "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
@@ -70,64 +70,64 @@
     },
     {
       "id": 8,
-      "title": "💬 Mensagens enviadas ao longo do tempo",
+      "title": "💬 Mensagens por semana",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "rate(social_messages_sent_total[5m]) * 60", "legendFormat": "Total" },
-        { "expr": "rate(social_messages_with_media_total[5m]) * 60", "legendFormat": "Com mídia" },
-        { "expr": "rate(social_messages_with_reply_total[5m]) * 60", "legendFormat": "Respostas" }
+        { "expr": "increase(social_messages_sent_total[7d])", "legendFormat": "Total" },
+        { "expr": "increase(social_messages_with_media_total[7d])", "legendFormat": "Com mídia" },
+        { "expr": "increase(social_messages_with_reply_total[7d])", "legendFormat": "Respostas" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 9,
-      "title": "🔑 Autenticação",
+      "title": "🔑 Autenticação por semana",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "rate(social_auth_logins_total{result=\"success\"}[5m]) * 60", "legendFormat": "Login OK" },
-        { "expr": "rate(social_auth_logins_total{result=\"failed\"}[5m]) * 60", "legendFormat": "Login Falhou" },
-        { "expr": "rate(social_auth_google_logins_total[5m]) * 60", "legendFormat": "Google OAuth" },
-        { "expr": "rate(social_auth_registrations_total[5m]) * 60", "legendFormat": "Registros" }
+        { "expr": "increase(social_auth_logins_total{result=\"success\"}[7d])", "legendFormat": "Login OK" },
+        { "expr": "increase(social_auth_logins_total{result=\"failed\"}[7d])", "legendFormat": "Login Falhou" },
+        { "expr": "increase(social_auth_google_logins_total[7d])", "legendFormat": "Google OAuth" },
+        { "expr": "increase(social_auth_registrations_total[7d])", "legendFormat": "Registros" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 10,
-      "title": "📝 Engajamento — Posts e Likes",
+      "title": "📝 Engajamento — Posts e Likes por semana",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "rate(social_posts_created_total[5m]) * 300", "legendFormat": "Posts criados" },
-        { "expr": "rate(social_posts_with_media_total[5m]) * 300", "legendFormat": "Posts com mídia" },
-        { "expr": "rate(social_likes_total{target=\"post\",action=\"like\"}[5m]) * 300", "legendFormat": "Likes em posts" },
-        { "expr": "rate(social_likes_total{target=\"comment\",action=\"like\"}[5m]) * 300", "legendFormat": "Likes em comments" }
+        { "expr": "increase(social_posts_created_total[7d])", "legendFormat": "Posts criados" },
+        { "expr": "increase(social_posts_with_media_total[7d])", "legendFormat": "Posts com mídia" },
+        { "expr": "increase(social_likes_total{target=\"post\",action=\"like\"}[7d])", "legendFormat": "Likes em posts" },
+        { "expr": "increase(social_likes_total{target=\"comment\",action=\"like\"}[7d])", "legendFormat": "Likes em comments" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 11,
-      "title": "🤝 Amizades",
+      "title": "🤝 Amizades por semana",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "rate(social_friendships_total{action=\"sent\"}[5m]) * 300", "legendFormat": "Enviadas" },
-        { "expr": "rate(social_friendships_total{action=\"accepted\"}[5m]) * 300", "legendFormat": "Aceitas" },
-        { "expr": "rate(social_friendships_total{action=\"rejected\"}[5m]) * 300", "legendFormat": "Rejeitadas" },
-        { "expr": "rate(social_friendships_total{action=\"removed\"}[5m]) * 300", "legendFormat": "Desfeitas" }
+        { "expr": "increase(social_friendships_total{action=\"sent\"}[7d])", "legendFormat": "Enviadas" },
+        { "expr": "increase(social_friendships_total{action=\"accepted\"}[7d])", "legendFormat": "Aceitas" },
+        { "expr": "increase(social_friendships_total{action=\"rejected\"}[7d])", "legendFormat": "Rejeitadas" },
+        { "expr": "increase(social_friendships_total{action=\"removed\"}[7d])", "legendFormat": "Desfeitas" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 12,
-      "title": "💬 Chats criados + Falhas WebSocket",
+      "title": "💬 Chats criados + Falhas WebSocket por semana",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "rate(social_chats_created_total{type=\"direct\"}[5m]) * 300", "legendFormat": "Chats diretos" },
-        { "expr": "rate(social_chats_created_total{type=\"group\"}[5m]) * 300", "legendFormat": "Grupos criados" },
-        { "expr": "rate(social_ws_auth_failures_total[5m]) * 300", "legendFormat": "Falhas auth WS" }
+        { "expr": "increase(social_chats_created_total{type=\"direct\"}[7d])", "legendFormat": "Chats diretos" },
+        { "expr": "increase(social_chats_created_total{type=\"group\"}[7d])", "legendFormat": "Grupos criados" },
+        { "expr": "increase(social_ws_auth_failures_total[7d])", "legendFormat": "Falhas auth WS" }
       ],
       "fieldConfig": { "defaults": { "unit": "short" } }
     },
@@ -148,7 +148,7 @@
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
       "targets": [
-        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[1m])) by (status)", "legendFormat": "HTTP {{ status }}" }
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[1h])) by (status)", "legendFormat": "HTTP {{ status }}" }
       ],
       "fieldConfig": { "defaults": { "unit": "reqps" } }
     }
