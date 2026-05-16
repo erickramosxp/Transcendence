@@ -1,7 +1,7 @@
 {
   "title": "Transcendence Backend",
   "uid": "transcendence-backend",
-  "tags": ["transcendence", "quarkus", "jvm"],
+  "tags": ["transcendence", "quarkus", "jvm", "social"],
   "timezone": "browser",
   "schemaVersion": 38,
   "refresh": "30s",
@@ -9,166 +9,148 @@
   "panels": [
     {
       "id": 1,
-      "title": "Backend Status",
+      "title": "🟢 Backend Status",
       "type": "stat",
-      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
-      "targets": [
-        {
-          "expr": "up{job=\"transcendence-backend\"}",
-          "legendFormat": "Status"
-        }
-      ],
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "orientation": "auto",
-        "colorMode": "background"
-      },
+      "gridPos": { "x": 0, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "up{job=\"transcendence-backend\"}", "legendFormat": "Status" }],
       "fieldConfig": {
         "defaults": {
-          "mappings": [
-            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
-          ]
+          "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }],
+          "colorMode": "background"
         }
       }
     },
     {
       "id": 2,
-      "title": "Heap JVM Usado",
-      "type": "gauge",
-      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
-      "targets": [
-        {
-          "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"} / jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"} * 100",
-          "legendFormat": "Heap %"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              { "value": 0, "color": "green" },
-              { "value": 70, "color": "yellow" },
-              { "value": 85, "color": "red" }
-            ]
-          }
-        }
-      }
+      "title": "👥 Usuários Online (WebSocket)",
+      "type": "stat",
+      "gridPos": { "x": 3, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": 0, "color": "red" }, { "value": 1, "color": "green" }] } } }
     },
     {
       "id": 3,
-      "title": "CPU do Processo",
-      "type": "gauge",
-      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
-      "targets": [
-        {
-          "expr": "process_cpu_usage{job=\"transcendence-backend\"} * 100",
-          "legendFormat": "CPU %"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              { "value": 0, "color": "green" },
-              { "value": 60, "color": "yellow" },
-              { "value": 80, "color": "red" }
-            ]
-          }
-        }
-      }
+      "title": "💬 Mensagens/min",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "rate(social_messages_sent_total[1m]) * 60", "legendFormat": "msg/min" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 4,
-      "title": "Threads Ativas",
+      "title": "📝 Posts/hora",
       "type": "stat",
-      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
-      "targets": [
-        {
-          "expr": "jvm_threads_live_threads{job=\"transcendence-backend\"}",
-          "legendFormat": "Threads"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "short" }
-      }
+      "gridPos": { "x": 9, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "rate(social_posts_created_total[1h]) * 3600", "legendFormat": "posts/h" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 5,
-      "title": "Requisições por Segundo",
-      "type": "timeseries",
-      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
-      "targets": [
-        {
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[1m])) by (status)",
-          "legendFormat": "HTTP {{ status }}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "reqps" }
-      }
+      "title": "❤️ Likes/min",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "rate(social_likes_total{action=\"like\"}[1m]) * 60", "legendFormat": "likes/min" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 6,
-      "title": "Latência P95 por Endpoint",
-      "type": "timeseries",
-      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le, uri))",
-          "legendFormat": "P95 {{ uri }}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "s" }
-      }
+      "title": "🤝 Amizades aceitas/hora",
+      "type": "stat",
+      "gridPos": { "x": 15, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "rate(social_friendships_total{action=\"accepted\"}[1h]) * 3600", "legendFormat": "aceitas/h" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
     },
     {
       "id": 7,
-      "title": "Uso de Heap ao longo do tempo",
+      "title": "👥 Usuários Online ao longo do tempo",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
-      "targets": [
-        {
-          "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"}",
-          "legendFormat": "Heap Usado"
-        },
-        {
-          "expr": "jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"}",
-          "legendFormat": "Heap Máximo"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "bytes" }
-      }
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "fixedColor": "green", "mode": "fixed" } } }
     },
     {
       "id": 8,
-      "title": "Taxa de Erros 5xx",
+      "title": "💬 Mensagens enviadas ao longo do tempo",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(social_messages_sent_total[5m]) * 60", "legendFormat": "Total" },
+        { "expr": "rate(social_messages_with_media_total[5m]) * 60", "legendFormat": "Com mídia" },
+        { "expr": "rate(social_messages_with_reply_total[5m]) * 60", "legendFormat": "Respostas" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 9,
+      "title": "🔑 Autenticação",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(social_auth_logins_total{result=\"success\"}[5m]) * 60", "legendFormat": "Login OK" },
+        { "expr": "rate(social_auth_logins_total{result=\"failed\"}[5m]) * 60", "legendFormat": "Login Falhou" },
+        { "expr": "rate(social_auth_google_logins_total[5m]) * 60", "legendFormat": "Google OAuth" },
+        { "expr": "rate(social_auth_registrations_total[5m]) * 60", "legendFormat": "Registros" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 10,
+      "title": "📝 Engajamento — Posts e Likes",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
       "targets": [
-        {
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"5..\"}[5m]))",
-          "legendFormat": "Erros 5xx/s"
-        }
+        { "expr": "rate(social_posts_created_total[5m]) * 300", "legendFormat": "Posts criados" },
+        { "expr": "rate(social_posts_with_media_total[5m]) * 300", "legendFormat": "Posts com mídia" },
+        { "expr": "rate(social_likes_total{target=\"post\",action=\"like\"}[5m]) * 300", "legendFormat": "Likes em posts" },
+        { "expr": "rate(social_likes_total{target=\"comment\",action=\"like\"}[5m]) * 300", "legendFormat": "Likes em comments" }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "thresholds": {
-            "steps": [
-              { "value": 0, "color": "green" },
-              { "value": 0.1, "color": "red" }
-            ]
-          }
-        }
-      }
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 11,
+      "title": "🤝 Amizades",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(social_friendships_total{action=\"sent\"}[5m]) * 300", "legendFormat": "Enviadas" },
+        { "expr": "rate(social_friendships_total{action=\"accepted\"}[5m]) * 300", "legendFormat": "Aceitas" },
+        { "expr": "rate(social_friendships_total{action=\"rejected\"}[5m]) * 300", "legendFormat": "Rejeitadas" },
+        { "expr": "rate(social_friendships_total{action=\"removed\"}[5m]) * 300", "legendFormat": "Desfeitas" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 12,
+      "title": "💬 Chats criados + Falhas WebSocket",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(social_chats_created_total{type=\"direct\"}[5m]) * 300", "legendFormat": "Chats diretos" },
+        { "expr": "rate(social_chats_created_total{type=\"group\"}[5m]) * 300", "legendFormat": "Grupos criados" },
+        { "expr": "rate(social_ws_auth_failures_total[5m]) * 300", "legendFormat": "Falhas auth WS" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 13,
+      "title": "🖥️ JVM — Heap",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Usado" },
+        { "expr": "jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Máximo" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 14,
+      "title": "🌐 Requisições HTTP por status",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[1m])) by (status)", "legendFormat": "HTTP {{ status }}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
     }
   ]
 }
