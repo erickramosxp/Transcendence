@@ -2,6 +2,7 @@ package com.ft.transcendence.like.app;
 
 import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,6 +17,9 @@ import java.time.OffsetDateTime;
 public class LikeService {
     @Inject
     EntityManager entityManager;
+
+    @Inject
+    NotificationDispatcher notificationDispatcher;
 
     @Transactional
     public void likePost(long userId, long postId) {
@@ -37,6 +41,8 @@ public class LikeService {
                     "UPDATE Post SET likeCount = likeCount + 1 WHERE id = :id"
             ).setParameter("id", postId).executeUpdate();
         }
+
+        notificationDispatcher.onLikePost(userId, post);
     }
 
     @Transactional
@@ -79,6 +85,8 @@ public class LikeService {
                     "UPDATE Comment SET likeCount = likeCount + 1 WHERE id = :id"
             ).setParameter("id", commentId).executeUpdate();
         }
+
+        notificationDispatcher.onLikeComment(userId, comment);
     }
 
     @Transactional
