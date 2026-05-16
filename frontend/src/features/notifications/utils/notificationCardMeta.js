@@ -14,46 +14,55 @@ export const NOTIFICATION_CARD_META = {
 	[NOTIFICATION_TYPES.LIKE_POST]: {
 		icon: Heart,
 		iconClassName: "text-pink-500",
+		accentClassName: "bg-pink-500",
 		cardKey: "LIKE_POST",
 	},
 	[NOTIFICATION_TYPES.LIKE_COMMENT]: {
 		icon: Heart,
 		iconClassName: "text-pink-500",
+		accentClassName: "bg-pink-500",
 		cardKey: "LIKE_COMMENT",
 	},
 	[NOTIFICATION_TYPES.COMMENT_POST]: {
 		icon: MessageCircle,
 		iconClassName: "text-primary",
+		accentClassName: "bg-primary",
 		cardKey: "COMMENT_POST",
 	},
 	[NOTIFICATION_TYPES.FRIEND_REQUEST]: {
 		icon: UserPlus,
-		iconClassName: "text-orange-500",
+		iconClassName: "text-primary",
+		accentClassName: "bg-primary",
 		cardKey: "FRIEND_REQUEST",
 	},
 	[NOTIFICATION_TYPES.FRIEND_ACCEPTED]: {
 		icon: UserCheck,
 		iconClassName: "text-orange-500",
+		accentClassName: "bg-orange-500",
 		cardKey: "FRIEND_ACCEPTED",
 	},
 	[NOTIFICATION_TYPES.FRIEND_REJECTED]: {
 		icon: UserX,
 		iconClassName: "text-muted-foreground",
+		accentClassName: "bg-muted-foreground",
 		cardKey: "FRIEND_REJECTED",
 	},
 	[NOTIFICATION_TYPES.FRIEND_BROKEN]: {
 		icon: UserMinus,
 		iconClassName: "text-muted-foreground",
+		accentClassName: "bg-muted-foreground",
 		cardKey: "FRIEND_BROKEN",
 	},
 	[NOTIFICATION_TYPES.ADDED_GROUP]: {
 		icon: Users,
 		iconClassName: "text-violet-500",
+		accentClassName: "bg-violet-500",
 		cardKey: "ADDED_GROUP",
 	},
 	[NOTIFICATION_TYPES.REMOVED_GROUP]: {
 		icon: Users,
 		iconClassName: "text-violet-500",
+		accentClassName: "bg-violet-500",
 		cardKey: "REMOVED_GROUP",
 	},
 };
@@ -61,6 +70,7 @@ export const NOTIFICATION_CARD_META = {
 const FALLBACK_META = {
 	icon: Bell,
 	iconClassName: "text-primary",
+	accentClassName: "bg-primary",
 	cardKey: "unknown",
 };
 

@@ -6,6 +6,7 @@ import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
+import { showNotificationToast } from '@/features/notifications/utils/showNotificationToast'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
 
 import {
@@ -291,10 +292,14 @@ export const useSocketStore = create((set, get) => ({
                     break;
                 }
                 case WS_INCOMING_EVENTS.NOTIFICATION_RECEIVED: {
-                    const payload = data.payload ?? data;
+                    const raw = data.payload ?? data;
+                    const notification = raw?.id != null ? raw : raw?.notification;
+                    if (!notification?.id) break;
+
                     void useNotificationStore
                         .getState()
-                        .prependIncomingNotification(payload);
+                        .prependIncomingNotification(notification);
+                    showNotificationToast(notification);
                     break;
                 }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:

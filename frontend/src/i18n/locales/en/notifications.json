@@ -8,6 +8,10 @@
         "load": "Could not load notifications. Please try again.",
         "retry": "Try again"
     },
+    "toast": {
+        "close": "Close notification",
+        "reason": "Reason: {{reason}}"
+    },
     "card": {
         "someone": "Someone",
         "LIKE_POST": "<bold>{{name}}</bold> liked your post.",

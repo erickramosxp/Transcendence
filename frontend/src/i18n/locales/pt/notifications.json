@@ -8,6 +8,10 @@
         "load": "Não foi possível carregar as notificações. Tente novamente.",
         "retry": "Tentar novamente"
     },
+    "toast": {
+        "close": "Fechar notificação",
+        "reason": "Motivo: {{reason}}"
+    },
     "card": {
         "someone": "Alguém",
         "LIKE_POST": "<bold>{{name}}</bold> curtiu seu post.",
