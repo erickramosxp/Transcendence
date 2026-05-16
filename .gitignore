@@ -21,3 +21,4 @@ storybook-static/
 **/playwright-report/
 **/blob-report/
 **/.playwright/
+minio_data/

@@ -1,0 +1,67 @@
+groups:
+  - name: infra_alerts
+    rules:
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus está fora do ar!"
+          description: "O container do Prometheus em {{ $labels.instance }} parou de responder."
+
+      - alert: BackendDown
+        expr: up{job="transcendence-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend caiu!"
+          description: "A API do Quarkus em {{ $labels.instance }} está offline há mais de 1 minuto."
+
+  - name: jvm_alerts
+    rules:
+      - alert: HighHeapUsage
+        expr: >
+          jvm_memory_used_bytes{area="heap"}
+          / jvm_memory_max_bytes{area="heap"} > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Heap da JVM acima de 85%"
+          description: "O uso de heap está em {{ humanizePercentage $value }} nos últimos 2 minutos."
+
+      - alert: HighCpuUsage
+        expr: process_cpu_usage > 0.80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU do processo acima de 80%"
+          description: "O uso de CPU está em {{ humanizePercentage $value }} nos últimos 2 minutos."
+
+  - name: http_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: >
+          sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+          / sum(rate(http_server_requests_seconds_count[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taxa de erros HTTP 5xx acima de 5%"
+          description: "{{ humanizePercentage $value }} das requisições estão retornando erro nos últimos 5 minutos."
+
+      - alert: SlowResponses
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(http_server_requests_seconds_bucket[5m])) by (le, uri)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 de latência acima de 2s"
+          description: "O endpoint {{ $labels.uri }} está respondendo em mais de 2s no percentil 95."
