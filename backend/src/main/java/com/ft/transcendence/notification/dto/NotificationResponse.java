@@ -17,6 +17,7 @@ public class NotificationResponse {
     public Long commentId;
     public Long friendshipId;
     public String preview;
+    public String chatName;
 
     public static NotificationResponse of(Notification n, String resolvedAvatarUrl) {
         NotificationResponse r = new NotificationResponse();
@@ -33,6 +34,7 @@ public class NotificationResponse {
             r.commentId = n.content.commentId;
             r.friendshipId = n.content.friendshipId;
             r.preview = n.content.preview;
+            r.chatName = n.content.chatName;
         }
 
         return r;
