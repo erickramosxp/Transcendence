@@ -5,6 +5,7 @@ import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,37 +24,40 @@ public class FriendshipService {
     @Inject
     StorageService storageService;
 
+    @Inject
+    NotificationDispatcher notificationDispatcher;
+
     @Transactional
     public FriendshipDTO sendRequest(Long currentUserId, Long targetUserId) {
 
         if (currentUserId.equals(targetUserId)) {
-            throw new WebApplicationException("You can't add yourself", Response.Status.BAD_REQUEST); // Erro 400
+            throw new WebApplicationException("You can't add yourself", Response.Status.BAD_REQUEST);
         }
 
         Optional<User> targetUser = User.findByIdOptional(targetUserId);
         if (!targetUser.isPresent())
-                throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
+            throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
 
         long count = Friendship.count(
                 "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
                 currentUserId, targetUserId
         );
         if (count > 0) {
-            throw new WebApplicationException("Friendship already exists or is pending", Response.Status.CONFLICT); // Erro 409
+            throw new WebApplicationException("Friendship already exists or is pending", Response.Status.CONFLICT);
         }
 
         Friendship request = new Friendship();
         request.userId = currentUserId;
         request.friendId = targetUserId;
         request.status = FriendshipStatus.PENDING;
-
         request.persist();
 
+        User actor = User.findById(currentUserId);
         User friendUser = targetUser.get();
 
-        FriendshipDTO dto = new FriendshipDTO(request.id, request.friendId, friendUser.name, friendUser.username, null);
+        notificationDispatcher.onFriendRequest(actor, targetUserId, request.id);
 
-        return dto;
+        return new FriendshipDTO(request.id, request.friendId, friendUser.name, friendUser.username, null);
     }
 
     public List<FriendshipDTO> getPendingRequests(Long currentUserId) {
@@ -66,7 +70,6 @@ public class FriendshipService {
         ).project(FriendshipDTO.class).list();
 
         requests.forEach(request -> {
-
             if (request.avatarUrl != null && !request.avatarUrl.trim().isEmpty()) {
                 request.avatarUrl = storageService.generateUrl(request.avatarUrl);
             }
@@ -90,18 +93,12 @@ public class FriendshipService {
         PanacheQuery<FriendshipDTO> query;
 
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-
             String filter = "%" + searchQuery.toLowerCase() + "%";
             hql += " AND (LOWER(u.name) LIKE ?2 OR LOWER(u.username) LIKE ?2)";
-
-            query = Friendship.find(hql, currentUserId, filter)
-                    .project(FriendshipDTO.class);
+            query = Friendship.find(hql, currentUserId, filter).project(FriendshipDTO.class);
         } else {
-            query = Friendship.find(hql, currentUserId)
-                    .project(FriendshipDTO.class);
+            query = Friendship.find(hql, currentUserId).project(FriendshipDTO.class);
         }
-
-
 
         List<FriendshipDTO> paginatedFriends = query.range(start, end).list();
 
@@ -114,7 +111,6 @@ public class FriendshipService {
                 friend.avatarUrl = storageService.generateUrl(friend.avatarUrl);
             }
         });
-
 
         return new PageResponse<>(paginatedFriends, pageIndex, pageSize, hasMore);
     }
@@ -131,6 +127,9 @@ public class FriendshipService {
         mirror.friendId = request.userId;
         mirror.status = FriendshipStatus.ACCEPTED;
         mirror.persist();
+
+        User actor = User.findById(currentUserId);
+        notificationDispatcher.onFriendAccepted(actor, request.userId);
     }
 
     @Transactional
@@ -138,8 +137,10 @@ public class FriendshipService {
 
         Friendship request = getAndValidatePendingRequest(friendshipId, currentUserId);
         request.delete();
-    }
 
+        User actor = User.findById(currentUserId);
+        notificationDispatcher.onFriendReject(actor, request.userId);
+    }
 
     @Transactional
     public void removeFriendship(Long currentUserId, Long friendshipId) {
@@ -155,6 +156,13 @@ public class FriendshipService {
                 "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
                 friendship.userId, friendship.friendId
         );
+
+        Long otherUserId = friendship.userId.equals(currentUserId)
+                ? friendship.friendId
+                : friendship.userId;
+
+        User actor = User.findById(currentUserId);
+        notificationDispatcher.onFriendBroken(actor, otherUserId);
     }
 
     public List<FriendshipDTO> searchFriends(Long myId, String query) {
@@ -162,10 +170,10 @@ public class FriendshipService {
         String filter = "%" + query.toLowerCase() + "%";
 
         List<FriendshipDTO> friends = Friendship.find(
-                "SELECT f.id, u.id, u.name, u.username, u.avatarUrl " +
-                        "FROM Friendship f JOIN User u ON f.friendId = u.id " +
-                        "WHERE f.userId = ?1 AND f.status = 'ACCEPTED' " +
-                        "AND (LOWER(u.name) LIKE ?2 OR LOWER(u.username) LIKE ?2)",
+                        "SELECT f.id, u.id, u.name, u.username, u.avatarUrl " +
+                                "FROM Friendship f JOIN User u ON f.friendId = u.id " +
+                                "WHERE f.userId = ?1 AND f.status = 'ACCEPTED' " +
+                                "AND (LOWER(u.name) LIKE ?2 OR LOWER(u.username) LIKE ?2)",
                         myId, filter
                 )
                 .project(FriendshipDTO.class)
@@ -175,7 +183,6 @@ public class FriendshipService {
     }
 
     public PageResponse<FriendshipDTO> getOnlineFriends(Long currentUserId) {
-
         return getFriendsList(currentUserId, 0, 10, null);
     }
 
@@ -194,5 +201,4 @@ public class FriendshipService {
 
         return request;
     }
-
 }
