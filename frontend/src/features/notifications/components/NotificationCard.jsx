@@ -33,59 +33,65 @@ export function NotificationCard({
 	return (
 		<article
 			className={cn(
-				"flex w-full items-center gap-3 rounded-xl border border-border/50 bg-card/70 px-3 py-3 transition-colors",
+				"flex w-full overflow-hidden rounded-xl border border-border/50 bg-card/70 transition-colors",
 				unread && "bg-card/95",
 				isMarking && "opacity-60",
 			)}
 		>
-			<Avatar
-				className="shrink-0"
-				size="md"
-				src={notification.avatarUrl}
-				name={notification.name}
-				username={notification.username}
+			<span
+				className={cn("w-1 shrink-0", meta.accentClassName)}
+				aria-hidden
 			/>
-
-			<button
-				type="button"
-				className="flex min-w-0 flex-1 items-start gap-2 text-left"
-				disabled={isMarking || !unread}
-				onClick={() => onMarkRead?.(notification.id)}
-			>
-				<Icon
-					className={cn("mt-0.5 size-4 shrink-0", meta.iconClassName)}
-					aria-hidden
+			<div className="flex min-w-0 flex-1 items-center gap-3 p-3">
+				<Avatar
+					className="shrink-0"
+					size="md"
+					src={notification.avatarUrl}
+					name={notification.name}
+					username={notification.username}
 				/>
 
-				<div className="min-w-0 flex-1">
-					<p className="text-sm leading-snug text-foreground">
-						<Trans
-							i18nKey={cardKey}
-							ns="notifications"
-							values={values}
-							components={{
-								bold: (
-									<span className="font-semibold text-foreground" />
-								),
-							}}
-						/>
-					</p>
-					{timeLabel ? (
-						<p className="mt-1 text-xs text-muted-foreground">
-							{timeLabel}
+				<button
+					type="button"
+					className="flex min-w-0 flex-1 items-start gap-2 text-left"
+					disabled={isMarking || !unread}
+					onClick={() => onMarkRead?.(notification.id)}
+				>
+					<Icon
+						className={cn("mt-0.5 size-4 shrink-0", meta.iconClassName)}
+						aria-hidden
+					/>
+
+					<div className="min-w-0 flex-1">
+						<p className="text-sm leading-snug text-foreground">
+							<Trans
+								i18nKey={cardKey}
+								ns="notifications"
+								values={values}
+								components={{
+									bold: (
+										<span className="font-semibold text-foreground" />
+									),
+								}}
+							/>
 						</p>
-					) : null}
-				</div>
-			</button>
+						{timeLabel ? (
+							<p className="mt-1 text-xs text-muted-foreground">
+								{timeLabel}
+							</p>
+						) : null}
+					</div>
+				</button>
 
-			{unread ? (
-				<span
-					className="size-2.5 shrink-0 rounded-full bg-primary"
-					aria-hidden
-				/>
-			) : (
-				<span className="size-2.5 shrink-0" aria-hidden />
-			)}
+				{unread ? (
+					<span
+						className="size-2.5 shrink-0 rounded-full bg-primary"
+						aria-hidden
+					/>
+				) : (
+					<span className="size-2.5 shrink-0" aria-hidden />
+				)}
+			</div>
 		</article>
 	);
 }
