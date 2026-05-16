@@ -8,16 +8,18 @@
         "load": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
         "retry": "Intentar de nuevo"
     },
-    "types": {
-        "LIKE_POST": "le gustó tu publicación.",
-        "LIKE_COMMENT": "le gustó tu comentario.",
-        "COMMENT_POST": "comentó en tu publicación.",
-        "FRIEND_REQUEST": "te envió una solicitud de amistad.",
-        "FRIEND_ACCEPTED": "aceptó tu solicitud de amistad.",
-        "FRIEND_REJECTED": "rechazó tu solicitud de amistad.",
-        "FRIEND_BROKEN": "dejó de ser tu amigo.",
-        "ADDED_GROUP": "te añadió a un grupo.",
-        "REMOVED_GROUP": "te eliminó de un grupo.",
-        "unknown": "te envió una notificación."
+    "card": {
+        "someone": "Alguien",
+        "LIKE_POST": "<bold>{{name}}</bold> le gustó tu publicación.",
+        "LIKE_COMMENT": "<bold>{{name}}</bold> le gustó tu comentario.",
+        "COMMENT_POST": "<bold>{{name}}</bold> comentó: \"{{preview}}\"",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold> comentó en tu publicación.",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold> te envió una solicitud de amistad.",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold> aceptó tu solicitud de amistad.",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold> rechazó tu solicitud de amistad.",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold> dejó de ser tu amigo.",
+        "ADDED_GROUP": "<bold>{{name}}</bold> te añadió al grupo \"{{chatName}}\".",
+        "REMOVED_GROUP": "<bold>{{name}}</bold> te eliminó del grupo \"{{chatName}}\".",
+        "unknown": "<bold>{{name}}</bold> te envió una notificación."
     }
 }

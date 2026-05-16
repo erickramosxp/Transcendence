@@ -8,16 +8,18 @@
         "load": "Could not load notifications. Please try again.",
         "retry": "Try again"
     },
-    "types": {
-        "LIKE_POST": "liked your post.",
-        "LIKE_COMMENT": "liked your comment.",
-        "COMMENT_POST": "commented on your post.",
-        "FRIEND_REQUEST": "sent you a friend request.",
-        "FRIEND_ACCEPTED": "accepted your friend request.",
-        "FRIEND_REJECTED": "declined your friend request.",
-        "FRIEND_BROKEN": "removed you as a friend.",
-        "ADDED_GROUP": "added you to a group.",
-        "REMOVED_GROUP": "removed you from a group.",
-        "unknown": "sent you a notification."
+    "card": {
+        "someone": "Someone",
+        "LIKE_POST": "<bold>{{name}}</bold> liked your post.",
+        "LIKE_COMMENT": "<bold>{{name}}</bold> liked your comment.",
+        "COMMENT_POST": "<bold>{{name}}</bold> commented: \"{{preview}}\"",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold> commented on your post.",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold> sent you a friend request.",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold> accepted your friend request.",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold> declined your friend request.",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold> removed you as a friend.",
+        "ADDED_GROUP": "<bold>{{name}}</bold> added you to the group \"{{chatName}}\".",
+        "REMOVED_GROUP": "<bold>{{name}}</bold> removed you from the group \"{{chatName}}\".",
+        "unknown": "<bold>{{name}}</bold> sent you a notification."
     }
 }

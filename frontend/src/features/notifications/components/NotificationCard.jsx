@@ -1,7 +1,11 @@
 import { Avatar } from "@/design-system";
 import { getCurrentTime } from "@/shared/getCurrentTime";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { cn } from "@/design-system/tokens/colors";
+import {
+	resolveCardI18nKey,
+	resolveNotificationCardMeta,
+} from "../utils/notificationCardMeta";
 
 export function NotificationCard({
 	notification,
@@ -12,10 +16,15 @@ export function NotificationCard({
 	const isMarking = markingReadId === notification.id;
 	const unread = notification.isRead === false;
 
-	const typeKey = notification.type
-		? `types.${notification.type}`
-		: "types.unknown";
-	const typeLabel = t(typeKey, { defaultValue: notification.type ?? "" });
+	const meta = resolveNotificationCardMeta(notification.type);
+	const Icon = meta.icon;
+	const cardKey = resolveCardI18nKey(notification.type, notification);
+
+	const values = {
+		name: notification.name?.trim() || t("card.someone"),
+		preview: notification.preview ?? "",
+		chatName: notification.chatName ?? "",
+	};
 
 	const timeLabel = notification.createdAt
 		? getCurrentTime(notification.createdAt, i18n.language)
@@ -24,8 +33,8 @@ export function NotificationCard({
 	return (
 		<article
 			className={cn(
-				"flex w-full items-start gap-3 rounded-xl border border-border/60 bg-card/80 px-3 py-3 text-left transition-colors",
-				unread && "bg-card",
+				"flex w-full items-center gap-3 rounded-xl border border-border/50 bg-card/70 px-3 py-3 transition-colors",
+				unread && "bg-card/95",
 				isMarking && "opacity-60",
 			)}
 		>
@@ -39,40 +48,43 @@ export function NotificationCard({
 
 			<button
 				type="button"
-				className="min-w-0 flex-1 text-left"
+				className="flex min-w-0 flex-1 items-start gap-2 text-left"
 				disabled={isMarking || !unread}
 				onClick={() => onMarkRead?.(notification.id)}
 			>
-				<p className="text-sm leading-snug">
-					{notification.name ? (
-						<span className="font-semibold text-foreground">
-							{notification.name}{" "}
-						</span>
+				<Icon
+					className={cn("mt-0.5 size-4 shrink-0", meta.iconClassName)}
+					aria-hidden
+				/>
+
+				<div className="min-w-0 flex-1">
+					<p className="text-sm leading-snug text-foreground">
+						<Trans
+							i18nKey={cardKey}
+							ns="notifications"
+							values={values}
+							components={{
+								bold: (
+									<span className="font-semibold text-foreground" />
+								),
+							}}
+						/>
+					</p>
+					{timeLabel ? (
+						<p className="mt-1 text-xs text-muted-foreground">
+							{timeLabel}
+						</p>
 					) : null}
-					<span className="text-foreground">{typeLabel}</span>
-				</p>
-				{notification.preview ? (
-					<p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-						&ldquo;{notification.preview}&rdquo;
-					</p>
-				) : null}
-				{notification.chatName ? (
-					<p className="mt-1 text-sm text-muted-foreground">
-						{notification.chatName}
-					</p>
-				) : null}
-				{timeLabel ? (
-					<p className="mt-1 text-xs text-muted-foreground">{timeLabel}</p>
-				) : null}
+				</div>
 			</button>
 
 			{unread ? (
 				<span
-					className="mt-2 size-2.5 shrink-0 rounded-full bg-primary"
+					className="size-2.5 shrink-0 rounded-full bg-primary"
 					aria-hidden
 				/>
 			) : (
-				<span className="mt-2 size-2.5 shrink-0" aria-hidden />
+				<span className="size-2.5 shrink-0" aria-hidden />
 			)}
 		</article>
 	);
