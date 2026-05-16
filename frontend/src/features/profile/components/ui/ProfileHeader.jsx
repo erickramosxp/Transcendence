@@ -72,7 +72,7 @@ export const ProfileHeader = () => {
 
 		const typeValidation = validImageFile(file);
 		if (!typeValidation.valid) {
-			toast.error(contentValidation.error);
+			toast.error(typeValidation.error);
 			return;
 		}
 
@@ -86,9 +86,23 @@ export const ProfileHeader = () => {
 		setNewImage(imageUrl);
 	}
 
-	const setNewUrlImage = (image) => {
+	const handleCloseCrop = () => {
+		if (newImage) {
+			URL.revokeObjectURL(newImage);
+		}
+		setNewImage(null);
+	}
 
-		changeFields({ avatarUrl: image })
+	const handleSaveCroppedImage = async (croppedFile) => {
+
+		const contentValidation = await validateImageContent(croppedFile);
+		if (!contentValidation.valid) {
+			toast.error(contentValidation.error);
+			return;
+		}
+
+		await updateAvatar(croppedFile);
+		handleCloseCrop();
 	}
 
 	const openFollowers = () => setConnectionsModal({ open: true, tab: 'followers' });
@@ -125,8 +139,8 @@ export const ProfileHeader = () => {
 					<ImageCropModal onClose={() => setNewImage(null)}>
 						<CroppedImage
 							image={newImage}
-							setNewImage={updateAvatar}
-							onClose={setNewImage}
+							setNewImage={handleSaveCroppedImage}
+							onClose={handleCloseCrop}
 							cropShape="round"
 							aspect={1 / 1}
 						/>
@@ -180,17 +194,17 @@ export const ProfileHeader = () => {
 														{disableFollowButton &&
 															<Loading className="absolute text-muted-foreground" size="sm" />
 														}
-														<Button 
-															disabled={disableFollowButton} 
-															variant='outline' 
+														<Button
+															disabled={disableFollowButton}
+															variant='outline'
 															className={`transition-all
 																${disableFollowButton ? 'cursor-none blur-[1px] opacity-70' : 'cursor-pointer'}`
-															} 
+															}
 															onClick={() => handleUserFollowrs(userData.username, userData.isFollowing)}>
 															{userData?.isFollowing ? t('header.unfollow') : t('header.follow')}
 														</Button>
 													</div>
-													<FriendshipButton initialStatus={userData?.relationStatus} friendshipId={userData?.friendshipId} targetUserId={userData?.id}/>
+													<FriendshipButton initialStatus={userData?.relationStatus} friendshipId={userData?.friendshipId} targetUserId={userData?.id} />
 												</>
 											)
 											:

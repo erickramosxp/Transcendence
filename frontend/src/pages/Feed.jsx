@@ -15,6 +15,8 @@ import {
     UserListItem
 } from "@/design-system";
 import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
+import { getImageDimensions } from "@/shared/getImageDimensions";
+import { generateResizedBlob } from "@/shared/generateResizedBlob";
 
 export function Feed() {
 
@@ -55,6 +57,16 @@ export function Feed() {
 
         if (postData.file) {
             formData.append("file", postData.file);
+            if (postData.fileType == "photo") {
+                const { width, height } = await getImageDimensions(postData.file);
+                formData.append("width", width);
+                formData.append("height", height);
+                const previewBlob = await generateResizedBlob(postData.file, 400, 400, 0.6);
+                formData.append("previewFile", new File([previewBlob], "preview.jpg", { type: 'image/jpeg' }));
+                const blurBlob = await generateResizedBlob(postData.file, 20, 20, 0.1);
+                formData.append("blurFile", new File([blurBlob], "blur.jpg", { type: 'image/jpeg' }));
+                console.log(`Dimensões finais enviadas ao backend: ${width}x${height}`);
+            }
         }
 
 
@@ -93,10 +105,10 @@ export function Feed() {
                             </CardHeader>
                             <CardContent>
                                 {usersOnline && usersOnline.map((user, index) => (
-                                    <UserListItem 
+                                    <UserListItem
                                         key={user?.userId + index}
                                         user={user}
-                                        onClick={() => {}}
+                                        onClick={() => { }}
                                     />
                                 ))}
                             </CardContent>
