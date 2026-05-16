@@ -5,6 +5,7 @@ import { useChatStore } from '@/features/chat/store/useChatStore'
 import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData'
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
+import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
 
 import {
@@ -152,7 +153,6 @@ export const useSocketStore = create((set, get) => ({
             }, WS_HEARTBEAT_MS)
         }
 
-        // Evita ficar preso em CONNECTING quando o servidor está indisponível.
         connectTimeoutId = setTimeout(() => {
             if (ws.readyState === WebSocket.CONNECTING) {
                 console.warn('[WS] Timeout ao conectar, forçando fechamento para nova tentativa')
@@ -173,6 +173,7 @@ export const useSocketStore = create((set, get) => ({
 
             // Handshake desta ligação: servidor não herda subscrições do socket anterior.
             sendOnWire(ws, 'LIST_PRESENCE')
+            void useNotificationStore.getState().refreshUnreadCount()
             const activeChatId = useChatStore.getState().activeChatId
             if (activeChatId != null) {
                 sendOnWire(ws, WS_SEND_EVENTS.CHAT_SUBSCRIBE, {
@@ -287,6 +288,13 @@ export const useSocketStore = create((set, get) => ({
                 case WS_INCOMING_EVENTS.MESSAGE_CREATED: {
                     const payload = data.payload ?? data;
                     handleMessageCreated(payload);
+                    break;
+                }
+                case WS_INCOMING_EVENTS.NOTIFICATION_RECEIVED: {
+                    const payload = data.payload ?? data;
+                    void useNotificationStore
+                        .getState()
+                        .prependIncomingNotification(payload);
                     break;
                 }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:

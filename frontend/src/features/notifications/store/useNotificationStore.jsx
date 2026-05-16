@@ -7,6 +7,10 @@ import {
 	DEFAULT_NOTIFICATION_PAGE_SIZE,
 } from "../service/notificationService";
 
+export const NOTIFICATION_ERROR_CODES = {
+	LOAD: "load",
+};
+
 function mergeUniqueById(existing, incoming) {
 	const seen = new Set(existing.map((n) => n?.id).filter((id) => id != null));
 	const extra = incoming.filter((n) => {
@@ -23,18 +27,18 @@ export const useNotificationStore = create((set, get) => ({
 	page: 0,
 	pageSize: DEFAULT_NOTIFICATION_PAGE_SIZE,
 	hasMore: false,
-
 	unreadCount: 0,
-
 	loading: false,
-	error: null,
+	errorCode: null,
+	markingAllRead: false,
+	markingReadId: null,
 
 	loadNotificationsPage: async (
 		page = 0,
 		size = get().pageSize ?? DEFAULT_NOTIFICATION_PAGE_SIZE,
 		{ append = false } = {},
 	) => {
-		set({ loading: true, error: null });
+		set({ loading: true, errorCode: null });
 		try {
 			const data = await fetchNotificationsPage(page, size);
 			const items = Array.isArray(data?.items) ? data.items : [];
@@ -46,10 +50,11 @@ export const useNotificationStore = create((set, get) => ({
 				loading: false,
 			}));
 			await get().refreshUnreadCount();
-		} catch (e) {
-			const message =
-				e?.response?.data?.message ?? e?.message ?? "Erro ao carregar notificações";
-			set({ loading: false, error: typeof message === "string" ? message : "Erro" });
+		} catch {
+			set({
+				loading: false,
+				errorCode: NOTIFICATION_ERROR_CODES.LOAD,
+			});
 		}
 	},
 
@@ -68,50 +73,69 @@ export const useNotificationStore = create((set, get) => ({
 		}
 	},
 
-	/** Notificação vinda do WebSocket (`NOTIFICATION_RECEIVED`). Evita duplicar por `id`. */
-	prependIncomingNotification: (notification) => {
+	prependIncomingNotification: async (notification) => {
 		if (notification?.id == null) return;
-		set((state) => {
-			if (state.notifications.some((n) => n?.id === notification.id))
-				return state;
-			const wasUnread = notification.isRead === false;
-			return {
-				notifications: [notification, ...state.notifications],
-				unreadCount: wasUnread ? state.unreadCount + 1 : state.unreadCount,
-			};
-		});
+
+		const { notifications } = get();
+		if (notifications.some((n) => n?.id === notification.id)) return;
+
+		set({ notifications: [notification, ...notifications] });
+		await get().refreshUnreadCount();
 	},
 
 	markOneRead: async (id) => {
+		const { markingAllRead, markingReadId } = get();
+		if (markingAllRead || markingReadId != null) return;
+
 		const snapList = [...get().notifications];
 		const snapUnread = get().unreadCount;
+		const target = snapList.find((n) => n?.id === id);
+		if (!target || target.isRead) return;
+
+		const wasUnread = target.isRead === false;
+
 		const list = snapList.map((n) =>
 			n?.id === id ? { ...n, isRead: true } : n,
 		);
-		const unreadLocal = list.filter((n) => !n?.isRead).length;
-		set({ notifications: list, unreadCount: unreadLocal });
+
+		set({
+			markingReadId: id,
+			notifications: list,
+			unreadCount: wasUnread ? Math.max(0, snapUnread - 1) : snapUnread,
+		});
+
 		try {
 			await markRead(id);
 			await get().refreshUnreadCount();
 		} catch {
 			set({ notifications: snapList, unreadCount: snapUnread });
+		} finally {
+			set({ markingReadId: null });
 		}
 	},
 
 	markEverythingRead: async () => {
+		const { markingAllRead, markingReadId, unreadCount } = get();
+		if (markingAllRead || markingReadId != null || unreadCount === 0) return;
+
 		const snapList = [...get().notifications];
 		const snapUnread = get().unreadCount;
+
 		set({
+			markingAllRead: true,
 			notifications: snapList.map((n) => ({ ...n, isRead: true })),
 			unreadCount: 0,
 		});
+
 		try {
 			await markAllRead();
 			await get().refreshUnreadCount();
 		} catch {
 			set({ notifications: snapList, unreadCount: snapUnread });
+		} finally {
+			set({ markingAllRead: false });
 		}
 	},
 
-	clearError: () => set({ error: null }),
+	clearError: () => set({ errorCode: null }),
 }));

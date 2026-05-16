@@ -1,5 +1,23 @@
 {
     "title": "Notificações",
     "markAllRead": "Marcar todas como lidas",
-    "empty": "Nenhuma notificação por aqui."
+    "empty": "Nenhuma notificação por aqui.",
+    "loading": "Carregando…",
+    "loadMore": "Carregar mais",
+    "errors": {
+        "load": "Não foi possível carregar as notificações. Tente novamente.",
+        "retry": "Tentar novamente"
+    },
+    "types": {
+        "LIKE_POST": "curtiu seu post.",
+        "LIKE_COMMENT": "curtiu seu comentário.",
+        "COMMENT_POST": "comentou no seu post.",
+        "FRIEND_REQUEST": "enviou uma solicitação de amizade.",
+        "FRIEND_ACCEPTED": "aceitou sua solicitação de amizade.",
+        "FRIEND_REJECTED": "recusou sua solicitação de amizade.",
+        "FRIEND_BROKEN": "desfez a amizade com você.",
+        "ADDED_GROUP": "adicionou você a um grupo.",
+        "REMOVED_GROUP": "removeu você de um grupo.",
+        "unknown": "enviou uma notificação."
+    }
 }

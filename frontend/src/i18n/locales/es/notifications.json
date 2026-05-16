@@ -1,5 +1,23 @@
 {
     "title": "Notificaciones",
     "markAllRead": "Marcar todas como leídas",
-    "empty": "Aún no hay notificaciones."
+    "empty": "Aún no hay notificaciones.",
+    "loading": "Cargando…",
+    "loadMore": "Cargar más",
+    "errors": {
+        "load": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
+        "retry": "Intentar de nuevo"
+    },
+    "types": {
+        "LIKE_POST": "le gustó tu publicación.",
+        "LIKE_COMMENT": "le gustó tu comentario.",
+        "COMMENT_POST": "comentó en tu publicación.",
+        "FRIEND_REQUEST": "te envió una solicitud de amistad.",
+        "FRIEND_ACCEPTED": "aceptó tu solicitud de amistad.",
+        "FRIEND_REJECTED": "rechazó tu solicitud de amistad.",
+        "FRIEND_BROKEN": "dejó de ser tu amigo.",
+        "ADDED_GROUP": "te añadió a un grupo.",
+        "REMOVED_GROUP": "te eliminó de un grupo.",
+        "unknown": "te envió una notificación."
+    }
 }

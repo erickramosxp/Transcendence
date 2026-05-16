@@ -1,5 +1,23 @@
 {
     "title": "Notifications",
     "markAllRead": "Mark all as read",
-    "empty": "No notifications yet."
+    "empty": "No notifications yet.",
+    "loading": "Loading…",
+    "loadMore": "Load more",
+    "errors": {
+        "load": "Could not load notifications. Please try again.",
+        "retry": "Try again"
+    },
+    "types": {
+        "LIKE_POST": "liked your post.",
+        "LIKE_COMMENT": "liked your comment.",
+        "COMMENT_POST": "commented on your post.",
+        "FRIEND_REQUEST": "sent you a friend request.",
+        "FRIEND_ACCEPTED": "accepted your friend request.",
+        "FRIEND_REJECTED": "declined your friend request.",
+        "FRIEND_BROKEN": "removed you as a friend.",
+        "ADDED_GROUP": "added you to a group.",
+        "REMOVED_GROUP": "removed you from a group.",
+        "unknown": "sent you a notification."
+    }
 }
