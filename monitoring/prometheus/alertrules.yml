@@ -19,6 +19,20 @@ groups:
           summary: "Backend caiu!"
           description: "A API do Quarkus em {{ $labels.instance }} está offline há mais de 1 minuto."
 
+  - name: deadmans_switch
+    rules:
+      # Alerta que dispara SEMPRE — é o heartbeat do sistema de monitoramento.
+      # Se esse alerta parar de chegar no Alertmanager, significa que o
+      # Prometheus caiu. O Alertmanager repassa para o Healthchecks.io,
+      # que dispara a notificação no Discord.
+      - alert: DeadMansSwitch
+        expr: vector(1)
+        labels:
+          severity: heartbeat
+        annotations:
+          summary: "Heartbeat do Prometheus"
+          description: "Se você está vendo isso no Discord, algo deu muito errado."
+
   - name: jvm_alerts
     rules:
       - alert: HighHeapUsage

@@ -10,9 +10,16 @@ route:
 
   routes:
     - match:
+        severity: heartbeat
+      receiver: 'healthchecks'
+      repeat_interval: 1m
+      group_wait: 0s
+      group_interval: 1m
+
+    - match:
         severity: critical
       receiver: 'discord-notifications'
-      repeat_interval: 30m  # critical repete mais rápido
+      repeat_interval: 30m
 
     - match:
         severity: warning
@@ -24,27 +31,15 @@ receivers:
     discord_configs:
       - webhook_url: 'https://discord.com/api/webhooks/1496673516467261625/QyezrkSKp4gXsgNBDdENttWS1HLDu-TZnee9lXIoqIw1_NbVI2hbMQimXU65X-HPNQd8'
         send_resolved: true
-        title: >-
-          {{ if eq .Status "firing" }}
-            {{ if eq (index .Alerts 0).Labels.severity "critical" }}🚨{{ else }}⚠️{{ end }} {{ .GroupLabels.alertname }}
-          {{ else }}
-            ✅ RESOLVIDO: {{ .GroupLabels.alertname }}
-          {{ end }}
-        message: >-
-          {{ if eq .Status "resolved" }}
-          🟢 **Serviço normalizado!**
-          O alerta **{{ .GroupLabels.alertname }}** foi resolvido com sucesso.
-          {{ else }}
-          {{ range .Alerts }}
-          **Severidade:** {{ if eq .Labels.severity "critical" }}🔴 Critical{{ else }}🟡 Warning{{ end }}
-          **Alerta:** {{ .Labels.alertname }}
-          **Descrição:** {{ .Annotations.description }}
-          **Início:** {{ .StartsAt.Format "02/01/2006 15:04:05" }}
-          {{ end }}
-          {{ end }}
+        title: '{{ if eq .Status "firing" }}{{ if eq (index .Alerts 0).Labels.severity "critical" }}🚨{{ else }}⚠️{{ end }} {{ .GroupLabels.alertname }}{{ else }}✅ RESOLVIDO: {{ .GroupLabels.alertname }}{{ end }}'
+        message: '{{ if eq .Status "resolved" }}🟢 **Serviço normalizado!** O alerta **{{ .GroupLabels.alertname }}** foi resolvido.{{ else }}{{ range .Alerts }}**Severidade:** {{ if eq .Labels.severity "critical" }}🔴 Critical{{ else }}🟡 Warning{{ end }}\n**Alerta:** {{ .Labels.alertname }}\n**Descrição:** {{ .Annotations.description }}{{ end }}{{ end }}'
+
+  - name: 'healthchecks'
+    webhook_configs:
+      - url: 'https://hc-ping.com/3d9aadf1-95fd-43ff-bb8e-75a98e40162d'
+        send_resolved: false
 
 inhibit_rules:
-  # Se critical já disparou para o mesmo alerta, suprime o warning duplicado
   - source_match:
       severity: 'critical'
     target_match:

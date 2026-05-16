@@ -22,3 +22,5 @@ storybook-static/
 **/blob-report/
 **/.playwright/
 minio_data/
+
+certs/*.pem
