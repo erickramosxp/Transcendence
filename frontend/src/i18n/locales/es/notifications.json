@@ -8,7 +8,9 @@
         "load": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
         "retry": "Intentar de nuevo",
         "markRead": "No se pudo marcar la notificación como leída.",
-        "markAllRead": "No se pudieron marcar todas como leídas."
+        "markAllRead": "No se pudieron marcar todas como leídas.",
+        "postUnavailable": "Esta publicación ya no está disponible.",
+        "openTarget": "No se pudo abrir el destino de esta notificación."
     },
     "toast": {
         "close": "Cerrar notificación",

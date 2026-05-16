@@ -8,7 +8,9 @@
         "load": "Could not load notifications. Please try again.",
         "retry": "Try again",
         "markRead": "Could not mark the notification as read.",
-        "markAllRead": "Could not mark all notifications as read."
+        "markAllRead": "Could not mark all notifications as read.",
+        "postUnavailable": "This post is no longer available.",
+        "openTarget": "Could not open this notification's destination."
     },
     "toast": {
         "close": "Close notification",

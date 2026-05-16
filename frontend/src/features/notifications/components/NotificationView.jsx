@@ -7,7 +7,7 @@ import {
 	NOTIFICATION_ERROR_CODES,
 } from "../store/useNotificationStore";
 import { NotificationCard } from "./NotificationCard";
-import { useMediaPostModal } from "@/features/profile/hooks/useMediaPostModal";
+import { useNotificationPostModal } from "../hooks/useNotificationPostModal";
 import { MediaPostModal } from "@/features/profile/components/ui/MediaPostModal";
 
 export function NotificationView() {
@@ -15,7 +15,7 @@ export function NotificationView() {
 
 	const {
 		selected,
-		modalLoading,
+		resolvingPostId,
 		activeCommentsPostId,
 		highlightCommentId,
 		openPost,
@@ -23,7 +23,7 @@ export function NotificationView() {
 		handleLike,
 		toggleComments,
 		incrementCommentCount,
-	} = useMediaPostModal();
+	} = useNotificationPostModal();
 
 	const errorCode = useNotificationStore((state) => state.errorCode);
 	const loading = useNotificationStore((state) => state.loading);
@@ -125,6 +125,7 @@ export function NotificationView() {
 								<NotificationCard
 									notification={notification}
 									markingReadId={markingReadId}
+									resolvingPostId={resolvingPostId}
 									onMarkRead={markOneRead}
 									onOpenPost={openPost}
 								/>
@@ -150,10 +151,10 @@ export function NotificationView() {
 		</div>
 
 		<MediaPostModal
-			open={!!selected || modalLoading}
+			open={!!selected}
 			onClose={closePost}
 			post={selected}
-			loading={modalLoading}
+			loading={false}
 			onLike={handleLike}
 			onToggleComments={toggleComments}
 			activeCommentsPostId={activeCommentsPostId}

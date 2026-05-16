@@ -8,7 +8,9 @@
         "load": "Não foi possível carregar as notificações. Tente novamente.",
         "retry": "Tentar novamente",
         "markRead": "Não foi possível marcar a notificação como lida.",
-        "markAllRead": "Não foi possível marcar todas como lidas."
+        "markAllRead": "Não foi possível marcar todas como lidas.",
+        "postUnavailable": "Este post não está mais disponível.",
+        "openTarget": "Não foi possível abrir o destino desta notificação."
     },
     "toast": {
         "close": "Fechar notificação",

@@ -11,15 +11,6 @@ import '@/i18n'
 
 const clientId = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID;
 
-const toastContainerProps = {
-  position: 'bottom-right',
-  draggable: true,
-  newestOnTop: true,
-  limit: 3,
-  theme: 'dark',
-  toastClassName: '!bg-transparent !shadow-none',
-};
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
       <BrowserRouter>
@@ -28,7 +19,10 @@ createRoot(document.getElementById('root')).render(
             <GoogleOAuthProvider clientId={clientId}>
               <AuthProvider>
                 <App />
-                <ToastContainer {...toastContainerProps} />
+                <ToastContainer
+                  position='bottom-right'
+                  draggable
+                />
               </AuthProvider>
             </GoogleOAuthProvider>
           )
@@ -36,7 +30,10 @@ createRoot(document.getElementById('root')).render(
           (
             <AuthProvider>
               <App />
-              <ToastContainer {...toastContainerProps} />
+              <ToastContainer
+                position='bottom-right'
+                draggable
+              />
             </AuthProvider>
           )
         }
