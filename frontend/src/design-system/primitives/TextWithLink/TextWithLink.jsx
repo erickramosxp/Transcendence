@@ -5,7 +5,7 @@ export function TextWithLink({ text, className = "", linkClassName }) {
 	const parts = parseTextWithLinks(text);
 
 	return (
-		<span className={className}>
+		<span className={cn("break-all", className)}>
 			{parts.map((part, i) =>
 				part.type === "link" ? (
 					<a

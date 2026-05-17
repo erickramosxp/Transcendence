@@ -21,8 +21,11 @@ export const getCroppedImage = async (imageSrc, pixelCrop, format = 'image/jpeg'
         throw new Error("fail to cropped");
     }
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    const TARGET_WIDTH = 400;
+    const TARGET_HEIGHT = 400;
+
+    canvas.width = TARGET_WIDTH;
+    canvas.height = TARGET_HEIGHT;
 
     //  drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
     //  sx, sy, sWidth, sHeight
@@ -37,8 +40,8 @@ export const getCroppedImage = async (imageSrc, pixelCrop, format = 'image/jpeg'
         pixelCrop.width,
         pixelCrop.height,
         0, 0,
-        pixelCrop.width,
-        pixelCrop.height
+        TARGET_WIDTH,
+        TARGET_HEIGHT
     );
 
     // Blob = Binary Large Object // um arquivo em memória (imagem, vídeo, etc)

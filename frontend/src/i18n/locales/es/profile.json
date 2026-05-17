@@ -5,7 +5,7 @@
         "media": "Multimedia",
         "likes": "Me gusta"
     },
-    "header" : {
+    "header": {
         "editProfile": "Editar perfil",
         "settings": "Configuración",
         "follow": "Seguir",
@@ -28,6 +28,10 @@
             "errorNameLength": "El nombre debe tener al menos 3 caracteres",
             "success": "Perfil actualizado correctamente",
             "error": "Error al actualizar el perfil"
+        },
+        "toast": {
+            "follow_error": "Error al seguir",
+            "unfollow_error": "Error al dejar de seguir"
         }
     },
     "info": {
