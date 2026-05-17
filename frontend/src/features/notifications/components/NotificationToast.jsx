@@ -7,6 +7,7 @@ import {
 	resolveCardI18nKey,
 	resolveNotificationCardMeta,
 } from "../utils/notificationCardMeta";
+import { notificationTransComponents } from "../utils/notificationTransComponents";
 
 export function NotificationToast({ notification, closeToast }) {
 	const { t } = useTranslation("notifications");
@@ -19,10 +20,6 @@ export function NotificationToast({ notification, closeToast }) {
 		preview: notification.preview ?? "",
 		chatName: notification.chatName ?? "",
 	};
-
-	const reasonLabel =
-		notification.reason?.trim() &&
-		t("toast.reason", { reason: notification.reason.trim() });
 
 	function goToNotifications() {
 		closeToast?.();
@@ -69,19 +66,10 @@ export function NotificationToast({ notification, closeToast }) {
 									ns="notifications"
 									i18nKey={cardKey}
 									values={values}
-									components={{
-										bold: (
-											<span className="font-semibold text-foreground" />
-										),
-									}}
+									components={notificationTransComponents}
 								/>
 							</span>
 						</p>
-						{reasonLabel ? (
-							<p className="mt-1 pl-6 text-xs text-muted-foreground">
-								{reasonLabel}
-							</p>
-						) : null}
 					</div>
 				</button>
 				<button

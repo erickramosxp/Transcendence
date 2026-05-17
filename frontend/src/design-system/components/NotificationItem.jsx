@@ -56,7 +56,7 @@ export function NotificationItem({
 					) : null}
 
 					<div className="min-w-0 flex-1">
-						<p className="text-sm leading-snug text-foreground">
+						<p className="text-sm leading-snug">
 							{message}
 						</p>
 						{timeLabel ? (

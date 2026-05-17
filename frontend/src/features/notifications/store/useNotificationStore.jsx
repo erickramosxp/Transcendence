@@ -31,6 +31,7 @@ export const useNotificationStore = create((set, get) => ({
 	hasMore: false,
 	unreadCount: 0,
 	loading: false,
+	loadingMore: false,
 	errorCode: null,
 	markingAllRead: false,
 	markingReadId: null,
@@ -40,7 +41,11 @@ export const useNotificationStore = create((set, get) => ({
 		size = get().pageSize ?? DEFAULT_NOTIFICATION_PAGE_SIZE,
 		{ append = false } = {},
 	) => {
-		set({ loading: true, errorCode: null });
+		set({
+			loading: !append,
+			loadingMore: append,
+			errorCode: null,
+		});
 		try {
 			const data = await fetchNotificationsPage(page, size);
 			const items = Array.isArray(data?.items) ? data.items : [];
@@ -50,19 +55,21 @@ export const useNotificationStore = create((set, get) => ({
 				pageSize: size,
 				hasMore: Boolean(data?.hasMore),
 				loading: false,
+				loadingMore: false,
 			}));
 			await get().refreshUnreadCount();
 		} catch {
 			set({
 				loading: false,
+				loadingMore: false,
 				errorCode: NOTIFICATION_ERROR_CODES.LOAD,
 			});
 		}
 	},
 
 	loadMoreNotifications: async () => {
-		const { hasMore, loading, page, pageSize } = get();
-		if (!hasMore || loading) return;
+		const { hasMore, loading, loadingMore, page, pageSize } = get();
+		if (!hasMore || loading || loadingMore) return;
 		await get().loadNotificationsPage(page + 1, pageSize, { append: true });
 	},
 

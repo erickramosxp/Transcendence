@@ -14,22 +14,21 @@
     },
     "toast": {
         "close": "Close notification",
-        "openNotifications": "Open notifications page",
-        "reason": "Reason: {{reason}}"
+        "openNotifications": "Open notifications page"
     },
     "card": {
         "openTarget": "Open notification destination",
         "someone": "Someone",
-        "LIKE_POST": "<bold>{{name}}</bold> liked your post.",
-        "LIKE_COMMENT": "<bold>{{name}}</bold> liked your comment.",
-        "COMMENT_POST": "<bold>{{name}}</bold> commented: \"{{preview}}\"",
-        "COMMENT_POST_noPreview": "<bold>{{name}}</bold> commented on your post.",
-        "FRIEND_REQUEST": "<bold>{{name}}</bold> sent you a friend request.",
-        "FRIEND_ACCEPTED": "<bold>{{name}}</bold> accepted your friend request.",
-        "FRIEND_REJECTED": "<bold>{{name}}</bold> declined your friend request.",
-        "FRIEND_BROKEN": "<bold>{{name}}</bold> removed you as a friend.",
-        "ADDED_GROUP": "<bold>{{name}}</bold> added you to the group \"{{chatName}}\".",
-        "REMOVED_GROUP": "<bold>{{name}}</bold> removed you from the group \"{{chatName}}\".",
-        "unknown": "<bold>{{name}}</bold> sent you a notification."
+        "LIKE_POST": "<bold>{{name}}</bold><muted> liked your post.</muted>",
+        "LIKE_COMMENT": "<bold>{{name}}</bold><muted> liked your comment.</muted>",
+        "COMMENT_POST": "<bold>{{name}}</bold><muted> commented: \"{{preview}}\"</muted>",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold><muted> commented on your post.</muted>",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold><muted> sent you a friend request.</muted>",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold><muted> accepted your friend request.</muted>",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold><muted> declined your friend request.</muted>",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold><muted> removed you as a friend.</muted>",
+        "ADDED_GROUP": "<bold>{{name}}</bold><muted> added you to the group \"{{chatName}}\".</muted>",
+        "REMOVED_GROUP": "<bold>{{name}}</bold><muted> removed you from the group \"{{chatName}}\".</muted>",
+        "unknown": "<bold>{{name}}</bold><muted> sent you a notification.</muted>"
     }
 }

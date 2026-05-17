@@ -5,6 +5,7 @@ import {
 	resolveCardI18nKey,
 	resolveNotificationCardMeta,
 } from "../utils/notificationCardMeta";
+import { notificationTransComponents } from "../utils/notificationTransComponents";
 import { useNotificationActivation } from "../hooks/useNotificationActivation";
 
 export function NotificationCard({
@@ -54,11 +55,7 @@ export function NotificationCard({
 					i18nKey={cardKey}
 					ns="notifications"
 					values={values}
-					components={{
-						bold: (
-							<span className="font-semibold text-foreground" />
-						),
-					}}
+					components={notificationTransComponents}
 				/>
 			}
 			timeLabel={timeLabel}

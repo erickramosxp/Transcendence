@@ -14,22 +14,21 @@
     },
     "toast": {
         "close": "Cerrar notificación",
-        "openNotifications": "Abrir página de notificaciones",
-        "reason": "Motivo: {{reason}}"
+        "openNotifications": "Abrir página de notificaciones"
     },
     "card": {
         "openTarget": "Abrir destino de la notificación",
         "someone": "Alguien",
-        "LIKE_POST": "<bold>{{name}}</bold> le gustó tu publicación.",
-        "LIKE_COMMENT": "<bold>{{name}}</bold> le gustó tu comentario.",
-        "COMMENT_POST": "<bold>{{name}}</bold> comentó: \"{{preview}}\"",
-        "COMMENT_POST_noPreview": "<bold>{{name}}</bold> comentó en tu publicación.",
-        "FRIEND_REQUEST": "<bold>{{name}}</bold> te envió una solicitud de amistad.",
-        "FRIEND_ACCEPTED": "<bold>{{name}}</bold> aceptó tu solicitud de amistad.",
-        "FRIEND_REJECTED": "<bold>{{name}}</bold> rechazó tu solicitud de amistad.",
-        "FRIEND_BROKEN": "<bold>{{name}}</bold> dejó de ser tu amigo.",
-        "ADDED_GROUP": "<bold>{{name}}</bold> te añadió al grupo \"{{chatName}}\".",
-        "REMOVED_GROUP": "<bold>{{name}}</bold> te eliminó del grupo \"{{chatName}}\".",
-        "unknown": "<bold>{{name}}</bold> te envió una notificación."
+        "LIKE_POST": "<bold>{{name}}</bold><muted> le gustó tu publicación.</muted>",
+        "LIKE_COMMENT": "<bold>{{name}}</bold><muted> le gustó tu comentario.</muted>",
+        "COMMENT_POST": "<bold>{{name}}</bold><muted> comentó: \"{{preview}}\"</muted>",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold><muted> comentó en tu publicación.</muted>",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold><muted> te envió una solicitud de amistad.</muted>",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold><muted> aceptó tu solicitud de amistad.</muted>",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold><muted> rechazó tu solicitud de amistad.</muted>",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold><muted> dejó de ser tu amigo.</muted>",
+        "ADDED_GROUP": "<bold>{{name}}</bold><muted> te añadió al grupo \"{{chatName}}\".</muted>",
+        "REMOVED_GROUP": "<bold>{{name}}</bold><muted> te eliminó del grupo \"{{chatName}}\".</muted>",
+        "unknown": "<bold>{{name}}</bold><muted> te envió una notificación.</muted>"
     }
 }
