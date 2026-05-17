@@ -174,7 +174,7 @@ export default function CommentCard({
                                 </span>
                             </div>
 
-                            <div className="mt-2 leading-relaxed text-foreground">
+                            <div className="mt-2 min-w-0 overflow-hidden break-words leading-relaxed text-foreground [overflow-wrap:anywhere]">
                                 <TextWithLink text={comment.contents} />
                             </div>
 

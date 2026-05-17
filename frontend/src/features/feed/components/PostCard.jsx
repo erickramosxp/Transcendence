@@ -108,7 +108,7 @@ function PostCard({
 						</div>
 					</div>
 
-					<div className="mt-2 break-words overflow-hidden leading-relaxed text-foreground">
+					<div className="mt-2 min-w-0 overflow-hidden break-words leading-relaxed text-foreground [overflow-wrap:anywhere]">
 						<TextWithLink text={post.contents} />
 					</div>
 

@@ -56,7 +56,7 @@ export function NotificationItem({
 					) : null}
 
 					<div className="min-w-0 flex-1">
-						<p className="text-sm leading-snug">
+						<p className="min-w-0 break-words text-sm leading-snug [overflow-wrap:anywhere]">
 							{message}
 						</p>
 						{timeLabel ? (

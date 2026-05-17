@@ -5,7 +5,12 @@ export function TextWithLink({ text, className = "", linkClassName }) {
 	const parts = parseTextWithLinks(text);
 
 	return (
-		<span className={cn("break-all", className)}>
+		<span
+			className={cn(
+				"block min-w-0 max-w-full break-words [overflow-wrap:anywhere]",
+				className,
+			)}
+		>
 			{parts.map((part, i) =>
 				part.type === "link" ? (
 					<a

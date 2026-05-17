@@ -7,6 +7,18 @@ function sameMessageId(a, b) {
 	return Number(a) === Number(b)
 }
 
+function findPendingOutboundIndex(messages, { chatId, text, replyToId }) {
+	const textT = String(text ?? '').trim()
+	const replyToN = Number(replyToId ?? 0)
+	return messages.findIndex(
+		(m) =>
+			m.deliveryStatus === 'sending' &&
+			Number(m.chatId) === Number(chatId) &&
+			String(m.text ?? '').trim() === textT &&
+			Number(m.replyToId ?? 0) === replyToN,
+	)
+}
+
 export const useChatStore = create((set) => ({
 
     activeChatId: null,
@@ -61,6 +73,27 @@ export const useChatStore = create((set) => ({
 
                 if (alreadyExists) {
                     return state
+                }
+            }
+
+            const me = readCurrentUserId()
+            const isOwn =
+                message.senderId != null &&
+                String(message.senderId) === String(me)
+            if (isOwn && message.id != null) {
+                const pendingIdx = findPendingOutboundIndex(state.messages, {
+                    chatId: message.chatId,
+                    text: message.text,
+                    replyToId: message.replyToId,
+                })
+                if (pendingIdx !== -1) {
+                    const prev = state.messages[pendingIdx]
+                    const next = [...state.messages]
+                    next[pendingIdx] = {
+                        ...message,
+                        clientMessageId: prev.clientMessageId,
+                    }
+                    return { messages: next }
                 }
             }
 
@@ -129,18 +162,34 @@ export const useChatStore = create((set) => ({
             const textT = String(payload.text ?? '').trim()
             const chatId = payload.chatId
             const replyToPayload = payload.replyToId ?? payload.reply_to_id
-            const idx = state.messages.findIndex(
-                (m) =>
-                    m.deliveryStatus === 'sending' &&
-                    Number(m.chatId) === Number(chatId) &&
-                    String(m.text ?? '').trim() === textT &&
-                    Number(m.replyToId ?? 0) === Number(replyToPayload ?? 0),
+            const pendingIdx = findPendingOutboundIndex(state.messages, {
+                chatId,
+                text: textT,
+                replyToId: replyToPayload,
+            })
+
+            const existingIdx = state.messages.findIndex((m) =>
+                sameMessageId(m.id, payload.id),
             )
-            if (idx === -1) return state
+
+            if (existingIdx !== -1) {
+                if (pendingIdx === -1) return state
+                replaced = true
+                return {
+                    messages: state.messages.filter((_, i) => i !== pendingIdx),
+                }
+            }
+
+            if (pendingIdx === -1) return state
 
             const ui = mapMessageSenderData(payload, me, peerFallback)
+            const prev = state.messages[pendingIdx]
             const next = [...state.messages]
-            next[idx] = { ...ui, chatId }
+            next[pendingIdx] = {
+                ...ui,
+                chatId,
+                clientMessageId: prev.clientMessageId,
+            }
             replaced = true
             return { messages: next }
         })
@@ -163,7 +212,11 @@ export const useChatStore = create((set) => ({
 
             const ui = mapMessageSenderData(payload, me, peerFallback)
             const next = [...state.messages]
-            next[idx] = { ...ui, chatId: payload.chatId }
+            next[idx] = {
+                ...ui,
+                chatId: payload.chatId,
+                clientMessageId,
+            }
             replaced = true
             return { messages: next }
         })

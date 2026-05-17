@@ -53,7 +53,7 @@ export function NotificationToast({ notification, closeToast }) {
 						username={notification.username}
 					/>
 					<div className="min-w-0 flex-1">
-						<p className="flex items-start gap-2 text-sm leading-snug text-foreground">
+						<p className="flex min-w-0 items-start gap-2 text-sm leading-snug text-foreground">
 							<Icon
 								className={cn(
 									"mt-0.5 size-4 shrink-0",
@@ -61,7 +61,7 @@ export function NotificationToast({ notification, closeToast }) {
 								)}
 								aria-hidden
 							/>
-							<span>
+							<span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
 								<Trans
 									ns="notifications"
 									i18nKey={cardKey}

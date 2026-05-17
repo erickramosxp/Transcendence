@@ -245,10 +245,22 @@ export const useSocketStore = create((set, get) => ({
                     : 'User')
 
             const chat = useChatStore.getState()
-            const resolved = chat.completeOutboundWithServerPayload(
-                payload,
-                peerFallback,
-            )
+            const clientToken =
+                payload.clientMessageId ?? payload.client_message_id
+            let resolved = false
+            if (clientToken) {
+                resolved = chat.completeOutboundWithClientToken(
+                    clientToken,
+                    payload,
+                    peerFallback,
+                )
+            }
+            if (!resolved) {
+                resolved = chat.completeOutboundWithServerPayload(
+                    payload,
+                    peerFallback,
+                )
+            }
 
             if (!resolved) {
                 const ui = mapMessageSenderData(
