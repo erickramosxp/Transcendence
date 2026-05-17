@@ -6,6 +6,8 @@ import { mapMessageSenderData } from '@/features/chat/utils/mapMessageSenderData
 import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
+import { showNotificationToast } from '@/features/notifications/utils/showNotificationToast'
+import { showChatMessageToast } from '@/features/chat/utils/showChatMessageToast'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
 
 import {
@@ -43,9 +45,21 @@ export const useSocketStore = create((set, get) => ({
 
         const { socket } = get();
 
-        if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+        if (socket?.readyState === WebSocket.OPEN || socket?.readyState === WebSocket.CONNECTING) {
             return;
         }
+
+        if (socket) {
+            socket.onopen = null
+            socket.onmessage = null
+            socket.onclose = null
+            socket.onerror = null
+            if (socket.readyState !== WebSocket.CLOSED) {
+                socket.close()
+            }
+            set({ socket: null, connected: false })
+        }
+
         set({ connecting: true })
         const ws = new WebSocket(resolveRealtimeWebSocketUrl(token))
         let connectTimeoutId = null
@@ -153,7 +167,6 @@ export const useSocketStore = create((set, get) => ({
             }, WS_HEARTBEAT_MS)
         }
 
-        // Evita ficar preso em CONNECTING quando o servidor está indisponível.
         connectTimeoutId = setTimeout(() => {
             if (ws.readyState === WebSocket.CONNECTING) {
                 console.warn('[WS] Timeout ao conectar, forçando fechamento para nova tentativa')
@@ -174,6 +187,7 @@ export const useSocketStore = create((set, get) => ({
 
             // Handshake desta ligação: servidor não herda subscrições do socket anterior.
             sendOnWire(ws, 'LIST_PRESENCE')
+            void useNotificationStore.getState().refreshUnreadCount()
             const activeChatId = useChatStore.getState().activeChatId
             if (activeChatId != null) {
                 sendOnWire(ws, WS_SEND_EVENTS.CHAT_SUBSCRIBE, {
@@ -231,10 +245,22 @@ export const useSocketStore = create((set, get) => ({
                     : 'User')
 
             const chat = useChatStore.getState()
-            const resolved = chat.completeOutboundWithServerPayload(
-                payload,
-                peerFallback,
-            )
+            const clientToken =
+                payload.clientMessageId ?? payload.client_message_id
+            let resolved = false
+            if (clientToken) {
+                resolved = chat.completeOutboundWithClientToken(
+                    clientToken,
+                    payload,
+                    peerFallback,
+                )
+            }
+            if (!resolved) {
+                resolved = chat.completeOutboundWithServerPayload(
+                    payload,
+                    peerFallback,
+                )
+            }
 
             if (!resolved) {
                 const ui = mapMessageSenderData(
@@ -266,6 +292,8 @@ export const useSocketStore = create((set, get) => ({
                     },
                 })
             }
+
+            showChatMessageToast(payload)
         }
 
         ws.onmessage = (event) => {
@@ -288,6 +316,23 @@ export const useSocketStore = create((set, get) => ({
                 case WS_INCOMING_EVENTS.MESSAGE_CREATED: {
                     const payload = data.payload ?? data;
                     handleMessageCreated(payload);
+                    break;
+                }
+                case WS_INCOMING_EVENTS.NOTIFICATION_RECEIVED: {
+                    const raw = data.payload ?? data;
+                    const notification = raw?.id != null ? raw : raw?.notification;
+                    if (!notification?.id) break;
+
+                    void useNotificationStore
+                        .getState()
+                        .prependIncomingNotification(notification);
+
+                    const onNotificationsPage =
+                        typeof window !== 'undefined' &&
+                        window.location.pathname === '/notifications';
+                    if (!onNotificationsPage) {
+                        showNotificationToast(notification);
+                    }
                     break;
                 }
                 case WS_INCOMING_EVENTS.PRESENCE_UPDATED:

@@ -1,10 +1,18 @@
-import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 import { LeftSidebar } from '@/app/layouts/LeftSidebar'
 import { BottomSidebar } from '@/app/layouts/BottomSidebar'
 import RealtimeProvider from '../providers/RealtimeProvider'
+import { registerAppNavigate } from '@/shared/navigation/appNavigate'
 
 export function PrivateLayout() {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        registerAppNavigate(navigate)
+        return () => registerAppNavigate(null)
+    }, [navigate])
 
     return (
         <RealtimeProvider>

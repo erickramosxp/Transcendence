@@ -41,6 +41,9 @@
 | Feed: criar post de texto                           | ✅                      | ✅       |                                                      |
 | Feed: criar post com foto/vídeo                     | ✅                      | ✅       |                                                      |
 | Feed: comentar post                                 | ✅                      | ✅       |                                                      |
+| Notificações: carregar página (vazio e listagem)    | ✅                      | ✅       |                                                      |
+| Notificações: marcar uma como lida ao abrir destino | ✅                      | ✅       |                                                      |
+| Notificações: marcar todas como lidas               | ✅                      | ✅       |                                                      |
 | Perfil: editar avatar/imagem                        | ✅                      | ✅       |                                                      |
 | Modais principais (abrir/fechar/interações)         | ✅                      | ✅       |                                                      |
 | i18n: troca de idioma e textos no Chat              | ✅                      | ✅       |                                                      |
@@ -97,12 +100,21 @@
   - Entra no modo de edição de perfil.
   - Atualiza campo de perfil e valida persistência visual da alteração.
 
+- `notifications-page.spec.js`: ✅
+  - Acessa a página de notificações autenticado.
+  - Valida estado vazio quando não há notificações.
+  - Valida listagem de notificações na página.
+  - Marca uma notificação como lida ao abrir o destino.
+  - Marca todas as notificações como lidas.
+
 - Status geral:
   - Fluxos críticos validados nos dois navegadores suportados para automação. Edge está coberto indiretamente via Chromium.
 
 #### Evidências
 - Relatório Playwright (E2E):
-	` frontend/playwright-report/index.html`
+  - `frontend/playwright-report/index.html`
+- Executar apenas os testes de notificações:
+  - `npm run test:e2e -- e2e/notifications/notifications-page.spec.js`
 
 ---
 

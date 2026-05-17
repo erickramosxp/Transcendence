@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChatWindow from "@/features/chat/components/ChatWindow";
 import ChatList from "@/features/chat/components/ChatList";
 import { cn } from "@/design-system/tokens/colors";
@@ -12,6 +13,8 @@ import { useSocketStore } from "@/shared/realtime/store/useSocketStore";
 
 export function Chat() {
 	const { t } = useTranslation("chat");
+	const location = useLocation();
+	const navigate = useNavigate();
 	const [selectedChat, setSelectedChat] = useState(null);
 	const [myChats, setMyChats] = useState([]);
 	const [chatListHasMore, setChatListHasMore] = useState(false);
@@ -45,6 +48,26 @@ export function Chat() {
 		listFetchRef.current = { page: 0, hasMore: more, loading: false };
 		return { response: resp, sortedChats: sorted };
 	}, []);
+
+	useEffect(() => {
+		const openChatId = location.state?.openChatId;
+		if (openChatId == null || loadHeader) return;
+
+		const match = myChats.find(
+			(c) => c?.id != null && Number(c.id) === Number(openChatId),
+		);
+		if (match) {
+			setSelectedChat(match);
+		}
+
+		navigate(location.pathname, { replace: true, state: {} });
+	}, [
+		location.state?.openChatId,
+		myChats,
+		loadHeader,
+		navigate,
+		location.pathname,
+	]);
 
 	useEffect(() => {
 		const fetchMyChats = async () => {

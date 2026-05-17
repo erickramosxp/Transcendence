@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { useSocketStore } from '@/shared/realtime/store/useSocketStore'
 
 const RealtimeProvider = ({ children }) => {
@@ -22,6 +23,7 @@ const RealtimeProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
+        void useNotificationStore.getState().refreshUnreadCount()
         connect()
 
         return () => {

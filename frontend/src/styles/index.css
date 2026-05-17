@@ -4,12 +4,43 @@
 /* @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities); */
 
+.Toastify__toast-container {
+  z-index: 100000;
+  pointer-events: none;
+}
+
+.Toastify__toast-container > * {
+  pointer-events: auto;
+}
+
+.Toastify__toast.notification-toast {
+  padding: 0 !important;
+  margin-bottom: 0.75rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  width: fit-content !important;
+  max-width: min(calc(100vw - 2rem), 360px);
+}
+
+.Toastify__toast.notification-toast .Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1023px) {
+  .Toastify__toast-container--bottom-right {
+    bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 @media (max-width: 480px) {
   .Toastify__toast-container {
     width: 100vw !important;
     padding: 0 8px; /* margem laterais */
   }
-  .Toastify__toast {
+  .Toastify__toast:not(.notification-toast) {
     margin: 0 4px; /* espaçamento toasts */
     font-size: 14px; /* texto menor */
   }

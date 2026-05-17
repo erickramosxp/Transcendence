@@ -29,8 +29,20 @@ export function SideBarNav({ items, actions }) {
 								)
 							}
 						>
-							{Icon ? <Icon className="size-5 shrink-0 stroke-[1.75]" aria-hidden /> : null}
-							{item.label}
+							<span className="relative shrink-0">
+								{Icon ? (
+									<Icon className="size-5 stroke-[1.75]" aria-hidden />
+								) : null}
+								{item.badge > 0 ? (
+									<span
+										className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold leading-none text-primary-foreground ring-2 ring-card"
+										aria-label={`${item.badge} não lidas`}
+									>
+										{item.badge > 99 ? "99+" : item.badge}
+									</span>
+								) : null}
+							</span>
+							<span>{item.label}</span>
 						</NavLink>
 					)
 				})}

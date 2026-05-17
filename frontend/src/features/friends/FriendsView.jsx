@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system';
 import FriendsList from './components/FriendsList';
 import FriendRequests from './components/FriendRequests';
@@ -11,9 +12,31 @@ import { useTranslation } from 'react-i18next';
 export const FriendsView = () => {
 
     const { t } = useTranslation('friends');
-    const [tab, setTab] = useState("friends");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabFromUrl = searchParams.get('tab');
+    const initialTab =
+        tabFromUrl === 'requests' || tabFromUrl === 'discover'
+            ? tabFromUrl
+            : 'friends';
+    const [tab, setTab] = useState(initialTab);
 
     const friendsData = useFriends();
+
+    useEffect(() => {
+        const urlTab = searchParams.get('tab');
+        if (urlTab === 'requests' || urlTab === 'discover' || urlTab === 'friends') {
+            setTab(urlTab);
+        }
+    }, [searchParams]);
+
+    const handleTabChange = (value) => {
+        setTab(value);
+        if (value === 'friends') {
+            setSearchParams({});
+        } else {
+            setSearchParams({ tab: value });
+        }
+    };
 
     return (
         <div className='max-w-4xl mx-auto px-3 sm:px-4 pb-10 pt-5 sm:pt-10'>
@@ -21,7 +44,7 @@ export const FriendsView = () => {
                 <h1>{t('title')}</h1>
             </div>
             <FriendsProvider value={friendsData} >
-                <Tabs value={tab} onValueChange={setTab}>
+                <Tabs value={tab} onValueChange={handleTabChange}>
                     <TabsList className='mb-3'>
                         <TabsTrigger value="friends">{t('tabs.friends')}</TabsTrigger>
                         <TabsTrigger value="requests">{t('tabs.requests')}</TabsTrigger>
