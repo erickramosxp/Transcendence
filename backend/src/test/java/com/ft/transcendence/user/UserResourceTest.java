@@ -187,7 +187,9 @@ public class UserResourceTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + user.token)
-                .multiPart("file", file)
+                .multiPart("file", file, "image/jpeg")
+                .multiPart("previewFile", file, "image/jpeg")
+                .multiPart("blurFile", file, "image/jpeg")
                 .when()
                 .post("/posts")
                 .then()
