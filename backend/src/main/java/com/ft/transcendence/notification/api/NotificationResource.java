@@ -24,8 +24,9 @@ public class NotificationResource {
 
     @GET
     public Response list(@QueryParam("page") @DefaultValue("0") int page,
-                         @QueryParam("size") @DefaultValue("20") int size) {
-        PageResponse<NotificationResponse> result = notificationService.listByUser(currentUser.id(), page, size);
+                         @QueryParam("size") @DefaultValue("20") int size,
+                         @QueryParam("unreadOnly") @DefaultValue("false") boolean unreadOnly) {
+        PageResponse<NotificationResponse> result = notificationService.listByUser(currentUser.id(), page, size, unreadOnly);
         return Response.ok(result).build();
     }
 
