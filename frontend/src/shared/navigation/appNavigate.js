@@ -16,3 +16,13 @@ export function appNavigate(to, options) {
 export function navigateToNotifications() {
 	appNavigate("/notifications");
 }
+
+export function navigateToChat(chatId) {
+	if (chatId == null) {
+		appNavigate("/chat");
+		return;
+	}
+	appNavigate("/chat", {
+		state: { openChatId: Number(chatId) },
+	});
+}

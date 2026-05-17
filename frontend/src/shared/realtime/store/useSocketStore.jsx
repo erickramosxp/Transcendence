@@ -7,6 +7,7 @@ import { readCurrentUserId } from '@/features/chat/utils/currentUser'
 import { useFriendStore } from '@/features/friends/store/useFriendStore'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { showNotificationToast } from '@/features/notifications/utils/showNotificationToast'
+import { showChatMessageToast } from '@/features/chat/utils/showChatMessageToast'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
 
 import {
@@ -44,9 +45,21 @@ export const useSocketStore = create((set, get) => ({
 
         const { socket } = get();
 
-        if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+        if (socket?.readyState === WebSocket.OPEN || socket?.readyState === WebSocket.CONNECTING) {
             return;
         }
+
+        if (socket) {
+            socket.onopen = null
+            socket.onmessage = null
+            socket.onclose = null
+            socket.onerror = null
+            if (socket.readyState !== WebSocket.CLOSED) {
+                socket.close()
+            }
+            set({ socket: null, connected: false })
+        }
+
         set({ connecting: true })
         const ws = new WebSocket(resolveRealtimeWebSocketUrl(token))
         let connectTimeoutId = null
@@ -267,6 +280,8 @@ export const useSocketStore = create((set, get) => ({
                     },
                 })
             }
+
+            showChatMessageToast(payload)
         }
 
         ws.onmessage = (event) => {
