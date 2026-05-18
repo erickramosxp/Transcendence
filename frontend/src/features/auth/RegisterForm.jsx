@@ -6,7 +6,8 @@ import { SocialLogin } from "@/features/auth/components/SocialLogin";
 
 import { Button, TabsContent, Label, Input, Separator } from "@/design-system";
 import { Link } from "react-router-dom";
-
+import { validateRegister } from "@/shared/validation/validators";
+import { LIMITS } from "@/shared/validation/limits";
 
 export function RegisterForm({ onSubmit }) {
 
@@ -22,25 +23,27 @@ export function RegisterForm({ onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !username || !name || !password) {
-      toast.error(t('errors.fillAllFields'));
-      setDisableButton(false);
-      return;
-    }
+    const payload = {
+      name: name.trim(),
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
+      password,
+      acceptTerms,
+    };
 
-    if (!acceptTerms) {
-      toast.warn(t('register.acceptTermsRequired'));
+    const result = validateRegister(payload, t);
+    if (!result.ok) {
+      toast.error(result.message);
       return;
     }
 
     try {
       setDisableButton(true);
-      await onSubmit({ name, username, email, password, acceptTerms });
+      await onSubmit(payload);
     } finally {
       setDisableButton(false);
     }
   }
-
 
   return (
     <TabsContent value="signup">
@@ -66,6 +69,7 @@ export function RegisterForm({ onSubmit }) {
             <Input
               id="signup-name"
               type="text"
+              maxLength={LIMITS.profileNameMax}
               placeholder={t('register.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -83,6 +87,7 @@ export function RegisterForm({ onSubmit }) {
           <Input
             id="signup-username"
             type="text"
+            maxLength={LIMITS.profileNameMax}
             placeholder={t('register.usernamePlaceholder')}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -114,6 +119,7 @@ export function RegisterForm({ onSubmit }) {
           <Input
             id="signup-password"
             type="password"
+            maxLength={LIMITS.passwordMax}
             placeholder={t('register.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}

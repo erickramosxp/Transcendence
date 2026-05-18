@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { updateProfileInfo } from "@/features/profile/services/profileService";
 import {toast} from 'react-toastify'
 import { useTranslation } from "react-i18next";
-
+import { LIMITS } from '@/shared/validation/limits';
 import { Button, Input, Label } from "@/design-system";
+import { isValidHttpUrl } from "@/shared/validation/validators";
 
 export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
 
@@ -36,29 +37,45 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
     })
   }, [userData]);
 
-  t('header.editProfileModal')
-
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.name.length < 3) {
-      toast.error(t(''));
+    const name = formData.name.trim();
+    const websiteUrl = formData.websiteUrl.trim();
+
+    if (name.length < LIMITS.profileNameMin) {
+      toast.error(t('header.editProfileModal.errorNameLength'));
       return;
     }
-    if (formData.bio.length > 160) {
+    if (name.length > LIMITS.profileNameMax) {
+      toast.error(t('header.editProfileModal.errorNameMaxLength'));
+      return;
+    }
+    if (formData.bio.length > LIMITS.profileBioMax) {
       toast.error(t('header.editProfileModal.errorBioLength'));
       return;
     }
+    if (formData.location.length > LIMITS.profileLocationMax) {
+      toast.error(t('header.editProfileModal.errorLocationLength'));
+      return;
+    }
+
+    if (websiteUrl && !isValidHttpUrl(websiteUrl)) {
+      toast.error(t('header.editProfileModal.errorWebsiteUrl'));
+      return;
+    }
+
+    const payload = { ...formData, name, websiteUrl };
 
     try {
-      await updateProfileInfo(formData);
-      changeFields(formData);
+      await updateProfileInfo(payload);
+      changeFields(payload);
       toast.success(t('header.editProfileModal.success'));
-    } catch(err) {
+      onSaved?.();
+    } catch (err) {
       console.log(err);
       toast.error(t('header.editProfileModal.error'));
     }
-    onSaved?.();
   };
 
   const updateField = (field, value) => {
@@ -66,9 +83,9 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
   };
 
   const inputs = [
-    { id: "name", label: t('header.editProfileModal.name'), type: "text", value: formData.name, placeholder: t('header.editProfileModal.namePlaceholder'), onChange: e => updateField("name", e.target.value) },
-    { id: "bio", label: t('header.editProfileModal.bio'), type: "text", value: formData.bio, placeholder: t('header.editProfileModal.bioPlaceholder'), onChange: e => updateField("bio", e.target.value), maxLength: 160 },
-    { id: "location", label: t('header.editProfileModal.location'), type: "text", value: formData.location, placeholder: t('header.editProfileModal.locationPlaceholder'), onChange: e => updateField("location", e.target.value) },
+    { id: "name", label: t('header.editProfileModal.name'), type: "text", value: formData.name, placeholder: t('header.editProfileModal.namePlaceholder'), onChange: e => updateField("name", e.target.value), maxLength: LIMITS.profileNameMax },
+    { id: "bio", label: t('header.editProfileModal.bio'), type: "text", value: formData.bio, placeholder: t('header.editProfileModal.bioPlaceholder'), onChange: e => updateField("bio", e.target.value), maxLength: LIMITS.profileBioMax },
+    { id: "location", label: t('header.editProfileModal.location'), type: "text", value: formData.location, placeholder: t('header.editProfileModal.locationPlaceholder'), onChange: e => updateField("location", e.target.value), maxLength: LIMITS.profileLocationMax },
     { id: "websiteUrl", label: t('header.editProfileModal.website'), type: "url", value: formData.websiteUrl, placeholder: t('header.editProfileModal.websitePlaceholder'), onChange: e => updateField("websiteUrl", e.target.value) }
   ];
 

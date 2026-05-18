@@ -26,6 +26,9 @@
             "cancel": "Cancel",
             "errorBioLength": "Bio must be less than 160 characters",
             "errorNameLength": "Name must be at least 3 characters long",
+            "errorNameMaxLength": "Name must be at most 30 characters long",
+            "errorLocationLength": "Location must be less than 100 characters",
+            "errorWebsiteUrl": "Website must be a valid URL",
             "success": "Profile updated successfully",
             "error": "Failed to update profile"
         },

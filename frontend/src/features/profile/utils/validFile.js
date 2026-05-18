@@ -1,4 +1,5 @@
 import i18n from "@/i18n";
+import { LIMITS, mbToBytes } from "@/shared/validation/limits";
 
 const validImageTypes = [
     "image/jpeg",
@@ -11,13 +12,28 @@ const validVideoTypes = [
     "video/mp4"
 ]
 
-const limits = {
-    avatar: 2 * 1024 * 1024, // 2MB
-    image: 5 * 1024 * 1024,  // 5MB
-    video: 20 * 1024 * 1024  // 20MB
+const fileSizeBytes = {
+    avatar: mbToBytes(LIMITS.avatarFileMB),
+    image: mbToBytes(LIMITS.postImageFileMB),
+    video: mbToBytes(LIMITS.postVideoFileMB),
 };
 
-export function validImageFile(file) {
+const maxMbByKind = {
+	avatar: LIMITS.avatarFileMB,
+	image: LIMITS.postImageFileMB,
+	video: LIMITS.postVideoFileMB,
+  };
+  function checkFileSize(file, kind) {
+	if (file.size > fileSizeBytes[kind]) {
+	  return {
+		valid: false,
+		error: i18n.t("errors.upload.fileTooLargeMax", { max: maxMbByKind[kind] }),
+	  };
+	}
+	return { valid: true };
+  }
+
+export function validImageFile(file, kind = "image") {
 
     if (!file) {
         return { valid: false, error: i18n.t("errors.upload.notFound") };
@@ -27,7 +43,7 @@ export function validImageFile(file) {
         return { valid: false, error: i18n.t("errors.upload.invalidType") };
     }
 
-    return { valid: true };
+    return checkFileSize(file, kind);
 }
 
 export function validVideoFile(file) {
@@ -40,7 +56,7 @@ export function validVideoFile(file) {
         return { valid: false, error: i18n.t("errors.upload.invalidType") };
     }
 
-    return { valid: true };
+    return checkFileSize(file, "video");
 
 }
 
@@ -62,3 +78,5 @@ export function validateImageContent(file) {
         img.src = url;
     });
 }
+
+export { fileSizeBytes };

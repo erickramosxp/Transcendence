@@ -11,10 +11,11 @@ import { useEffect, useState } from 'react';
 
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify';
+import { LIMITS } from '@/shared/validation/limits';
 
 export const SecurityTab = () => {
 
-    const { t } = useTranslation('settings');
+    const { t } = useTranslation(['settings', 'auth']);
     const [loading, setLoading] = useState(true);
     const [isOAuth, setIsOAuth] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
@@ -55,6 +56,21 @@ export const SecurityTab = () => {
 
         if (!newPassword || !confirmNewPassword) {
             toast.warn(t('security.warnNewPassword'));
+            return;
+        }
+
+        if (newPassword.length < LIMITS.passwordMin) {
+            toast.warn(t('security.passwordTooShort'));
+            return;
+        }
+
+        if (newPassword.length > LIMITS.passwordMax) {
+            toast.warn(t('auth:errors.passwordTooLong'));
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            toast.warn(t('security.passwordMismatch'));
             return;
         }
         setDisableButton(true);
@@ -119,6 +135,7 @@ export const SecurityTab = () => {
                     <Input
                         id="newPassword"
                         type="password"
+                        maxLength={LIMITS.passwordMax}
                         onChange={(e) => setNewPassword(e.target.value)}
                         value={newPassword}
                     />
@@ -132,6 +149,7 @@ export const SecurityTab = () => {
                     <Input
                         id="confirmNewPassword"
                         type="password"
+                        maxLength={LIMITS.passwordMax}
                         onChange={(e) => setConfirmNewPassword(e.target.value)}
                         value={confirmNewPassword}
                     />
@@ -143,13 +161,13 @@ export const SecurityTab = () => {
                                 {t('security.passwordMismatch')}
                             </p>
                         )}
-                    {newPassword.length > 0 && newPassword.length < 8 &&
+                    {newPassword.length > 0 && newPassword.length < LIMITS.passwordMin &&
                         <p>
                             {t('security.passwordTooShort')}
                         </p>
                     }
                 </div>
-                    
+
 
                 <div>
                     <Button type='submit' disabled={disableButton}>

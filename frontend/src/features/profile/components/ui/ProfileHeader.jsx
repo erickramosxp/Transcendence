@@ -70,7 +70,7 @@ export const ProfileHeader = () => {
 
 	const updateImage = async (file) => {
 
-		const typeValidation = validImageFile(file);
+		const typeValidation = validImageFile(file, "avatar");
 		if (!typeValidation.valid) {
 			toast.error(typeValidation.error);
 			return;
@@ -94,6 +94,12 @@ export const ProfileHeader = () => {
 	}
 
 	const handleSaveCroppedImage = async (croppedFile) => {
+
+		const sizeValidation = validImageFile(croppedFile, "avatar");
+		if (!sizeValidation.valid) {
+			toast.error(sizeValidation.error);
+			return;
+		}
 
 		const contentValidation = await validateImageContent(croppedFile);
 		if (!contentValidation.valid) {

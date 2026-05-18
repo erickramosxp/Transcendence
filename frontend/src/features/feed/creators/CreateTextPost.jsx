@@ -10,7 +10,6 @@ import { Button, Textarea, Card, CardContent } from "@/design-system";
 function CreateTextPost({ onAddPost, onClose }) {
   const {
     text,
-    error,
     showEmojiPicker,
     handleSubmit,
     handleChange,
@@ -18,7 +17,8 @@ function CreateTextPost({ onAddPost, onClose }) {
     linkPreview,
     linkPreviewLoading,
     linkPreviewError,
-    uploadPercent
+    uploadPercent,
+    maxTextLength,
   } = useCreatePost(onAddPost, onClose, "text");
 
   const { anchorRef, pickerStyle } = useFloatingEmojiPicker(showEmojiPicker);
@@ -32,7 +32,7 @@ function CreateTextPost({ onAddPost, onClose }) {
             <div ref={anchorRef}>
 
             <Textarea
-              maxLength={500}
+              maxLength={maxTextLength}
               value={text}
               onChange={handleChange}
               onKeyDown={(e) => {
@@ -70,7 +70,7 @@ function CreateTextPost({ onAddPost, onClose }) {
             )}
 
             <p className="text-right text-sm text-muted-foreground">
-              {text.length}/500
+              {text.length}/{maxTextLength}
             </p>
 
             {showEmojiPicker &&

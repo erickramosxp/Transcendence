@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Avatar } from "@/design-system";
 import { FileUploadButton } from '@/design-system';
 import { cn } from '@/design-system/tokens/colors';
-
-
 export const AvatarEditable = ({ user, canEdit = false, onChange }) => {
 
     const [showHint, setShowHint] = useState(true);
@@ -41,9 +39,8 @@ export const AvatarEditable = ({ user, canEdit = false, onChange }) => {
                         <FileUploadButton
                             onFileSelect={onChange}
                             className="text-accent-foreground text-xs font-bold bg-accent/60 px-2 py-1 rounded cursor-pointer"
-                            type="file"
-                            accept=".jpg,.png"
-                            maxMBSize={5}
+                            accept="image/jpeg,image/png,image/webp,image/gif"
+                            fileKind="avatar"
                         />
                     </label>
                 )}

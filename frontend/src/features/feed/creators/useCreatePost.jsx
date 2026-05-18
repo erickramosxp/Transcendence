@@ -3,7 +3,8 @@ import { extractUrl } from "@/shared/linkPreview";
 import linkPreviewService from "@/shared/api/linkPreviewService";
 import { useDebounce } from "@/hooks/useDebounce";
 import { validImageFile, validVideoFile, validateImageContent } from "@/features/profile/utils/validFile";
-import { toast } from 'react-toastify'
+import { LIMITS } from "@/shared/validation/limits";
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { getMyProfileAvatar } from "@/features/profile/services/profileService";
 
@@ -21,25 +22,19 @@ export function useCreatePost(onAddPost, onClose, postType) {
 	const [uploadPercent, setUploadPercent] = useState(null);
 	const [avatarUrl, setAvatarUrl] = useState(null);
 
-
-
 	const debouncedText = useDebounce(text, LINK_PREVIEW_DEBOUNCE_MS);
 
 	useEffect(() => {
-
-
 		const getMyAvatar = async () => {
-
 			try {
 				const resp = await getMyProfileAvatar();
 				setAvatarUrl(resp.avatarUrl);
 			} catch {
-
+				// avatar opcional no composer
 			}
-		}
+		};
 
 		getMyAvatar();
-
 	}, []);
 
 	useEffect(() => {
@@ -73,16 +68,26 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		setLinkPreview(null);
 		setLinkPreviewLoading(false);
 		setLinkPreviewError(null);
-	}
+	};
 
 	async function handleSubmit() {
-		if (postType === "text" && text.trim() === "") {
+		const trimmedText = text.trim();
+
+		if (postType === "text" && trimmedText === "") {
 			toast.error(t("common:errors.post.empty"));
 			return;
 		}
 
+		if (text.length > LIMITS.postText) {
+			toast.error(t("common:errors.post.tooLong", { max: LIMITS.postText }));
+			return;
+		}
+
 		if ((postType === "photo" || postType === "video") && file == null) {
-			const msg = postType === "photo" ? t("common:errors.post.emptyImage") : t("common:errors.post.emptyVideo");
+			const msg =
+				postType === "photo"
+					? t("common:errors.post.emptyImage")
+					: t("common:errors.post.emptyVideo");
 			toast.error(msg);
 			return;
 		}
@@ -91,29 +96,30 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		let fileToUpload = file;
 		if (file) {
 			let validation;
-			if (postType == "photo") {
-				validation = validImageFile(file);
+			if (postType === "photo") {
+				validation = validImageFile(file, "image");
 				if (validation.valid) {
-
 					validation = await validateImageContent(file);
 
-					if (file.type !== 'image/gif') {
-						const { default: imageCompression } = await import('browser-image-compression');
+					if (validation.valid && file.type !== "image/gif") {
+						const { default: imageCompression } = await import(
+							"browser-image-compression"
+						);
 
 						const options = {
 							maxSizeMB: 2,
 							maxWidthOrHeight: 1024,
-							useWebWorker: true
+							useWebWorker: true,
 						};
 
 						fileToUpload = await imageCompression(file, options);
 					}
 				}
-			}
-			else if (postType == "video")
+			} else if (postType === "video") {
 				validation = validVideoFile(file);
+			}
 
-			if (!validation.valid) {
+			if (!validation?.valid) {
 				toast.error(validation.error);
 				setFile(null);
 				return;
@@ -121,12 +127,15 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		}
 
 		try {
-			await onAddPost({
-				text: text,
-				file: fileToUpload,
-				fileType: typeof postType === "string" ? postType : postType?.type || "",
-				linkPreview: linkPreview,
-			}, setUploadPercent);
+			await onAddPost(
+				{
+					text,
+					file: fileToUpload,
+					fileType: typeof postType === "string" ? postType : postType?.type || "",
+					linkPreview,
+				},
+				setUploadPercent,
+			);
 
 			setUploadPercent(100);
 
@@ -135,21 +144,18 @@ export function useCreatePost(onAddPost, onClose, postType) {
 				setUploadPercent(null);
 				onClose();
 			}, 300);
-		} finally {
-
+		} catch {
+			// erro de rede tratado em Feed.jsx
 		}
 	}
 
 	function handleChange(e) {
 		const value = e.target.value;
+		if (value.length > LIMITS.postText) return;
 		setText(value);
 
 		const match = value.match(/:(\w*)$/);
-		if (match) {
-			setShowEmojiPicker(true);
-		} else {
-			setShowEmojiPicker(false);
-		}
+		setShowEmojiPicker(!!match);
 	}
 
 	function handleEmojiSelect(emojiData) {
@@ -170,5 +176,6 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		handleSubmit,
 		handleChange,
 		handleEmojiSelect,
+		maxTextLength: LIMITS.postText,
 	};
 }

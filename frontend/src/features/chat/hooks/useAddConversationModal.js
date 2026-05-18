@@ -11,6 +11,7 @@ import {
 } from "@/features/chat/utils/ConversationModalUtils";
 import { resolveFriendForChat } from "@/features/chat/utils/resolveFriendForChat";
 import { useDebouncedFriendSuggestions } from "@/features/chat/hooks/useDebouncedFriendSuggestions";
+import { LIMITS } from "@/shared/validation/limits";
 
 export const ADD_CONVERSATION_TAB = {
 	GROUP: "chat-group",
@@ -213,6 +214,12 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 			setSubmitError(t("list.add.createErrorGroupName"));
 			return;
 		}
+		if (name.length > LIMITS.groupNameMax) {
+			setSubmitError(
+				t("list.add.createErrorGroupNameTooLong", { max: LIMITS.groupNameMax }),
+			);
+			return;
+		}
 		if (groupMembers.length === 0) {
 			setSubmitError(t("list.add.createErrorNoMembers"));
 			return;
@@ -274,5 +281,6 @@ export function useAddConversationModal({ activeTab, onChatCreated, onClose }) {
 		handleAddGroupMember,
 		handleCreate,
 		clearTabErrors,
+		groupNameMaxLength: LIMITS.groupNameMax,
 	};
 }

@@ -26,6 +26,9 @@
             "cancel": "Cancelar",
             "errorBioLength": "La biografía debe tener menos de 160 caracteres",
             "errorNameLength": "El nombre debe tener al menos 3 caracteres",
+            "errorNameMaxLength": "El nombre debe tener como máximo 30 caracteres",
+            "errorLocationLength": "La ubicación debe tener menos de 100 caracteres",
+            "errorWebsiteUrl": "El sitio web debe ser una URL válida",
             "success": "Perfil actualizado correctamente",
             "error": "Error al actualizar el perfil"
         },

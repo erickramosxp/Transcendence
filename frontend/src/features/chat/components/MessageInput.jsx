@@ -5,6 +5,8 @@ import { Input } from "@/design-system";
 import { Paperclip, Send, Smile, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { useMessageLinkPreview } from "@/features/chat/hooks/useMessageLinkPreview";
+import { LIMITS } from "@/shared/validation/limits";
+import { toast } from "react-toastify";
 import { useChatTypingPresence } from "@/features/chat/hooks/useChatTypingPresence";
 import { ChatLinkPreviewCard } from "@/features/chat/components/ChatLinkPreviewCard";
 
@@ -15,7 +17,7 @@ export default function MessageInput({
 	onCancelReply,
 	networkOnline = true,
 }) {
-	const { t } = useTranslation("chat");
+	const { t } = useTranslation(["chat", "common"]);
 	const [text, setText] = useState("");
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const emojiPickerAreaRef = useRef(null);
@@ -54,11 +56,17 @@ export default function MessageInput({
 
 	async function handleSendMessage(e) {
 		e.preventDefault();
-		if (!text.trim()) return;
+		const trimmed = text.trim();
+		if (!trimmed) return;
 		if (!networkOnline) return;
 
+		if (text.length > LIMITS.chatMessageMax) {
+			toast.error(t("common:errors.post.tooLong", { max: LIMITS.chatMessageMax }));
+			return;
+		}
+
 		stopTypingSession();
-		const ok = await onSendMessage(text);
+		const ok = await onSendMessage(trimmed);
 		if (ok !== false) setText("");
 	}
 
@@ -67,6 +75,7 @@ export default function MessageInput({
 	}
 
 	function onTextChange(next) {
+		if (next.length > LIMITS.chatMessageMax) return;
 		setText(next);
 		notifyDraftChanged(next);
 	}
@@ -125,6 +134,7 @@ export default function MessageInput({
 				<div className="relative min-w-0 flex-1">
 					<Input
 						value={text}
+						maxLength={LIMITS.chatMessageMax}
 						onChange={(e) => onTextChange(e.target.value)}
 						onFocus={() => setShowEmojiPicker(false)}
 						className="ds-chat-input-field"

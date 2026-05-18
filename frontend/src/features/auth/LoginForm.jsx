@@ -6,6 +6,8 @@ import { toast } from 'react-toastify'
 import { useTranslation } from "react-i18next";
 
 import { Button, TabsContent, Separator, Label, Input } from "@/design-system";
+import { isValidLoginIdentifier } from "@/shared/validation/validators";
+import { LIMITS } from "@/shared/validation/limits";
 
 export function LoginForm({onSubmit}) {
 
@@ -17,14 +19,31 @@ export function LoginForm({onSubmit}) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!username || !password) {
+        const trimmedUsername = username.trim();
+
+        if (!trimmedUsername || !password) {
             toast.error(t('errors.fillAllFields'));
             return;
         }
-        
-        onSubmit({username, password});
+
+        if (!isValidLoginIdentifier(trimmedUsername)) {
+            toast.error(t('errors.invalidLoginIdentifier'));
+            return;
+        }
+
+        if (password.length > LIMITS.passwordMax) {
+            toast.error(t('errors.passwordTooLong'));
+            return;
+        }
+
+        try {
+            onSubmit({ username: trimmedUsername, password });
+        } catch (error) {
+            console.error(error);
+            toast.error(t('errors.loginFailed'));
+        }
     }
-    
+
     return (
 
         <TabsContent value="login">
@@ -44,13 +63,14 @@ export function LoginForm({onSubmit}) {
                       htmlFor="login-email"
                     >
                       <Mail className="h-4 w-4" />
-                      {t('login.email')}
+                      {t('login.identifier')}
                     </Label>
                     <Input
                       id="login-email"
                       data-testid="auth-login-email"
-                      type="email"
-                      placeholder={t('login.emailPlaceholder')}
+                      type="text"
+                      autoComplete="username"
+                      placeholder={t('login.identifierPlaceholder')}
                       value={username}
                       onChange={(e) => {
                         setUsername(e.target.value);
@@ -68,6 +88,7 @@ export function LoginForm({onSubmit}) {
                       id="login-password"
                       data-testid="auth-login-password"
                       type="password"
+                      maxLength={LIMITS.passwordMax}
                       placeholder={t('login.passwordPlaceholder')}
                       value={password}
                       onChange={(e) => {

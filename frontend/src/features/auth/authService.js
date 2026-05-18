@@ -40,7 +40,7 @@ const apiLogin = async (credentials) => {
 
 
 export const authService = {
-    
+
   login: async (credentials) => {
     return apiLogin(credentials);
   },
