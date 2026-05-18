@@ -15,12 +15,12 @@ export function usePostList(fetchFn) {
   const sentinelRef = useRef(null);
   const { t } = useTranslation();
 
-  async function loadInitial() {
-    const data = await fetchFn(0, 10);
+  const loadInitial = useCallback(async () => {
+    const data = await fetchFn(0, 9);
     setPosts(data.items);
     setPage(data.page + 1);
     setHasMore(data.hasMore);
-  }
+  }, [fetchFn]);
 
   const loadMore = useCallback(async () => {
 
@@ -86,5 +86,6 @@ export function usePostList(fetchFn) {
     posts, setPosts, hasMore, isLoadingMore,
     sentinelRef, activeCommentsPostId, handleDelete,
     loadInitial, handleLike, toggleComments, incrementCommentCount,
+    loadMore
   };
 }

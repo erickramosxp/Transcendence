@@ -289,7 +289,7 @@ public class UserService {
                 String pathToLoad = media.pathPreview != null ? media.pathPreview : media.pathOriginal;
                 previewUrl = storageService.generateUrl(pathToLoad);
             }
-            return MediaResponse.of(p, previewUrl);
+            return MediaResponse.of(p, previewUrl, media.mediaType);
 
         }).toList();
         return resp;
@@ -523,5 +523,5 @@ public class UserService {
         if (media.pathBlur != null) paths.add(media.pathBlur);
         return paths;
     }
-    
+
 }

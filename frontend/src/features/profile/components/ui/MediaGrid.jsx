@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { usePostList } from "@/features/profile/hooks/usePostList";
 import { useMediaPostModal } from "@/features/profile/hooks/useMediaPostModal";
 import { getUserMediaPosts } from "@/features/profile/services/profileService";
-import { Loading } from "@/design-system";
+import { Loading, Button } from "@/design-system";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { MediaGridRenderer } from "./midiaThumbnails/MediaGridRenderer";
@@ -12,9 +12,11 @@ export function MediaGrid({ username }) {
 	const [loading, setLoading] = useState(true);
 	const { t } = useTranslation("profile");
 
-	const { posts, loadInitial } = usePostList((page, size) =>
-		getUserMediaPosts(username, page, size),
-	);
+	const fetchMediaPosts = useCallback((page, size) => {
+        return getUserMediaPosts(username, page, size);
+    }, [username]);
+
+	const { posts, loadInitial, loadMore, hasMore, isLoadingMore } = usePostList(fetchMediaPosts);
 
 	const {
 		selected,
@@ -33,7 +35,6 @@ export function MediaGrid({ username }) {
 			try {
 				await loadInitial();
 			} catch (err) {
-				console.error(err);
 				toast.error(t("mediaGrid.getMidaError"));
 			} finally {
 				setLoading(false);
@@ -66,6 +67,18 @@ export function MediaGrid({ username }) {
 					</div>
 				))}
 			</div>
+			{/* 2. Adicione o bloco do botão "Carregar Mais" aqui */}
+            {hasMore && (
+                <div className="flex justify-center mt-6 mb-4">
+                    <Button 
+                        onClick={loadMore}
+                        disabled={isLoadingMore}
+                        className="w-full max-w-[200px]" // Ajuste a largura como preferir
+                    >
+                        {isLoadingMore ? "Carregando..." : "Carregar mais"}
+                    </Button>
+                </div>
+			)}
 
 			<MediaPostModal
 				open={!!selected}
