@@ -5,15 +5,30 @@ import { toast } from "react-toastify";
 import { cn } from "@/design-system/tokens/colors";
 import { validImageFile, validVideoFile } from "@/features/profile/utils/validFile";
 
+/**
+ * Atributo `accept` do input por contexto.
+ * Deve permanecer alinhado aos MIME types em `validFile.js` (`validImageTypes` / `validVideoTypes`).
+ */
 const ACCEPT_BY_KIND = {
 	avatar: "image/jpeg,image/png,image/gif,image/webp",
 	image: "image/jpeg,image/png,image/gif,image/webp",
 	video: "video/mp4",
 };
 
+/**
+ * Botão que abre o seletor de arquivos com validação imediata (MIME + tamanho via `LIMITS`).
+ *
+ * A validação aqui é a primeira camada; consumidores (`ProfileHeader`, `useCreatePost`)
+ * devem revalidar e, para imagens, chamar `validateImageContent` antes do envio ao servidor.
+ *
+ * @param {Object} props
+ * @param {(file: File) => void} props.onFileSelect - Callback após arquivo válido.
+ * @param {"avatar"|"image"|"video"} [props.fileKind="image"] - Define `accept` e qual limite MB aplicar.
+ * @param {string} [props.accept] - Sobrescreve `ACCEPT_BY_KIND[fileKind]`.
+ * @param {string} [props.className] - Classes do botão.
+ */
 export function FileUploadButton({
 	onFileSelect,
-	/** @type {"avatar"|"image"|"video"} */
 	fileKind = "image",
 	accept,
 	className
@@ -21,6 +36,10 @@ export function FileUploadButton({
 	const inputRef = useRef(null);
 	const resolvedAccept = accept ?? ACCEPT_BY_KIND[fileKind];
 
+	/**
+	 * Valida na seleção: `validImageFile(file, fileKind)` ou `validVideoFile(file)`.
+	 * Em erro, exibe toast e limpa o input para permitir nova tentativa.
+	 */
 	function handleChange(e) {
 		const file = e.target.files[0];
 

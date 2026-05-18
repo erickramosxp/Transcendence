@@ -5,7 +5,7 @@ import {toast} from 'react-toastify'
 import { useTranslation } from "react-i18next";
 import { LIMITS } from '@/shared/validation/limits';
 import { Button, Input, Label } from "@/design-system";
-import { isValidHttpUrl } from "@/shared/validation/validators";
+import { validateProfile } from "@/shared/validation/validators";
 
 export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
 
@@ -40,32 +40,13 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const name = formData.name.trim();
-    const websiteUrl = formData.websiteUrl.trim();
-
-    if (name.length < LIMITS.profileNameMin) {
-      toast.error(t('header.editProfileModal.errorNameLength'));
-      return;
-    }
-    if (name.length > LIMITS.profileNameMax) {
-      toast.error(t('header.editProfileModal.errorNameMaxLength'));
-      return;
-    }
-    if (formData.bio.length > LIMITS.profileBioMax) {
-      toast.error(t('header.editProfileModal.errorBioLength'));
-      return;
-    }
-    if (formData.location.length > LIMITS.profileLocationMax) {
-      toast.error(t('header.editProfileModal.errorLocationLength'));
+    const result = validateProfile(formData, t);
+    if (!result.ok) {
+      toast.error(result.message);
       return;
     }
 
-    if (websiteUrl && !isValidHttpUrl(websiteUrl)) {
-      toast.error(t('header.editProfileModal.errorWebsiteUrl'));
-      return;
-    }
-
-    const payload = { ...formData, name, websiteUrl };
+    const payload = { ...formData, ...result.data };
 
     try {
       await updateProfileInfo(payload);

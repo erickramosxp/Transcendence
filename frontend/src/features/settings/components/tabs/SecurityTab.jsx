@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify';
 import { LIMITS } from '@/shared/validation/limits';
+import { validateChangePassword } from '@/shared/validation/validators';
 
 export const SecurityTab = () => {
 
@@ -49,30 +50,15 @@ export const SecurityTab = () => {
     const handleSettingsSubmit = async (e) => {
         e.preventDefault()
 
-        if (!currentPassword) {
-            toast.warn(t('security.warnCurrentPassword'));
+        const result = validateChangePassword(
+            { currentPassword, newPassword, confirmNewPassword },
+            t
+        );
+        if (!result.ok) {
+            toast.warn(result.message);
             return;
         }
 
-        if (!newPassword || !confirmNewPassword) {
-            toast.warn(t('security.warnNewPassword'));
-            return;
-        }
-
-        if (newPassword.length < LIMITS.passwordMin) {
-            toast.warn(t('security.passwordTooShort'));
-            return;
-        }
-
-        if (newPassword.length > LIMITS.passwordMax) {
-            toast.warn(t('auth:errors.passwordTooLong'));
-            return;
-        }
-
-        if (newPassword !== confirmNewPassword) {
-            toast.warn(t('security.passwordMismatch'));
-            return;
-        }
         setDisableButton(true);
         try {
             await changePassword({currentPassword, newPassword, confirmNewPassword});

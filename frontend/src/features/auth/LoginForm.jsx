@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useTranslation } from "react-i18next";
 
 import { Button, TabsContent, Separator, Label, Input } from "@/design-system";
-import { isValidLoginIdentifier } from "@/shared/validation/validators";
+import { validateLogin } from "@/shared/validation/validators";
 import { LIMITS } from "@/shared/validation/limits";
 
 export function LoginForm({onSubmit}) {
@@ -19,25 +19,14 @@ export function LoginForm({onSubmit}) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const trimmedUsername = username.trim();
-
-        if (!trimmedUsername || !password) {
-            toast.error(t('errors.fillAllFields'));
-            return;
-        }
-
-        if (!isValidLoginIdentifier(trimmedUsername)) {
-            toast.error(t('errors.invalidLoginIdentifier'));
-            return;
-        }
-
-        if (password.length > LIMITS.passwordMax) {
-            toast.error(t('errors.passwordTooLong'));
+        const result = validateLogin({ username, password }, t);
+        if (!result.ok) {
+            toast.error(result.message);
             return;
         }
 
         try {
-            onSubmit({ username: trimmedUsername, password });
+            onSubmit({ username: result.username, password: result.password });
         } catch (error) {
             console.error(error);
             toast.error(t('errors.loginFailed'));

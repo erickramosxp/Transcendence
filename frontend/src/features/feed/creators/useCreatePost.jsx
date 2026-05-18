@@ -70,6 +70,12 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		setLinkPreviewError(null);
 	};
 
+	/**
+	 * Envia o post com validação de texto (`LIMITS.postText`) e de arquivo:
+	 * - Foto: `validImageFile` → `validateImageContent` → compressão (max 2 MB, 1024px; GIF não comprime).
+	 * - Vídeo: `validVideoFile` (`LIMITS.postVideoFileMB`, apenas `video/mp4`).
+	 * A seleção via `FileUploadButton` já valida MIME/tamanho; esta função revalida antes do upload.
+	 */
 	async function handleSubmit() {
 		const trimmedText = text.trim();
 
