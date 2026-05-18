@@ -43,12 +43,17 @@ public class NotificationService {
         return n;
     }
 
-    public PageResponse<NotificationResponse> listByUser(Long userId, int pageIndex, int pageSize) {
+    public PageResponse<NotificationResponse> listByUser(Long userId, int pageIndex, int pageSize, boolean unreadOnly) {
         int start = pageIndex * pageSize;
         int end = start + pageSize;
 
+        String query = "receiver.id = ?1";
+        if (unreadOnly)
+            query += " AND isRead = false";
+        query += " ORDER BY createdAt DESC";
+
         List<Notification> notifications = Notification
-                .find("receiver.id = ?1 ORDER BY createdAt DESC", userId)
+                .find(query, userId)
                 .range(start, end)
                 .list();
 
