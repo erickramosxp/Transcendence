@@ -91,7 +91,7 @@ public class JobWorkerTest extends BaseApiTest {
 
         Mockito.verify(storageService, Mockito.times(1)).delete(path);
 
-        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_POST_MEDIA).firstResult();
+        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_S3_MEDIA).firstResult();
         Post updatedPost = Post.findById(postId);
 
         Assertions.assertEquals(JobStatus.DONE, job.status);
@@ -139,7 +139,7 @@ public class JobWorkerTest extends BaseApiTest {
         jobWorker.processJobs();
         entityManager.clear();
 
-        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_POST_MEDIA).firstResult();
+        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_S3_MEDIA).firstResult();
 
         Assertions.assertEquals(JobStatus.PENDING, job.status);
         Assertions.assertEquals(1, job.attempts);
@@ -188,7 +188,7 @@ public class JobWorkerTest extends BaseApiTest {
 
 
             QuarkusTransaction.requiringNew().run(() -> {
-                Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_POST_MEDIA).firstResult();
+                Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_S3_MEDIA).firstResult();
                 if (job.status == JobStatus.PENDING) {
                     job.availableAt = OffsetDateTime.now();
                 }
@@ -197,7 +197,7 @@ public class JobWorkerTest extends BaseApiTest {
 
         entityManager.clear();
 
-        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_POST_MEDIA).firstResult();
+        Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_S3_MEDIA).firstResult();
 
         Assertions.assertEquals(JobStatus.FAILED, job.status);
         Assertions.assertEquals(5, job.attempts);

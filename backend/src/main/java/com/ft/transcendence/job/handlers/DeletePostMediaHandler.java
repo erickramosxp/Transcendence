@@ -1,8 +1,7 @@
 package com.ft.transcendence.job.handlers;
 
 import com.ft.transcendence.common.storage.StorageService;
-import com.ft.transcendence.job.JobPayloads.DeletePostMediaPayload;
-import com.ft.transcendence.post.domain.Post;
+import com.ft.transcendence.job.JobPayloads.DeleteMediaPayload;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,20 +14,15 @@ public class DeletePostMediaHandler {
     StorageService storageService;
 
     @Transactional
-    public void handle(DeletePostMediaPayload payload) {
+    public void handle(DeleteMediaPayload payload) {
 
         try {
 
-            Long postId = payload.postId;
-            String mediaUrl = payload.mediaUrl;
+            if (payload.pathsToDelete != null && !payload.pathsToDelete.isEmpty()) {
 
-            Post post = Post.findById(postId);
-
-            storageService.delete(mediaUrl);
-
-            if (post != null && mediaUrl.equals(post.mediaUrl)) {
-                post.mediaUrl = null;
-                Log.infof("mediaUrl removed from post %d after deletion from storage", postId);
+                for (String path : payload.pathsToDelete) {
+                    storageService.delete(path);
+                }
             }
 
         } catch (Exception e) {

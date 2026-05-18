@@ -1,16 +1,16 @@
 package com.ft.transcendence.job.app;
 
 import com.ft.transcendence.common.utils.JsonService;
-import com.ft.transcendence.job.JobPayloads.DeletePostMediaPayload;
+import com.ft.transcendence.job.JobPayloads.DeleteMediaPayload;
 import com.ft.transcendence.job.domain.Job;
 import com.ft.transcendence.job.enums.JobStatus;
 import com.ft.transcendence.job.enums.JobType;
-import com.ft.transcendence.post.domain.Post;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 
 @ApplicationScoped
@@ -20,27 +20,20 @@ public class JobService {
     JsonService jsonService;
 
     @Transactional
-    public void createDeletePostMediaJob(long postId, long userId) {
+    public void createDeleteMediaJob(List<String> pathsToDelete, long userId) {
 
-        Post post = Post.findById(postId);
-
-        if (post == null) {
-            throw new IllegalStateException("Post not founded on create delete media job");
-        }
-
-        if (post.mediaUrl == null || post.mediaUrl.isBlank()) {
+        if (pathsToDelete == null || pathsToDelete.isEmpty()) {
             return;
         }
 
-        DeletePostMediaPayload payload = new DeletePostMediaPayload();
-        payload.postId = postId;
-        payload.mediaUrl = post.mediaUrl;
+        DeleteMediaPayload payload = new DeleteMediaPayload();
+        payload.pathsToDelete = pathsToDelete;
         payload.requestedByUserId = userId;
 
         String payloadJson = jsonService.serialize(payload);
 
         Job job = new Job();
-        job.type = JobType.DELETE_POST_MEDIA;
+        job.type = JobType.DELETE_S3_MEDIA;
         job.status = JobStatus.PENDING;
         job.payload = payloadJson;
         job.attempts = 0;

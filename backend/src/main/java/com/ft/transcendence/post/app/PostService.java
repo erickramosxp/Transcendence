@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,13 +187,31 @@ public class PostService {
         Like.delete("post.id = ?1", postId);
         Like.delete("comment.post.id = ?1", postId);
 
-        if (post.mediaUrl != null && !post.mediaUrl.isBlank()) {
-            try {
-                jobService.createDeletePostMediaJob(postId, userId);
-            } catch (Exception e) {
-                Log.info("Error creating job", e);
+        List<Media> medias = Media.find("modelType = ?1 and modelId = ?2", "POST", postId).list();
+
+        if (!medias.isEmpty()) {
+
+            List<String> pathsToDelete = new ArrayList<>();
+
+            for (Media m : medias) {
+                if (m.pathOriginal != null)
+                    pathsToDelete.add(m.pathOriginal);
+                if (m.pathPreview != null)
+                    pathsToDelete.add(m.pathPreview);
+                if (m.pathBlur != null)
+                    pathsToDelete.add(m.pathBlur);
             }
+
+            if (!pathsToDelete.isEmpty()) {
+                try {
+                    jobService.createDeleteMediaJob(pathsToDelete, userId);
+                } catch (Exception e) {
+                    Log.info("Error creating delete media job", e);
+                }
+            }
+            Media.delete("modelType = ?1 and modelId = ?2", "POST", postId);
         }
+
 
     }
 

@@ -1,7 +1,7 @@
 package com.ft.transcendence.job.app;
 
 import com.ft.transcendence.common.utils.JsonService;
-import com.ft.transcendence.job.JobPayloads.DeletePostMediaPayload;
+import com.ft.transcendence.job.JobPayloads.DeleteMediaPayload;
 import com.ft.transcendence.job.domain.Job;
 import com.ft.transcendence.job.handlers.DeletePostMediaHandler;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,8 +21,8 @@ public class JobProcessor {
 
         switch (job.type) {
 
-            case DELETE_POST_MEDIA:
-                DeletePostMediaPayload payload = jsonService.deserialize(job.payload, DeletePostMediaPayload.class);
+            case DELETE_S3_MEDIA:
+                DeleteMediaPayload payload = jsonService.deserialize(job.payload, DeleteMediaPayload.class);
                 deleteHandler.handle(payload);
                 break;
             default:

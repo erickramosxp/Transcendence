@@ -11,13 +11,17 @@ import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.follow.domain.Follow;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
+import com.ft.transcendence.job.app.JobService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.media.app.MediaService;
 import com.ft.transcendence.media.domain.Media;
+import com.ft.transcendence.media.enums.MediaStatus;
+import com.ft.transcendence.media.enums.MediaType;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -30,11 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.nio.file.Path;
-import java.util.Optional;
 
 @ApplicationScoped
 public class UserService {
@@ -48,6 +49,12 @@ public class UserService {
     @Inject
     MediaService mediaService;
 
+    @Inject
+    JobService jobService;
+
+    @Inject
+    UserAvatarService userAvatarService;
+
     public UserPageResponse getUserPage(User user, Long currentUserId) {
         Long followers = Follow.count("followee.id = ?1", user.id);
         Long following = Follow.count("follower.id = ?1", user.id);
@@ -55,11 +62,10 @@ public class UserService {
                 .firstResultOptional()
                 .isPresent();
 
-        String avatarUrl = user.avatarUrl;
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(List.of(user));
 
-        if (user.avatarUrl != null && !user.avatarUrl.startsWith("http")) {
-            avatarUrl = storageService.generateUrl(user.avatarUrl);
-        }
+        String avatarUrl = avatarMap.get(user.id);
+
         UserPageResponse userPageResponse = UserPageResponse.of(user, followers, following, isFollowing, avatarUrl);
 
         Long targetUserId = user.id;
@@ -166,28 +172,21 @@ public class UserService {
                         (existing, replacement) -> existing
                 ));
 
+        List<User> postAuthors = posts.stream().map(p -> p.user).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(postAuthors);
+
+
         Map<String, String> avatarCache = new HashMap<>();
 
         resp.items = posts.stream().map(p -> {
 
-
-            String avatarUrl  = p.user.avatarUrl;
-            if (avatarUrl != null) {
-                avatarUrl = avatarCache.computeIfAbsent(
-                        avatarUrl,
-                        storageService::generateUrl
-                );
-            }
-
+            String avatarUrl = avatarMap.get(p.user.id);
             Media media = mediaByPostId.get(p.id);
             com.ft.transcendence.media.dto.MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
 
             return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
         }).toList();
 
-        resp.page = page;
-        resp.size = size;
-        resp.hasMore = hasMore;
         return resp;
     }
 
@@ -230,26 +229,18 @@ public class UserService {
                         (existing, replacement) -> existing
                 ));
 
-        Map<String, String> avatarCache = new HashMap<>();
+        User postOwner = posts.get(0).user;
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(List.of(postOwner));
+        String avatarUrl = avatarMap.get(postOwner.id);
 
         resp.items = posts.stream().map(p -> {
-
-            String avatarUrl  = p.user.avatarUrl;
-            if (avatarUrl != null) {
-                avatarUrl = avatarCache.computeIfAbsent(
-                        avatarUrl,
-                        storageService::generateUrl
-                );
-            }
-
             Media media = mediaByPostId.get(p.id);
             com.ft.transcendence.media.dto.MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
 
-            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
+            // Usa a variável avatarUrl que foi carregada fora do loop
+            return PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
         }).toList();
-        resp.page = page;
-        resp.size = size;
-        resp.hasMore = hasMore;
+
         return resp;
     }
 
@@ -301,9 +292,6 @@ public class UserService {
             return MediaResponse.of(p, previewUrl);
 
         }).toList();
-        resp.page = page;
-        resp.size = size;
-        resp.hasMore = hasMore;
         return resp;
     }
 
@@ -360,11 +348,12 @@ public class UserService {
         if (hasMore)
             follows = follows.subList(0, size);
 
+        List<User> followers = follows.stream().map(f -> f.follower).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(followers);
+
         List<UserFollowResponse> items = follows.stream()
                 .map(f -> {
-                    String avatarUrl = f.follower.avatarUrl;
-                    if (avatarUrl != null && !avatarUrl.isBlank())
-                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    String avatarUrl = avatarMap.get(f.follower.id);
                     return UserFollowResponse.ofFollowers(f, avatarUrl);
                 }).toList();
 
@@ -383,12 +372,13 @@ public class UserService {
         if (hasMore)
             follows = follows.subList(0, size);
 
+        List<User> followers = follows.stream().map(f -> f.follower).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(followers);
+
         List<UserFollowResponse> items = follows.stream()
                 .map(f -> {
-                    String avatarUrl = f.followee.avatarUrl;
-                    if (avatarUrl != null && !avatarUrl.isBlank())
-                        avatarUrl = storageService.generateUrl(avatarUrl);
-                    return UserFollowResponse.ofFollowing(f, avatarUrl);
+                    String avatarUrl = avatarMap.get(f.follower.id);
+                    return UserFollowResponse.ofFollowers(f, avatarUrl);
                 }).toList();
 
         return new PageResponse<>(items, page, items.size(), hasMore);
@@ -397,14 +387,111 @@ public class UserService {
     @Transactional
     public Response updateAvatar(long userId, FileUploadForm req) throws IOException {
 
-        if (req.file == null)
+
+        MediaAnalysis analysis = validateAvatarFile(req);
+        String mimeType = analysis.detectedMimeType();
+        String extension = getExtensionFromMimeType(mimeType);
+
+        String newPath = "users/" + userId + "/avatar/avatar_" + java.util.UUID.randomUUID() + extension;
+
+        InputStream stream = Files.newInputStream(req.file.uploadedFile());
+        storageService.upload(newPath, stream, req.file.size(), mimeType);
+
+        User user = User.findById(userId);
+        user.avatarUrl = newPath;
+
+        Media existingMedia = Media.find("modelType = ?1 and modelId = ?2", "USER_PROFILE", userId).firstResult();
+
+        if (existingMedia != null) {
+            // Se o usuário já tinha avatar, envia as URLs ANTIGAS para o Job apagar do S3
+            List<String> oldPaths = extractMediaPaths(existingMedia);
+            if (!oldPaths.isEmpty()) {
+                jobService.createDeleteMediaJob(oldPaths, userId);
+            }
+
+            // FAZ O UPDATE NA LINHA EXISTENTE
+            existingMedia.mediaType = MediaType.IMAGE;
+            existingMedia.pathOriginal = newPath;
+            existingMedia.pathPreview = null;
+            existingMedia.pathBlur = null;
+            existingMedia.status = MediaStatus.COMPLETED;
+
+            // O Hibernate faz o SQL UPDATE automaticamente ao finalizar a transação!
+
+        } else {
+            // Se é o primeiro avatar da vida do usuário, faz INSERT
+            Media newMedia = new Media();
+            newMedia.modelType = "USER_PROFILE";
+            newMedia.modelId = userId;
+            newMedia.mediaType = MediaType.IMAGE;
+            newMedia.pathOriginal = newPath;
+            newMedia.status = MediaStatus.COMPLETED;
+            newMedia.persist();
+        }
+        String avatarUrl = storageService.generateUrl(newPath);
+        return Response.ok(new UpdateAvatarResponse(avatarUrl)).build();
+    }
+
+    @Transactional
+    public void removeAvatar(long currentUserId) {
+
+        User user = User.findById(currentUserId);
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        List<String> pathsToDelete = new ArrayList<>();
+
+        // 1. Fallback: Pega a URL legada do usuário (se existir) para garantir a exclusão
+        if (user.avatarUrl != null && !user.avatarUrl.isBlank()) {
+            pathsToDelete.add(user.avatarUrl);
+            user.avatarUrl = null; // Limpa a coluna antiga
+        }
+
+        // 2. Busca o avatar na nova tabela polimórfica
+        Media media = Media.find("modelType = ?1 and modelId = ?2", "USER_PROFILE", currentUserId).firstResult();
+
+        if (media != null) {
+            // 3. Extrai todas as variações possíveis geradas pela nova arquitetura
+            if (media.pathOriginal != null && !pathsToDelete.contains(media.pathOriginal)) pathsToDelete.add(media.pathOriginal);
+            if (media.pathPreview != null && !pathsToDelete.contains(media.pathPreview)) pathsToDelete.add(media.pathPreview);
+            if (media.pathBlur != null && !pathsToDelete.contains(media.pathBlur)) pathsToDelete.add(media.pathBlur);
+
+            // 4. Deleta a linha do banco de dados instantaneamente
+            media.delete();
+        }
+
+        // 5. Envia todas as URLs mapeadas para o Worker deletar no MinIO de forma assíncrona
+        if (!pathsToDelete.isEmpty()) {
+            try {
+                jobService.createDeleteMediaJob(pathsToDelete, currentUserId);
+            } catch (Exception e) {
+                Log.error("Error creating delete media job for avatar", e);
+            }
+        }
+    }
+
+    public UserAvatarResponse getAvatar(long userId) {
+
+        User user = User.findById(userId);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(List.of(user));
+        String presignedUrl = avatarMap.get(userId);
+
+        return new UserAvatarResponse(presignedUrl);
+    }
+
+    private MediaAnalysis validateAvatarFile(FileUploadForm req) {
+        if (req.file == null) {
             throw new BadRequestException("Avatar upload must contain image");
+        }
 
-
-
-        String contentType = req.file.contentType();
-        MediaAnalysis analysis;
         Path uploadedPath = req.file.uploadedFile();
+        MediaAnalysis analysis;
+
         try {
             analysis = mediaValidationService.analyzeImage(uploadedPath);
         } catch (Exception e) {
@@ -415,58 +502,26 @@ public class UserService {
             throw new BadRequestException(analysis.error());
         }
 
+        return analysis;
+    }
 
-        String mimeType = analysis.detectedMimeType();
-
-        String extension = switch (mimeType) {
+    private String getExtensionFromMimeType(String mimeType) {
+        if (mimeType == null) return ".png";
+        return switch (mimeType) {
             case "image/jpeg" -> ".jpg";
             case "image/png" -> ".png";
             case "image/webp" -> ".webp";
             case "image/gif" -> ".gif";
             default -> ".png";
         };
-        String path = "users/" + userId + "/avatar/avatar" + extension;
-
-        InputStream stream = Files.newInputStream(req.file.uploadedFile());
-        long size = req.file.size();
-
-        storageService.upload(path, stream, size, mimeType);
-        User user = User.findById(userId);
-        user.avatarUrl = path;
-        String avatarUrl = storageService.generateUrl(path);
-        return Response.ok(
-                new UpdateAvatarResponse(avatarUrl)
-        ).build();
     }
 
-    @Transactional
-    public void removeAvatar(long currentUserId) {
-
-        User user = User.findById(currentUserId);
-
-        if (user == null)
-            throw new NotFoundException();
-
-        if (user.avatarUrl == null || user.avatarUrl.isBlank())
-            return;
-
-        storageService.delete(user.avatarUrl);
-
-        user.avatarUrl = null;
+    private List<String> extractMediaPaths(Media media) {
+        List<String> paths = new java.util.ArrayList<>();
+        if (media.pathOriginal != null) paths.add(media.pathOriginal);
+        if (media.pathPreview != null) paths.add(media.pathPreview);
+        if (media.pathBlur != null) paths.add(media.pathBlur);
+        return paths;
     }
-
-    public UserAvatarResponse getAvatar(long userId) {
-
-        UserAvatarResponse avatarResponse = User.find(
-                "id",
-                userId
-        ).project(UserAvatarResponse.class).firstResult();
-
-        String presignedUrl = avatarResponse.avatarUrl;
-        if (presignedUrl != null && !presignedUrl.isEmpty()) {
-            presignedUrl = storageService.generateUrl(avatarResponse.avatarUrl);
-        }
-
-        return new UserAvatarResponse(presignedUrl);
-    }
+    
 }

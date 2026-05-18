@@ -295,7 +295,7 @@ public class PostResourceTest extends BaseApiTest {
         Post post = Post.findById(postId);
         assertNotNull(post.deletedAt);
 
-        Job job = Job.find("type = ?1 and status = ?2", JobType.DELETE_POST_MEDIA, JobStatus.PENDING)
+        Job job = Job.find("type = ?1 and status = ?2", JobType.DELETE_S3_MEDIA, JobStatus.PENDING)
                 .firstResult();
 
         assertNotNull(job);
