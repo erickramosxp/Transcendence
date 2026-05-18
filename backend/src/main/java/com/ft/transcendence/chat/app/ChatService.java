@@ -31,9 +31,10 @@ public class ChatService {
     StorageService storageService;
 
     @Inject
-    SocialMetrics metrics;
-    
     NotificationDispatcher notificationDispatcher;
+
+    @Inject
+    SocialMetrics metrics;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
         if (page < 0 || size <= 0)
@@ -124,6 +125,7 @@ public class ChatService {
                 throw new ForbiddenException("User with id=" + userId + " is not your friend");
             ChatParticipant.create(chat, user, "member");
         }
+
         for (Long userId : participantIds)
             notificationDispatcher.onAddedToGroup(currentUser, userId, chat);
 
