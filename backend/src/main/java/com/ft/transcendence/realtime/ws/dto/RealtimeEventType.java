@@ -12,6 +12,7 @@ public final class RealtimeEventType {
     public static final String PING = "PING";
     public static final String PONG = "PONG";
     public static final String ERROR = "ERROR";
+    public static final String NOTIFICATION_RECEIVED = "NOTIFICATION_RECEIVED";
 
     private RealtimeEventType() {}
 }

@@ -14,6 +14,7 @@ import enPrivacyPolicy from "./locales/en/legalPrivacy.json";
 import enTermsOfService from "./locales/en/termsOfService.json";
 import enNotFound from "./locales/en/notFound.json";
 import enLegalNavigation from "./locales/en/legalNavigation.json";
+import enNotifications from "./locales/en/notifications.json";
 
 import ptAuth from "./locales/pt/auth.json";
 import ptFeed from "./locales/pt/feed.json";
@@ -28,6 +29,7 @@ import ptPrivacyPolicy from "./locales/pt/legalPrivacy.json";
 import ptTermsOfService from "./locales/pt/termsOfService.json";
 import ptNotFound from "./locales/pt/notFound.json";
 import ptLegalNavigation from "./locales/pt/legalNavigation.json";
+import ptNotifications from "./locales/pt/notifications.json";
 
 import esAuth from "./locales/es/auth.json";
 import esFeed from "./locales/es/feed.json";
@@ -42,6 +44,7 @@ import esPrivacyPolicy from "./locales/es/legalPrivacy.json";
 import esTermsOfService from "./locales/es/termsOfService.json";
 import esNotFound from "./locales/es/notFound.json";
 import esLegalNavigation from "./locales/es/legalNavigation.json";
+import esNotifications from "./locales/es/notifications.json";
 
 const resources = {
     "en-US": {
@@ -57,7 +60,8 @@ const resources = {
         privacyPolicy: enPrivacyPolicy,
         termsOfService: enTermsOfService,
         notFound: enNotFound,
-        legalNavigation: enLegalNavigation
+        legalNavigation: enLegalNavigation,
+        notifications: enNotifications
     },
     "pt-BR": {
         auth: ptAuth,
@@ -72,7 +76,8 @@ const resources = {
         privacyPolicy: ptPrivacyPolicy,
         termsOfService: ptTermsOfService,
         notFound: ptNotFound,
-        legalNavigation: ptLegalNavigation
+        legalNavigation: ptLegalNavigation,
+        notifications: ptNotifications
     },
     "es-ES": {
         auth: esAuth,
@@ -87,7 +92,8 @@ const resources = {
         privacyPolicy: esPrivacyPolicy,
         termsOfService: esTermsOfService,
         notFound: esNotFound,
-        legalNavigation: esLegalNavigation
+        legalNavigation: esLegalNavigation,
+        notifications: esNotifications
     }
 }
 
@@ -95,7 +101,7 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        ns: ["common", "profile", "auth", "feed", "home", "authProvider", "chat", "privacyPolicy", "termsOfService", "notFound", "legalNavigation"],
+        ns: ["common", "profile", "auth", "feed", "home", "authProvider", "chat", "privacyPolicy", "termsOfService", "notFound", "legalNavigation", "notifications"],
         defaultNS: "common",
         fallbackLng: "pt-BR",
         lng: localStorage.getItem("lang") || "pt-BR",

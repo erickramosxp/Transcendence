@@ -3,6 +3,7 @@ package com.ft.transcendence.like.app;
 import com.ft.transcendence.comment.domain.Comment;
 import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,6 +21,9 @@ public class LikeService {
 
     @Inject
     SocialMetrics metrics;
+
+    @Inject
+    NotificationDispatcher notificationDispatcher;
 
     @Transactional
     public void likePost(long userId, long postId) {
@@ -43,6 +47,8 @@ public class LikeService {
 
             metrics.recordPostLike();
         }
+
+        notificationDispatcher.onLikePost(userId, post);
     }
 
     @Transactional
@@ -89,6 +95,8 @@ public class LikeService {
 
             metrics.recordCommentLike();
         }
+
+        notificationDispatcher.onLikeComment(userId, comment);
     }
 
     @Transactional

@@ -95,6 +95,13 @@
   "a11y": {
     "back": "Back to conversation list"
   },
+  "toast": {
+    "close": "Close",
+    "openChat": "Open conversation",
+    "messageTitle": "sent a message",
+    "previewEmpty": "New message",
+    "messageBodyMany": "{{count}} messages · {{preview}}"
+  },
   "participants": {
     "title": "Group participants",
     "openAria": "View group participants",

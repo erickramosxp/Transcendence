@@ -1,0 +1,34 @@
+{
+    "title": "Notificações",
+    "markAllRead": "Marcar todas como lidas",
+    "empty": "Nenhuma notificação por aqui.",
+    "loading": "Carregando…",
+    "loadMore": "Carregar mais",
+    "errors": {
+        "load": "Não foi possível carregar as notificações. Tente novamente.",
+        "retry": "Tentar novamente",
+        "markRead": "Não foi possível marcar a notificação como lida.",
+        "markAllRead": "Não foi possível marcar todas como lidas.",
+        "postUnavailable": "Este post não está mais disponível.",
+        "openTarget": "Não foi possível abrir o destino desta notificação."
+    },
+    "toast": {
+        "close": "Fechar notificação",
+        "openNotifications": "Abrir página de notificações"
+    },
+    "card": {
+        "openTarget": "Abrir destino da notificação",
+        "someone": "Alguém",
+        "LIKE_POST": "<bold>{{name}}</bold><muted> curtiu seu post.</muted>",
+        "LIKE_COMMENT": "<bold>{{name}}</bold><muted> curtiu seu comentário.</muted>",
+        "COMMENT_POST": "<bold>{{name}}</bold><muted> comentou: \"{{preview}}\"</muted>",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold><muted> comentou no seu post.</muted>",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold><muted> enviou uma solicitação de amizade.</muted>",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold><muted> aceitou sua solicitação de amizade.</muted>",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold><muted> recusou sua solicitação de amizade.</muted>",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold><muted> desfez a amizade com você.</muted>",
+        "ADDED_GROUP": "<bold>{{name}}</bold><muted> adicionou você ao grupo \"{{chatName}}\".</muted>",
+        "REMOVED_GROUP": "<bold>{{name}}</bold><muted> removeu você do grupo \"{{chatName}}\".</muted>",
+        "unknown": "<bold>{{name}}</bold><muted> enviou uma notificação.</muted>"
+    }
+}

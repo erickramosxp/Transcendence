@@ -9,6 +9,7 @@ import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
+import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,8 @@ public class ChatService {
 
     @Inject
     SocialMetrics metrics;
+    
+    NotificationDispatcher notificationDispatcher;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
         if (page < 0 || size <= 0)
@@ -110,7 +114,9 @@ public class ChatService {
         User currentUser = User.findById(currentUserId);
         ChatParticipant.create(chat, currentUser, "admin");
 
-        for (Long userId : req.participantIds) {
+        HashSet<Long> participantIds = new HashSet<>(req.participantIds);
+
+        for (Long userId : participantIds) {
             User user = User.findById(userId);
             if (user == null)
                 throw new NotFoundException("User with id=" + userId + " not found");
@@ -118,6 +124,8 @@ public class ChatService {
                 throw new ForbiddenException("User with id=" + userId + " is not your friend");
             ChatParticipant.create(chat, user, "member");
         }
+        for (Long userId : participantIds)
+            notificationDispatcher.onAddedToGroup(currentUser, userId, chat);
 
         metrics.recordGroupChatCreated();
 
@@ -168,6 +176,9 @@ public class ChatService {
         if (!"group".equals(chat.getType()))
             throw new BadRequestException("This chat is not a group");
 
+        if (!areFriends(currentUserId, req.userId))
+            throw new ForbiddenException("User with id=" + req.userId + " is not your friend");
+
         ChatParticipant requester = ChatParticipant.find("chat.id = ?1 and user.id = ?2", chatId, currentUserId).firstResult();
         if (requester == null)
             throw new ForbiddenException("You are not a participant of this chat");
@@ -184,6 +195,8 @@ public class ChatService {
             throw new NotFoundException("User not found");
 
         ChatParticipant.create(chat, user, "member");
+
+        notificationDispatcher.onAddedToGroup(requester.user, user.id, chat);
     }
 
     @Transactional
@@ -208,6 +221,8 @@ public class ChatService {
         ChatParticipant target = ChatParticipant.find("chat.id = ?1 and user.id = ?2", chatId, targetUserId).firstResult();
         if (target == null)
             throw new NotFoundException("User is not a participant of this chat");
+
+        notificationDispatcher.onRemovedFromGroup(requester.user, target.user.id, chat);
 
         target.delete();
     }

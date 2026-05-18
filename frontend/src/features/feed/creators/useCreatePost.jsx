@@ -88,12 +88,26 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		}
 
 		setUploadPercent(0);
+		let fileToUpload = file;
 		if (file) {
 			let validation;
 			if (postType == "photo") {
 				validation = validImageFile(file);
 				if (validation.valid) {
+
 					validation = await validateImageContent(file);
+
+					if (file.type !== 'image/gif') {
+						const { default: imageCompression } = await import('browser-image-compression');
+
+						const options = {
+							maxSizeMB: 2,
+							maxWidthOrHeight: 1024,
+							useWebWorker: true
+						};
+
+						fileToUpload = await imageCompression(file, options);
+					}
 				}
 			}
 			else if (postType == "video")
@@ -109,7 +123,7 @@ export function useCreatePost(onAddPost, onClose, postType) {
 		try {
 			await onAddPost({
 				text: text,
-				file: file,
+				file: fileToUpload,
 				fileType: typeof postType === "string" ? postType : postType?.type || "",
 				linkPreview: linkPreview,
 			}, setUploadPercent);

@@ -24,6 +24,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.NotSupportedException;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +55,11 @@ public class PostService {
         if ((req.text == null || req.text.isBlank()) && (req.file == null))
             throw new BadRequestException("Posts must contain text or images");
 
+        if (req.text != null && req.text.length() > 500) {
+            throw new BadRequestException("Text content is too long. Maximum 500 characters.");
+        }
+
+        // file
         String contentType = null;
         long size = 0;
         MediaAnalysis analysis;
@@ -77,7 +83,13 @@ public class PostService {
                 throw new BadRequestException(analysis.error());
             }
 
+
             contentType = analysis.detectedMimeType();
+            if (contentType.startsWith("image/")) {
+                if (!req.previewFile.contentType().startsWith("image/") || !req.blurFile.contentType().startsWith("image/")) {
+                    throw new BadRequestException("Invalid format for preview or blur variants");
+                }
+            }
         }
 
         var now = OffsetDateTime.now();
@@ -95,21 +107,52 @@ public class PostService {
         String mediaUrl = null;
 
         if (req.file != null) {
-            String originalName = req.file.fileName();
-            String extension = originalName.substring(originalName.lastIndexOf("."));
-            String fullNameFile = java.util.UUID.randomUUID() + extension;
-            String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;
 
-            try (InputStream stream = Files.newInputStream(req.file.uploadedFile())) {
-                storageService.upload(path, stream, size, contentType);
+            try {
+                String extension = getExtensionFromMimeType(contentType);
+                String fullNameFile = java.util.UUID.randomUUID() + extension;
+                String basePath = "users/" + userId + "/post/" + post.id + "/";
+
+                String mainPath = basePath + "main_" + fullNameFile;
+                uploadFileToStorage(req.file, mainPath, contentType);
+                post.mediaUrl = mainPath;
+                mediaUrl = storageService.generateUrl(mainPath);
+
+                if (contentType != null && contentType.startsWith("image/")) {
+
+                    // Upload do Preview
+                    String previewPath = basePath + "preview_" + java.util.UUID.randomUUID() + ".jpg";
+                    uploadFileToStorage(req.previewFile, previewPath, "image/jpeg");
+                    //post.previewUrl = previewPath; // Seta na entity para salvar no banco
+
+                    // Upload do Blur
+                    String blurPath = basePath + "blur_" + java.util.UUID.randomUUID() + ".jpg";
+                    uploadFileToStorage(req.blurFile, blurPath, "image/jpeg");
+                    //post.blurUrl = blurPath; // Seta na entity para salvar no banco
+                }
+            } catch (IOException e) {
+                System.err.println("Erro crítico ao fazer upload para o MinIO: " + e.getMessage());
+                throw new BadRequestException("Erro in uploaded file");
+
             }
 
-            post.mediaUrl = path;
-            mediaUrl = path;
 
-            if (mediaUrl != null && !mediaUrl.isBlank()) {
-                mediaUrl = storageService.generateUrl(mediaUrl);
-            }
+
+
+//            String extension = getExtensionFromMimeType(contentType);
+//            String fullNameFile = java.util.UUID.randomUUID() + extension;
+//            String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;
+//
+//            try (InputStream stream = Files.newInputStream(req.file.uploadedFile())) {
+//                storageService.upload(path, stream, size, contentType);
+//            }
+//
+//            post.mediaUrl = path;
+//            mediaUrl = path;
+//
+//            if (mediaUrl != null && !mediaUrl.isBlank()) {
+//                mediaUrl = storageService.generateUrl(mediaUrl);
+//            }
         }
 
         metrics.recordPostCreated(req.file != null);
@@ -221,6 +264,39 @@ public class PostService {
             } catch (Exception e) {
                 Log.info("Error creating job", e);
             }
+        }
+    }
+
+    private String getExtensionFromMimeType(String contentType) {
+        if (contentType == null) {
+            return ".jpg";
+        }
+
+        switch (contentType.toLowerCase()) {
+            case "image/jpeg":
+            case "image/jpg":
+                return ".jpg";
+            case "image/png":
+                return ".png";
+            case "image/gif":
+                return ".gif";
+            case "image/webp":
+                return ".webp";
+            case "video/quicktime":
+            case "video/mp4":
+                return ".mp4";
+            default:
+                return ".jpg";
+        }
+    }
+
+    private void uploadFileToStorage(FileUpload fileUpload, String path, String contentType) throws IOException {
+        if (fileUpload == null) return;
+
+        try (InputStream stream = Files.newInputStream(fileUpload.uploadedFile())) {
+            storageService.upload(path, stream, fileUpload.size(), contentType);
+        } catch (IOException e) {
+            throw e;
         }
     }
 }

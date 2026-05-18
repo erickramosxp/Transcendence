@@ -1,0 +1,47 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'severity']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+  receiver: 'discord-notifications'
+
+  routes:
+    - match:
+        severity: heartbeat
+      receiver: 'healthchecks'
+      repeat_interval: 1m
+      group_wait: 0s
+      group_interval: 1m
+
+    - match:
+        severity: critical
+      receiver: 'discord-notifications'
+      repeat_interval: 30m
+
+    - match:
+        severity: warning
+      receiver: 'discord-notifications'
+      repeat_interval: 1h
+
+receivers:
+  - name: 'discord-notifications'
+    discord_configs:
+      - webhook_url: 'DISCORD_WEBHOOK_PLACEHOLDER'
+        send_resolved: true
+        title: '{{ if eq .Status "firing" }}{{ if eq (index .Alerts 0).Labels.severity "critical" }}🚨{{ else }}⚠️{{ end }} {{ .GroupLabels.alertname }}{{ else }}✅ RESOLVIDO: {{ .GroupLabels.alertname }}{{ end }}'
+        message: '{{ if eq .Status "resolved" }}🟢 **Serviço normalizado!** O alerta **{{ .GroupLabels.alertname }}** foi resolvido.{{ else }}{{ range .Alerts }}**Severidade:** {{ if eq .Labels.severity "critical" }}🔴 Critical{{ else }}🟡 Warning{{ end }}\n**Alerta:** {{ .Labels.alertname }}\n**Descrição:** {{ .Annotations.description }}{{ end }}{{ end }}'
+
+  - name: 'healthchecks'
+    webhook_configs:
+      - url: 'HEALTHCHECKS_PLACEHOLDER'
+        send_resolved: false
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname']

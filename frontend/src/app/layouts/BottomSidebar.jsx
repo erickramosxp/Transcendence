@@ -1,9 +1,11 @@
 import { NavLink, useLocation } from "react-router-dom"
 import { cn } from "@/design-system/tokens/colors"
 import { Home, MessageCircle, Bell, Users, User } from "lucide-react"
+import { useNotificationStore } from "@/features/notifications/store/useNotificationStore"
 
 export function BottomSidebar() {
 	const location = useLocation()
+	const unreadCount = useNotificationStore((state) => state.unreadCount)
 
 	const navItems = [
 		{ path: '/feed', icon: Home, label: 'Feed' },
@@ -26,7 +28,17 @@ export function BottomSidebar() {
 							isActive ? "text-[var(--yale-blue-500)]" : "text-gray-500 dark:text-gray-600"
 						)}
 					>
-						<item.icon className="h-6 w-6" />
+						<span className="relative">
+							<item.icon className="h-6 w-6" />
+							{item.path === "/notifications" && unreadCount > 0 ? (
+								<span
+									className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-semibold text-primary-foreground"
+									aria-hidden
+								>
+									{unreadCount > 9 ? "9+" : unreadCount}
+								</span>
+							) : null}
+						</span>
 						{isActive && <span className="w-1.5 h-1.5 rounded-full bg-[var(--yale-blue-500)]" aria-hidden />}
 						<span className="sr-only">{item.label}</span>
 					</NavLink>

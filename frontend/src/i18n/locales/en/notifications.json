@@ -1,0 +1,34 @@
+{
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "loading": "Loading…",
+    "loadMore": "Load more",
+    "errors": {
+        "load": "Could not load notifications. Please try again.",
+        "retry": "Try again",
+        "markRead": "Could not mark the notification as read.",
+        "markAllRead": "Could not mark all notifications as read.",
+        "postUnavailable": "This post is no longer available.",
+        "openTarget": "Could not open this notification's destination."
+    },
+    "toast": {
+        "close": "Close notification",
+        "openNotifications": "Open notifications page"
+    },
+    "card": {
+        "openTarget": "Open notification destination",
+        "someone": "Someone",
+        "LIKE_POST": "<bold>{{name}}</bold><muted> liked your post.</muted>",
+        "LIKE_COMMENT": "<bold>{{name}}</bold><muted> liked your comment.</muted>",
+        "COMMENT_POST": "<bold>{{name}}</bold><muted> commented: \"{{preview}}\"</muted>",
+        "COMMENT_POST_noPreview": "<bold>{{name}}</bold><muted> commented on your post.</muted>",
+        "FRIEND_REQUEST": "<bold>{{name}}</bold><muted> sent you a friend request.</muted>",
+        "FRIEND_ACCEPTED": "<bold>{{name}}</bold><muted> accepted your friend request.</muted>",
+        "FRIEND_REJECTED": "<bold>{{name}}</bold><muted> declined your friend request.</muted>",
+        "FRIEND_BROKEN": "<bold>{{name}}</bold><muted> removed you as a friend.</muted>",
+        "ADDED_GROUP": "<bold>{{name}}</bold><muted> added you to the group \"{{chatName}}\".</muted>",
+        "REMOVED_GROUP": "<bold>{{name}}</bold><muted> removed you from the group \"{{chatName}}\".</muted>",
+        "unknown": "<bold>{{name}}</bold><muted> sent you a notification.</muted>"
+    }
+}

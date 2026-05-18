@@ -5,20 +5,28 @@ import { useAuth } from "@/app/providers/AuthProvider"
 
 import { Button, ThemeToggle, LanguageSwitcher, SideBarNav } from "@/design-system"
 import { Bell, Home, LogOut, MessageCircle, User, Users } from "lucide-react"
+import { useNotificationStore } from "@/features/notifications/store/useNotificationStore"
 
 export function LeftSidebar() {
     const { logout } = useAuth()
     const { t } = useTranslation("common")
+    const unreadCount = useNotificationStore((state) => state.unreadCount)
 
     const sideBarItems = useMemo(
         () => [
             { label: t("nav.feed"), icon: Home, to: "/feed", end: true },
             { label: t("nav.messages"), icon: MessageCircle, to: "/chat", end: false },
-            { label: t("nav.notifications"), icon: Bell, to: "/notifications", end: true },
+            {
+                label: t("nav.notifications"),
+                icon: Bell,
+                to: "/notifications",
+                end: true,
+                badge: unreadCount,
+            },
             { label: t("nav.friends"), icon: Users, to: "/friends", end: true },
             { label: t("nav.profile"), icon: User, to: "/profile", end: true },
         ],
-        [t],
+        [t, unreadCount],
     )
     return (
         <>

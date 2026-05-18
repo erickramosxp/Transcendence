@@ -1,96 +1,83 @@
 import { useState, useEffect } from "react";
-import  PostCard  from "@/features/feed/components/PostCard";
 import { usePostList } from "@/features/profile/hooks/usePostList";
-import { getUserMediaPosts, getPostUserDetails } from '@/features/profile/services/profileService'
-import { Modal, Loading } from "@/design-system";
+import { useMediaPostModal } from "@/features/profile/hooks/useMediaPostModal";
+import { getUserMediaPosts } from "@/features/profile/services/profileService";
+import { Loading } from "@/design-system";
 import { useTranslation } from "react-i18next";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { MediaGridRenderer } from "./midiaThumbnails/MediaGridRenderer";
+import { MediaPostModal } from "./MediaPostModal";
 
 export function MediaGrid({ username }) {
+	const [loading, setLoading] = useState(true);
+	const { t } = useTranslation("profile");
 
-  const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { t } = useTranslation('profile');
+	const { posts, loadInitial } = usePostList((page, size) =>
+		getUserMediaPosts(username, page, size),
+	);
 
-  const { posts, loadInitial, handleLike, toggleComments, activeCommentsPostId, incrementCommentCount, ...handlers } = usePostList(
-  (page, size) => getUserMediaPosts(username, page, size)
-);
+	const {
+		selected,
+		modalLoading,
+		activeCommentsPostId,
+		highlightCommentId,
+		openPost,
+		closePost,
+		handleLike,
+		toggleComments,
+		incrementCommentCount,
+	} = useMediaPostModal();
 
-  useEffect(() => {
+	useEffect(() => {
+		const loadMedia = async () => {
+			try {
+				await loadInitial();
+			} catch (err) {
+				console.error(err);
+				toast.error(t("mediaGrid.getMidaError"));
+			} finally {
+				setLoading(false);
+			}
+		};
 
-    const getUserMediaPosts = async () => {
-      try {
-        await loadInitial();
+		loadMedia();
+	}, [username, loadInitial, t]);
 
-      } catch (err) {
-        console.error(err);
-        toast.error(t('mediaGrid.getMidaError'));
-      } finally {
-        setLoading(false);
-      }
-    }
+	if (loading) return <Loading size="md" className="py-10" />;
 
-    getUserMediaPosts();
-  }, [username]);
+	if (posts.length === 0) {
+		return (
+			<p className="text-center text-muted-foreground py-12 text-sm">
+				{t("mediaGrid.empty")}
+			</p>
+		);
+	}
 
-  const getPostDetails = async (postId) => {
+	return (
+		<>
+			<div className="grid grid-cols-3 gap-1">
+				{posts.map((item, index) => (
+					<div
+						key={`${item.postId}-${index}`}
+						className="flex justify-center aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+						onClick={() => openPost(item.postId)}
+					>
+						<MediaGridRenderer item={item} />
+					</div>
+				))}
+			</div>
 
-    try {
-      const resp = await getPostUserDetails(postId);
-      setSelected(resp);
-    } catch (err) {
-      console.error(err);
-      toast.error(t('mediaGrid.getPostError'));
-    }
-  }
-
-
-  if (loading)
-    return <Loading size="md" className="py-10" />
-
-  if (posts.length === 0) {
-    return (
-      <p className="text-center text-muted-foreground py-12 text-sm">
-        {t('mediaGrid.empty')}
-      </p>
-    );
-  }
-
-  return (
-    <>
-      <div className="grid grid-cols-3 gap-1">
-        {posts.map((item, index) => (
-          <div
-            key={`${item.postId}-${index}`}
-            className="flex justify-center aspect-square overflow-hidden rounded-md cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => getPostDetails(item.postId)}
-          >
-            <MediaGridRenderer 
-              item={item}
-            />
-          </div>
-        ))}
-      </div>
-
-      <Modal
-        size="lg"
-        open={!!selected}
-        onClose={() => setSelected(null)}
-      >
-        {selected && (
-          <PostCard 
-            onLike={handleLike}
-            onToggleComments={toggleComments}
-            activeCommentsPostId={activeCommentsPostId}
-            incrementCommentCount={incrementCommentCount}
-            isModal={true}
-          className="p-0! shadow-none! border-none! rounded-none!"
-          post={selected}
-          />
-        )}
-      </Modal>
-    </>
-  );
+			<MediaPostModal
+				open={!!selected}
+				onClose={closePost}
+				post={selected}
+				loading={modalLoading}
+				onLike={handleLike}
+				onToggleComments={toggleComments}
+				activeCommentsPostId={activeCommentsPostId}
+				incrementCommentCount={incrementCommentCount}
+				highlightCommentId={highlightCommentId}
+			/>
+		</>
+	);
 }
-

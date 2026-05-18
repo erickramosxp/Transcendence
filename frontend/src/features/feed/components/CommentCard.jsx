@@ -10,6 +10,7 @@ import {
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/useLanguage";
+import { cn } from "@/design-system/tokens/colors";
 
 import {
     Button,
@@ -22,7 +23,12 @@ import {
     LikeButton
 } from "@/design-system";
 
-export default function CommentCard({ postId, incrementCommentCount }) {
+export default function CommentCard({
+    postId,
+    incrementCommentCount,
+    highlightCommentId = null,
+    inModal = false,
+}) {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
     const [loadingComments, setLoadingComments] = useState(true);
@@ -69,6 +75,17 @@ export default function CommentCard({ postId, incrementCommentCount }) {
         requestComments();
     }, [postId]);
 
+    useEffect(() => {
+        if (!inModal || highlightCommentId == null || loadingComments) return;
+        const id = Number(highlightCommentId);
+        if (Number.isNaN(id)) return;
+
+        requestAnimationFrame(() => {
+            const el = document.getElementById(`comment-${id}`);
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+    }, [inModal, highlightCommentId, loadingComments, comments]);
+
     const handleToggleLike = async (commentId) => {
         const targetComment = comments.find((c) => c.id === commentId);
         if (!targetComment) return;
@@ -110,6 +127,71 @@ export default function CommentCard({ postId, incrementCommentCount }) {
         }
     };
 
+    const commentList = (
+        <div className="space-y-3">
+            {comments.map((comment) => (
+                <div
+                    key={comment.id ?? `${comment.user_id}-${comment.created_at}`}
+                    id={
+                        inModal && comment.id != null
+                            ? `comment-${comment.id}`
+                            : undefined
+                    }
+                    className={cn(
+                        "rounded-xl bg-muted p-3",
+                        inModal &&
+                            highlightCommentId != null &&
+                            Number(comment.id) === Number(highlightCommentId) &&
+                            "ring-2 ring-inset ring-primary/60",
+                    )}
+                >
+                    <div className="flex gap-3">
+                        <div>
+                            <Avatar
+                                src={comment.avatarUrl}
+                                username={comment.username}
+                                name={comment.name}
+                                size="md"
+                            />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
+                                <span className="min-w-10 truncate text-foreground transition-colors hover:text-primary sm:truncate-none">
+                                    <Link className="truncate" to={`/${comment.username}`}>
+                                        {comment.name}
+                                    </Link>
+                                </span>
+
+                                <span className="truncate text-muted-foreground sm:truncate-none">
+                                    @{comment.username}
+                                </span>
+                                <span
+                                    title={new Date(comment.created_at).toLocaleString()}
+                                    className="truncate text-muted-foreground sm:truncate-none"
+                                >
+                                    {getCurrentTime(comment.created_at, currentLanguage)}
+                                </span>
+                            </div>
+
+                            <div className="mt-2 min-w-0 overflow-hidden break-words leading-relaxed text-foreground [overflow-wrap:anywhere]">
+                                <TextWithLink text={comment.contents} />
+                            </div>
+
+                            <div className="mt-3 flex items-center gap-6 text-muted-foreground">
+                                <LikeButton 
+                                    onClick={() => handleToggleLike(comment.id)}
+                                    liked={comment.likedByMe}
+                                    count={comment.likeCount}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+
     return (
         <div className="space-y-3 pt-2">
             <Separator />
@@ -119,60 +201,12 @@ export default function CommentCard({ postId, incrementCommentCount }) {
                 <div className="text-sm text-muted-foreground">
                     {t('comments.empty')}
                 </div>
+            ) : inModal ? (
+                <div className="max-h-[min(20rem,50vh)] overflow-x-hidden overflow-y-auto px-1.5 py-1">
+                    {commentList}
+                </div>
             ) : (
-                <Scroll className="max-h-[20rem]">
-                    <div className="space-y-3">
-                        {comments.map((comment) => (
-                            <div
-                                key={comment.id ?? `${comment.user_id}-${comment.created_at}`}
-                                className="rounded-xl bg-muted p-3"
-                            >
-                                <div className="flex gap-3">
-                                    <div>
-                                        <Avatar
-                                            src={comment.avatarUrl}
-                                            username={comment.username}
-                                            name={comment.name}
-                                            size="md"
-                                        />
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 text-sm max-w-[200px] sm:max-w-none">
-                                            <span className="min-w-10 truncate text-foreground transition-colors hover:text-primary sm:truncate-none">
-                                                <Link className="truncate" to={`/${comment.username}`}>
-                                                    {comment.name}
-                                                </Link>
-                                            </span>
-
-                                            <span className="truncate text-muted-foreground sm:truncate-none">
-                                                @{comment.username}
-                                            </span>
-                                            <span
-                                                title={new Date(comment.created_at).toLocaleString()}
-                                                className="truncate text-muted-foreground sm:truncate-none"
-                                            >
-                                                {getCurrentTime(comment.created_at, currentLanguage)}
-                                            </span>
-                                        </div>
-
-                                        <div className="mt-2 leading-relaxed text-foreground">
-                                            <TextWithLink text={comment.contents} />
-                                        </div>
-
-                                        <div className="mt-3 flex items-center gap-6 text-muted-foreground">
-                                            <LikeButton 
-                                                onClick={() => handleToggleLike(comment.id)}
-                                                liked={comment.likedByMe}
-                                                count={comment.likeCount}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Scroll>
+                <Scroll className="max-h-[20rem]">{commentList}</Scroll>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-2">

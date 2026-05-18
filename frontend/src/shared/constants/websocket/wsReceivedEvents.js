@@ -1,7 +1,7 @@
 import { WS_ERROR_CODES } from "./wsErrorCodes"
 
 /**
- * 
+ *
  * @typedef {Object} ErrorPayload
  * @property {"ERROR"} type - Always "ERROR".
  * @property {Object} payload - The error details.
@@ -50,7 +50,7 @@ export const WS_INCOMING_EVENTS = {
 
     /**
      * Sent after a message is persisted.
-     * 
+     *
      */
     MESSAGE_CREATED: 'MESSAGE_CREATED',
 
@@ -63,6 +63,11 @@ export const WS_INCOMING_EVENTS = {
      * Another participant stopped typing.
      */
     TYPING_STOP: 'TYPING_STOP',
+
+    /**
+     * New notification for the connected user (same shape as REST list item).
+     */
+    NOTIFICATION_RECEIVED: 'NOTIFICATION_RECEIVED',
 
     /**
      * Standard websocket error wrapper.
