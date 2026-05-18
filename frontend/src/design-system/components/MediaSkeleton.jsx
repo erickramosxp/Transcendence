@@ -25,6 +25,7 @@ export function MediaSkeleton({ width, height, blurUrl, className = "" }) {
                     <img
                         src={blurUrl}
                         alt=""
+                        loading="lazy"
                         className="w-full h-full object-cover scale-110 blur-md opacity-70"
                     />
                 )}

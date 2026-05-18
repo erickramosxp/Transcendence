@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 export const PostPreview = ({ content, file, user }) => {
 
     const [previewUrl, setPreviewUrl] = useState(null);
-    const { t } = useTranslation('feed'); 
+    const { t } = useTranslation('feed');
 
     if (!content?.trim() && !file) return null;
 
@@ -70,8 +70,14 @@ export const PostPreview = ({ content, file, user }) => {
 
                             {previewUrl && (
                                 <Media
-                                    url={previewUrl}
-                                    mimeType={file?.type}
+                                    media={{
+                                        mediaUrl: previewUrl,
+                                        mediaType: file?.type?.startsWith("image/")
+                                            ? "IMAGE"
+                                            : file?.type?.startsWith("video/")
+                                                ? "VIDEO"
+                                                : undefined
+                                    }}
                                 />
                             )}
                         </div>
@@ -82,7 +88,7 @@ export const PostPreview = ({ content, file, user }) => {
                                 count={0}
                             />
                             <button
-                                onClick={() => {}}
+                                onClick={() => { }}
                                 className={cn(
                                     "flex items-center gap-2 text-sm transition-all hover:scale-105",
                                     "text-muted-foreground hover:text-primary"

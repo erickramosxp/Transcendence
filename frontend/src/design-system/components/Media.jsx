@@ -32,6 +32,7 @@ export function Media({ media }) {
             {mediaType === "IMAGE" && (
                 <img
                     src={mediaUrl}
+                    loading="lazy"
                     alt=""
                     onLoad={() => setMediaLoaded(true)}
                     className={`${sharedStyles} object-contain transition-opacity duration-500 ease-out ${mediaLoaded ? "opacity-100" : "opacity-0"}`}
@@ -41,6 +42,7 @@ export function Media({ media }) {
             {mediaType === "VIDEO" && (
                 <video
                     preload="metadata"
+                    loading="lazy"
                     controls
                     ref={videoRef}
                     onLoadedData={() => setMediaLoaded(true)}
