@@ -1,74 +1,54 @@
-import { resolveMediaType } from "@/shared/resolveMediaType";
 import { useEffect, useState, useRef } from "react";
 import { MediaSkeleton } from "@/design-system";
 
-
-export function Media({ url, mimeType }) {
-    const [mediaType, setMediaType] = useState(null);
+export function Media({ media }) {
     const [mediaLoaded, setMediaLoaded] = useState(false);
     const videoRef = useRef(null);
 
-    const mediaStyles = `
-        mt-3 rounded-lg
-        transition-opacity duration-500 ease-out
-        ${mediaLoaded ? "opacity-100 block" : "opacity-0 hidden"}
-    `;
+    const { mediaUrl, mediaType, width, height, blurUrl } = media || {};
+
+    const sharedStyles = "col-start-1 row-start-1 w-auto h-auto max-w-full max-h-[400px] rounded-lg";
 
     useEffect(() => {
-        if (videoRef.current && mediaType === "video") {
+        if (videoRef.current && mediaType === "VIDEO") {
             videoRef.current.volume = 0.3;
         }
     }, [mediaType]);
 
-    useEffect(() => {
-        let isMounted = true;
-
-        async function detect() {
-            setMediaLoaded(false);
-
-            const type = await resolveMediaType(url, mimeType);
-
-            if (isMounted) {
-                setMediaType(type);
-            }
-        }
-
-        if (url) detect();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [url, mimeType]);
-
-    if (!url) return null;
+    if (!mediaUrl) return null;
 
     return (
-        <>
+        <div className="mt-3 w-full max-w-[600px] grid place-items-start">
 
             {!mediaLoaded && (
-                <MediaSkeleton  />
-            )}
-
-            {mediaType === "image" && (
-                <img
-                    src={url}
-                    alt=""
-                    onLoad={() => setMediaLoaded(true)}
-                    className={`${mediaStyles} max-h-100 max-w-full object-contain`}
+                <MediaSkeleton
+                    blurUrl={blurUrl}
+                    width={width}
+                    height={height}
+                    className={sharedStyles}
                 />
             )}
 
-            {mediaType === "video" && (
+            {mediaType === "IMAGE" && (
+                <img
+                    src={mediaUrl}
+                    alt=""
+                    onLoad={() => setMediaLoaded(true)}
+                    className={`${sharedStyles} object-contain transition-opacity duration-500 ease-out ${mediaLoaded ? "opacity-100" : "opacity-0"}`}
+                />
+            )}
+
+            {mediaType === "VIDEO" && (
                 <video
                     preload="metadata"
                     controls
                     ref={videoRef}
                     onLoadedData={() => setMediaLoaded(true)}
-                    className={`${mediaStyles} lx:max-w-lg max-w-xl w-full sm:max-h-100`}
+                    className={`${sharedStyles} object-contain transition-opacity duration-500 ease-out ${mediaLoaded ? "opacity-100" : "opacity-0"}`}
                 >
-                    <source src={url} type="video/mp4" />
+                    <source src={mediaUrl} type="video/mp4" />
                 </video>
             )}
-        </>
+        </div>
     );
 }

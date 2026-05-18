@@ -21,7 +21,6 @@ import { generateResizedBlob } from "@/shared/generateResizedBlob";
 export function Feed() {
 
     const [posts, setPosts] = useState([]);
-    // const [usersOnline, setUsersOnline] = useState(null);
     const [loadingUsersOnline, setLoadingUsersOnline] = useState(true);
     const usersPresence = usePresenceStore((state) => state.usersPresence);
 
@@ -29,25 +28,6 @@ export function Feed() {
 
     const { t } = useTranslation('feed');
 
-    // useEffect(() => {
-
-    //     // const getOnlineUsers = async () => {
-
-    //     //     // :{"userId":6,"name":"teste2","username":"teste2","avatarUrl":null,"online":true,"lastSeenAt":"2026-04-24T19:40:22.388376212Z"}
-    //     //     try {
-    //     //         const resp = await getListOnlineFriends();
-    //     //         setUsersOnline(resp.data.items);
-    //     //     } finally {
-    //     //         setLoadingUsersOnline(false);
-    //     //     }
-    //     // }
-
-    //     // getOnlineUsers();
-
-    //     setUsersOnline(Object.values(usersPresence));
-    //     setLoadingUsersOnline(false)
-
-    // }, [usersPresence]);
 
     async function addPost(postData, setLoadingPercent) {
 

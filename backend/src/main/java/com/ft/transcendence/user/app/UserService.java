@@ -12,6 +12,8 @@ import com.ft.transcendence.follow.domain.Follow;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.media.app.MediaService;
+import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
@@ -22,6 +24,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +44,9 @@ public class UserService {
 
     @Inject
     MediaValidationService mediaValidationService;
+
+    @Inject
+    MediaService mediaService;
 
     public UserPageResponse getUserPage(User user, Long currentUserId) {
         Long followers = Follow.count("followee.id = ?1", user.id);
@@ -136,23 +142,34 @@ public class UserService {
                 .map(l -> l.post)
                 .toList();
 
+        UserPostsResponse resp = new UserPostsResponse();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+
+        if (posts.isEmpty()) {
+            resp.items = java.util.Collections.emptyList();
+            return resp;
+        }
+
         List<Long> postIds = posts.stream().map(p -> p.id).toList();
-        List<Like> likesByMe = postIds.isEmpty()
-                ? List.of()
-                : Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
+
+        List<Like> likesByMe = Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
         var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
-        UserPostsResponse resp = new UserPostsResponse();
+        List<Media> feedMedias = Media.find("modelType = 'POST' and modelId in ?1", postIds).list();
+
+        Map<Long, Media> mediaByPostId = feedMedias.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        m -> m.modelId,
+                        m -> m,
+                        (existing, replacement) -> existing
+                ));
 
         Map<String, String> avatarCache = new HashMap<>();
 
         resp.items = posts.stream().map(p -> {
 
-            String mediaUrl = p.mediaUrl;
-
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.startsWith("http") || mediaUrl.startsWith("blob"))) {
-                mediaUrl = storageService.generateUrl(mediaUrl);
-            }
 
             String avatarUrl  = p.user.avatarUrl;
             if (avatarUrl != null) {
@@ -162,7 +179,10 @@ public class UserService {
                 );
             }
 
-            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+            Media media = mediaByPostId.get(p.id);
+            com.ft.transcendence.media.dto.MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
         }).toList();
 
         resp.page = page;
@@ -186,25 +206,33 @@ public class UserService {
         if (hasMore)
             posts = posts.subList(0, size);
 
+        UserPostsResponse resp = new UserPostsResponse();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+
+        if (posts.isEmpty()) {
+            resp.items = java.util.Collections.emptyList();
+            return resp;
+        }
+
         List<Long> postIds = posts.stream().map(p -> p.id).toList();
 
-        List<Like> likesByMe = postIds.isEmpty()
-                ? List.of()
-                : Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
-
+        List<Like> likesByMe = Like.find("user.id = ?1 and post.id in ?2", currentUserId, postIds).list();
         var likedPostIds = likesByMe.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
+        List<Media> feedMedias = Media.find("modelType = 'POST' and modelId in ?1", postIds).list();
 
-        UserPostsResponse resp = new UserPostsResponse();
+        Map<Long, Media> mediaByPostId = feedMedias.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        m -> m.modelId,
+                        m -> m,
+                        (existing, replacement) -> existing
+                ));
+
         Map<String, String> avatarCache = new HashMap<>();
 
         resp.items = posts.stream().map(p -> {
-
-            String mediaUrl = p.mediaUrl;
-
-            if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
-                mediaUrl = storageService.generateUrl(mediaUrl);
-            }
 
             String avatarUrl  = p.user.avatarUrl;
             if (avatarUrl != null) {
@@ -214,7 +242,10 @@ public class UserService {
                 );
             }
 
-            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+            Media media = mediaByPostId.get(p.id);
+            com.ft.transcendence.media.dto.MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
+
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
         }).toList();
         resp.page = page;
         resp.size = size;
@@ -229,7 +260,9 @@ public class UserService {
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("user.id = ?1 and deletedAt is null and mediaUrl is not null order by createdAt desc", userId)
+        List<Post> posts = Post.find(
+                        "user.id = ?1 and deletedAt is null and id IN (select m.modelId from Media m where m.modelType = 'POST') order by createdAt desc",
+                        userId)
                 .range(start, end)
                 .list();
 
@@ -238,13 +271,35 @@ public class UserService {
             posts = posts.subList(0, size);
 
         UserMediaResponse resp = new UserMediaResponse();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+        if (posts.isEmpty()) {
+            resp.items = java.util.Collections.emptyList();
+            return resp;
+        }
+
+        List<Long> postIds = posts.stream().map(p -> p.id).toList();
+        List<Media> medias = Media.find("modelType = 'POST' and modelId in ?1", postIds).list();
+
+        Map<Long, Media> mediaByPostId = medias.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        m -> m.modelId,
+                        m -> m,
+                        (existing, replacement) -> existing
+                ));
+
         resp.items = posts.stream().map(p -> {
-            
-            String mediaUrl = p.mediaUrl;
-            if (mediaUrl != null && !mediaUrl.isBlank()) {
-                mediaUrl = storageService.generateUrl(mediaUrl);
+
+            Media media = mediaByPostId.get(p.id);
+            String previewUrl = null;
+
+            if (media != null) {
+                String pathToLoad = media.pathPreview != null ? media.pathPreview : media.pathOriginal;
+                previewUrl = storageService.generateUrl(pathToLoad);
             }
-            return MediaResponse.of(p, mediaUrl);
+            return MediaResponse.of(p, previewUrl);
+
         }).toList();
         resp.page = page;
         resp.size = size;

@@ -9,6 +9,11 @@ import com.ft.transcendence.common.media.MediaValidationService;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.job.app.JobService;
 import com.ft.transcendence.like.domain.Like;
+import com.ft.transcendence.media.app.MediaService;
+import com.ft.transcendence.media.domain.Media;
+import com.ft.transcendence.media.dto.MediaResponse;
+import com.ft.transcendence.media.enums.MediaStatus;
+import com.ft.transcendence.media.enums.MediaType;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
@@ -46,135 +51,54 @@ public class PostService {
     @Inject
     JobService jobService;
 
+    @Inject
+    MediaService mediaService;
+
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
-        if ((req.text == null || req.text.isBlank()) && (req.file == null))
-            throw new BadRequestException("Posts must contain text or images");
 
-        if (req.text != null && req.text.length() > 500) {
-            throw new BadRequestException("Text content is too long. Maximum 500 characters.");
-        }
+        validatePostReq(req);
 
-        // file
-        String contentType = null;
-        long size = 0;
-        MediaAnalysis analysis;
+        MediaAnalysis analysis = validateMediaPost(req);
+
+        Post post = createPostEntity(userId, req);
+
+        Media createdMedia = null;
         if (req.file != null) {
-            Path uploadedPath = req.file.uploadedFile();
-            size = req.file.size();
-
-            try {
-                analysis = mediaValidationService.analyzePostFile(uploadedPath);
-            } catch (Exception e) {
-                throw new BadRequestException("Error validating file");
-            }
-
-            if (!analysis.valid()) {
-                if (analysis.mediaKind() == MediaKind.TOO_LARGE)
-                    throw new PayloadTooLargeException(analysis.error());
-                else if (analysis.mediaKind() == MediaKind.NOT_FOUNDED)
-                    throw new UnprocessableEntityException(analysis.error());
-                else if (analysis.mediaKind() == MediaKind.UNKNOWN)
-                    throw new NotSupportedException(analysis.error());
-                throw new BadRequestException(analysis.error());
-            }
-
-
-            contentType = analysis.detectedMimeType();
-            if (contentType.startsWith("image/")) {
-                if (!req.previewFile.contentType().startsWith("image/") || !req.blurFile.contentType().startsWith("image/")) {
-                    throw new BadRequestException("Invalid format for preview or blur variants");
-                }
-            }
+            createdMedia = savePostMedia(post, userId, req, analysis);
         }
 
-        var now = OffsetDateTime.now();
-
-        Post post = new Post();
-        post.user = User.findById(userId);
-        post.text = (req.text == null || req.text.isBlank()) ? null : req.text;
-        post.mediaUrl = null;
-        post.likeCount = 0L;
-        post.commentCount = 0L;
-        post.createdAt = now;
-        post.updatedAt = now;
-        post.persist();
-
-        String mediaUrl = null;
-
-        if (req.file != null) {
-
-            try {
-                String extension = getExtensionFromMimeType(contentType);
-                String fullNameFile = java.util.UUID.randomUUID() + extension;
-                String basePath = "users/" + userId + "/post/" + post.id + "/";
-
-                String mainPath = basePath + "main_" + fullNameFile;
-                uploadFileToStorage(req.file, mainPath, contentType);
-                post.mediaUrl = mainPath;
-                mediaUrl = storageService.generateUrl(mainPath);
-
-                if (contentType != null && contentType.startsWith("image/")) {
-
-                    // Upload do Preview
-                    String previewPath = basePath + "preview_" + java.util.UUID.randomUUID() + ".jpg";
-                    uploadFileToStorage(req.previewFile, previewPath, "image/jpeg");
-                    //post.previewUrl = previewPath; // Seta na entity para salvar no banco
-
-                    // Upload do Blur
-                    String blurPath = basePath + "blur_" + java.util.UUID.randomUUID() + ".jpg";
-                    uploadFileToStorage(req.blurFile, blurPath, "image/jpeg");
-                    //post.blurUrl = blurPath; // Seta na entity para salvar no banco
-                }
-            } catch (IOException e) {
-                System.err.println("Erro crítico ao fazer upload para o MinIO: " + e.getMessage());
-                throw new BadRequestException("Erro in uploaded file");
-
-            }
-
-
-
-
-//            String extension = getExtensionFromMimeType(contentType);
-//            String fullNameFile = java.util.UUID.randomUUID() + extension;
-//            String path = "users/" + userId + "/post/" + post.id + "/" + fullNameFile;
-//
-//            try (InputStream stream = Files.newInputStream(req.file.uploadedFile())) {
-//                storageService.upload(path, stream, size, contentType);
-//            }
-//
-//            post.mediaUrl = path;
-//            mediaUrl = path;
-//
-//            if (mediaUrl != null && !mediaUrl.isBlank()) {
-//                mediaUrl = storageService.generateUrl(mediaUrl);
-//            }
-        }
-
-
-        String avatarUrl  = post.user.avatarUrl;
-        if (avatarUrl != null) {
-            avatarUrl = storageService.generateUrl(avatarUrl);
-        }
-
-        return PostResponse.of(post, false, avatarUrl, mediaUrl);
+        return buildResponse(post, createdMedia);
     }
 
     public PostResponse getPostById(Long postId, Long currentUserId) {
         Post post = Post.findById(postId);
         boolean likedByMe = Like.find("user.id = ?1 and post.id = ?2", currentUserId, postId).firstResultOptional().isPresent();
 
-        String mediaUrl = post.mediaUrl;
+        Media media = Media.find("modelType = ?1 and modelId = ?2", "POST", postId).firstResult();
+        MediaResponse mediaResponse = null;
+        if (media != null) {
+            String originalUrl = storageService.generateUrl(media.pathOriginal);
+            String previewUrl = media.pathPreview != null ? storageService.generateUrl(media.pathPreview) : null;
+            String blurUrl = media.pathBlur != null ? storageService.generateUrl(media.pathBlur) : null;
 
-        if (mediaUrl != null && !mediaUrl.isBlank() && !(mediaUrl.contains("http") || mediaUrl.contains("blob"))) {
-            mediaUrl = storageService.generateUrl(mediaUrl);
+            mediaResponse = new MediaResponse(
+                    media.id,
+                    media.mediaType.name(),
+                    originalUrl,
+                    blurUrl,
+                    media.width,
+                    media.height,
+                    media.status != null ? media.status.name() : null
+            );
         }
 
-        String avatarUrl  = post.user.avatarUrl;
+        String avatarUrl = post.user.avatarUrl;
         if (avatarUrl != null) {
             avatarUrl = storageService.generateUrl(avatarUrl);
         }
-        return PostResponse.of(post, likedByMe, avatarUrl, mediaUrl);
+
+        return PostResponse.of(post, likedByMe, avatarUrl, mediaResponse);
     }
 
     public FeedResponse feed(int page, int size, long userId) {
@@ -191,23 +115,30 @@ public class PostService {
         if (hasMore)
             posts = posts.subList(0, size);
 
+        FeedResponse resp = new FeedResponse();
+        resp.page = page;
+        resp.size = size;
+        resp.hasMore = hasMore;
+        if (posts.isEmpty()) {
+            resp.items = java.util.Collections.emptyList();
+            return resp;
+        }
+        // get posts ids
         List<Long> postIds = posts.stream().map(p -> p.id).toList();
-
+        // get all likes in all posts
         List<Like> likes = Like.find("user.id = ?1 and post.id in ?2", userId, postIds).list();
-
         var likedPostIds = likes.stream().map(l -> l.post.id).collect(java.util.stream.Collectors.toSet());
 
-        FeedResponse resp = new FeedResponse();
-
+        List<Media> feedMedias = Media.find("modelType = 'POST' and modelId in ?1", postIds).list();
+        Map<Long, Media> mediaByPostId = feedMedias.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        m -> m.modelId,
+                        m -> m,
+                        (existing, replacement) -> existing
+                ));
 
         Map<String, String> avatarCache = new HashMap<>();
         resp.items = posts.stream().map(p -> {
-
-            String mediaUrl = p.mediaUrl;
-
-            if (mediaUrl != null && !mediaUrl.isBlank()) {
-                mediaUrl = storageService.generateUrl(mediaUrl);
-            }
 
             String avatarUrl  = p.user.avatarUrl;
             if (avatarUrl != null && !avatarUrl.isEmpty()) {
@@ -216,8 +147,10 @@ public class PostService {
                         storageService::generateUrl
                 );
             }
+            Media media = mediaByPostId.get(p.id);
+            MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
 
-            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaUrl);
+            return  PostResponse.of(p, likedPostIds.contains(p.id), avatarUrl, mediaResponse);
         }).toList();
 
         resp.page = page;
@@ -295,4 +228,147 @@ public class PostService {
             throw e;
         }
     }
+
+    private void validatePostReq(CreatePostForm req) {
+
+        if ((req.text == null || req.text.isBlank()) && (req.file == null))
+            throw new BadRequestException("Posts must contain text or images");
+
+        if (req.text != null && req.text.length() > 500) {
+            throw new BadRequestException("Text content is too long. Maximum 500 characters.");
+        }
+    }
+
+    private MediaAnalysis validateMediaPost(CreatePostForm req) {
+
+        if (req.file == null) {
+            return null;
+        }
+
+        Path uploadedPath = req.file.uploadedFile();
+
+        MediaAnalysis analysis;
+
+        try {
+            analysis = mediaValidationService.analyzePostFile(uploadedPath);
+
+        } catch (Exception e) {
+            throw new BadRequestException("Error validating file");
+        }
+
+
+        if (!analysis.valid()) {
+
+            if (analysis.mediaKind() == MediaKind.TOO_LARGE)
+                throw new PayloadTooLargeException(analysis.error());
+
+            if (analysis.mediaKind() == MediaKind.NOT_FOUNDED)
+                throw new UnprocessableEntityException(analysis.error());
+
+            if (analysis.mediaKind() == MediaKind.UNKNOWN)
+                throw new NotSupportedException(analysis.error());
+
+            throw new BadRequestException(analysis.error());
+        }
+
+        String contentType = analysis.detectedMimeType();
+
+        if (contentType.startsWith("image/")) {
+            if (!req.previewFile.contentType().startsWith("image/") || !req.blurFile.contentType().startsWith("image/")) {
+                    throw new BadRequestException("Invalid format for preview or blur variants");
+            }
+        }
+
+        return analysis;
+    }
+
+    private PostResponse buildResponse(Post post, Media media) {
+
+        String avatarUrl  = post.user.avatarUrl;
+        if (avatarUrl != null) {
+            avatarUrl = storageService.generateUrl(avatarUrl);
+        }
+
+        MediaResponse mediaResponse = null;
+        if (media != null) {
+
+            String originalUrl = storageService.generateUrl(media.pathOriginal);
+            String blurUrl = media.pathBlur != null ? storageService.generateUrl(media.pathBlur) : null;
+
+            mediaResponse = new MediaResponse(
+                    media.id,
+                    media.mediaType.name(),
+                    originalUrl,
+                    blurUrl,
+                    media.width,
+                    media.height,
+                    media.status != null ? media.status.name() : null
+            );
+
+        }
+        return PostResponse.of(post, false, avatarUrl, mediaResponse);
+    }
+
+    private Media savePostMedia(Post post, Long userId, CreatePostForm req, MediaAnalysis analysis) {
+
+        String contentType = analysis.detectedMimeType();
+        MediaType type = contentType.startsWith("video/") ? MediaType.VIDEO : MediaType.IMAGE;
+
+
+            try {
+                String extension = getExtensionFromMimeType(contentType);
+                String basePath = "users/" + userId + "/post/" + post.id + "/";
+
+
+                String fullNameFile = java.util.UUID.randomUUID() + extension;
+                String mainPath = basePath + "main_" + fullNameFile;
+                uploadFileToStorage(req.file, mainPath, contentType);
+
+                String previewPath = null;
+                String blurPath = null;
+
+                if (type == MediaType.IMAGE && req.previewFile != null && req.blurFile != null) {
+                    previewPath = basePath + "preview_" + java.util.UUID.randomUUID() + ".jpg";
+                    uploadFileToStorage(req.previewFile, previewPath, "image/jpeg");
+
+                    blurPath = basePath + "blur_" + java.util.UUID.randomUUID() + ".jpg";
+                    uploadFileToStorage(req.blurFile, blurPath, "image/jpeg");
+                }
+
+                return mediaService.attachMedia(
+                        "POST",
+                        post.id,
+                        type,
+                        mainPath,
+                        previewPath,
+                        blurPath,
+                        req.width,
+                        req.height,
+                        type != MediaType.IMAGE ? MediaStatus.PENDING : MediaStatus.COMPLETED
+                );
+
+            } catch (IOException e) {
+                System.err.println("Erro crítico ao fazer upload para o MinIO: " + e.getMessage());
+                throw new BadRequestException("Erro in uploaded file");
+
+            }
+    }
+
+    private Post createPostEntity(Long userId, CreatePostForm req) {
+
+        var now = OffsetDateTime.now();
+
+        Post post = new Post();
+        post.user = User.findById(userId);
+        post.text = (req.text == null || req.text.isBlank()) ? null : req.text;
+        post.mediaUrl = null;
+        post.likeCount = 0L;
+        post.commentCount = 0L;
+        post.createdAt = now;
+        post.updatedAt = now;
+        post.persist();
+
+        return post;
+    }
+
 }
