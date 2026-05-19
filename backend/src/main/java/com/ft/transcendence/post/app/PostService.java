@@ -18,6 +18,7 @@ import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostResponse;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -54,6 +55,9 @@ public class PostService {
 
     @Inject
     MediaService mediaService;
+
+    @Inject
+    UserAvatarService userAvatarService;
 
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
@@ -94,10 +98,8 @@ public class PostService {
             );
         }
 
-        String avatarUrl = post.user.avatarUrl;
-        if (avatarUrl != null) {
-            avatarUrl = storageService.generateUrl(avatarUrl);
-        }
+
+        String avatarUrl = userAvatarService.getUserAvatarUrl(post.user);
 
         return PostResponse.of(post, likedByMe, avatarUrl, mediaResponse);
     }
@@ -138,16 +140,12 @@ public class PostService {
                         (existing, replacement) -> existing
                 ));
 
-        Map<String, String> avatarCache = new HashMap<>();
+        List<User> postAuthors = posts.stream().map(p -> p.user).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(postAuthors);
+
         resp.items = posts.stream().map(p -> {
 
-            String avatarUrl  = p.user.avatarUrl;
-            if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                avatarUrl = avatarCache.computeIfAbsent(
-                        avatarUrl,
-                        storageService::generateUrl
-                );
-            }
+            String avatarUrl = avatarMap.get(p.user.id);
             Media media = mediaByPostId.get(p.id);
             MediaResponse mediaResponse = mediaService.buildMediaResponse(media);
 
@@ -303,10 +301,7 @@ public class PostService {
 
     private PostResponse buildResponse(Post post, Media media) {
 
-        String avatarUrl  = post.user.avatarUrl;
-        if (avatarUrl != null) {
-            avatarUrl = storageService.generateUrl(avatarUrl);
-        }
+        String avatarUrl  = userAvatarService.getUserAvatarUrl(post.user);
 
         MediaResponse mediaResponse = null;
         if (media != null) {

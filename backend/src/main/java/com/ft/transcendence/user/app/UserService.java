@@ -176,8 +176,6 @@ public class UserService {
         Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(postAuthors);
 
 
-        Map<String, String> avatarCache = new HashMap<>();
-
         resp.items = posts.stream().map(p -> {
 
             String avatarUrl = avatarMap.get(p.user.id);
@@ -421,8 +419,6 @@ public class UserService {
             existingMedia.pathBlur = null;
             existingMedia.status = MediaStatus.COMPLETED;
 
-            // O Hibernate faz o SQL UPDATE automaticamente ao finalizar a transação!
-
         } else {
             // Se é o primeiro avatar da vida do usuário, faz INSERT
             Media newMedia = new Media();
@@ -447,13 +443,13 @@ public class UserService {
 
         List<String> pathsToDelete = new ArrayList<>();
 
-        // 1. Fallback: Pega a URL legada do usuário (se existir) para garantir a exclusão
+        // Pega a URL legada do usuário (se existir) para garantir a exclusão
         if (user.avatarUrl != null && !user.avatarUrl.isBlank()) {
             pathsToDelete.add(user.avatarUrl);
-            user.avatarUrl = null; // Limpa a coluna antiga
+            user.avatarUrl = null;
         }
 
-        // 2. Busca o avatar na nova tabela polimórfica
+        // 2. Busca o avatar na nova tabela
         Media media = Media.find("modelType = ?1 and modelId = ?2", "USER_PROFILE", currentUserId).firstResult();
 
         if (media != null) {
@@ -462,11 +458,10 @@ public class UserService {
             if (media.pathPreview != null && !pathsToDelete.contains(media.pathPreview)) pathsToDelete.add(media.pathPreview);
             if (media.pathBlur != null && !pathsToDelete.contains(media.pathBlur)) pathsToDelete.add(media.pathBlur);
 
-            // 4. Deleta a linha do banco de dados instantaneamente
             media.delete();
         }
 
-        // 5. Envia todas as URLs mapeadas para o Worker deletar no MinIO de forma assíncrona
+        // 5. Envia todas as URLs mapeadas para o Worker
         if (!pathsToDelete.isEmpty()) {
             try {
                 jobService.createDeleteMediaJob(pathsToDelete, currentUserId);

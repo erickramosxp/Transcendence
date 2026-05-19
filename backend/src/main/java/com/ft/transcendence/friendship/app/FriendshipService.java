@@ -1,11 +1,11 @@
 package com.ft.transcendence.friendship.app;
 
 import com.ft.transcendence.common.dto.PageResponse;
-import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,16 +16,17 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
 public class FriendshipService {
 
     @Inject
-    StorageService storageService;
+    NotificationDispatcher notificationDispatcher;
 
     @Inject
-    NotificationDispatcher notificationDispatcher;
+    UserAvatarService userAvatarService;
 
     @Transactional
     public FriendshipDTO sendRequest(Long currentUserId, Long targetUserId) {
@@ -69,10 +70,12 @@ public class FriendshipService {
                         currentUserId
         ).project(FriendshipDTO.class).list();
 
+        List<Long> requesterIds = requests.stream().map(f -> f.friendId).toList();
+        Map<Long, String> avatars = userAvatarService.getAvatarUrlsByIds(requesterIds);
+
+
         requests.forEach(request -> {
-            if (request.avatarUrl != null && !request.avatarUrl.trim().isEmpty()) {
-                request.avatarUrl = storageService.generateUrl(request.avatarUrl);
-            }
+            request.avatarUrl = avatars.get(request.friendId);
         });
 
         return requests;
@@ -106,10 +109,11 @@ public class FriendshipService {
         if (hasMore)
             paginatedFriends = paginatedFriends.subList(0, pageSize);
 
+        List<Long> requesterIds = paginatedFriends.stream().map(f -> f.friendId).toList();
+        Map<Long, String> avatars = userAvatarService.getAvatarUrlsByIds(requesterIds);
+
         paginatedFriends.forEach(friend -> {
-            if (friend.avatarUrl != null && !friend.avatarUrl.trim().isEmpty()) {
-                friend.avatarUrl = storageService.generateUrl(friend.avatarUrl);
-            }
+            friend.avatarUrl = avatars.get(friend.friendId);
         });
 
         return new PageResponse<>(paginatedFriends, pageIndex, pageSize, hasMore);

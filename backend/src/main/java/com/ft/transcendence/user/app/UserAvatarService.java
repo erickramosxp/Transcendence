@@ -49,4 +49,48 @@ public class UserAvatarService {
 
         return avatarMap;
     }
+
+    public Map<Long, String> getAvatarUrlsByIds(List<Long> userIds) {
+
+        if (userIds == null || userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<User> users = User.find("id IN ?1", userIds).list();
+
+        return getAvatarUrls(users);
+    }
+
+    public String getUserAvatarUrl(User user) {
+
+        Media media = Media.find("modelType = 'USER_PROFILE' and modelId = ?1", user.id).firstResult();
+
+        if (media != null && media.pathOriginal != null) {
+            return storageService.generateUrl(media.pathOriginal);
+        }
+
+        if (user.avatarUrl != null && !user.avatarUrl.isBlank()) {
+            return storageService.generateUrl(user.avatarUrl);
+        }
+
+        return null;
+    }
+
+    public String getUserAvatarUrl(Long userId) {
+
+        if (userId == null) return null;
+
+        Media media = Media.find("modelType = 'USER_PROFILE' and modelId = ?1", userId).firstResult();
+
+        if (media != null && media.pathOriginal != null) {
+            return storageService.generateUrl(media.pathOriginal);
+        }
+
+        User user = User.findById(userId);
+        if (user != null && user.avatarUrl != null && !user.avatarUrl.isBlank()) {
+            return storageService.generateUrl(user.avatarUrl);
+        }
+
+        return null;
+    }
 }

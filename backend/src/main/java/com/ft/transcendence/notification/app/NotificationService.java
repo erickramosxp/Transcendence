@@ -6,6 +6,7 @@ import com.ft.transcendence.notification.domain.Notification;
 import com.ft.transcendence.notification.domain.NotificationType;
 import com.ft.transcendence.notification.dto.NotificationContent;
 import com.ft.transcendence.notification.dto.NotificationResponse;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,13 +14,15 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class NotificationService {
 
     @Inject
-    StorageService storageService;
+    UserAvatarService userAvatarService;
 
     @Transactional
     public Notification create(Long receiverId, Long senderId, NotificationType type, NotificationContent content, Long targetId) {
@@ -52,13 +55,21 @@ public class NotificationService {
                 .range(start, end)
                 .list();
 
+        if (notifications.isEmpty()) {
+            return new PageResponse<>(Collections.emptyList(), pageIndex, pageSize, false);
+        }
+
         boolean hasMore = notifications.size() > pageSize;
         if (hasMore)
             notifications = notifications.subList(0, pageSize);
 
+        List<User> senders = notifications.stream().map(n -> n.sender).toList();
+        Map<Long, String> avatars = userAvatarService.getAvatarUrls(senders);
+
+
         List<NotificationResponse> items = notifications.stream()
                 .map(n -> {
-                    String avatarUrl = resolveAvatarUrl(n.content);
+                    String avatarUrl = avatars.get(n.sender.id);
                     return NotificationResponse.of(n, avatarUrl);
                 })
                 .toList();
@@ -83,16 +94,5 @@ public class NotificationService {
     @Transactional
     public void markAllAsRead(Long userId) {
         Notification.update("isRead = true WHERE receiver.id = ?1 AND isRead = false", userId);
-    }
-
-    private String resolveAvatarUrl(NotificationContent content) {
-        if (content == null || content.avatarUrl == null || content.avatarUrl.isBlank())
-            return null;
-
-        String url = content.avatarUrl;
-        if (url.contains("http") || url.contains("blob"))
-            return url;
-
-        return storageService.generateUrl(url);
     }
 }
