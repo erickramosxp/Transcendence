@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 public class MediaResponse {
     public Long postId;
     public String mediaUrl;
+    public String previewUrl;
     public MediaType mediaType;
     public OffsetDateTime createdAt;
 

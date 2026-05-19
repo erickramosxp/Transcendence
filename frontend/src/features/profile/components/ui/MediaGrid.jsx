@@ -67,13 +67,12 @@ export function MediaGrid({ username }) {
 					</div>
 				))}
 			</div>
-			{/* 2. Adicione o bloco do botão "Carregar Mais" aqui */}
             {hasMore && (
                 <div className="flex justify-center mt-6 mb-4">
                     <Button 
                         onClick={loadMore}
                         disabled={isLoadingMore}
-                        className="w-full max-w-[200px]" // Ajuste a largura como preferir
+                        className="w-full max-w-[200px]"
                     >
                         {isLoadingMore ? "Carregando..." : "Carregar mais"}
                     </Button>

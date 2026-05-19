@@ -1,66 +1,50 @@
-import { useEffect, useState } from "react";
-import { generateVideoThumbnailFromUrl } from "@/features/profile/utils/generateVideoThumbnail";
+import { useState } from "react";
+import { Play } from "lucide-react";
 import { Loading } from "@/design-system";
-import { Play } from 'lucide-react'
-
 
 export const VideoThumbnail = ({ thumbnailUrl }) => {
 
-    const [thumbnail, setThumbnail] = useState(null);
-    const [error, setError] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
-    useEffect(() => {
+    const showPlaceholder = !thumbnailUrl || imageError;
 
-        const getThumbnail = async () => {
-
-            try {
-                const image = await generateVideoThumbnailFromUrl(thumbnailUrl);
-
-                if (!image) {
-                    setThumbnail("https://t4.ftcdn.net/jpg/05/24/04/51/360_F_524045110_UXnCx4GEDapddDi5tdlY96s4g0MxHRvt.jpg")
-                    setError(true);
-                    return;
-                }
-                const imageUrl = URL.createObjectURL(image);
-                setThumbnail(imageUrl);
-            } catch (err) {
-                setThumbnail("https://t4.ftcdn.net/jpg/05/24/04/51/360_F_524045110_UXnCx4GEDapddDi5tdlY96s4g0MxHRvt.jpg")
-                setError(true);
-                console.log(err);
-            }
-        }
-
-        getThumbnail();
-    }, [thumbnailUrl]);
-
-
-    if (thumbnail == null) {
+    if (showPlaceholder) {
         return (
-            <Loading size="sm" />
+            <div className="bg-primary/40 w-full h-full flex items-center justify-center">
+                <Play className="size-8 sm:size-12 fill-current" />
+            </div>
         );
     }
 
     return (
-        <div className="relative w-full h-full cursor-pointer group">
+        <div className="relative w-full h-full overflow-hidden group">
+
+            {!loaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                    <Loading size="sm" />
+                </div>
+            )}
 
             <img
-                src={thumbnail}
+                src={thumbnailUrl}
                 alt="video thumbnail"
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                    e.currentTarget.src = `${error}`;
-                }}
+                onLoad={() => setLoaded(true)}
+                onError={() => setImageError(true)}
             />
 
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition" />
+            {loaded && (
+                <>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition" />
 
-            {!error &&
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="size-12 sm:size-15 rounded-full bg-black/40 flex items-center justify-center">
-                        <Play />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="size-12 rounded-full bg-black/40 flex items-center justify-center">
+                            <Play className="size-5 text-white fill-white" />
+                        </div>
                     </div>
-                </div>
-            }
+                </>
+            )}
         </div>
     );
-}
+};
