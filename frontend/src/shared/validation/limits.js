@@ -9,8 +9,11 @@
  * @property {number} profileNameMax - Tamanho máximo de nome/username.
  * @property {number} profileBioMax - Bio do perfil (EditProfileForm).
  * @property {number} profileLocationMax - Localização do perfil.
+ * @property {number} profileWebsiteMax - URL do site no perfil (EditProfileForm).
+ * @property {number} emailMax - E-mail no cadastro (RegisterForm) e login por e-mail (LoginForm; RFC 5321).
  * @property {number} chatMessageMax - Mensagem de chat (MessageInput).
  * @property {number} groupNameMax - Nome de grupo de conversa.
+ * @property {number} friendSearchMax - Busca na página de Amigos (meus amigos e descobrir).
  * @property {number} passwordMin - Senha mínima (RegisterForm, SecurityTab).
  * @property {number} passwordMax - Senha máxima (inputs com maxLength, LoginForm, SecurityTab).
  * @property {number} avatarFileMB - Tamanho máximo do avatar em MB (`validImageFile` com kind `"avatar"`).
@@ -24,8 +27,11 @@ export const LIMITS = {
 	profileNameMax: 30,
 	profileBioMax: 160,
 	profileLocationMax: 100,
+	profileWebsiteMax: 200,
+	emailMax: 100,
 	chatMessageMax: 4000,
 	groupNameMax: 80,
+	friendSearchMax: 30,
 	passwordMin: 8,
 	passwordMax: 30,
 	avatarFileMB: 5,

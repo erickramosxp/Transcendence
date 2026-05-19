@@ -11,17 +11,45 @@ export function mbToBytes(mb) {
 	return mb * 1024 * 1024;
 }
 
+/** Domínio com TLD e caminho opcional, sem protocolo (ex.: exemplo.com, github.com/user). */
+const PROFILE_WEBSITE_DOMAIN =
+	/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d{1,5})?(?:\/[^\s]*)?$/;
+
 /**
- * Valida URL opcional de perfil (http/https). Não relacionado a upload de arquivo.
+ * Valida site opcional do perfil: domínio sem protocolo ou URL http(s).
+ * Rejeita outros esquemas (ftp, javascript:, etc.) por segurança.
  */
-export function isValidHttpUrl(value) {
+export function isValidProfileWebsite(value) {
 	if (!value?.trim()) return true;
-	try {
-		const u = new URL(value.trim());
-		return u.protocol === "http:" || u.protocol === "https:";
-	} catch {
-		return false;
+
+	const trimmed = value.trim();
+	if (/\s/.test(trimmed)) return false;
+
+	if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+		try {
+			const u = new URL(trimmed);
+			return u.protocol === "http:" || u.protocol === "https:";
+		} catch {
+			return false;
+		}
 	}
+
+	return PROFILE_WEBSITE_DOMAIN.test(trimmed);
+}
+
+/** @deprecated Use {@link isValidProfileWebsite}. Mantido para compatibilidade com testes legados. */
+export function isValidHttpUrl(value) {
+	return isValidProfileWebsite(value);
+}
+
+/**
+ * Garante href clicável: adiciona https:// quando o usuário informou só o domínio.
+ */
+export function toProfileWebsiteHref(value) {
+	const trimmed = value?.trim() ?? "";
+	if (!trimmed) return "";
+	if (/^https?:\/\//i.test(trimmed)) return trimmed;
+	return `https://${trimmed}`;
 }
 
 /**
@@ -42,6 +70,10 @@ export function validateRegister({ name, username, email, password, acceptTerms 
 
 	if (n.length < LIMITS.profileNameMin) {
 		return { ok: false, message: t("errors.nameTooShort") };
+	}
+
+	if (e.length > LIMITS.emailMax) {
+		return { ok: false, message: t("errors.emailTooLong") };
 	}
 
 	if (!isValidEmail(e)) {
@@ -76,6 +108,7 @@ export function isValidEmail(value) {
 export function isValidLoginIdentifier(value) {
 	const trimmed = value?.trim() ?? "";
 	if (!trimmed) return false;
+	if (trimmed.length > LIMITS.emailMax) return false;
 	if (isValidEmail(trimmed)) return true;
 	const usernameRegex = new RegExp(
 		`^[a-zA-Z0-9_]{${LIMITS.profileNameMin},${LIMITS.profileNameMax}}$`
@@ -92,6 +125,10 @@ export function validateLogin({ username, password }, t) {
 
 	if (!trimmedUsername || !password) {
 		return { ok: false, message: t("errors.fillAllFields") };
+	}
+
+	if (trimmedUsername.length > LIMITS.emailMax) {
+		return { ok: false, message: t("errors.emailTooLong") };
 	}
 
 	if (!isValidLoginIdentifier(trimmedUsername)) {
@@ -131,7 +168,11 @@ export function validateProfile({ name, bio, location, websiteUrl }, t) {
 		return { ok: false, message: t("header.editProfileModal.errorLocationLength") };
 	}
 
-	if (trimmedWebsiteUrl && !isValidHttpUrl(trimmedWebsiteUrl)) {
+	if (trimmedWebsiteUrl.length > LIMITS.profileWebsiteMax) {
+		return { ok: false, message: t("header.editProfileModal.errorWebsiteLength") };
+	}
+
+	if (trimmedWebsiteUrl && !isValidProfileWebsite(trimmedWebsiteUrl)) {
 		return { ok: false, message: t("header.editProfileModal.errorWebsiteUrl") };
 	}
 

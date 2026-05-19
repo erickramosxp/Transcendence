@@ -20,7 +20,7 @@
             "location": "Location",
             "locationPlaceholder": "Where are you from?",
             "website": "Website",
-            "websitePlaceholder": "https://example.com",
+            "websitePlaceholder": "example.com",
             "birthday": "Birthday",
             "save": "Save",
             "cancel": "Cancel",
@@ -28,7 +28,8 @@
             "errorNameLength": "Name must be at least 3 characters long",
             "errorNameMaxLength": "Name must be at most 30 characters long",
             "errorLocationLength": "Location must be less than 100 characters",
-            "errorWebsiteUrl": "Website must be a valid URL",
+            "errorWebsiteUrl": "Enter a valid website",
+            "errorWebsiteLength": "Website must be at most 200 characters",
             "success": "Profile updated successfully",
             "error": "Failed to update profile"
         },

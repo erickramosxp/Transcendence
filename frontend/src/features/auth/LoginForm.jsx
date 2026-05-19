@@ -16,6 +16,14 @@ export function LoginForm({onSubmit}) {
 
     const { t } = useTranslation('auth');
 
+    const loginIdentifierMax = (value) =>
+        value.includes("@") ? LIMITS.emailMax : LIMITS.profileNameMax;
+
+    const handleLoginIdentifierChange = (e) => {
+        const next = e.target.value;
+        setUsername(next.slice(0, loginIdentifierMax(next)));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -59,11 +67,10 @@ export function LoginForm({onSubmit}) {
                       data-testid="auth-login-email"
                       type="text"
                       autoComplete="username"
+                      maxLength={loginIdentifierMax(username)}
                       placeholder={t('login.identifierPlaceholder')}
                       value={username}
-                      onChange={(e) => {
-                        setUsername(e.target.value);
-                      }}
+                      onChange={handleLoginIdentifierChange}
                     />
                   </div>
                   <div className="space-y-2">

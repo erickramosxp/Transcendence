@@ -20,7 +20,7 @@
             "location": "Ubicación",
             "locationPlaceholder": "¿De dónde eres?",
             "website": "Sitio web",
-            "websitePlaceholder": "https://ejemplo.com",
+            "websitePlaceholder": "ejemplo.com",
             "birthday": "Cumpleaños",
             "save": "Guardar",
             "cancel": "Cancelar",
@@ -28,7 +28,8 @@
             "errorNameLength": "El nombre debe tener al menos 3 caracteres",
             "errorNameMaxLength": "El nombre debe tener como máximo 30 caracteres",
             "errorLocationLength": "La ubicación debe tener menos de 100 caracteres",
-            "errorWebsiteUrl": "El sitio web debe ser una URL válida",
+            "errorWebsiteUrl": "Introduce un sitio válido",
+            "errorWebsiteLength": "El sitio web debe tener como máximo 200 caracteres",
             "success": "Perfil actualizado correctamente",
             "error": "Error al actualizar el perfil"
         },

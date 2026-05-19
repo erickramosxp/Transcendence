@@ -19,6 +19,9 @@ export function RegisterForm({ onSubmit }) {
   const [disableButton, setDisableButton] = useState(false);
   const { t } = useTranslation('auth');
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value.slice(0, LIMITS.emailMax));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,9 +107,12 @@ export function RegisterForm({ onSubmit }) {
           <Input
             id="signup-email"
             type="email"
+            inputMode="email"
+            autoComplete="email"
+            maxLength={LIMITS.emailMax}
             placeholder={t('register.emailPlaceholder')}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
           />
         </div>
         <div className="space-y-2">

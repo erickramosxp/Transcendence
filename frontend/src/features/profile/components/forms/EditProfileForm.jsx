@@ -67,7 +67,7 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
     { id: "name", label: t('header.editProfileModal.name'), type: "text", value: formData.name, placeholder: t('header.editProfileModal.namePlaceholder'), onChange: e => updateField("name", e.target.value), maxLength: LIMITS.profileNameMax },
     { id: "bio", label: t('header.editProfileModal.bio'), type: "text", value: formData.bio, placeholder: t('header.editProfileModal.bioPlaceholder'), onChange: e => updateField("bio", e.target.value), maxLength: LIMITS.profileBioMax },
     { id: "location", label: t('header.editProfileModal.location'), type: "text", value: formData.location, placeholder: t('header.editProfileModal.locationPlaceholder'), onChange: e => updateField("location", e.target.value), maxLength: LIMITS.profileLocationMax },
-    { id: "websiteUrl", label: t('header.editProfileModal.website'), type: "url", value: formData.websiteUrl, placeholder: t('header.editProfileModal.websitePlaceholder'), onChange: e => updateField("websiteUrl", e.target.value) }
+    { id: "websiteUrl", label: t('header.editProfileModal.website'), type: "text", value: formData.websiteUrl, placeholder: t('header.editProfileModal.websitePlaceholder'), onChange: e => updateField("websiteUrl", e.target.value), maxLength: LIMITS.profileWebsiteMax }
   ];
 
   return (

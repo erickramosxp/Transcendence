@@ -3,7 +3,8 @@ import { LIMITS } from "@/shared/validation/limits";
 import {
 	mbToBytes,
 	isValidEmail,
-	isValidHttpUrl,
+	isValidProfileWebsite,
+	toProfileWebsiteHref,
 	isValidLoginIdentifier,
 	validateChangePassword,
 	validateLogin,
@@ -33,20 +34,35 @@ describe("isValidEmail", () => {
 	});
 });
 
-describe("isValidHttpUrl", () => {
+describe("isValidProfileWebsite", () => {
 	it("aceita vazio (campo opcional)", () => {
-		expect(isValidHttpUrl("")).toBe(true);
-		expect(isValidHttpUrl("   ")).toBe(true);
+		expect(isValidProfileWebsite("")).toBe(true);
+		expect(isValidProfileWebsite("   ")).toBe(true);
 	});
 
-	it("aceita http e https", () => {
-		expect(isValidHttpUrl("https://example.com")).toBe(true);
-		expect(isValidHttpUrl("http://example.com/path")).toBe(true);
+	it("aceita http, https e domínio sem protocolo", () => {
+		expect(isValidProfileWebsite("https://example.com")).toBe(true);
+		expect(isValidProfileWebsite("http://example.com/path")).toBe(true);
+		expect(isValidProfileWebsite("example.com")).toBe(true);
+		expect(isValidProfileWebsite("www.github.com/user")).toBe(true);
 	});
 
-	it("rejeita protocolos inválidos ou texto sem URL", () => {
-		expect(isValidHttpUrl("ftp://example.com")).toBe(false);
-		expect(isValidHttpUrl("not a url")).toBe(false);
+	it("rejeita protocolos inseguros, espaços ou texto inválido", () => {
+		expect(isValidProfileWebsite("ftp://example.com")).toBe(false);
+		expect(isValidProfileWebsite("javascript:alert(1)")).toBe(false);
+		expect(isValidProfileWebsite("not a url")).toBe(false);
+		expect(isValidProfileWebsite("apenas-texto")).toBe(false);
+	});
+});
+
+describe("toProfileWebsiteHref", () => {
+	it("adiciona https quando não há protocolo", () => {
+		expect(toProfileWebsiteHref("example.com")).toBe("https://example.com");
+	});
+
+	it("mantém http(s) existente", () => {
+		expect(toProfileWebsiteHref("https://example.com")).toBe("https://example.com");
+		expect(toProfileWebsiteHref("http://example.com")).toBe("http://example.com");
 	});
 });
 
@@ -207,6 +223,13 @@ describe("validateProfile", () => {
 		expect(validateProfile({ ...validProfile, websiteUrl: "" }, t).ok).toBe(true);
 	});
 
+	it("aceita domínio sem protocolo", () => {
+		expect(validateProfile({ ...validProfile, websiteUrl: "example.com" }, t)).toEqual({
+			ok: true,
+			data: { ...validProfile, websiteUrl: "example.com" },
+		});
+	});
+
 	it("rejeita nome curto ou longo", () => {
 		expect(validateProfile({ ...validProfile, name: "ab" }, t)).toEqual({
 			ok: false,
@@ -237,6 +260,18 @@ describe("validateProfile", () => {
 		).toEqual({
 			ok: false,
 			message: "header.editProfileModal.errorLocationLength",
+		});
+	});
+
+	it("rejeita website acima do limite", () => {
+		expect(
+			validateProfile(
+				{ ...validProfile, websiteUrl: "https://example.com/" + "x".repeat(LIMITS.profileWebsiteMax) },
+				t
+			)
+		).toEqual({
+			ok: false,
+			message: "header.editProfileModal.errorWebsiteLength",
 		});
 	});
 
