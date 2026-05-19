@@ -19,11 +19,9 @@ CREATE TABLE media (
     updated_at timestamptz
 );
 
--- A Mágica da Performance: Índice Composto
 CREATE INDEX idx_media_polymorphic
     ON media (model_type, model_id);
 
--- Reaproveitando a trigger do seu banco
 CREATE TRIGGER trg_media_updated_at
     BEFORE UPDATE ON media
     FOR EACH ROW

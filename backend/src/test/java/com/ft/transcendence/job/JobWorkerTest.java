@@ -6,6 +6,7 @@ import com.ft.transcendence.job.app.JobWorker;
 import com.ft.transcendence.job.domain.Job;
 import com.ft.transcendence.job.enums.JobStatus;
 import com.ft.transcendence.job.enums.JobType;
+import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.user.UserTestContext;
 import com.ft.transcendence.user.domain.User;
@@ -23,6 +24,7 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -48,6 +50,7 @@ public class JobWorkerTest extends BaseApiTest {
                 .thenReturn("posts/1/test-file.jpg");
         Mockito.when(storageService.generateUrl(Mockito.anyString()))
                 .thenReturn("http://mock-url.com/posts/1/test-file.jpg");
+        Mockito.doNothing().when(storageService).delete(ArgumentMatchers.anyString());
     }
 
     @Test
@@ -71,8 +74,8 @@ public class JobWorkerTest extends BaseApiTest {
                         .path("id"))
                         .longValue();
 
-        Post post = Post.findById(postId);
-        String path = post.mediaUrl;
+        List<Media> medias = Media.findByModel("POST", postId);
+        Assertions.assertFalse(medias.isEmpty(), "Mídias deveriam estar salvas");
 
         given()
                 .header("Authorization", "Bearer " + user.token)
@@ -81,23 +84,18 @@ public class JobWorkerTest extends BaseApiTest {
                 .then()
                 .statusCode(204);
 
-
-        Mockito.reset(storageService);
-        Mockito.doNothing().when(storageService).delete(path);
-
         jobWorker.processJobs();
-
         entityManager.clear();
 
-        Mockito.verify(storageService, Mockito.times(1)).delete(path);
+        Mockito.verify(storageService, Mockito.times(3)).delete(ArgumentMatchers.anyString());
 
         Job job = Job.find("type = ?1 order by id desc", JobType.DELETE_S3_MEDIA).firstResult();
-        Post updatedPost = Post.findById(postId);
+        List<Media> mediaList = Media.findByModel("POST", postId);
 
         Assertions.assertEquals(JobStatus.DONE, job.status);
         Assertions.assertNotNull(job.finishedAt);
         Assertions.assertNull(job.lastError);
-        Assertions.assertNull(updatedPost.mediaUrl);
+        Assertions.assertTrue(mediaList.isEmpty(), "A lista de mídias deveria estar vazia");
     }
 
     @Test
@@ -122,9 +120,6 @@ public class JobWorkerTest extends BaseApiTest {
                         .path("id"))
                         .longValue();
 
-        Post post = Post.findById(postId);
-        String path = post.mediaUrl;
-
         given()
                 .header("Authorization", "Bearer " + user.token)
                 .when()
@@ -132,9 +127,8 @@ public class JobWorkerTest extends BaseApiTest {
                 .then()
                 .statusCode(204);
 
-        Mockito.reset(storageService);
         Mockito.doThrow(new RuntimeException("storage error"))
-                .when(storageService).delete(path);
+                .when(storageService).delete(ArgumentMatchers.anyString());
 
         jobWorker.processJobs();
         entityManager.clear();
@@ -168,8 +162,6 @@ public class JobWorkerTest extends BaseApiTest {
                         .path("id"))
                         .longValue();
 
-        Post post = Post.findById(postId);
-        String path = post.mediaUrl;
 
         given()
                 .header("Authorization", "Bearer " + user.token)
@@ -179,7 +171,7 @@ public class JobWorkerTest extends BaseApiTest {
                 .statusCode(204);
 
         Mockito.doThrow(new RuntimeException("storage error"))
-                .when(storageService).delete(path);
+                .when(storageService).delete(ArgumentMatchers.anyString());
 
         for (int i = 0; i < 5; i++) {
             jobWorker.processJobs();

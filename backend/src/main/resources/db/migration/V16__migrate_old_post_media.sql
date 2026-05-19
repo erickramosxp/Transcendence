@@ -1,4 +1,4 @@
--- Supondo que a coluna antiga no post se chame 'media_path'
+-- V16__migrate_old_post_media.sql
 
 INSERT INTO media (
     model_type, 
