@@ -24,6 +24,7 @@ services:
       QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "false"
+      MINIO_PUBLIC_URL: http://localhost:9000
     depends_on:
       database_dev:
         condition: service_healthy
@@ -102,7 +103,8 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      MINIO_SERVER_URL: "http://127.0.0.1:9000"
+      MINIO_SERVER_URL: "http://localhost:9000"
+      MINIO_DOMAIN: "localhost"
     volumes:
       - ./minio_data:/data
     command: ["server", "/data", "--console-address", ":9001"]

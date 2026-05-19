@@ -22,6 +22,7 @@ services:
       QUARKUS_MINIO_HOST: ${MINIO_API_ENDPOINT}
       QUARKUS_MINIO_PORT: 443
       QUARKUS_MINIO_ENDPOINT: http://minio:9000
+      QUARKUS_MINIO_URL: http://minio:9000
       QUARKUS_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "true"
@@ -45,6 +46,7 @@ services:
       MINIO_SERVER_URL: https://${MINIO_API_ENDPOINT}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_PUBLIC_URL: https://${MINIO_API_ENDPOINT}
     volumes:
       - ~/minio/data:/data
     command: server /data --console-address ":9001"
