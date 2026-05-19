@@ -68,9 +68,14 @@ export const ProfileHeader = () => {
 
 	}
 
+	/**
+	 * Primeira etapa do upload de avatar (após `FileUploadButton` com `fileKind="avatar"`).
+	 * Revalida com `validImageFile(..., "avatar")` (`LIMITS.avatarFileMB`) e `validateImageContent`
+	 * antes de abrir o crop.
+	 */
 	const updateImage = async (file) => {
 
-		const typeValidation = validImageFile(file);
+		const typeValidation = validImageFile(file, "avatar");
 		if (!typeValidation.valid) {
 			toast.error(typeValidation.error);
 			return;
@@ -93,7 +98,17 @@ export const ProfileHeader = () => {
 		setNewImage(null);
 	}
 
+	/**
+	 * Segunda etapa: após o crop, revalida tamanho e conteúdo da imagem recortada
+	 * (o crop pode alterar o arquivo enviado ao servidor).
+	 */
 	const handleSaveCroppedImage = async (croppedFile) => {
+
+		const sizeValidation = validImageFile(croppedFile, "avatar");
+		if (!sizeValidation.valid) {
+			toast.error(sizeValidation.error);
+			return;
+		}
 
 		const contentValidation = await validateImageContent(croppedFile);
 		if (!contentValidation.valid) {

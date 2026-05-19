@@ -3,6 +3,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Loading, Input, Button, Scroll } from "@/design-system";
 import { Search } from 'lucide-react'
 import { useTranslation } from "react-i18next";
+import { LIMITS } from "@/shared/validation/limits";
 
 export const PaginatedSearchList = ({
     data,
@@ -23,11 +24,12 @@ export const PaginatedSearchList = ({
     const endListRef = useRef(null);
 
     const debouncedSearch = useDebounce(search, 650);
+    const clampedSearch = debouncedSearch.slice(0, LIMITS.friendSearchMax);
 
     useEffect(() => {
         setPage(0);
-        onFetch(0, debouncedSearch, true);
-    }, [debouncedSearch, onFetch]); 
+        onFetch(0, clampedSearch, true);
+    }, [clampedSearch, onFetch]); 
 
 
 
@@ -43,7 +45,7 @@ export const PaginatedSearchList = ({
     const handleLoadMore = () => {
         const nextPage = page + 1;
         setPage(nextPage);
-        onFetch(nextPage, debouncedSearch, false);
+        onFetch(nextPage, clampedSearch, false);
     };
 
     return (
@@ -54,6 +56,7 @@ export const PaginatedSearchList = ({
                         id='search'
                         icon={<Search size={20} />}
                         value={search}
+                        maxLength={LIMITS.friendSearchMax}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={placeholder}
                     />
@@ -72,7 +75,7 @@ export const PaginatedSearchList = ({
                                 data.map((item, index) => renderItem(item, index))
                             ) : (
                                 <p className="col-span-full text-center text-muted-foreground">
-                                    {debouncedSearch ? notFoundMessage : emptyMessage}
+                                    {clampedSearch ? notFoundMessage : emptyMessage}
                                 </p>
                             )}
                             <div ref={endListRef}></div>

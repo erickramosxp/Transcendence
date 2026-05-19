@@ -33,6 +33,7 @@
       "memberErrorGeneric": "Could not verify the user.",
       "removeMemberAria": "Remove {{username}} from list",
       "createErrorGroupName": "Enter the group name.",
+      "createErrorGroupNameTooLong": "Group name cannot exceed {{max}} characters.",
       "createErrorDmUsername": "Enter the contact's username.",
       "createErrorDmSelf": "You can't start a chat only with yourself.",
       "createErrorGeneric": "Could not create the conversation.",

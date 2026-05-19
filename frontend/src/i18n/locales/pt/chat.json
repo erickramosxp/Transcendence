@@ -33,6 +33,7 @@
       "memberErrorGeneric": "Não foi possível verificar o usuário.",
       "removeMemberAria": "Remover {{username}} da lista",
       "createErrorGroupName": "Informe o nome do grupo.",
+      "createErrorGroupNameTooLong": "O nome do grupo não pode ultrapassar {{max}} caracteres.",
       "createErrorDmUsername": "Informe o nome de usuário do contato.",
       "createErrorDmSelf": "Você não pode iniciar uma conversa só consigo mesmo.",
       "createErrorGeneric": "Não foi possível criar a conversa.",
