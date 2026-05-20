@@ -5,6 +5,7 @@ import { Button, Input, Label } from "@/design-system";
 export function AddConversationGroupForm({
 	groupName,
 	onGroupNameChange,
+	groupNameMaxLength,
 	groupFieldId,
 	groupQuery,
 	onGroupQueryChange,
@@ -30,6 +31,7 @@ export function AddConversationGroupForm({
 				placeholder={t("list.add.groupNamePlaceholder")}
 				className="rounded-xl bg-input-background"
 				autoComplete="off"
+				maxLength={groupNameMaxLength}
 			/>
 
 			<Label htmlFor={groupFieldId}>{t("list.add.groupMembersLabel")}</Label>

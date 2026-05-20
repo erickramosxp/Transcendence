@@ -6,21 +6,23 @@ import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/hooks/useLanguage';
 
 import { Button } from '@/design-system';
+import { toProfileWebsiteHref } from '@/shared/validation/validators';
 
 
 export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registerDate, followers, following, onFollowersClick, onFollowingClick }) => {
 
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation('profile');
+  const breakLongText = "min-w-0 break-words [overflow-wrap:anywhere]";
   
   return (
-    <div className="">
-      <h1 className={`text-xl font-bold text-foreground`}>{name}</h1>
+    <div className="min-w-0">
+      <h1 className={`text-xl font-bold text-foreground ${breakLongText}`}>{name}</h1>
       { username && 
-        <p className="text-muted-foreground text-sm">@{username}</p>
+        <p className={`text-muted-foreground text-sm ${breakLongText}`}>@{username}</p>
       }
       {bio && (
-        <p className="mt-3 text-sm text-foreground">
+        <p className={`mt-3 text-sm text-foreground whitespace-pre-wrap ${breakLongText}`}>
             {bio}
         </p> 
     )}
@@ -31,24 +33,20 @@ export const ProfileInfo = ({ name, username, bio, location, websiteUrl, registe
         
         {/* Só aparece se "location" não for nulo/vazio */}
         {location && (
-          <span className="flex items-center gap-1" title={t('info.location')}>
-            {/* Ícone de Pin */}
-            <MapPin className="h-4 w-4"/>
-            {location}
+          <span className="flex min-w-0 max-w-full items-center gap-1" title={t('info.location')}>
+            <MapPin className="h-4 w-4 shrink-0"/>
+            <span className={breakLongText}>{location}</span>
           </span>
         )}
 
-        {/* Só aparece se "website" não for nulo/vazio */}
         {websiteUrl && (
-          <span className="flex items-center gap-1" title={t('info.website')}>
-            {/* Ícone de Link */}
-            <Link className="h-4 w-4"/>
-            {/* Tag <a> para tornar o link clicável */}
+          <span className="flex min-w-0 max-w-full items-center gap-1" title={t('info.website')}>
+            <Link className="h-4 w-4 shrink-0"/>
             <a 
-              href={`${websiteUrl}`}
+              href={toProfileWebsiteHref(websiteUrl)}
               target="_blank" 
               rel="noopener noreferrer" 
-              className={`text-primary hover:underline`}>
+              className={`text-primary hover:underline ${breakLongText}`}>
               {websiteUrl}
             </a>
           </span>
