@@ -24,7 +24,7 @@ public abstract class BaseApiTest {
                   "email": "%s",
                   "username": "%s",
                   "name": "Test",
-                  "password": "123456"
+                  "password": "Test1234"
                 }
                 """.formatted(email, username))
                 .post("/auth/register")
@@ -40,7 +40,7 @@ public abstract class BaseApiTest {
                         .body("""
                         {
                           "username": "%s",
-                          "password": "123456"
+                          "password": "Test1234"
                         }
                         """.formatted(email))
                         .post("/auth/login")
