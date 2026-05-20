@@ -32,6 +32,9 @@
         "toast": {
             "follow_error": "Error al seguir",
             "unfollow_error": "Error al dejar de seguir"
+        },
+        "followersModal": {
+            "noFollowers": "Ningún seguidor todavía."
         }
     },
     "info": {
@@ -53,7 +56,9 @@
         "getMidaError": "Error al buscar mídias do usuário",
         "getPostError": "Error al obter informações do post",
         "postModalTitle": "Publicación",
-        "empty": "Sin multimedia aún."
+        "empty": "Sin multimedia aún.",
+        "loadMore": "Cargar más",
+        "loadingMore": "Cargando..."
     },
     "postList": {
         "error": "Error al obtener publicaciones del usuario"

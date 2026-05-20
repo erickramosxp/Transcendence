@@ -74,7 +74,7 @@ export function MediaGrid({ username }) {
                         disabled={isLoadingMore}
                         className="w-full max-w-[200px]"
                     >
-                        {isLoadingMore ? "Carregando..." : "Carregar mais"}
+                        {isLoadingMore ? t('mediaGrid.loadingMore') : t('mediaGrid.loadMore')}
                     </Button>
                 </div>
 			)}
