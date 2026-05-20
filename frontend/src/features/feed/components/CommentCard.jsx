@@ -9,8 +9,10 @@ import {
 } from "../feedService";
 import { getCurrentTime } from "@/shared/getCurrentTime";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/design-system/tokens/colors";
+import { LIMITS } from "@/shared/validation/limits";
 
 import {
     Button,
@@ -35,13 +37,21 @@ export default function CommentCard({
 
     const { currentLanguage } = useLanguage();
 
-    const { t } = useTranslation('feed');
+    const { t } = useTranslation(['feed', 'common']);
 
     async function handleSubmit(e) {
         e.preventDefault();
 
         const value = commentText.trim();
-        if (!value) return;
+        if (!value) {
+            toast.error(t('common:errors.comment.empty'));
+            return;
+        }
+
+        if (commentText.length > LIMITS.commentText) {
+            toast.error(t('common:errors.post.tooLong', { max: LIMITS.commentText }));
+            return;
+        }
 
         try {
             const newComment = await createComment({
@@ -212,9 +222,13 @@ export default function CommentCard({
             <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="flex items-center justify-end gap-2">
                     <Textarea
-                        maxLength={500}
+                        maxLength={LIMITS.commentText}
                         value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
+                        onChange={(e) => {
+                            const next = e.target.value;
+                            if (next.length > LIMITS.commentText) return;
+                            setCommentText(next);
+                        }}
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault();

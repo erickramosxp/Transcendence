@@ -25,16 +25,22 @@
     },
     "errors": {
         "upload": {
+            "notFound": "Ningún archivo seleccionado.",
             "invalidType": "Tipo de archivo no permitido.",
             "invalidImage": "La imagen es inválida o está dañada.",
             "invalidVideo": "El video es inválido o está dañado.",
             "fileTooLarge": "El archivo es demasiado grande.",
+            "fileTooLargeMax": "El archivo supera el límite de {{max}}MB.",
             "unknown": "Error al subir el archivo."
+        },
+        "comment": {
+            "empty": "El comentario no puede estar vacío."
         },
         "post": {
             "empty": "El post no puede estar vacío.",
             "emptyVideo": "Video no puede estar vacío.",
             "emptyImage": "Imagen no puede estar vacía.",
+            "tooLong": "El texto no puede superar {{max}} caracteres.",
             "createFailed": "Error al crear el post."
         },
         "avatar": {

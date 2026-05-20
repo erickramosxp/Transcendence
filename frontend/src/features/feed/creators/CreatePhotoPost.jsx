@@ -18,6 +18,7 @@ import {
 
 import { PostPreview } from "../components/PostPreview";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { LIMITS } from "@/shared/validation/limits";
 
 function CreatePhotoPost({ onAddPost, onClose }) {
 	const {
@@ -29,7 +30,8 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 		handleChange,
 		handleEmojiSelect,
 		uploadPercent,
-		avatarUrl
+		avatarUrl,
+		maxTextLength,
 	} = useCreatePost(onAddPost, onClose, "photo");
 
 	const { t } = useTranslation('feed');
@@ -42,7 +44,7 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 				<div className="flex gap-3 sm:gap-4">
 					<div className="relative min-w-0 flex-1 space-y-3 sm:space-y-4">
 						<Textarea
-							maxLength={500}
+							maxLength={maxTextLength}
 							value={text}
 							onChange={handleChange}
 							onKeyDown={(e) => {
@@ -56,7 +58,7 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 						/>
 						<div ref={anchorRef} />
 						<p className="text-right text-sm text-muted-foreground">
-							{text.length}/500
+							{text.length}/{maxTextLength}
 						</p>
 
 						{showEmojiPicker &&
@@ -118,10 +120,10 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 								<FileUploadButton
 									onFileSelect={setFile}
 									accept="image/jpeg,image/png,image/gif,image/webp"
-									maxMBSize={5}
+									fileKind="image"
 								/>
 								<div className="text-xs text-muted-foreground">
-									<span>Max size (5MB)</span>
+									<span>Max size ({LIMITS.postImageFileMB}MB)</span>
 								</div>
 							</div>
 

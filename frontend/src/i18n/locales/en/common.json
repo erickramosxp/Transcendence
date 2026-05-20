@@ -25,16 +25,22 @@
     },
     "errors": {
         "upload": {
+            "notFound": "No file selected.",
             "invalidType": "File type not allowed.",
             "invalidImage": "The image is invalid or corrupted.",
             "invalidVideo": "The video is invalid or corrupted.",
             "fileTooLarge": "The file is too large.",
+            "fileTooLargeMax": "The file exceeds the {{max}}MB limit.",
             "unknown": "Error uploading the file."
+        },
+        "comment": {
+            "empty": "Comment cannot be empty."
         },
         "post": {
             "empty": "Post cannot be empty.",
             "emptyVideo": "Video cannot be empty.",
             "emptyImage": "Image cannot be empty.",
+            "tooLong": "Text cannot exceed {{max}} characters.",
             "createFailed": "Failed to create post."
         },
         "avatar": {

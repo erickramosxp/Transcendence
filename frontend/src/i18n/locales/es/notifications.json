@@ -1,7 +1,13 @@
 {
     "title": "Notificaciones",
     "markAllRead": "Marcar todas como leídas",
+    "filter": {
+        "label": "Filtrar notificaciones",
+        "all": "Todas",
+        "unread": "No leídas"
+    },
     "empty": "Aún no hay notificaciones.",
+    "emptyUnread": "No hay notificaciones sin leer.",
     "loading": "Cargando…",
     "loadMore": "Cargar más",
     "errors": {
@@ -18,6 +24,7 @@
     },
     "card": {
         "openTarget": "Abrir destino de la notificación",
+        "markRead": "Marcar como leída",
         "someone": "Alguien",
         "LIKE_POST": "<bold>{{name}}</bold><muted> le gustó tu publicación.</muted>",
         "LIKE_COMMENT": "<bold>{{name}}</bold><muted> le gustó tu comentario.</muted>",

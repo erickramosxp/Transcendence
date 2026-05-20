@@ -8,19 +8,22 @@ import { Button, Card, CardContent, CardFooter, Textarea, FileUploadButton, Prog
 import { PostPreview } from "../components/PostPreview";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { LIMITS } from "@/shared/validation/limits";
 
 
 function CreateVideoPost({ onAddPost, onClose }) {
 
 	const {
 		text,
-		file, setFile,
+		file,
+		setFile,
 		showEmojiPicker,
 		handleSubmit,
 		handleChange,
 		handleEmojiSelect,
 		avatarUrl,
-		uploadPercent
+		uploadPercent,
+		maxTextLength,
 	} = useCreatePost(onAddPost, onClose, "video");
 
 	const { t } = useTranslation('feed');
@@ -34,7 +37,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 				<div className="flex gap-3 sm:gap-4">
 					<div className="flex-1 space-y-3 sm:space-y-4 min-w-0 relative">
 						<Textarea
-							maxLength={500}
+							maxLength={maxTextLength}
 							value={text}
 							onChange={handleChange}
 							onKeyDown={(e) => {
@@ -48,7 +51,7 @@ function CreateVideoPost({ onAddPost, onClose }) {
 						/>
 						<div ref={anchorRef} />
 						<p className="text-sm text-muted-foreground text-right">
-							{text.length}/500
+							{text.length}/{maxTextLength}
 						</p>
 						{!file && (
 							<div className="flex items-center gap-2 rounded-md bg-muted p-3">
@@ -98,9 +101,13 @@ function CreateVideoPost({ onAddPost, onClose }) {
 						)}
 						<div className="flex items-center justify-between gap-2">
 							<div className="flex gap-1 sm:gap-2 items-center">
-								<FileUploadButton onFileSelect={setFile} accept="video/mp4,video/webm,video/ogg" maxMBSize={20} />
+								<FileUploadButton
+									onFileSelect={setFile}
+									accept="video/mp4"
+									fileKind="video"
+								/>
 								<div className="text-xs text-muted-foreground">
-									<span>Max size (20MB)</span>
+									<span>Max size ({LIMITS.postVideoFileMB}MB)</span>
 								</div>
 							</div>
 							<div>
