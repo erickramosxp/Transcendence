@@ -40,6 +40,9 @@ public class CommentService {
         if (req.text == null || req.text.isBlank())
             throw new BadRequestException("Comment must contain text");
 
+        if (req.text.length() > 500)
+            throw new BadRequestException("Comment must be at most 500 characters");
+
         Post post = Post.findById(req.postId);
         if (post == null)
             throw new NotFoundException("Post not found");

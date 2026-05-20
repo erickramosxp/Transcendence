@@ -8,6 +8,7 @@ import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -39,7 +40,7 @@ public class UserResource {
     @PATCH
     @Path("/profile")
     @Authenticated
-    public UpdateUserProfileResponse updateProfile(UpdateUserProfileRequest req) {
+    public UpdateUserProfileResponse updateProfile(@Valid UpdateUserProfileRequest req) {
         long userId = currentUser.id();
         return userService.updateProfile(userId, req);
     }

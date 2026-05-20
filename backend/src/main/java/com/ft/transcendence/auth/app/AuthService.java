@@ -60,6 +60,15 @@ public class AuthService {
         if (username == null || username.isBlank() || password == null || password.isBlank())
             throw new NotAuthorizedException("Username or Password is blank");
 
+        boolean isEmail = username.contains("@");
+        if (isEmail) {
+            if (!username.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"))
+                throw new NotAuthorizedException("Invalid identifier");
+        } else {
+            if (!username.matches("^[a-zA-Z0-9_]{3,30}$"))
+                throw new NotAuthorizedException("Invalid identifier");
+        }
+
         User user = User.findByEmailOrUsername(username.trim());
         if (user == null || !user.active)
             throw new NotAuthorizedException("User not found");
@@ -97,6 +106,10 @@ public class AuthService {
             throw new BadRequestException("Username is required");
         if (req.password == null || req.password.isBlank())
             throw new BadRequestException("Password is required");
+        if (!req.email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"))
+            throw new NotAuthorizedException("Invalid identifier of email");
+        if (!req.username.matches("^[a-zA-Z0-9_]{3,30}$"))
+            throw new NotAuthorizedException("Invalid identifier of username");
     }
 
     @Transactional
@@ -110,6 +123,9 @@ public class AuthService {
 
         if (req.newPassword == null || req.newPassword.isBlank() || req.newPassword.length() < 8)
             throw new BadRequestException("New password must be at least 8 characters");
+
+        if (req.newPassword.length() > 30)
+            throw new BadRequestException("New password must be at most 30 characters");
 
         local.passwordHash = BcryptUtil.bcryptHash(req.newPassword);
     }

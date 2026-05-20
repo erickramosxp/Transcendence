@@ -100,8 +100,17 @@ public class UserService {
     public UpdateUserProfileResponse updateProfile(long userId, UpdateUserProfileRequest req) {
         User user = User.findById(userId);
 
-        if (req.name != null && !req.name.isBlank())
-            user.name = req.name;
+        if (req.name != null && !req.name.isBlank()) {
+            String trimmed = req.name.trim();
+            if (trimmed.length() < 3 || trimmed.length() > 30)
+                throw new BadRequestException("Name must be between 3 and 30 characters");
+            user.name = trimmed;
+        }
+        if (req.bio != null && req.bio.length() > 160)
+            throw new BadRequestException("Bio must be at most 160 characters");
+        if (req.location != null && req.location.length() > 100)
+            throw new BadRequestException("Location must be at most 100 characters");
+
         user.biography = normalize(req.bio);
         user.location = normalize(req.location);
         user.websiteUrl = normalize(req.websiteUrl);
