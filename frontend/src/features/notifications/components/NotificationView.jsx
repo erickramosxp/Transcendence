@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Bell } from "lucide-react";
-import { Button, Loading } from "@/design-system";
+import {
+	Button,
+	Loading,
+	Tabs,
+	TabsList,
+	TabsTrigger,
+} from "@/design-system";
 import { useTranslation } from "react-i18next";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import {
 	useNotificationStore,
 	NOTIFICATION_ERROR_CODES,
+	NOTIFICATION_FILTER,
 } from "../store/useNotificationStore";
 import { NotificationCard } from "./NotificationCard";
 import { useNotificationPostModal } from "../hooks/useNotificationPostModal";
@@ -46,6 +53,8 @@ export function NotificationView() {
 		(state) => state.markEverythingRead,
 	);
 	const markOneRead = useNotificationStore((state) => state.markOneRead);
+	const filter = useNotificationStore((state) => state.filter);
+	const setFilter = useNotificationStore((state) => state.setFilter);
 
 	useEffect(() => {
 		loadNotificationsPage(0);
@@ -70,18 +79,20 @@ export function NotificationView() {
 	const showList = !showLoadError && notifications.length > 0;
 	const showEmpty =
 		!loading && !showLoadError && notifications.length === 0;
+	const emptyMessage =
+		filter === NOTIFICATION_FILTER.UNREAD ? t("emptyUnread") : t("empty");
 
 	return (
 		<>
 			<div className="max-w-4xl mx-auto px-3 sm:px-4 pb-10 pt-5 sm:pt-10">
 				<header className="mb-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
 					<div className="flex min-w-0 items-start gap-3">
-						<Bell
+						{/* <Bell
 							className="mt-0.5 size-6 shrink-0 text-primary"
 							aria-hidden
-						/>
+						/> */}
 						<div className="min-w-0">
-							<h1 className="text-base font-bold uppercase tracking-wide text-primary sm:text-lg">
+							<h1 className="ds-notification-title">
 								{t("title")}
 							</h1>
 						</div>
@@ -103,6 +114,25 @@ export function NotificationView() {
 						{t("markAllRead")}
 					</Button>
 				</header>
+
+				<Tabs
+					value={filter}
+					onValueChange={setFilter}
+					className="mb-4"
+					aria-label={t("filter.label")}
+				>
+					<TabsList
+						variant="filled"
+						className="grid w-full grid-cols-2 gap-1 p-1"
+					>
+						<TabsTrigger value={NOTIFICATION_FILTER.ALL}>
+							{t("filter.all")}
+						</TabsTrigger>
+						<TabsTrigger value={NOTIFICATION_FILTER.UNREAD}>
+							{t("filter.unread")}
+						</TabsTrigger>
+					</TabsList>
+				</Tabs>
 
 				<section
 					className="min-w-0 max-w-full space-y-4"
@@ -136,7 +166,7 @@ export function NotificationView() {
 					)}
 
 					{showEmpty && (
-						<p className="text-sm text-muted-foreground">{t("empty")}</p>
+						<p className="text-sm text-muted-foreground">{emptyMessage}</p>
 					)}
 
 					{showList && (

@@ -67,6 +67,7 @@ export function AddConversationModal({
 					<TabsContent value={ADD_CONVERSATION_TAB.GROUP}>
 						<AddConversationGroupForm
 							groupName={modal.groupName}
+							groupNameMaxLength={modal.groupNameMaxLength}
 							onGroupNameChange={(e) => {
 								modal.setGroupName(e.target.value);
 								if (modal.submitError) modal.setSubmitError(null);

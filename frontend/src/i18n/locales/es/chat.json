@@ -33,6 +33,7 @@
       "memberErrorGeneric": "No se pudo verificar el usuario.",
       "removeMemberAria": "Quitar a {{username}} de la lista",
       "createErrorGroupName": "Introduce el nombre del grupo.",
+      "createErrorGroupNameTooLong": "El nombre del grupo no puede superar {{max}} caracteres.",
       "createErrorDmUsername": "Introduce el usuario del contacto.",
       "createErrorDmSelf": "No puedes abrir un chat solo contigo mismo.",
       "createErrorGeneric": "No se pudo crear la conversación.",

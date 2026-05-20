@@ -13,6 +13,11 @@ export const NOTIFICATION_ERROR_CODES = {
 	LOAD: "load",
 };
 
+export const NOTIFICATION_FILTER = {
+	ALL: "all",
+	UNREAD: "unread",
+};
+
 function mergeUniqueById(existing, incoming) {
 	const seen = new Set(existing.map((n) => n?.id).filter((id) => id != null));
 	const extra = incoming.filter((n) => {
@@ -29,6 +34,7 @@ export const useNotificationStore = create((set, get) => ({
 	page: 0,
 	pageSize: DEFAULT_NOTIFICATION_PAGE_SIZE,
 	hasMore: false,
+	filter: NOTIFICATION_FILTER.ALL,
 	unreadCount: 0,
 	loading: false,
 	loadingMore: false,
@@ -36,18 +42,35 @@ export const useNotificationStore = create((set, get) => ({
 	markingAllRead: false,
 	markingReadId: null,
 
+	setFilter: (filter) => {
+		const next =
+			filter === NOTIFICATION_FILTER.UNREAD
+				? NOTIFICATION_FILTER.UNREAD
+				: NOTIFICATION_FILTER.ALL;
+		if (get().filter === next) return;
+		set({
+			filter: next,
+			notifications: [],
+			page: 0,
+			hasMore: false,
+			errorCode: null,
+		});
+		void get().loadNotificationsPage(0);
+	},
+
 	loadNotificationsPage: async (
 		page = 0,
 		size = get().pageSize ?? DEFAULT_NOTIFICATION_PAGE_SIZE,
 		{ append = false } = {},
 	) => {
+		const unreadOnly = get().filter === NOTIFICATION_FILTER.UNREAD;
 		set({
 			loading: !append,
 			loadingMore: append,
 			errorCode: null,
 		});
 		try {
-			const data = await fetchNotificationsPage(page, size);
+			const data = await fetchNotificationsPage(page, size, { unreadOnly });
 			const items = Array.isArray(data?.items) ? data.items : [];
 			set((state) => ({
 				notifications: append ? mergeUniqueById(state.notifications, items) : items,
@@ -84,6 +107,7 @@ export const useNotificationStore = create((set, get) => ({
 
 	prependIncomingNotification: async (notification) => {
 		if (notification?.id == null) return;
+		if (notification.isRead === true) return;
 
 		const { notifications } = get();
 		if (notifications.some((n) => n?.id === notification.id)) return;
@@ -103,10 +127,11 @@ export const useNotificationStore = create((set, get) => ({
 		if (target.isRead) return true;
 
 		const wasUnread = target.isRead === false;
+		const unreadOnly = get().filter === NOTIFICATION_FILTER.UNREAD;
 
-		const list = snapList.map((n) =>
-			n?.id === id ? { ...n, isRead: true } : n,
-		);
+		const list = unreadOnly
+			? snapList.filter((n) => n?.id !== id)
+			: snapList.map((n) => (n?.id === id ? { ...n, isRead: true } : n));
 
 		set({
 			markingReadId: id,
@@ -133,10 +158,13 @@ export const useNotificationStore = create((set, get) => ({
 
 		const snapList = [...get().notifications];
 		const snapUnread = get().unreadCount;
+		const unreadOnly = get().filter === NOTIFICATION_FILTER.UNREAD;
 
 		set({
 			markingAllRead: true,
-			notifications: snapList.map((n) => ({ ...n, isRead: true })),
+			notifications: unreadOnly
+				? []
+				: snapList.map((n) => ({ ...n, isRead: true })),
 			unreadCount: 0,
 		});
 

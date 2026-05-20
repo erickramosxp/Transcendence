@@ -106,11 +106,16 @@ test.describe('página de notificações', () => {
 			(url) => isNotificationsListUrl(url),
 			async (route) => {
 				if (route.request().method() !== 'GET') return route.continue();
+				const requestUrl = new URL(route.request().url());
+				const unreadOnly = requestUrl.searchParams.get('unreadOnly') === 'true';
+				const items = unreadOnly
+					? notifications.filter((n) => n.isRead === false)
+					: notifications;
 				await route.fulfill({
 					status: 200,
 					contentType: 'application/json',
 					body: JSON.stringify({
-						items: notifications,
+						items,
 						page: 0,
 						size: 20,
 						hasMore: false,
@@ -241,6 +246,40 @@ test.describe('página de notificações', () => {
 
 		await markReadResponse;
 		await expect(page).toHaveURL(/\/friends/, { timeout: 15_000 });
+	});
+
+	test('filtra apenas notificações não lidas', async ({ page }) => {
+		page.__e2eNotifications.setList([
+			buildNotification({
+				id: NOTIF_UNREAD_ID,
+				type: 'FRIEND_REQUEST',
+				isRead: false,
+				name: 'Alice E2E',
+			}),
+			buildNotification({
+				id: NOTIF_READ_ID,
+				type: 'LIKE_POST',
+				isRead: true,
+				name: 'Bob E2E',
+				postId: 42,
+			}),
+		]);
+
+		await login(page);
+		await page.goto('/notifications');
+
+		await expect(
+			page.getByText(/Bob E2E.*curtiu seu post/i),
+		).toBeVisible();
+
+		await page.getByRole('tab', { name: /^Não lidas$/i }).click();
+
+		await expect(
+			page.getByText(/Alice E2E.*solicitação de amizade/i),
+		).toBeVisible();
+		await expect(
+			page.getByText(/Bob E2E.*curtiu seu post/i),
+		).toHaveCount(0);
 	});
 
 	test('marca todas as notificações como lidas', async ({ page }) => {

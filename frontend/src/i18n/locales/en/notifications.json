@@ -1,7 +1,13 @@
 {
     "title": "Notifications",
     "markAllRead": "Mark all as read",
+    "filter": {
+        "label": "Filter notifications",
+        "all": "All",
+        "unread": "Unread"
+    },
     "empty": "No notifications yet.",
+    "emptyUnread": "No unread notifications.",
     "loading": "Loading…",
     "loadMore": "Load more",
     "errors": {
@@ -18,6 +24,7 @@
     },
     "card": {
         "openTarget": "Open notification destination",
+        "markRead": "Mark as read",
         "someone": "Someone",
         "LIKE_POST": "<bold>{{name}}</bold><muted> liked your post.</muted>",
         "LIKE_COMMENT": "<bold>{{name}}</bold><muted> liked your comment.</muted>",

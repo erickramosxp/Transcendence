@@ -58,12 +58,20 @@ export function AuthProvider({ children }) {
             }
 
             toast.success(i18n.t('authProvider:login.success'));
-            setTimeout(() => { navigate('/feed')}, 1000);
+            setTimeout(() => { navigate('/feed') }, 1000);
 
         } catch (err) {
-            console.log(err);
-            const errorMsg = err.response?.data?.message || i18n.t('authProvider:login.error');
-            console.log(errorMsg);
+            const status = err.response?.status;
+
+            let errorMsg;
+            if (status === 401) {
+                errorMsg = i18n.t('auth:errors.invalidCredentials');
+            } else if (status === 400) {
+                errorMsg = err.response?.data?.message || i18n.t('auth:errors.error');
+            } else {
+                errorMsg = i18n.t('auth:errors.error');
+            }
+
             toast.error(errorMsg);
         }
 
@@ -90,8 +98,17 @@ export function AuthProvider({ children }) {
             }, 2000);
 
         } catch (err) {
-            const errorMsg = err.response?.data?.message || t('register.error');
-            console.log(errorMsg);
+            const status = err.response?.status;
+            const backendMsg = err.response?.data?.message;
+
+            let errorMsg;
+            if (status === 400 && backendMsg?.includes('Email already'))
+              errorMsg = i18n.t('auth:errors.emailInUse');
+            else if (status === 400 && backendMsg?.includes('Username already'))
+              errorMsg = i18n.t('auth:errors.usernameInUse');
+            else
+              errorMsg = backendMsg || i18n.t('auth:errors.error');
+
             toast.error(errorMsg);
         }
     }

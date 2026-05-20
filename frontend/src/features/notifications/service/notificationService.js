@@ -7,9 +7,10 @@ export const DEFAULT_NOTIFICATION_PAGE_SIZE = 20;
 export async function listNotifications(
 	page = 0,
 	size = DEFAULT_NOTIFICATION_PAGE_SIZE,
+	{ unreadOnly = false } = {},
 ) {
 	const { data } = await api.get(baseRoute, {
-		params: { page, size },
+		params: { page, size, unreadOnly },
 	});
 	return data;
 }
