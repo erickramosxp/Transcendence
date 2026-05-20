@@ -17,8 +17,14 @@ SELECT
         ELSE 'IMAGE'
     END AS media_type,
     media_url,
-    media_url,
-    'COMPLETED',
+    CASE
+        WHEN media_url LIKE '%.mp4' THEN NULL
+        ELSE media_url
+    END AS path_preview,
+    CASE
+        WHEN media_url LIKE '%.mp4' THEN 'PENDING'
+        ELSE 'COMPLETED'
+    END AS status,
     created_at
 FROM posts
 WHERE media_url IS NOT NULL;
