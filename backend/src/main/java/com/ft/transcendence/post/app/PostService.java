@@ -37,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -349,7 +348,7 @@ public class PostService {
                     uploadFileToStorage(req.blurFile, blurPath, "image/jpeg");
                 }
 
-                return mediaService.attachMedia(
+                Media media = mediaService.attachMedia(
                         "POST",
                         post.id,
                         type,
@@ -360,6 +359,12 @@ public class PostService {
                         req.height,
                         type != MediaType.IMAGE ? MediaStatus.PENDING : MediaStatus.COMPLETED
                 );
+
+                if (type == MediaType.VIDEO) {
+                    jobService.createProcessVideoJob(media, userId);
+                }
+
+                return media;
 
             } catch (IOException e) {
                 System.err.println("Erro crítico ao fazer upload para o MinIO: " + e.getMessage());
