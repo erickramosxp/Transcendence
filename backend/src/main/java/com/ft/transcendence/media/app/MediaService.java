@@ -35,15 +35,29 @@ public class MediaService {
         return media;
     }
 
+    @Transactional
+    public Media attachExternalImage(String modelType, Long modelId, String externalUrl) {
+        Media media = new Media();
+        media.modelType = modelType;
+        media.modelId = modelId;
+        media.mediaType = MediaType.IMAGE;
+        media.pathOriginal = externalUrl;
+        media.pathPreview = null;
+        media.pathBlur = null;
+        media.status = MediaStatus.COMPLETED;
+        media.persist();
+        return media;
+    }
+
     public MediaResponse buildMediaResponse(Media media) {
 
         if (media == null) {
             return null;
         }
 
-        String originalUrl = storageService.generateUrl(media.pathOriginal);
-        String previewUrl = media.pathPreview != null ? storageService.generateUrl(media.pathPreview) : null;
-        String blurUrl = media.pathBlur != null ? storageService.generateUrl(media.pathBlur) : null;
+        String originalUrl = resolvePublicUrl(media.pathOriginal);
+        String previewUrl = media.pathPreview != null ? resolvePublicUrl(media.pathPreview) : null;
+        String blurUrl = media.pathBlur != null ? resolvePublicUrl(media.pathBlur) : null;
 
         return new MediaResponse(
                 media.id,
@@ -54,6 +68,16 @@ public class MediaService {
                 media.height,
                 media.status != null ? media.status.name() : null
         );
+    }
+
+    private String resolvePublicUrl(String path) {
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+        if (path.startsWith("http://") || path.startsWith("https://")) {
+            return path;
+        }
+        return storageService.generateUrl(path);
     }
 
 }

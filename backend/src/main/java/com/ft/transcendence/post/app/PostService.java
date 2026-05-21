@@ -63,6 +63,29 @@ public class PostService {
     UserAvatarService userAvatarService;
 
     @Transactional
+    public Post createEditorialTextPost(long userId, String text, String externalImageUrl) {
+        if (text == null || text.isBlank()) {
+            throw new BadRequestException("Posts must contain text");
+        }
+        if (text.length() > 500) {
+            throw new BadRequestException("Text content is too long. Maximum 500 characters.");
+        }
+
+        var form = new CreatePostForm();
+        form.text = text;
+        Post post = createPostEntity(userId, form);
+
+        if (isExternalHttpsUrl(externalImageUrl)) {
+            mediaService.attachExternalImage("POST", post.id, externalImageUrl.trim());
+            metrics.recordPostCreated(true);
+        } else {
+            metrics.recordPostCreated(false);
+        }
+
+        return post;
+    }
+
+    @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
 
         validatePostReq(req);
@@ -374,6 +397,14 @@ public class PostService {
                 throw new BadRequestException("Erro in uploaded file");
 
             }
+    }
+
+    private static boolean isExternalHttpsUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        String trimmed = url.trim();
+        return trimmed.startsWith("https://");
     }
 
     private Post createPostEntity(Long userId, CreatePostForm req) {

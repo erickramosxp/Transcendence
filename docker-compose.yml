@@ -27,6 +27,11 @@ services:
       QUARKUS_MINIO_SECURE: "true"
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
       MINIO_PUBLIC_URL: https://${MINIO_API_ENDPOINT}
+      EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videa}
+      GNEWS_API_KEY: ${GNEWS_API_KEY:-}
+      GNEWS_COUNTRY: ${GNEWS_COUNTRY:-br}
+      GNEWS_LANG: ${GNEWS_LANG:-pt}
+      GNEWS_MAX_PER_RUN: ${GNEWS_MAX_PER_RUN:-10}
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s

@@ -25,6 +25,11 @@ services:
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "false"
       MINIO_PUBLIC_URL: http://localhost:9000
+      EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videa}
+      GNEWS_API_KEY: ${GNEWS_API_KEY:-}
+      GNEWS_COUNTRY: ${GNEWS_COUNTRY:-br}
+      GNEWS_LANG: ${GNEWS_LANG:-pt}
+      GNEWS_MAX_PER_RUN: ${GNEWS_MAX_PER_RUN:-10}
     depends_on:
       database_dev:
         condition: service_healthy
