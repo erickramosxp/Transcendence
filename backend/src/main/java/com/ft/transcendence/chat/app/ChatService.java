@@ -5,6 +5,7 @@ import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.domain.ChatMessage;
 import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.common.dto.PageResponse;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
@@ -37,6 +38,9 @@ public class ChatService {
     NotificationDispatcher notificationDispatcher;
 
     @Inject
+    SocialMetrics metrics;
+
+    @Inject
     UserAvatarService userAvatarService;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
@@ -67,7 +71,7 @@ public class ChatService {
 
                     ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", chat.id).firstResult();
 
-                    return ChatResponse.of(chat, otherUser,lastMessage);
+                    return ChatResponse.of(chat, otherUser, lastMessage);
                 })
                 .toList();
 
@@ -92,7 +96,6 @@ public class ChatService {
         Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent()) {
             UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
-
             ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", existing.get().id).firstResult();
             return ChatResponse.of(existing.get(), otherUser, lastMessage);
         }
@@ -101,6 +104,8 @@ public class ChatService {
 
         ChatParticipant.create(chat, userA, "member");
         ChatParticipant.create(chat, userB, "member");
+
+        metrics.recordDirectChatCreated();
 
         UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
 
@@ -129,6 +134,8 @@ public class ChatService {
         }
         for (Long userId : participantIds)
             notificationDispatcher.onAddedToGroup(currentUser, userId, chat);
+
+        metrics.recordGroupChatCreated();
 
         return ChatResponse.of(chat);
     }

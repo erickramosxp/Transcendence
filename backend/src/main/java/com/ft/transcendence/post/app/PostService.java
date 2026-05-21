@@ -6,6 +6,7 @@ import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import com.ft.transcendence.common.media.MediaAnalysis;
 import com.ft.transcendence.common.media.MediaKind;
 import com.ft.transcendence.common.media.MediaValidationService;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.job.app.JobService;
 import com.ft.transcendence.like.domain.Like;
@@ -53,6 +54,9 @@ public class PostService {
     JobService jobService;
 
     @Inject
+    SocialMetrics metrics;
+
+    @Inject
     MediaService mediaService;
 
     @Inject
@@ -71,6 +75,7 @@ public class PostService {
         if (req.file != null) {
             createdMedia = savePostMedia(post, userId, req, analysis);
         }
+        metrics.recordPostCreated(req.file != null);
 
         return buildResponse(post, createdMedia);
     }
@@ -83,7 +88,6 @@ public class PostService {
         MediaResponse mediaResponse = null;
         if (media != null) {
             String originalUrl = storageService.generateUrl(media.pathOriginal);
-            String previewUrl = media.pathPreview != null ? storageService.generateUrl(media.pathPreview) : null;
             String blurUrl = media.pathBlur != null ? storageService.generateUrl(media.pathBlur) : null;
 
             mediaResponse = new MediaResponse(
@@ -183,7 +187,7 @@ public class PostService {
         Comment.update("deletedAt = ?1 where post.id = ?2", now, postId);
         Like.delete("post.id = ?1", postId);
         Like.delete("comment.post.id = ?1", postId);
-
+        metrics.recordPostDeleted();
         List<Media> medias = Media.find("modelType = ?1 and modelId = ?2", "POST", postId).list();
 
         if (!medias.isEmpty()) {
@@ -208,7 +212,6 @@ public class PostService {
             }
             Media.delete("modelType = ?1 and modelId = ?2", "POST", postId);
         }
-
 
     }
 

@@ -1,6 +1,7 @@
 package com.ft.transcendence.friendship.app;
 
 import com.ft.transcendence.common.dto.PageResponse;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
@@ -23,6 +24,9 @@ import java.util.Optional;
 public class FriendshipService {
 
     @Inject
+    SocialMetrics metrics;
+
+    @Inject
     NotificationDispatcher notificationDispatcher;
 
     @Inject
@@ -31,9 +35,8 @@ public class FriendshipService {
     @Transactional
     public FriendshipDTO sendRequest(Long currentUserId, Long targetUserId) {
 
-        if (currentUserId.equals(targetUserId)) {
+        if (currentUserId.equals(targetUserId))
             throw new WebApplicationException("You can't add yourself", Response.Status.BAD_REQUEST);
-        }
 
         Optional<User> targetUser = User.findByIdOptional(targetUserId);
         if (!targetUser.isPresent())
@@ -43,9 +46,8 @@ public class FriendshipService {
                 "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
                 currentUserId, targetUserId
         );
-        if (count > 0) {
+        if (count > 0)
             throw new WebApplicationException("Friendship already exists or is pending", Response.Status.CONFLICT);
-        }
 
         Friendship request = new Friendship();
         request.userId = currentUserId;
@@ -53,6 +55,7 @@ public class FriendshipService {
         request.status = FriendshipStatus.PENDING;
         request.persist();
 
+        metrics.recordFriendRequestSent();
         User actor = User.findById(currentUserId);
         User friendUser = targetUser.get();
 
@@ -133,6 +136,7 @@ public class FriendshipService {
         mirror.persist();
 
         User actor = User.findById(currentUserId);
+        metrics.recordFriendRequestAccepted();
         notificationDispatcher.onFriendAccepted(actor, request.userId);
     }
 
@@ -142,6 +146,7 @@ public class FriendshipService {
         Friendship request = getAndValidatePendingRequest(friendshipId, currentUserId);
         request.delete();
 
+        metrics.recordFriendRequestRejected();
         User actor = User.findById(currentUserId);
         notificationDispatcher.onFriendReject(actor, request.userId);
     }
@@ -152,9 +157,8 @@ public class FriendshipService {
         Friendship friendship = Friendship.<Friendship>findByIdOptional(friendshipId)
                 .orElseThrow(() -> new WebApplicationException("Amizade não encontrada", Response.Status.NOT_FOUND));
 
-        if (!friendship.userId.equals(currentUserId) && !friendship.friendId.equals(currentUserId)) {
+        if (!friendship.userId.equals(currentUserId) && !friendship.friendId.equals(currentUserId))
             throw new WebApplicationException("Você não tem permissão para desfazer esta amizade", Response.Status.FORBIDDEN);
-        }
 
         Friendship.delete(
                 "(userId = ?1 AND friendId = ?2) OR (userId = ?2 AND friendId = ?1)",
@@ -165,6 +169,7 @@ public class FriendshipService {
                 ? friendship.friendId
                 : friendship.userId;
 
+        metrics.recordFriendshipRemoved();
         User actor = User.findById(currentUserId);
         notificationDispatcher.onFriendBroken(actor, otherUserId);
     }

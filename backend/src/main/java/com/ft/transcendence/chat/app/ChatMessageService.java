@@ -5,6 +5,7 @@ import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.dto.ChatMessagePageResponse;
 import com.ft.transcendence.chat.dto.ChatMessageRequest;
 import com.ft.transcendence.chat.dto.ChatMessageResponse;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.chat.dto.UserMessageResponse;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.common.utils.Utils;
@@ -31,6 +32,9 @@ public class ChatMessageService {
     @Inject
     UserAvatarService userAvatarService;
 
+    @Inject
+    SocialMetrics metrics;
+
     @Transactional
     public ChatMessageResponse createMessage(Long currentUserId, Long chatId, ChatMessageRequest req) {
         ChatParticipant chatParticipant = ChatParticipant.find("chat.id = ?1 and user.id = ?2", chatId, currentUserId).firstResult();
@@ -41,7 +45,7 @@ public class ChatMessageService {
 
         ChatMessage replyTo = null;
         if (req.replyToId != null) {
-             replyTo = ChatMessage.findById(req.replyToId);
+            replyTo = ChatMessage.findById(req.replyToId);
             if (replyTo == null)
                 throw new NotFoundException("Message reply not found");
             if (!replyTo.chat.id.equals(chatId))
@@ -49,6 +53,12 @@ public class ChatMessageService {
         }
 
         ChatMessage message = createChatMessage(chatParticipant.chat, currentUserId, req.text, req.mediaUrl, type, replyTo);
+
+        metrics.recordMessageSent(
+            req.mediaUrl != null && !req.mediaUrl.isBlank(),
+            req.replyToId != null
+        );
+
         ChatMessageResponse cm = ChatMessageResponse.of(message);
 
         cm.user.avatarUrl = userAvatarService.getUserAvatarUrl(message.sender);
