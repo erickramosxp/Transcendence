@@ -68,8 +68,6 @@ public class AuthService {
             metrics.recordLoginFailed();
             throw new UnauthorizedException("Username or Password is blank");
         }
-        if (username == null || username.isBlank() || password == null || password.isBlank())
-            throw new UnauthorizedException("Username or Password is blank");
 
         boolean isEmail = username.contains("@");
         if (isEmail) {
@@ -85,23 +83,17 @@ public class AuthService {
             metrics.recordLoginFailed();
             throw new UnauthorizedException("User not found");
         }
-        if (user == null || !user.active)
-            throw new UnauthorizedException("User not found");
 
         AuthProvider local = AuthProvider.findLocalByUserId(user.id);
         if (local == null || local.passwordHash == null) {
             metrics.recordLoginFailed();
             throw new UnauthorizedException("User not found");
         }
-        if (local == null || local.passwordHash == null)
-            throw new UnauthorizedException("User not found");
 
         if (!BcryptUtil.matches(password, local.passwordHash)) {
             metrics.recordLoginFailed();
             throw new UnauthorizedException("Incorrect password");
         }
-        if (!BcryptUtil.matches(password, local.passwordHash))
-            throw new UnauthorizedException("Incorrect password");
 
         var now = OffsetDateTime.now();
         user.lastLogin = now;
