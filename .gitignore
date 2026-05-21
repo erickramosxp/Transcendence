@@ -1,13 +1,21 @@
 # Environment variables
 .env
+.env.local
+.env.*.local
 .vscode
 
 # Node modules
-node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
 
 # Backend artifacts
 backend/target/
 backend/.idea
+backend/.quarkus/
+*.class
+*.jar
+!**/src/main/**/*.jar
 
 # Private keys
 **/*private*.pem
@@ -21,3 +29,23 @@ storybook-static/
 **/playwright-report/
 **/blob-report/
 **/.playwright/
+minio_data/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+ 
+# Certificados locais
+*.pem
+*.key
+*.crt

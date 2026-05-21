@@ -2,28 +2,27 @@ import React from 'react'
 import { VideoThumbnail } from './VideoThumbnail';
 import { AudioThumbnail } from './AudioThumbnail';
 import { UnknownMedia } from './UnknownMedia';
-import { resolveMediaTypeSync } from '@/shared/resolveMediaType';
 
 export const MediaGridRenderer = ({ item }) => {
-    
-    const type = resolveMediaTypeSync(item?.mediaUrl);
 
-    if (type === "image") {
+    const { mediaUrl, mediaType, width, height, blurUrl } = item || {};
+
+    if (mediaType === "IMAGE") {
         return (
             <img
-                src={item.mediaUrl}
+                src={mediaUrl}
                 className="w-full h-full object-cover"
             />
         );
     }
 
-    if (type === "video") {
+    if (mediaType === "VIDEO") {
         return (
-            <VideoThumbnail thumbnailUrl={item.mediaUrl} />
+            <VideoThumbnail thumbnailUrl={mediaUrl} />
         );
     }
 
-    if (type === "audio") {
+    if (mediaType === "AUDIO") {
         return <AudioThumbnail />;
     }
 

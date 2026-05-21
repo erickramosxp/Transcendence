@@ -1,0 +1,157 @@
+{
+  "title": "🖥️ Saúde do Servidor",
+  "uid": "server-health",
+  "tags": ["transcendence", "infra", "jvm", "health"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "🟢 Backend Status",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "up{job=\"transcendence-backend\"}", "legendFormat": "Status" }],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }],
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "red" }, { "value": 1, "color": "green" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 2,
+      "title": "🧠 Heap Usado",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"} / jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"} * 100", "legendFormat": "Heap %" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "green" }, { "value": 70, "color": "yellow" }, { "value": 85, "color": "red" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 3,
+      "title": "⚙️ Threads JVM",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "jvm_threads_live_threads{job=\"transcendence-backend\"}", "legendFormat": "Threads" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": 0, "color": "green" }, { "value": 200, "color": "yellow" }, { "value": 500, "color": "red" }] } } }
+    },
+    {
+      "id": 4,
+      "title": "🌐 Req/s HTTP",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[5m]))", "legendFormat": "req/s" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": 0, "color": "green" }] } } }
+    },
+    {
+      "id": 5,
+      "title": "❌ Taxa de Erros 5xx",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"5..\"}[5m])) / sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\"}[5m])) * 100", "legendFormat": "Erros %" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "green" }, { "value": 1, "color": "yellow" }, { "value": 5, "color": "red" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 6,
+      "title": "⏱️ Latência P95",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P95" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "green" }, { "value": 1, "color": "yellow" }, { "value": 2, "color": "red" }] }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "🧠 JVM Heap — Usado vs Máximo",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Usado" },
+        { "expr": "jvm_memory_committed_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Alocado" },
+        { "expr": "jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Máximo" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 8,
+      "title": "🧠 JVM Non-Heap",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"nonheap\",job=\"transcendence-backend\"}", "legendFormat": "Non-Heap Usado" },
+        { "expr": "jvm_memory_committed_bytes{area=\"nonheap\",job=\"transcendence-backend\"}", "legendFormat": "Non-Heap Alocado" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 9,
+      "title": "⚙️ Threads JVM",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "jvm_threads_live_threads{job=\"transcendence-backend\"}", "legendFormat": "Ativas" },
+        { "expr": "jvm_threads_daemon_threads{job=\"transcendence-backend\"}", "legendFormat": "Daemon" },
+        { "expr": "jvm_threads_peak_threads{job=\"transcendence-backend\"}", "legendFormat": "Pico" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 10,
+      "title": "🌐 Requisições HTTP por Status",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"2..\"}[5m]))", "legendFormat": "2xx OK" },
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"4..\"}[5m]))", "legendFormat": "4xx Client Error" },
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"5..\"}[5m]))", "legendFormat": "5xx Server Error" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 11,
+      "title": "⏱️ Latência HTTP — P50, P95, P99",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P95" },
+        { "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 12,
+      "title": "♻️ Garbage Collection",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "rate(jvm_gc_pause_seconds_sum{job=\"transcendence-backend\"}[5m])", "legendFormat": "GC Pause {{ action }} {{ cause }}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+    }
+  ]
+}

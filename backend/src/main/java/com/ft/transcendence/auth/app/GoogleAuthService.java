@@ -6,6 +6,7 @@ import com.ft.transcendence.auth.infra.GoogleAuthClient;
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
 import com.ft.transcendence.common.exception.UnauthorizedException;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.user.domain.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -40,6 +41,9 @@ public class GoogleAuthService {
     @Inject
     @RestClient
     GoogleAuthClient googleAuthClient;
+
+    @Inject
+    SocialMetrics metrics;
 
     @Inject
     public GoogleAuthService(@ConfigProperty(name = "google.oauth.web-client-id") String clientId,
@@ -83,13 +87,13 @@ public class GoogleAuthService {
 
         GoogleIdToken.Payload payload = verifyGoogleToken(idTokenString);
 
-
         OffsetDateTime now = OffsetDateTime.now();
         User user = findOrCreateUser(payload, now);
 
-
         user.lastLogin = now;
         user.updatedAt = now;
+
+        metrics.recordGoogleLogin();
 
         String token = Jwt
                 .upn(user.email)

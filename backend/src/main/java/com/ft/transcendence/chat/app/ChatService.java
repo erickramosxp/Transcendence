@@ -5,10 +5,12 @@ import com.ft.transcendence.chat.domain.ChatParticipant;
 import com.ft.transcendence.chat.domain.ChatMessage;
 import com.ft.transcendence.chat.dto.*;
 import com.ft.transcendence.common.dto.PageResponse;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,6 +36,12 @@ public class ChatService {
 
     @Inject
     NotificationDispatcher notificationDispatcher;
+
+    @Inject
+    SocialMetrics metrics;
+
+    @Inject
+    UserAvatarService userAvatarService;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
         if (page < 0 || size <= 0)
@@ -63,7 +71,7 @@ public class ChatService {
 
                     ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", chat.id).firstResult();
 
-                    return ChatResponse.of(chat, otherUser,lastMessage);
+                    return ChatResponse.of(chat, otherUser, lastMessage);
                 })
                 .toList();
 
@@ -88,7 +96,6 @@ public class ChatService {
         Optional<Chat> existing = ChatParticipant.findDirectChatId(currentUserId, userBId);
         if (existing.isPresent()) {
             UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
-
             ChatMessage lastMessage = ChatMessage.find("chat.id = ?1 order by createdAt desc", existing.get().id).firstResult();
             return ChatResponse.of(existing.get(), otherUser, lastMessage);
         }
@@ -97,6 +104,8 @@ public class ChatService {
 
         ChatParticipant.create(chat, userA, "member");
         ChatParticipant.create(chat, userB, "member");
+
+        metrics.recordDirectChatCreated();
 
         UserMessageResponse otherUser = userWithAvatarUrlAssigned(userB);
 
@@ -132,6 +141,8 @@ public class ChatService {
         for (Long userId : participantIds)
             notificationDispatcher.onAddedToGroup(currentUser, userId, chat);
 
+        metrics.recordGroupChatCreated();
+
         return ChatResponse.of(chat);
     }
 
@@ -158,11 +169,16 @@ public class ChatService {
         if (hasMore)
             participants = participants.subList(0, size);
 
+        List<User> uniqueUsers = participants.stream()
+                .map(p -> p.user)
+                .distinct()
+                .toList();
+
+        Map<Long, String> avatars = userAvatarService.getAvatarUrls(uniqueUsers);
+
         List<ChatParticipantResponse> items = participants.stream()
                 .map(cp -> {
-                    String avatarUrl = cp.user.avatarUrl;
-                    if (avatarUrl != null && !avatarUrl.isBlank())
-                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    String avatarUrl = avatars.get(cp.user.id);
                     return ChatParticipantResponse.of(cp, avatarUrl);
                 })
                 .toList();
@@ -239,9 +255,7 @@ public class ChatService {
 
     private UserMessageResponse userWithAvatarUrlAssigned(User u) {
         UserMessageResponse otherUser = UserMessageResponse.of(u);
-        if (otherUser.avatarUrl != null && !otherUser.avatarUrl.isBlank())
-            otherUser.avatarUrl = storageService.generateUrl(otherUser.avatarUrl);
-
+        otherUser.avatarUrl = userAvatarService.getUserAvatarUrl(u);
         return otherUser;
     }
 }

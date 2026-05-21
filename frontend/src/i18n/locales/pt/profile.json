@@ -36,6 +36,9 @@
         "toast": {
             "follow_error": "Falha ao seguir",
             "unfollow_error": "Falha ao deixar de seguir"
+        },
+        "followersModal": {
+            "noFollowers": "Nenhum seguidor ainda."
         }
     },
     "info": {
@@ -57,7 +60,9 @@
         "getMidaError": "Falha ao buscar mídias do usuário",
         "getPostError": "Falha ao obter informações do post",
         "postModalTitle": "Publicação",
-        "empty": "Nenhuma mídia ainda."
+        "empty": "Nenhuma mídia ainda.",
+        "loadMore": "Carregar mais",
+        "loadingMore": "Carregando..."
     },
     "postList": {
         "error": "Falha ao buscar posts do usuário"

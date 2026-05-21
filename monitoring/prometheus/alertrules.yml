@@ -1,0 +1,126 @@
+groups:
+  - name: infra_alerts
+    rules:
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus está fora do ar!"
+          description: "O container do Prometheus em {{ $labels.instance }} parou de responder."
+
+      - alert: BackendDown
+        expr: up{job="transcendence-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend caiu!"
+          description: "A API do Quarkus em {{ $labels.instance }} está offline há mais de 1 minuto."
+
+  - name: deadmans_switch
+    rules:
+      - alert: DeadMansSwitch
+        expr: vector(1)
+        labels:
+          severity: heartbeat
+        annotations:
+          summary: "Heartbeat do Prometheus"
+          description: "Se você está vendo isso no Discord, algo deu muito errado."
+
+  - name: jvm_alerts
+    rules:
+      - alert: HighHeapUsage
+        expr: >
+          jvm_memory_used_bytes{area="heap"}
+          / jvm_memory_max_bytes{area="heap"} > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Heap da JVM acima de 85%"
+          description: "O uso de heap está em {{ humanizePercentage $value }} nos últimos 2 minutos."
+
+      - alert: HighCpuUsage
+        expr: process_cpu_usage > 0.80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU do processo acima de 80%"
+          description: "O uso de CPU está em {{ humanizePercentage $value }} nos últimos 2 minutos."
+
+  - name: http_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: >
+          sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+          / sum(rate(http_server_requests_seconds_count[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taxa de erros HTTP 5xx acima de 5%"
+          description: "{{ humanizePercentage $value }} das requisições estão retornando erro nos últimos 5 minutos."
+
+      - alert: SlowResponses
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(http_server_requests_seconds_bucket[5m])) by (le, uri)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 de latência acima de 2s"
+          description: "O endpoint {{ $labels.uri }} está respondendo em mais de 2s no percentil 95."
+
+  - name: social_alerts
+    rules:
+      - alert: NoUsersOnline
+        expr: social_ws_connections_active == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nenhum usuário online há 10 minutos"
+          description: "O WebSocket não tem conexões ativas. Pode indicar falha no serviço de realtime."
+
+      - alert: HighWsAuthFailures
+        expr: rate(social_ws_auth_failures_total[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alta taxa de falhas de autenticação no WebSocket"
+          description: "Mais de 0.5 falhas/s de auth no WebSocket nos últimos 5 minutos. Possível ataque ou bug."
+
+      - alert: HighLoginFailureRate
+        expr: >
+          rate(social_auth_logins_total{result="failed"}[5m])
+          / (rate(social_auth_logins_total[5m]) + 0.001) > 0.3
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taxa de falha de login acima de 30%"
+          description: "{{ humanizePercentage $value }} das tentativas de login estão falhando. Possível ataque de força bruta."
+
+      - alert: NoPostsCreated
+        expr: increase(social_posts_created_total[1h]) == 0
+        for: 2h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nenhum post criado nas últimas 2 horas"
+          description: "Pode indicar problema na criação de posts ou baixo engajamento."
+
+      - alert: NoMessagesSent
+        expr: increase(social_messages_sent_total[30m]) == 0
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nenhuma mensagem enviada na última hora"
+          description: "Pode indicar problema no serviço de chat."

@@ -36,6 +36,9 @@
         "toast": {
             "follow_error": "Failed to follow",
             "unfollow_error": "Failed to unfollow"
+        },
+        "followersModal": {
+            "noFollowers": "No followers yet."
         }
     },
     "info": {
@@ -57,7 +60,9 @@
         "getMidaError": "Failed to fetch user media",
         "getPostError": "Failed to fetch post information",
         "postModalTitle": "Post",
-        "empty": "No media yet."
+        "empty": "No media yet.",
+        "loadMore": "Load more",
+        "loadingMore": "Loading..."
     },
     "postList": {
         "error": "Failed to fetch user posts"

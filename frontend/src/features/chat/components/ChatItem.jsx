@@ -28,6 +28,7 @@ export default function ChatItem({ chat, isSelected, onClick }) {
 		if (!isDirect || peerId == null) return false;
 		return !!s.usersPresence[peerId]?.online;
 	});
+    
 	const avatarStatus = peerOnline ? "online" : "offline";
 
     return (

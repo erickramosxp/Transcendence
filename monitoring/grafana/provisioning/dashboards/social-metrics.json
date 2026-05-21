@@ -1,0 +1,174 @@
+{
+  "title": "📱 Rede Social — Métricas",
+  "uid": "social-metrics",
+  "tags": ["transcendence", "social", "engagement"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "time": { "from": "now-7d", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "👥 Usuários Online agora",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "yellow" }, { "value": 1, "color": "green" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 2,
+      "title": "🤝 Novos usuários na semana",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "increase(social_auth_registrations_total[7d])", "legendFormat": "Registros" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "blue" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 3,
+      "title": "📝 Posts na semana",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "increase(social_posts_created_total[7d])", "legendFormat": "Posts" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 4,
+      "title": "💬 Mensagens na semana",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "increase(social_messages_sent_total[7d])", "legendFormat": "Mensagens" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 5,
+      "title": "❤️ Likes em Posts na semana",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "increase(social_likes_total{target=\"post\",action=\"like\"}[7d])", "legendFormat": "Likes em Posts" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 6,
+      "title": "💙 Likes em Comentários na semana",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "increase(social_likes_total{target=\"comment\",action=\"like\"}[7d])", "legendFormat": "Likes em Comentários" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "orange" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 7,
+      "title": "🏆 Taxa de Engajamento (Likes por Post)",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 4, "w": 4, "h": 4 },
+      "targets": [{ "expr": "sum(increase(social_likes_total{action=\"like\"}[7d])) / clamp_min(increase(social_posts_created_total[7d]), 1)", "legendFormat": "Likes/Post" }],
+      "fieldConfig": { "defaults": { "unit": "short", "decimals": 1, "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "value": 0, "color": "yellow" }, { "value": 2, "color": "green" }] } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 8,
+      "title": "👥 Usuários Online ao longo do tempo",
+      "type": "timeseries",
+      "gridPos": { "x": 4, "y": 4, "w": 10, "h": 8 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Usuários Online" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "fixedColor": "green", "mode": "fixed" } } }
+    },
+    {
+      "id": 9,
+      "title": "🔑 Autenticação — Logins e Registros",
+      "type": "timeseries",
+      "gridPos": { "x": 14, "y": 4, "w": 10, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_auth_logins_total{result=\"success\"}[1h])", "legendFormat": "Login com Sucesso" },
+        { "expr": "increase(social_auth_logins_total{result=\"failed\"}[1h])", "legendFormat": "Login com Falha" },
+        { "expr": "increase(social_auth_google_logins_total[1h])", "legendFormat": "Login via Google" },
+        { "expr": "increase(social_auth_registrations_total[1h])", "legendFormat": "Novos Registros" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 10,
+      "title": "📝 Posts por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_posts_created_total[1h])", "legendFormat": "Posts Criados" },
+        { "expr": "increase(social_posts_with_media_total[1h])", "legendFormat": "Posts com Mídia" },
+        { "expr": "increase(social_posts_deleted_total[1h])", "legendFormat": "Posts Deletados" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 11,
+      "title": "❤️ Likes por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_likes_total{target=\"post\",action=\"like\"}[1h])", "legendFormat": "Likes em Posts" },
+        { "expr": "increase(social_likes_total{target=\"comment\",action=\"like\"}[1h])", "legendFormat": "Likes em Comentários" },
+        { "expr": "increase(social_likes_total{target=\"post\",action=\"unlike\"}[1h])", "legendFormat": "Unlikes em Posts" },
+        { "expr": "increase(social_likes_total{target=\"comment\",action=\"unlike\"}[1h])", "legendFormat": "Unlikes em Comentários" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 12,
+      "title": "💬 Mensagens por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_messages_sent_total[1h])", "legendFormat": "Total de Mensagens" },
+        { "expr": "increase(social_messages_with_media_total[1h])", "legendFormat": "Mensagens com Mídia" },
+        { "expr": "increase(social_messages_with_reply_total[1h])", "legendFormat": "Respostas" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 13,
+      "title": "🤝 Amizades por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_friendships_total{action=\"sent\"}[1h])", "legendFormat": "Pedidos Enviados" },
+        { "expr": "increase(social_friendships_total{action=\"accepted\"}[1h])", "legendFormat": "Pedidos Aceitos" },
+        { "expr": "increase(social_friendships_total{action=\"rejected\"}[1h])", "legendFormat": "Pedidos Rejeitados" },
+        { "expr": "increase(social_friendships_total{action=\"removed\"}[1h])", "legendFormat": "Amizades Desfeitas" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 14,
+      "title": "💬 Chats criados por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_chats_created_total{type=\"direct\"}[1h])", "legendFormat": "Chats Diretos" },
+        { "expr": "increase(social_chats_created_total{type=\"group\"}[1h])", "legendFormat": "Grupos Criados" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 15,
+      "title": "🔒 Segurança WebSocket",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_ws_connections_total{event=\"opened\"}[1h])", "legendFormat": "Conexões Abertas" },
+        { "expr": "increase(social_ws_connections_total{event=\"closed\"}[1h])", "legendFormat": "Conexões Fechadas" },
+        { "expr": "increase(social_ws_auth_failures_total[1h])", "legendFormat": "Falhas de Autenticação WS" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    }
+  ]
+}

@@ -4,10 +4,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { followUser, unfollowUser, getFollowersList, getFollowingList } from '@/features/profile/services/profileService';
 import { Button, Scroll, Avatar, Tabs, TabsList, TabsTrigger, TabsContent, Modal, Loading } from '@/design-system';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 function UserList({ users, loading, currentUserId, onClose, toggleFollow, changeFollowCount }) {
 
   const navigate = useNavigate();
+  const { t } = useTranslation('profile');
 
   function handleNavigate(username) {
     onClose?.();
@@ -21,7 +23,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
       toggleFollow(username);
       changeFollowCount('follow');
     } catch (err) {
-      console.error(err)
+
     } finally {
 
     }
@@ -61,7 +63,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
   if (!users.length) {
     return (
       <p className="text-center text-muted-foreground py-10 text-sm">
-        Nenhum resultado ainda.
+        {t('header.followersModal.noFollowers')}
       </p>
     );
   }
@@ -105,7 +107,7 @@ function UserList({ users, loading, currentUserId, onClose, toggleFollow, change
                     size="follow"
                     onClick={() => handleUserFollowrs(user.username, user.isFollowing)}
                   >
-                    {user.isFollowing ? 'Seguindo' : 'Seguir'}
+                    {user.isFollowing ? t('header.unfollow') : t('header.follow')}
                   </Button>
                 )
               }
