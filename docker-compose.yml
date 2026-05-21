@@ -26,6 +26,7 @@ services:
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "true"
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
+      MINIO_PUBLIC_URL: https://${MINIO_API_ENDPOINT}
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s
@@ -60,12 +61,15 @@ services:
         BACKEND_SERVER_NAME: ${BACKEND_SERVER_NAME}
         MINIO_ENDPOINT: ${MINIO_ENDPOINT}
         MINIO_API_ENDPOINT: ${MINIO_API_ENDPOINT}
+        GRAFANA_SERVER_NAME: ${GRAFANA_SERVER_NAME}
+        PROMETHEUS_SERVER_NAME: ${PROMETHEUS_SERVER_NAME}
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /home/deploy/certs/config/live/143.198.185.76.nip.io/fullchain.pem:/etc/nginx/certs/nginx.crt:ro
       - /home/deploy/certs/config/live/143.198.185.76.nip.io/privkey.pem:/etc/nginx/certs/nginx.key:ro
+      - /home/deploy/.htpasswd:/etc/nginx/.htpasswd:ro
     restart: unless-stopped
     depends_on:
       backend:
@@ -85,8 +89,6 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.prod.yml:/etc/prometheus/prometheus.yml
       - ./monitoring/prometheus/alertrules.yml:/etc/prometheus/alertrules.yml
@@ -99,11 +101,11 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:3001:3000"
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+      GF_SERVER_ROOT_URL: https://${GRAFANA_SERVER_NAME}
+      GF_SERVER_DOMAIN: ${GRAFANA_SERVER_NAME}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
@@ -126,8 +128,6 @@ services:
     volumes:
       - ./monitoring/alertmanager/alertmanager.template.yml:/etc/alertmanager/alertmanager.template.yml
       - alertmanager_data:/alertmanager
-    ports:
-      - "127.0.0.1:9093:9093"
 
 volumes:
   db_data:
