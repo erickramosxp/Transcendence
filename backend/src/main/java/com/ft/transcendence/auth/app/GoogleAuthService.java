@@ -5,6 +5,7 @@ import com.ft.transcendence.auth.dto.GoogleTokenResponse;
 import com.ft.transcendence.auth.infra.GoogleAuthClient;
 import com.ft.transcendence.auth.domain.AuthProvider;
 import com.ft.transcendence.auth.domain.AuthProviderType;
+import com.ft.transcendence.common.exception.UnauthorizedException;
 import com.ft.transcendence.user.domain.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -16,7 +17,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.NotAuthorizedException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -107,11 +107,11 @@ public class GoogleAuthService {
         try {
             idToken = verifier.verify(idTokenString);
         } catch (GeneralSecurityException | IOException | IllegalArgumentException e) {
-            throw new NotAuthorizedException("Failed to validate Google token");
+            throw new UnauthorizedException("Failed to validate Google token");
         }
 
         if (idToken == null)
-            throw new NotAuthorizedException("Invalid or expired ID token");
+            throw new UnauthorizedException("Invalid or expired ID token");
 
         return idToken.getPayload();
     }

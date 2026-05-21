@@ -3,11 +3,11 @@ package com.ft.transcendence.auth.app;
 import java.time.OffsetDateTime;
 
 import com.ft.transcendence.auth.dto.ChangePasswordRequest;
+import com.ft.transcendence.common.exception.UnauthorizedException;
 import com.ft.transcendence.common.exception.UnprocessableEntityException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.NotAuthorizedException;
 
 import com.ft.transcendence.auth.dto.AuthResponse;
 import com.ft.transcendence.auth.dto.RegisterRequest;
@@ -58,27 +58,27 @@ public class AuthService {
     @Transactional
     public AuthResponse login(String username, String password) {
         if (username == null || username.isBlank() || password == null || password.isBlank())
-            throw new NotAuthorizedException("Username or Password is blank");
+            throw new UnauthorizedException("Username or Password is blank");
 
         boolean isEmail = username.contains("@");
         if (isEmail) {
             if (!username.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"))
-                throw new NotAuthorizedException("Invalid identifier");
+                throw new UnauthorizedException("Invalid identifier");
         } else {
             if (!username.matches("^[a-zA-Z0-9_]{3,30}$"))
-                throw new NotAuthorizedException("Invalid identifier");
+                throw new UnauthorizedException("Invalid identifier");
         }
 
         User user = User.findByEmailOrUsername(username.trim());
         if (user == null || !user.active)
-            throw new NotAuthorizedException("User not found");
+            throw new UnauthorizedException("User not found");
 
         AuthProvider local = AuthProvider.findLocalByUserId(user.id);
         if (local == null || local.passwordHash == null)
-            throw new NotAuthorizedException("User not found");
+            throw new UnauthorizedException("User not found");
 
         if (!BcryptUtil.matches(password, local.passwordHash))
-            throw new NotAuthorizedException("Incorrect password");
+            throw new UnauthorizedException("Incorrect password");
 
         var now = OffsetDateTime.now();
         user.lastLogin = now;
@@ -107,9 +107,9 @@ public class AuthService {
         if (req.password == null || req.password.isBlank())
             throw new BadRequestException("Password is required");
         if (!req.email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"))
-            throw new NotAuthorizedException("Invalid identifier of email");
+            throw new UnauthorizedException("Invalid identifier of email");
         if (!req.username.matches("^[a-zA-Z0-9_]{3,30}$"))
-            throw new NotAuthorizedException("Invalid identifier of username");
+            throw new UnauthorizedException("Invalid identifier of username");
     }
 
     @Transactional
