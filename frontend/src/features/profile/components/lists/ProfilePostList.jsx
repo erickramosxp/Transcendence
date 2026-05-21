@@ -15,15 +15,17 @@ export function ProfilePostList({ username }) {
   );
   const { userData } = useProfile();
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('profile');
 
   useEffect(() => {
 
     const getUserPosts = async () => {
+      
       try {
         await loadInitial();
 
       } catch (err) {
-        toast.error("Falha ao buscar posts do usuário");
+        toast.error(t('postList.error'));
       } finally {
         setLoading(false);
       }

@@ -10,6 +10,7 @@ import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.friendship.domain.Friendship;
 import com.ft.transcendence.friendship.domain.FriendshipStatus;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,7 +21,10 @@ import jakarta.ws.rs.NotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.find;
 
@@ -35,6 +39,9 @@ public class ChatService {
 
     @Inject
     SocialMetrics metrics;
+
+    @Inject
+    UserAvatarService userAvatarService;
 
     public ListChatResponse listUserChats(int page, int size, Long currentUserId) {
         if (page < 0 || size <= 0)
@@ -125,7 +132,6 @@ public class ChatService {
                 throw new ForbiddenException("User with id=" + userId + " is not your friend");
             ChatParticipant.create(chat, user, "member");
         }
-
         for (Long userId : participantIds)
             notificationDispatcher.onAddedToGroup(currentUser, userId, chat);
 
@@ -157,11 +163,16 @@ public class ChatService {
         if (hasMore)
             participants = participants.subList(0, size);
 
+        List<User> uniqueUsers = participants.stream()
+                .map(p -> p.user)
+                .distinct()
+                .toList();
+
+        Map<Long, String> avatars = userAvatarService.getAvatarUrls(uniqueUsers);
+
         List<ChatParticipantResponse> items = participants.stream()
                 .map(cp -> {
-                    String avatarUrl = cp.user.avatarUrl;
-                    if (avatarUrl != null && !avatarUrl.isBlank())
-                        avatarUrl = storageService.generateUrl(avatarUrl);
+                    String avatarUrl = avatars.get(cp.user.id);
                     return ChatParticipantResponse.of(cp, avatarUrl);
                 })
                 .toList();
@@ -238,8 +249,7 @@ public class ChatService {
 
     private UserMessageResponse userWithAvatarUrlAssigned(User u) {
         UserMessageResponse otherUser = UserMessageResponse.of(u);
-        if (otherUser.avatarUrl != null && !otherUser.avatarUrl.isBlank())
-            otherUser.avatarUrl = storageService.generateUrl(otherUser.avatarUrl);
+        otherUser.avatarUrl = userAvatarService.getUserAvatarUrl(u);
         return otherUser;
     }
 }

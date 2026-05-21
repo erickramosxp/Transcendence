@@ -145,7 +145,9 @@ function PostCard({
 						)
 					}
 
-					<Media url={post.media} mimeType={post.mimeType} />
+					{ post.media &&
+						<Media media={post.media} />
+					}
 
 					<div className="mt-3 flex flex-wrap items-center gap-4 text-muted-foreground sm:gap-6">
 						<LikeButton

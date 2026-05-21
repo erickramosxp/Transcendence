@@ -1,11 +1,11 @@
 package com.ft.transcendence.realtime.presence;
 
-import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.realtime.presence.dto.PresenceUpdatePayload;
 import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
 import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,7 +25,7 @@ public class RealtimePresenceHandler {
     @Inject
     RealtimeEventSender sender;
     @Inject
-    StorageService storageService;
+    UserAvatarService userAvatarService;
 
     private PresenceUpdatePayload getUserPayload(Long userId) {
         RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
@@ -37,18 +37,14 @@ public class RealtimePresenceHandler {
         if (targetConnection != null) {
             name = targetConnection.name;
             username = targetConnection.username;
-            avatarUrl = targetConnection.avatarUrl;
+            avatarUrl = userAvatarService.getUserAvatarUrl(targetConnection.userId);
         } else {
             User user = User.findById(userId);
             if (user != null) {
                 name = user.name;
                 username = user.username;
-                avatarUrl = user.avatarUrl;
+                avatarUrl = userAvatarService.getUserAvatarUrl(user);
             }
-        }
-
-        if (avatarUrl != null && !avatarUrl.isEmpty()) {
-            avatarUrl = storageService.generateUrl(avatarUrl);
         }
 
         return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
@@ -96,9 +92,8 @@ public class RealtimePresenceHandler {
     private void notifyWatchers(RealtimeConnection targetConnection, boolean online, OffsetDateTime lastSeenAt) {
         Set<RealtimeConnection> watchers = presenceService.getWatchers(targetConnection.userId);
         for (RealtimeConnection watcher : watchers) {
-            String avatarUrl = targetConnection.avatarUrl;
-            if (avatarUrl != null && !avatarUrl.isBlank())
-                avatarUrl = storageService.generateUrl(avatarUrl);
+
+            String avatarUrl = userAvatarService.getUserAvatarUrl(targetConnection.userId);
             sender.send(watcher.connectionId, RealtimeEventType.PRESENCE_UPDATED, PresenceUpdatePayload.of(targetConnection.userId,
                     targetConnection.name, targetConnection.username, avatarUrl, online, lastSeenAt));
         }
