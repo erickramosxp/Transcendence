@@ -35,7 +35,6 @@ public class RealtimeWebSocket {
             dispatcher.handleConnected(socket.id());
             metrics.recordWsConnected();
         } catch (NotAuthorizedException e) {
-            metrics.recordWsAuthFailure();
             socket.closeAndAwait(new CloseReason(1008, "Not authorized"));
         } catch (Exception e) {
             socket.closeAndAwait(new CloseReason(1011, "Internal error"));
