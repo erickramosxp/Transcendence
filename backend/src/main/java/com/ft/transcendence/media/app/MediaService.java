@@ -1,5 +1,6 @@
 package com.ft.transcendence.media.app;
 
+import com.ft.transcendence.common.config.AppConfig;
 import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.media.dto.MediaResponse;
@@ -14,6 +15,9 @@ public class MediaService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    AppConfig appConfig;
 
     @Transactional
     public Media attachMedia(String modelType, Long modelId, MediaType mediaType,
@@ -70,12 +74,16 @@ public class MediaService {
         );
     }
 
-    private String resolvePublicUrl(String path) {
+    public String resolvePublicUrl(String path) {
         if (path == null || path.isBlank()) {
             return null;
         }
         if (path.startsWith("http://") || path.startsWith("https://")) {
             return path;
+        }
+        if (path.startsWith("/")) {
+            String origin = appConfig.frontendOrigin().replaceAll("/+$", "");
+            return origin + path;
         }
         return storageService.generateUrl(path);
     }

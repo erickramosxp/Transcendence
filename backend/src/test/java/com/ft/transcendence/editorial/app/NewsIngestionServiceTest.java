@@ -39,14 +39,14 @@ class NewsIngestionServiceTest {
     @BeforeEach
     @Transactional
     void cleanEditorialData() {
-        ensureVideaUserExists();
-        User videa = User.find("username", "videa").firstResult();
-        List<Post> posts = Post.find("user.id", videa.id).list();
+        ensureEditorialUserExists();
+        User videanews = User.find("username", "videanews").firstResult();
+        List<Post> posts = Post.find("user.id", videanews.id).list();
         for (Post post : posts) {
             Media.delete("modelType = ?1 and modelId = ?2", "POST", post.id);
             IngestedNews.delete("post.id", post.id);
         }
-        Post.delete("user.id", videa.id);
+        Post.delete("user.id", videanews.id);
     }
 
     @Test
@@ -77,7 +77,7 @@ class NewsIngestionServiceTest {
         assertEquals(0, result.skipped());
         assertEquals(0, result.failed());
         assertTrue(IngestedNews.existsBySourceUrl(uniqueUrl));
-        assertEquals(1, Post.find("user.username", "videa").count());
+        assertEquals(1, Post.find("user.username", "videanews").count());
     }
 
     @Test
@@ -91,7 +91,7 @@ class NewsIngestionServiceTest {
         assertEquals(1, first.ingested());
         assertEquals(0, second.ingested());
         assertTrue(second.skipped() >= 1);
-        assertEquals(1, Post.find("user.username", "videa").count());
+        assertEquals(1, Post.find("user.username", "videanews").count());
     }
 
     private void mockSingleArticle(String url) {
@@ -107,15 +107,15 @@ class NewsIngestionServiceTest {
                 .thenReturn(response);
     }
 
-    private void ensureVideaUserExists() {
-        if (User.find("username", "videa").firstResult() != null) {
+    private void ensureEditorialUserExists() {
+        if (User.find("username", "videanews").firstResult() != null) {
             return;
         }
         var now = OffsetDateTime.now();
         var user = new User();
-        user.email = "editorial@videa.local";
-        user.username = "videa";
-        user.name = "Videa Notícias";
+        user.email = "editorial@videanews.local";
+        user.username = "videanews";
+        user.name = "Videa News";
         user.active = true;
         user.createdAt = now;
         user.updatedAt = now;

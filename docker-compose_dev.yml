@@ -25,7 +25,8 @@ services:
       QUARKUS_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       QUARKUS_MINIO_SECURE: "false"
       MINIO_PUBLIC_URL: http://localhost:9000
-      EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videa}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:5173}
+      EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videanews}
       GNEWS_API_KEY: ${GNEWS_API_KEY:-}
       GNEWS_COUNTRY: ${GNEWS_COUNTRY:-br}
       GNEWS_LANG: ${GNEWS_LANG:-pt}
@@ -48,7 +49,7 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       VITE_BACKEND_URL: http://localhost:8080
-      VITE_EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videa}
+      VITE_EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videanews}
       GOOGLE_WEB_CLIENT_ID: ${GOOGLE_WEB_CLIENT_ID}
     ports:
       - "5173:5173"

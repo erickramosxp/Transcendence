@@ -6,6 +6,9 @@ import io.smallrye.config.WithDefault;
 @ConfigMapping(prefix = "editorial")
 public interface EditorialConfig {
 
-    @WithDefault("videa")
+    @WithDefault("videanews")
     String username();
+
+    @WithDefault("/videanews-avatar.png")
+    String avatarPath();
 }

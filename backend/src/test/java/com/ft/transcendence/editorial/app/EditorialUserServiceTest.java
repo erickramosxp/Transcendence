@@ -20,27 +20,27 @@ class EditorialUserServiceTest {
 
     @Test
     @Transactional
-    void findEditorialUser_returnsSeededVideaUser() {
-        ensureVideaUserExists();
+    void findEditorialUser_returnsSeededEditorialUser() {
+        ensureEditorialUserExists();
 
         Optional<User> user = editorialUserService.findEditorialUser();
 
         assertTrue(user.isPresent());
-        assertEquals("videa", user.get().username);
-        assertEquals("Videa Notícias", user.get().name);
+        assertEquals("videanews", user.get().username);
+        assertEquals("Videa News", user.get().name);
     }
 
-    private void ensureVideaUserExists() {
-        if (User.find("username", "videa").firstResult() != null) {
+    private void ensureEditorialUserExists() {
+        if (User.find("username", "videanews").firstResult() != null) {
             return;
         }
         var now = OffsetDateTime.now();
         var user = new User();
-        user.email = "editorial@videa.local";
-        user.username = "videa";
-        user.name = "Videa Notícias";
+        user.email = "editorial@videanews.local";
+        user.username = "videanews";
+        user.name = "Videa News";
         user.active = true;
-        user.biography = "Manchetes do momento no Brasil.";
+        user.biography = "Noticias do momento no Brasil.";
         user.createdAt = now;
         user.updatedAt = now;
         user.persist();

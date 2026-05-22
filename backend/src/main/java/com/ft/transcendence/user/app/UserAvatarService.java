@@ -1,6 +1,7 @@
 package com.ft.transcendence.user.app;
 
 import com.ft.transcendence.common.storage.StorageService;
+import com.ft.transcendence.media.app.MediaService;
 import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +15,9 @@ public class UserAvatarService {
 
     @Inject
     StorageService storageService;
+
+    @Inject
+    MediaService mediaService;
 
     public Map<Long, String> getAvatarUrls(List<User> users) {
         if (users == null || users.isEmpty()) {
@@ -36,13 +40,16 @@ public class UserAvatarService {
             Media media = mediaByUserId.get(user.id);
             String url = null;
 
-            if (media != null) {
-                String pathToLoad = media.pathOriginal != null ? media.pathOriginal : media.pathOriginal;
-                url = urlCache.computeIfAbsent(pathToLoad, storageService::generateUrl);
-
+            if (media != null && media.pathOriginal != null) {
+                url = urlCache.computeIfAbsent(
+                        media.pathOriginal,
+                        mediaService::resolvePublicUrl
+                );
             } else if (user.avatarUrl != null && !user.avatarUrl.isBlank()) {
-                // Fallback para a coluna antiga
-                url = urlCache.computeIfAbsent(user.avatarUrl, storageService::generateUrl);
+                url = urlCache.computeIfAbsent(
+                        user.avatarUrl,
+                        mediaService::resolvePublicUrl
+                );
             }
             avatarMap.put(user.id, url);
         }
@@ -66,11 +73,11 @@ public class UserAvatarService {
         Media media = Media.find("modelType = 'USER_PROFILE' and modelId = ?1", user.id).firstResult();
 
         if (media != null && media.pathOriginal != null) {
-            return storageService.generateUrl(media.pathOriginal);
+            return mediaService.resolvePublicUrl(media.pathOriginal);
         }
 
         if (user.avatarUrl != null && !user.avatarUrl.isBlank()) {
-            return storageService.generateUrl(user.avatarUrl);
+            return mediaService.resolvePublicUrl(user.avatarUrl);
         }
 
         return null;
@@ -83,12 +90,12 @@ public class UserAvatarService {
         Media media = Media.find("modelType = 'USER_PROFILE' and modelId = ?1", userId).firstResult();
 
         if (media != null && media.pathOriginal != null) {
-            return storageService.generateUrl(media.pathOriginal);
+            return mediaService.resolvePublicUrl(media.pathOriginal);
         }
 
         User user = User.findById(userId);
         if (user != null && user.avatarUrl != null && !user.avatarUrl.isBlank()) {
-            return storageService.generateUrl(user.avatarUrl);
+            return mediaService.resolvePublicUrl(user.avatarUrl);
         }
 
         return null;

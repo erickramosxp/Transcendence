@@ -25,7 +25,7 @@ class EditorialHeadlinesServiceTest {
     @BeforeEach
     @Transactional
     void seedHeadline() {
-        User videa = ensureVideaUser();
+        User editorialUser = ensureEditorialUser();
         String sourceUrl = "https://example.com/headline-test-" + UUID.randomUUID();
 
         if (IngestedNews.existsBySourceUrl(sourceUrl)) {
@@ -33,7 +33,7 @@ class EditorialHeadlinesServiceTest {
         }
 
         Post post = new Post();
-        post.user = videa;
+        post.user = editorialUser;
         post.text = "Título de teste";
         post.likeCount = 0L;
         post.commentCount = 0L;
@@ -61,16 +61,16 @@ class EditorialHeadlinesServiceTest {
         assertTrue(response.items.size() <= 5);
     }
 
-    private User ensureVideaUser() {
-        User existing = User.find("username", "videa").firstResult();
+    private User ensureEditorialUser() {
+        User existing = User.find("username", "videanews").firstResult();
         if (existing != null) {
             return existing;
         }
         var now = OffsetDateTime.now();
         var user = new User();
-        user.email = "editorial@videa.local";
-        user.username = "videa";
-        user.name = "Videa Notícias";
+        user.email = "editorial@videanews.local";
+        user.username = "videanews";
+        user.name = "Videa News";
         user.active = true;
         user.createdAt = now;
         user.updatedAt = now;

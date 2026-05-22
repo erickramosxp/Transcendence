@@ -28,24 +28,55 @@ public final class NewsPostFormatter {
             return truncate(safeUrl, MAX_POST_LENGTH);
         }
 
-        StringBuilder body = new StringBuilder();
-        if (!safeTitle.isBlank()) {
-            body.append(safeTitle);
-        }
-
-        if (!safeDescription.isBlank()) {
-            if (!body.isEmpty()) {
-                body.append("\n\n");
-            }
-            body.append(safeDescription);
-        }
-
-        String bodyText = truncate(body.toString(), budgetForBody);
+        String bodyText = buildBody(safeTitle, safeDescription);
+        bodyText = truncate(bodyText, budgetForBody);
         if (bodyText.isBlank()) {
             return truncate(safeUrl, MAX_POST_LENGTH);
         }
 
         return bodyText + linkSuffix;
+    }
+
+    private static String buildBody(String title, String description) {
+        if (title.isBlank()) {
+            return description;
+        }
+        if (description.isBlank()) {
+            return title;
+        }
+
+        String summary = stripDuplicateTitlePrefix(title, description);
+        if (summary.isBlank()) {
+            return ensureSentenceEnd(title);
+        }
+
+        return ensureSentenceEnd(title) + " " + summary;
+    }
+
+    /** Garante ponto final no título antes do corpo (o feed colapsa \\n em espaço). */
+    private static String ensureSentenceEnd(String text) {
+        if (text.isBlank()) {
+            return text;
+        }
+        char last = text.charAt(text.length() - 1);
+        if (last == '.' || last == '!' || last == '?' || last == '…') {
+            return text;
+        }
+        return text + ".";
+    }
+
+    private static String stripDuplicateTitlePrefix(String title, String description) {
+        if (title.isBlank() || description.isBlank()) {
+            return description;
+        }
+        if (description.regionMatches(true, 0, title, 0, title.length())) {
+            String remainder = description.substring(title.length()).trim();
+            if (!remainder.isEmpty() && (remainder.charAt(0) == '.' || remainder.charAt(0) == ':' || remainder.charAt(0) == '-')) {
+                remainder = remainder.substring(1).trim();
+            }
+            return remainder;
+        }
+        return description;
     }
 
     private static String normalize(String value) {
