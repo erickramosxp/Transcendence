@@ -8,10 +8,7 @@ import jakarta.ws.rs.NotFoundException;
 
 import java.util.Optional;
 
-/**
- * Resolve a conta editorial configurada em {@code editorial.username} (padrão: videa).
- * O usuário é criado automaticamente pela migration V19 na subida do backend.
- */
+
 @ApplicationScoped
 public class EditorialUserService {
 

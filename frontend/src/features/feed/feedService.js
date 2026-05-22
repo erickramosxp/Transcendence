@@ -1,8 +1,9 @@
 import api from "@/shared/api/httpClient";
 
-export async function getFeed(page = 0, size = 10) {
-
-    const response = await api(`/posts?page=${page}&size=${size}`);
+export async function getFeed(page = 0, size = 10, scope = "social") {
+    const response = await api.get("/posts", {
+        params: { page, size, scope },
+    });
     return response;
 }
 
