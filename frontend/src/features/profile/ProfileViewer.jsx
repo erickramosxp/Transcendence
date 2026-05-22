@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import { ProfileHeader } from '@/features/profile/components/ui/ProfileHeader'
@@ -13,6 +13,7 @@ import { getUserInfo, updateProfileAvatar } from '@/features/profile/services/pr
 import { ProfileContext } from '@/features/profile/context/ProfileContext';
 
 import { useTranslation } from 'react-i18next';
+import { useDocumentTitle } from '@/shared/documentTitle';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent, Loading } from '@/design-system'
 
@@ -26,9 +27,17 @@ export function ProfileViewer() {
   const [activeTab, setActiveTab] = useState('posts');
   const { user } = useAuth();
   const { username } = useParams();
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation(['profile', 'common']);
 
-  const profileUsername = username ?? user.username;
+  const profileUsername = username ?? user?.username;
+
+  const profilePageTitle = notFounded
+    ? t('common:pageTitle.profileNotFound')
+    : userData?.name || (userData?.username ? `@${userData.username}` : null);
+
+  useDocumentTitle(profilePageTitle, {
+    enabled: !loadHeader && Boolean(profilePageTitle),
+  });
 
   useLayoutEffect(() => {
     setActiveTab('posts');
@@ -50,7 +59,10 @@ export function ProfileViewer() {
         setNotFounded(false);
       } catch (err) {
         setNotFounded(true);
-        toast.error(t('postList.error'));
+        const isNotFound = err.response?.status === 404;
+        if (!isNotFound) {
+          toast.error(t('postList.error'));
+        }
       } finally {
         setLoadHeader(false);
       }
@@ -102,6 +114,9 @@ export function ProfileViewer() {
   }
 
   if (notFounded) {
+    if (username) {
+      return <Navigate to="/404" replace />;
+    }
 
     return (
       <div className='flex flex-1 items-center justify-center h-full'>
@@ -109,7 +124,7 @@ export function ProfileViewer() {
           {t('viewer.notFounded')}
         </p>
       </div>
-    )
+    );
   }
 
   return (
