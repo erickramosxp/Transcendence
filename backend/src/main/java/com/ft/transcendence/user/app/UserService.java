@@ -390,7 +390,7 @@ public class UserService {
         List<UserFollowResponse> items = follows.stream()
                 .map(f -> {
                     String avatarUrl = avatarMap.get(f.follower.id);
-                    return UserFollowResponse.ofFollowers(f, avatarUrl);
+                    return UserFollowResponse.ofFollowing(f, avatarUrl);
                 }).toList();
 
         return new PageResponse<>(items, page, items.size(), hasMore);
