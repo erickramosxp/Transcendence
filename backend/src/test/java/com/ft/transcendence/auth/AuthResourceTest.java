@@ -36,9 +36,9 @@ public class AuthResourceTest extends BaseApiTest {
                 .body("""
                 {
                   "email": "%s",
-                  "username": "user1-%s",
+                  "username": "user1%s",
                   "name": "User One",
-                  "password": "123456"
+                  "password": "Test1234"
                 }
                 """.formatted(email, unique))
                 .post("/auth/register")
@@ -50,9 +50,9 @@ public class AuthResourceTest extends BaseApiTest {
                 .body("""
                 {
                   "email": "%s",
-                  "username": "user2-%s",
+                  "username": "user2%s",
                   "name": "User Two",
-                  "password": "123456"
+                  "password": "Test1234"
                 }
                 """.formatted(email, unique))
                 .post("/auth/register")
@@ -64,7 +64,7 @@ public class AuthResourceTest extends BaseApiTest {
     public void testRegisterDuplicateUsername() {
 
         String unique = String.valueOf(System.currentTimeMillis());
-        String username = "dup-" + unique;
+        String username = "dup" + unique;
 
         given()
                 .contentType("application/json")
@@ -73,7 +73,7 @@ public class AuthResourceTest extends BaseApiTest {
                   "email": "user1-%s@example.com",
                   "username": "%s",
                   "name": "User One",
-                  "password": "123456"
+                  "password": "Test1234"
                 }
                 """.formatted(unique, username))
                 .post("/auth/register")
@@ -87,7 +87,7 @@ public class AuthResourceTest extends BaseApiTest {
                   "email": "user2-%s@example.com",
                   "username": "%s",
                   "name": "User Two",
-                  "password": "123456"
+                  "password": "Test1234"
                 }
                 """.formatted(unique, username))
                 .post("/auth/register")
@@ -152,7 +152,7 @@ public class AuthResourceTest extends BaseApiTest {
         auth(user)
                 .body("""
                 {
-                  "currentPassword": "123456",
+                  "currentPassword": "Test1234",
                   "newPassword": "newpassword123"
                 }
                 """)
@@ -198,7 +198,7 @@ public class AuthResourceTest extends BaseApiTest {
         auth(user)
                 .body("""
                 {
-                  "currentPassword": "123456",
+                  "currentPassword": "Test1234",
                   "newPassword": "short"
                 }
                 """)

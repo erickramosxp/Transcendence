@@ -1,4 +1,16 @@
 {
+    "pageTitle": {
+        "home": "Home",
+        "feed": "Feed",
+        "messages": "Messages",
+        "notifications": "Notifications",
+        "friends": "Friends",
+        "profile": "Profile",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "notFound": "Page not found",
+        "profileNotFound": "Profile not found"
+    },
     "nav": {
         "feed": "Feed",
         "messages": "Messages",

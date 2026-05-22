@@ -1,5 +1,6 @@
 package com.ft.transcendence.realtime.ws.app;
 
+import com.ft.transcendence.common.exception.UnauthorizedException;
 import com.ft.transcendence.realtime.ws.dto.AuthenticatedSocketUser;
 import com.ft.transcendence.user.domain.User;
 import jakarta.ws.rs.NotAuthorizedException;
@@ -26,7 +27,7 @@ public class WsAuthService {
         String token = getQueryParam(query, "token");
 
         if (token == null || token.isBlank())
-            throw new NotAuthorizedException("Missing token");
+            throw new UnauthorizedException("Missing token");
 
         try {
             JsonWebToken jwt = jwtParser.parse(token);

@@ -1,8 +1,10 @@
 package com.ft.transcendence.chat.dto;
 
 import com.ft.transcendence.realtime.chat.dto.SendMessagePayload;
+import jakarta.validation.constraints.Size;
 
 public class ChatMessageRequest {
+    @Size(max = 4000)
     public String text;
     public String mediaUrl;
     public String type;

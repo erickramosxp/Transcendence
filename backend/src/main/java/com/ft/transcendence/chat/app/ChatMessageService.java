@@ -41,6 +41,13 @@ public class ChatMessageService {
         if (chatParticipant == null)
             throw new NotFoundException("Chat not found");
 
+        if (req.text == null || req.text.isBlank())
+            if (req.mediaUrl == null || req.mediaUrl.isBlank())
+                throw new BadRequestException("Message must contain text or media");
+
+        if (req.text != null && req.text.length() > 4000)
+            throw new BadRequestException("Message must be at most 4000 characters");
+
         String type = Utils.resolveType(req.text, req.mediaUrl).getValue();
 
         ChatMessage replyTo = null;

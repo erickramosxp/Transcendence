@@ -6,6 +6,7 @@ import com.ft.transcendence.auth.dto.*;
 import com.ft.transcendence.common.security.CurrentUser;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
@@ -23,13 +24,13 @@ public class AuthResource {
 
     @POST
     @Path("/register")
-    public AuthResponse register(RegisterRequest req) {
+    public AuthResponse register(@Valid RegisterRequest req) {
         return authService.registerLocal(req);
     }
 
     @POST
     @Path("/login")
-    public AuthResponse login(LoginRequest req) {
+    public AuthResponse login(@Valid LoginRequest req) {
         return authService.login(req.username, req.password);
     }
 

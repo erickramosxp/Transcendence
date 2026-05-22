@@ -2,48 +2,49 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/design-system/tokens/colors";
 
 /**
- *  Pode aparecer em outras telas também (loading, erro 404, etc.).
+ * Identidade visual da marca (logo + nome + slogan opcional).
+ * O logo segue o padrão da Home: cantos arredondados, gradiente e inclinação rotate-6.
  *
- * Tela	Uso
- * Login (atual)	<BrandHeader slogan="..." />
- * Sidebar do app	<BrandHeader size="sm" layout="inline" /> — logo + nome em linha
- * Página 404	<BrandHeader size="lg" slogan="Página não encontrada" />
- * Loading screen	<BrandHeader size="default" /> — sem slogan
+ * Tela              Uso
+ * Home / login      <BrandHeader size="lg" slogan="..." />
+ * Sidebar           <BrandHeader size="sm" layout="inline" />
+ * 404               <BrandHeader size="md" />
  */
+
+/** Estilo do bloco do logo — igual em todas as telas (padrão Home). */
+const LOGO_BRAND_CLASSES =
+    "shadow-2xl shadow-primary/50 rotate-6 transition-transform hover:rotate-12";
+
+const LOGO_SIZE_CLASSES = {
+    sm: "h-10 w-10 rounded-2xl",
+    default: "h-16 w-16 rounded-3xl sm:h-20 sm:w-20",
+    md: "h-16 w-16 rounded-3xl",
+    lg: "h-24 w-24 rounded-3xl",
+};
+
+const ICON_SIZE_CLASSES = {
+    sm: "h-5 w-5",
+    default: "h-8 w-8 sm:h-10 sm:w-10",
+    md: "h-8 w-8",
+    lg: "h-12 w-12",
+};
 
 export function BrandHeader({
     slogan,
     size = "default",
     layout = "stack",
     title = "Videa",
-    className
+    className,
 }) {
-    {/* Logo */ }
     const logoBox = (
         <div
             className={cn(
                 "inline-flex shrink-0 items-center justify-center bg-gradient-sparkle text-white",
-                /* Mesmo “formato” da home: retângulo com cantos amplos (rounded-3xl).
-                   No sm, rounded-3xl num quadrado pequeno vira bolha — usar rounded-2xl proporcional. */
-                size === "sm" && "h-10 w-10 rounded-2xl",
-                size === "default" && "h-16 w-16 rounded-3xl sm:h-20 sm:w-20",
-                size === "md" && "h-16 w-16",
-                size === "lg" && "h-24 w-24 rounded-3xl",
-                layout === "inline" &&
-                "-rotate-[11deg] shadow-md shadow-primary/30 transition-transform hover:-rotate-[15deg]",
-                layout === "stack" &&
-                "shadow-2xl shadow-primary/50 rotate-6 transition-transform hover:rotate-12",
+                LOGO_SIZE_CLASSES[size],
+                LOGO_BRAND_CLASSES,
             )}
         >
-            <Sparkles
-                className={cn(
-                    "text-white",
-                    size === "default" && "h-8 w-8 sm:h-10 sm:w-10",
-                    size === "sm" && "h-5 w-5",
-                    size === "md" && "w-8 h-8",
-                    size === "lg" && "h-12 w-12",
-                )}
-            />
+            <Sparkles className={cn("text-white", ICON_SIZE_CLASSES[size])} />
         </div>
     );
 

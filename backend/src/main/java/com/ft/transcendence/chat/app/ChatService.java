@@ -117,6 +117,12 @@ public class ChatService {
         if (req.participantIds.contains(currentUserId))
             throw new IllegalArgumentException("You cannot add yourself in group creation");
 
+        if (req.chatName == null || req.chatName.isBlank())
+            throw new BadRequestException("Group name is required");
+
+        if (req.chatName.length() > 80)
+            throw new BadRequestException("Group name must be at most 80 characters");
+
         Chat chat = Chat.createGroupChat(req.chatName);
 
         User currentUser = User.findById(currentUserId);
