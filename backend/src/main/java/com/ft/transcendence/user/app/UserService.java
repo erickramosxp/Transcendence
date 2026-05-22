@@ -384,12 +384,12 @@ public class UserService {
         if (hasMore)
             follows = follows.subList(0, size);
 
-        List<User> followers = follows.stream().map(f -> f.follower).toList();
-        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(followers);
+        List<User> followees = follows.stream().map(f -> f.followee).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrls(followees);
 
         List<UserFollowResponse> items = follows.stream()
                 .map(f -> {
-                    String avatarUrl = avatarMap.get(f.follower.id);
+                    String avatarUrl = avatarMap.get(f.followee.id);
                     return UserFollowResponse.ofFollowing(f, avatarUrl);
                 }).toList();
 
