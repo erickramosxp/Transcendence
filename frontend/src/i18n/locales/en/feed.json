@@ -44,11 +44,23 @@
         "end": "You’ve reached the end of the feed",
         "empty": "Nothing here yet.",
         "emptyCta": "Be the first to share something ✨",
+        "emptyNews": "No news published yet.",
         "loadError": "Failed to load posts"
+    },
+    "feedTabs": {
+        "feed": "Feed",
+        "news": "News"
     },
     "sections": {
         "onlineFriends": "Online Friends",
-        "trending": "Trending"
+        "trending": "Trending",
+        "momentNews": "News of the moment"
+    },
+    "momentNews": {
+        "viewAll": "View all →",
+        "updated": "Updated {{time}}",
+        "empty": "No headlines right now.",
+        "error": "Could not load the news."
     },
     "preview": {
         "title": "Preview",

@@ -39,16 +39,28 @@
         "empty": "Sem comentários",
         "placeholder": "Escreva um comentário..."
     },
+    "feedTabs": {
+        "feed": "Feed",
+        "news": "Notícias"
+    },
     "list": {
         "loadMore": "Carregando mais…",
         "end": "Você chegou ao fim do feed",
         "empty": "Nada por aqui ainda.",
         "emptyCta": "Seja o primeiro a compartilhar algo ✨",
+        "emptyNews": "Nenhuma notícia publicada ainda.",
         "loadError": "Falha ao carregar os posts"
     },
     "sections": {
         "onlineFriends": "Amigos Online",
-        "trending": "Em Alta"
+        "trending": "Em Alta",
+        "momentNews": "Notícias do momento"
+    },
+    "momentNews": {
+        "viewAll": "Ver todas →",
+        "updated": "Atualizado {{time}}",
+        "empty": "Nenhuma manchete no momento.",
+        "error": "Não foi possível carregar as notícias."
     },
     "preview": {
         "title": "Pré-visualização",

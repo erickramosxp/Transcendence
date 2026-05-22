@@ -294,12 +294,16 @@ public class UserService {
 
             if (media != null) {
                 String pathToLoad = null;
-                if (media.mediaType == MediaType.IMAGE)
+                if (media.mediaType == MediaType.IMAGE) {
                     pathToLoad = media.pathPreview != null ? media.pathPreview : media.pathOriginal;
-                else
+                } else if (media.pathPreview != null) {
                     pathToLoad = media.pathPreview;
-                if (pathToLoad != null)
-                    previewUrl = storageService.generateUrl(pathToLoad);
+                } else {
+                    pathToLoad = media.pathOriginal;
+                }
+                if (pathToLoad != null) {
+                    previewUrl = mediaService.resolvePublicUrl(pathToLoad);
+                }
             }
             return MediaResponse.of(p, previewUrl, media.mediaType);
 

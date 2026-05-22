@@ -15,6 +15,7 @@ import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.media.dto.MediaResponse;
 import com.ft.transcendence.media.enums.MediaStatus;
 import com.ft.transcendence.media.enums.MediaType;
+import com.ft.transcendence.editorial.config.EditorialConfig;
 import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.CreatePostForm;
 import com.ft.transcendence.post.dto.FeedResponse;
@@ -62,6 +63,32 @@ public class PostService {
     @Inject
     UserAvatarService userAvatarService;
 
+    @Inject
+    EditorialConfig editorialConfig;
+
+    @Transactional
+    public Post createEditorialTextPost(long userId, String text, String externalImageUrl) {
+        if (text == null || text.isBlank()) {
+            throw new BadRequestException("Posts must contain text");
+        }
+        if (text.length() > 500) {
+            throw new BadRequestException("Text content is too long. Maximum 500 characters.");
+        }
+
+        var form = new CreatePostForm();
+        form.text = text;
+        Post post = createPostEntity(userId, form);
+
+        if (isExternalHttpsUrl(externalImageUrl)) {
+            mediaService.attachExternalImage("POST", post.id, externalImageUrl.trim());
+            metrics.recordPostCreated(true);
+        } else {
+            metrics.recordPostCreated(false);
+        }
+
+        return post;
+    }
+
     @Transactional
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
 
@@ -107,15 +134,30 @@ public class PostService {
         return PostResponse.of(post, likedByMe, avatarUrl, mediaResponse);
     }
 
-    public FeedResponse feed(int page, int size, long userId) {
+    public FeedResponse feed(int page, int size, long userId, String scope) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
+
+        String feedScope = normalizeFeedScope(scope);
+        String editorialUsername = editorialConfig.username().trim();
 
         int start = page * size;
         int end = start + size;
 
-        List<Post> posts = Post.find("deletedAt is null order by createdAt desc")
-                .range(start, end).list();
+        List<Post> posts;
+        if ("news".equals(feedScope)) {
+            posts = Post.find(
+                            "deletedAt is null and user.username = ?1 order by createdAt desc",
+                            editorialUsername)
+                    .range(start, end)
+                    .list();
+        } else {
+            posts = Post.find(
+                            "deletedAt is null and user.username <> ?1 order by createdAt desc",
+                            editorialUsername)
+                    .range(start, end)
+                    .list();
+        }
 
         boolean hasMore = posts.size() > size;
         if (hasMore)
@@ -374,6 +416,25 @@ public class PostService {
                 throw new BadRequestException("Erro in uploaded file");
 
             }
+    }
+
+    private static boolean isExternalHttpsUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        String trimmed = url.trim();
+        return trimmed.startsWith("https://");
+    }
+
+    private static String normalizeFeedScope(String scope) {
+        if (scope == null || scope.isBlank()) {
+            return "social";
+        }
+        String normalized = scope.trim().toLowerCase();
+        if ("news".equals(normalized) || "social".equals(normalized)) {
+            return normalized;
+        }
+        throw new BadRequestException("Invalid feed scope. Use 'social' or 'news'.");
     }
 
     private Post createPostEntity(Long userId, CreatePostForm req) {

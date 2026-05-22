@@ -47,9 +47,10 @@ public class PostResource {
     @GET
     @Authenticated
     public FeedResponse feed(@QueryParam("page") @DefaultValue("0") int page,
-                             @QueryParam("size") @DefaultValue("20") int size) {
+                             @QueryParam("size") @DefaultValue("20") int size,
+                             @QueryParam("scope") @DefaultValue("social") String scope) {
         long userId = currentUser.id();
-        return postService.feed(page, size, userId);
+        return postService.feed(page, size, userId, scope);
     }
 
     @POST

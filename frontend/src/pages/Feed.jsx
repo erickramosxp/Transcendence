@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PostList from "@/features/feed/components/PostList";
 import PostMenu from "@/features/feed/PostMenu";
 import { createPost } from "@/features/feed/feedService";
 import { toast } from 'react-toastify'
-import { getListOnlineFriends } from "@/features/friends/service/friendService";
 
 import { useTranslation } from "react-i18next";
 import {
@@ -11,17 +10,21 @@ import {
     CardHeader,
     CardTitle,
     CardContent,
-    Loading,
-    UserListItem
+    UserListItem,
+    Tabs,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
 } from "@/design-system";
 import { usePresenceStore } from "@/features/friends/store/usePresenceStore";
 import { getImageDimensions } from "@/shared/getImageDimensions";
 import { generateResizedBlob } from "@/shared/generateResizedBlob";
+import { MomentNewsCard } from "@/features/editorial/components/MomentNewsCard";
 
 export function Feed() {
 
-    const [posts, setPosts] = useState([]);
-    const [loadingUsersOnline, setLoadingUsersOnline] = useState(true);
+    const [socialPosts, setSocialPosts] = useState([]);
+    const [feedTab, setFeedTab] = useState("social");
     const usersPresence = usePresenceStore((state) => state.usersPresence);
 
     const usersOnline = Object.values(usersPresence)
@@ -45,7 +48,6 @@ export function Feed() {
                 formData.append("previewFile", new File([previewBlob], "preview.jpg", { type: 'image/jpeg' }));
                 const blurBlob = await generateResizedBlob(postData.file, 20, 20, 0.1);
                 formData.append("blurFile", new File([blurBlob], "blur.jpg", { type: 'image/jpeg' }));
-                console.log(`Dimensões finais enviadas ao backend: ${width}x${height}`);
             }
         }
 
@@ -53,7 +55,8 @@ export function Feed() {
         try {
 
             const resp = await createPost(formData, setLoadingPercent);
-            setPosts((prev) => [resp, ...prev]);
+            setSocialPosts((prev) => [resp, ...prev]);
+            setFeedTab("social");
         } catch (err) {
             let message = t("common:errors.post.createFailed");
 
@@ -76,7 +79,29 @@ export function Feed() {
                 <div className="feed-grid">
                     <div className="space-y-6 min-w-0 max-w-full overflow-hidden">
                         <PostMenu onAddPost={addPost} />
-                        <PostList posts={posts} setPosts={setPosts} />
+
+                        <Tabs value={feedTab} onValueChange={setFeedTab} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="social">
+                                    {t('feedTabs.feed')}
+                                </TabsTrigger>
+                                <TabsTrigger value="news">
+                                    {t('feedTabs.news')}
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="social" className="mt-6">
+                                <PostList
+                                    scope="social"
+                                    posts={socialPosts}
+                                    setPosts={setSocialPosts}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="news" className="mt-6">
+                                <PostList scope="news" />
+                            </TabsContent>
+                        </Tabs>
                     </div>
                     <aside className="feed-sidebar space-y-6">
                         <Card className="bg-card/90 backdrop-blur-xl border-border">
@@ -94,17 +119,12 @@ export function Feed() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-card/90 backdrop-blur-xl border-border">
-                            <CardHeader className="pb-0">
-                                <CardTitle>{t('sections.trending')}</CardTitle>
-                            </CardHeader>
-                            <CardContent />
-                        </Card>
+                        <div className="hidden lg:block">
+                            <MomentNewsCard />
+                        </div>
                     </aside>
                 </div>
             </div>
         </div>
     );
 }
-
-

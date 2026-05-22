@@ -8,6 +8,7 @@
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+node_modules/
 
 # Backend artifacts
 backend/target/
@@ -16,6 +17,7 @@ backend/.quarkus/
 *.class
 *.jar
 !**/src/main/**/*.jar
+backend/.m2-repo/
 
 # Private keys
 **/*private*.pem
@@ -44,8 +46,14 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
- 
+
 # Certificados locais
 *.pem
 *.key
 *.crt
+
+# Git worktrees locais
+.worktrees/
+
+# Docs locais (não versionar)
+docs/PLANO-Noticias-MVP-Flipboard.md
