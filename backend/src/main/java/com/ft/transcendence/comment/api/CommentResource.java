@@ -8,6 +8,7 @@ import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.like.app.LikeService;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -26,7 +27,7 @@ public class CommentResource {
 
     @POST
     @Authenticated
-    public CommentResponse comment(CommentRequest req) {
+    public CommentResponse comment(@Valid CommentRequest req) {
         long userId = currentUser.id();
         return commentService.create(userId, req);
     }
