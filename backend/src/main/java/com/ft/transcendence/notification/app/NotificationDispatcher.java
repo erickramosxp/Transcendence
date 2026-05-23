@@ -91,11 +91,12 @@ public class NotificationDispatcher {
         dispatch(targetUserId, actor.id, NotificationType.FRIEND_REQUEST, content, null);
     }
 
-    public void onFriendAccepted(User actor, Long originalSenderId) {
+    public void onFriendAccepted(User actor, Long originalSenderId, Long friendshipId) {
         NotificationContent content = new NotificationContent();
         content.name = actor.name;
         content.username = actor.username;
         content.avatarUrl = actor.avatarUrl;
+        content.friendshipId = friendshipId;
         content.created_at = OffsetDateTime.now();
 
         dispatch(originalSenderId, actor.id, NotificationType.FRIEND_ACCEPTED, content, null);

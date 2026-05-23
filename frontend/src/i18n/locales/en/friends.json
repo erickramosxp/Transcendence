@@ -40,6 +40,43 @@
         "requestRejectedSuccess": "Friend request rejected",
         "requestRejectedError": "Failed to reject friend request",
         "friendRemovedSuccess": "Friend removed",
-        "friendRemovedError": "Failed to remove friend"
+        "friendRemovedError": "Failed to remove friend",
+        "searchFailed": "Failed to search users",
+        "loadMoreFailed": "Failed to load more users",
+        "filtersCleared": "Filters cleared!"
+    },
+    "discovery": {
+        "filters": {
+            "title": "Advanced filters",
+            "location": "Location",
+            "locationPlaceholder": "Ex: New York, USA",
+            "language": "Language",
+            "allLanguages": "All languages",
+            "sortBy": "Sort by",
+            "sortRelevance": "Relevance (Date)",
+            "sortName": "Name (Alphabetical)",
+            "sortMutual": "Mutual Friends",
+            "sortDirection": "Order",
+            "sortDesc": "Descending",
+            "sortAsc": "Ascending",
+            "clear": "Clear filters"
+        },
+        "languages": {
+            "pt-BR": "Portuguese",
+            "en-US": "English",
+            "es-ES": "Spanish"
+        },
+        "card": {
+            "notInformed": "Not informed",
+            "mutualFriends": "{{count}} mutual friend",
+            "mutualFriends_plural": "{{count}} mutual friends",
+            "noMutualFriends": "No mutual friends"
+        },
+        "search": {
+            "placeholder": "Name, username or bio...",
+            "button": "Search",
+            "loadMore": "Load more",
+            "loadingMore": "Loading..."
+        }
     }
 }

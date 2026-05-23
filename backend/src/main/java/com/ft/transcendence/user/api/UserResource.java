@@ -3,19 +3,21 @@ package com.ft.transcendence.user.api;
 import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.common.storage.FileUploadForm;
+import com.ft.transcendence.user.app.UserDiscoveryService;
 import com.ft.transcendence.user.app.UserService;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -25,6 +27,8 @@ public class UserResource {
     UserService userService;
     @Inject
     CurrentUser currentUser;
+    @Inject
+    UserDiscoveryService userDiscoveryService;
 
     @GET
     @Path("/{username}")
@@ -172,5 +176,27 @@ public class UserResource {
         long userId = currentUser.id();
         UserAvatarResponse avatarResponse = userService.getAvatar(userId);
         return avatarResponse;
+    }
+
+    @GET
+    @Path("/search")
+    @Authenticated
+    public PageResponse<UserSearchDTO> advancedSearch(
+            @QueryParam("page") @DefaultValue("0") @Min(0) int page,
+            @QueryParam("size") @DefaultValue("6") @Min(1) @Max(100) int size,
+            @QueryParam("q") String query,
+            @QueryParam("location") String location,
+            @QueryParam("language")
+            @Pattern(regexp = "^(pt-BR|en-US|es-ES|all)$", message = "Invalid language")
+            String language,
+            @QueryParam("sortBy") @DefaultValue("createdAt") String sortBy,
+            @QueryParam("sortDir") @DefaultValue("desc") String sortDir
+    ) {
+        Long currentUserId = currentUser.id();
+        PageResponse<UserSearchDTO> searched = userDiscoveryService.searchUsers(
+                currentUserId, page, size, query, location, language, sortBy, sortDir
+        );
+
+        return searched;
     }
 }

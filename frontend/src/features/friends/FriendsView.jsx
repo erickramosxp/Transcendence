@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system';
 import FriendsList from './components/FriendsList';
 import FriendRequests from './components/FriendRequests';
-import FriendSuggestions from './components/FriendSuggestions';
+import FriendDiscovery from './components/discovery/FriendDiscovery';
 import { useFriends } from './hooks/useFriends';
 import { FriendsProvider } from './Context/FriendsContext';
 import { useTranslation } from 'react-i18next';
@@ -40,9 +40,9 @@ export const FriendsView = () => {
 
     return (
         <div className='max-w-4xl mx-auto px-3 sm:px-4 pb-10 pt-5 sm:pt-10'>
-            <div className='mb-3'>
-                <h1>{t('title')}</h1>
-            </div>
+            <header className="ds-chat-list-head mb-3">
+				<h2 className="ds-notification-title">{t("title")}</h2>
+			</header>
             <FriendsProvider value={friendsData} >
                 <Tabs value={tab} onValueChange={handleTabChange}>
                     <TabsList className='mb-3'>
@@ -57,7 +57,7 @@ export const FriendsView = () => {
                         <FriendRequests />
                     </TabsContent>
                     <TabsContent value="discover">
-                        <FriendSuggestions />
+                        <FriendDiscovery />
                     </TabsContent>
                 </Tabs>
             </FriendsProvider>

@@ -4,6 +4,7 @@ import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.friendship.app.FriendshipService;
 import com.ft.transcendence.friendship.dto.FriendshipDTO;
+import com.ft.transcendence.friendship.dto.PendingRequestStatusDTO;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -37,6 +38,16 @@ public class FriendshipResource {
         Long currentUserId = currentUser.id();
         List<FriendshipDTO> requests = friendshipService.getPendingRequests(currentUserId);
         return Response.ok(requests).build();
+    }
+
+    @GET
+    @Path("/me/pending-status")
+    public Response checkPendingStatus() {
+        Long currentUserId = currentUser.id();
+
+        boolean hasPending = friendshipService.hasPendingRequests(currentUserId);
+
+        return Response.ok(new PendingRequestStatusDTO(hasPending)).build();
     }
 
     @POST
@@ -82,4 +93,6 @@ public class FriendshipResource {
         friendshipService.removeFriendship(currentUserId, friendshipId);
         return Response.ok().build();
     }
+
+
 }

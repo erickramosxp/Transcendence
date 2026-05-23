@@ -9,6 +9,7 @@ import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -84,6 +85,13 @@ public class FriendshipService {
         return requests;
     }
 
+    public boolean hasPendingRequests(Long currentUserId) {
+
+        return Friendship.find("friendId = ?1 AND status = 'PENDING'", currentUserId)
+                .firstResultOptional()
+                .isPresent();
+    }
+
     public PageResponse<FriendshipDTO> getFriendsList(Long currentUserId, int pageIndex, int pageSize, String searchQuery) {
 
         if (pageIndex < 0 || pageSize <= 0)
@@ -137,7 +145,7 @@ public class FriendshipService {
 
         User actor = User.findById(currentUserId);
         metrics.recordFriendRequestAccepted();
-        notificationDispatcher.onFriendAccepted(actor, request.userId);
+        notificationDispatcher.onFriendAccepted(actor, request.userId, friendshipId);
     }
 
     @Transactional

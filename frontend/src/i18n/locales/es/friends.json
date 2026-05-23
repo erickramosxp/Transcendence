@@ -40,6 +40,43 @@
         "requestRejectedSuccess": "Solicitud de amistad rechazada",
         "requestRejectedError": "Error al rechazar la solicitud de amistad",
         "friendRemovedSuccess": "Amistad eliminada",
-        "friendRemovedError": "Error al eliminar la amistad"
+        "friendRemovedError": "Error al eliminar la amistad",
+        "searchFailed": "Error al buscar usuarios",
+        "loadMoreFailed": "Error al cargar más usuarios",
+        "filtersCleared": "¡Filtros limpiados!"
+    },
+    "discovery": {
+        "filters": {
+            "title": "Filtros avanzados",
+            "location": "Ubicación",
+            "locationPlaceholder": "Ej: Madrid, España",
+            "language": "Idioma",
+            "allLanguages": "Todos los idiomas",
+            "sortBy": "Ordenar por",
+            "sortRelevance": "Relevancia (Fecha)",
+            "sortName": "Nombre (Alfabético)",
+            "sortMutual": "Amigos en Común",
+            "sortDirection": "Orden",
+            "sortDesc": "Descendente",
+            "sortAsc": "Ascendente",
+            "clear": "Limpiar filtros"
+        },
+        "languages": {
+            "pt-BR": "Portugués",
+            "en-US": "Inglés",
+            "es-ES": "Español"
+        },
+        "card": {
+            "notInformed": "No informado",
+            "mutualFriends": "{{count}} amigo en común",
+            "mutualFriends_plural": "{{count}} amigos en común",
+            "noMutualFriends": "Sin amigos en común"
+        },
+        "search": {
+            "placeholder": "Nombre, usuario o bio...",
+            "button": "Buscar",
+            "loadMore": "Cargar más",
+            "loadingMore": "Cargando..."
+        }
     }
 }

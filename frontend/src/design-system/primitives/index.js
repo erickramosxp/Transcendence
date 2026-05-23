@@ -10,3 +10,4 @@ export * from './Separator/Separator';
 export * from './Tabs/Tabs';
 export * from './Textarea/Textarea';
 export * from './TextWithLink/TextWithLink';
+export * from './Select/Select';

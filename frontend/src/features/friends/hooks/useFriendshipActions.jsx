@@ -11,6 +11,10 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
 
     return {
         sendRequest: async () => {
+
+            if (!targetUserId)
+                return;
+
             setStatus(FRIENDSHIP_STATUS.PENDING_SENT)
 
             setLoading(true);
@@ -26,6 +30,10 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             }
         },
         cancelRequest: async () => {
+
+            if (!friendshipId)
+                return;
+
             setStatus(FRIENDSHIP_STATUS.NONE)
             setLoading(true);
             try {
@@ -39,6 +47,10 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             }
         },
         accept: async () => {
+
+            if (!friendshipId)
+                return;
+
             setStatus(FRIENDSHIP_STATUS.ACCEPTED);
             setLoading(true);
             try {
@@ -58,6 +70,9 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             setOpen(false);
         },
         reject: async () => {
+
+            if (!friendshipId)
+                return;
             setStatus(FRIENDSHIP_STATUS.NONE);
             setLoading(true);
             try {
@@ -76,6 +91,10 @@ export function useFriendshipActions({ friendshipId, targetUserId, setStatus, se
             setOpen(false);
         },
         unfriend: async () => {
+
+            if (!friendshipId)
+                return;
+
             setStatus(FRIENDSHIP_STATUS.NONE)
             setLoading(true);
             try {

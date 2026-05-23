@@ -40,6 +40,50 @@
         "requestRejectedSuccess": "Pedido de amizade recusado",
         "requestRejectedError": "Erro ao recusar o pedido de amizade",
         "friendRemovedSuccess": "Amizade removida",
-        "friendRemovedError": "Erro ao remover a amizade"
+        "friendRemovedError": "Erro ao remover a amizade",
+        "searchFailed": "Falha ao buscar usuários",
+        "loadMoreFailed": "Falha ao buscar mais usuários",
+        "filtersCleared": "Filtros limpos!"
+    },
+    "discovery": {
+        "filters": {
+            "title": "Filtros avançados",
+            "location": "Localização",
+            "locationPlaceholder": "Ex: São Paulo, Brasil",
+            "language": "Idioma",
+            "allLanguages": "Todos os idiomas",
+            "sortBy": "Ordenar por",
+            "sortRelevance": "Relevância (Data)",
+            "sortName": "Nome (Alfabético)",
+            "sortMutual": "Amigos em Comum",
+            "sortDirection": "Ordem",
+            "sortDesc": "Decrescente",
+            "sortAsc": "Crescente",
+            "clear": "Limpar filtros"
+        },
+        "languages": {
+            "pt-BR": "Português",
+            "en-US": "Inglês",
+            "es-ES": "Espanhol"
+        },
+        "card": {
+            "notInformed": "Não informado",
+            "mutualFriends": "{{count}} amigo em comum",
+            "mutualFriends_plural": "{{count}} amigos em comum",
+            "noMutualFriends": "Sem amigos em comum"
+        },
+        "search": {
+            "placeholder": "Nome, usuário ou bio...",
+            "button": "Buscar",
+            "loadMore": "Carregar mais",
+            "loadingMore": "Carregando..."
+        },
+        "empty": {
+            "friends": "Nada por aqui ainda.",
+            "requests": "Você não tem nenhum pedido de amizade pendente.",
+            "default": "Lista vazia.",
+            "notFound": "Nenhum resultado encontrado.",
+            "discovery": "Não encontramos perfis para sua busca. Tente modificar ou limpar os filtros."
+        }
     }
 }
