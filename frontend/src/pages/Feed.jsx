@@ -21,13 +21,18 @@ import { getImageDimensions } from "@/shared/getImageDimensions";
 import { generateResizedBlob } from "@/shared/generateResizedBlob";
 import { MomentNewsCard } from "@/features/editorial/components/MomentNewsCard";
 
+const ONLINE_FRIENDS_MAX_VISIBLE = 5;
+const ONLINE_FRIENDS_LIST_MAX_HEIGHT = "max-h-[17.5rem]";
+
 export function Feed() {
 
     const [socialPosts, setSocialPosts] = useState([]);
     const [feedTab, setFeedTab] = useState("social");
     const usersPresence = usePresenceStore((state) => state.usersPresence);
 
-    const usersOnline = Object.values(usersPresence)
+    const usersOnline = Object.values(usersPresence).filter((user) => user?.online)
+    const hasOnlineFriends = usersOnline.length > 0
+    const onlineFriendsNeedsScroll = usersOnline.length > ONLINE_FRIENDS_MAX_VISIBLE
 
     const { t } = useTranslation('feed');
 
@@ -109,13 +114,27 @@ export function Feed() {
                                 <CardTitle>{t('sections.onlineFriends')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {usersOnline && usersOnline.map((user, index) => (
-                                    <UserListItem
-                                        key={user?.userId + index}
-                                        user={user}
-                                        onClick={() => { }}
-                                    />
-                                ))}
+                                {hasOnlineFriends ? (
+                                    <div
+                                        className={
+                                            onlineFriendsNeedsScroll
+                                                ? `${ONLINE_FRIENDS_LIST_MAX_HEIGHT} overflow-y-auto pr-1`
+                                                : undefined
+                                        }
+                                    >
+                                        {usersOnline.map((user) => (
+                                            <UserListItem
+                                                key={user.userId}
+                                                user={user}
+                                                onClick={() => { }}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground py-4 text-center">
+                                        {t('sections.onlineFriendsEmpty')}
+                                    </p>
+                                )}
                             </CardContent>
                         </Card>
 

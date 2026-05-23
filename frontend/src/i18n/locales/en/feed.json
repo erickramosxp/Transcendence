@@ -53,6 +53,7 @@
     },
     "sections": {
         "onlineFriends": "Online Friends",
+        "onlineFriendsEmpty": "You don't have any friends online right now.",
         "trending": "Trending",
         "momentNews": "News of the moment"
     },
