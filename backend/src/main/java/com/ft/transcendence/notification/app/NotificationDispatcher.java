@@ -29,8 +29,6 @@ public class NotificationDispatcher {
     @Inject
     RealtimeEventSender eventSender;
     @Inject
-    StorageService storageService;
-    @Inject
     UserAvatarService userAvatarService;
 
     public void onLikePost(Long userId, Post post) {
