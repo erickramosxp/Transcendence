@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import i18n from "@/i18n";
+import { mapItemsWithAuthorName } from "@/shared/profile/profileAuthorSync";
 import {
 	listNotifications as fetchNotificationsPage,
 	getUnreadCount,
@@ -114,6 +115,20 @@ export const useNotificationStore = create((set, get) => ({
 
 		set({ notifications: [notification, ...notifications] });
 		await get().refreshUnreadCount();
+	},
+
+	applyAuthorNameUpdate: (username, name) => {
+		const normalizedUsername = String(username ?? "").trim();
+		const normalizedName = String(name ?? "").trim();
+		if (!normalizedUsername || !normalizedName) return;
+
+		set((state) => ({
+			notifications: mapItemsWithAuthorName(
+				state.notifications,
+				normalizedUsername,
+				normalizedName,
+			),
+		}));
 	},
 
 	markOneRead: async (id) => {

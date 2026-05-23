@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNotificationStore } from '@/features/notifications/store/useNotificationStore'
 import { useSocketStore } from '@/shared/realtime/store/useSocketStore'
+import { PROFILE_AUTHOR_NAME_UPDATED } from '@/shared/profile/profileAuthorSync'
 
 const RealtimeProvider = ({ children }) => {
     const connect = useSocketStore((state) => state.connect)
@@ -28,6 +29,19 @@ const RealtimeProvider = ({ children }) => {
 
         return () => {
             disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
+        const onAuthorNameUpdated = (event) => {
+            const { username, name } = event.detail ?? {}
+            if (!username || !name) return
+            useNotificationStore.getState().applyAuthorNameUpdate(username, name)
+        }
+
+        window.addEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated)
+        return () => {
+            window.removeEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated)
         }
     }, [])
 
