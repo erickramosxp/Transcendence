@@ -6,6 +6,7 @@ import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -41,7 +42,7 @@ public class ChatResource {
     @POST
     @Path("/group")
     @Authenticated
-    public Response createGroupChat(CreateGroupChatRequest req) {
+    public Response createGroupChat(@Valid CreateGroupChatRequest req) {
         if (req.chatName.isBlank())
             throw new IllegalArgumentException("Groups chats need a name");
 

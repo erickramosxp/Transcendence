@@ -11,10 +11,15 @@ import { toast } from "react-toastify";
 
 import { useTranslation } from "react-i18next";
 import { Loading } from "@/design-system";
+import {
+    PROFILE_AUTHOR_NAME_UPDATED,
+    mapItemsWithAuthorName,
+} from "@/shared/profile/profileAuthorSync";
 
 
-function PostList({ posts, setPosts }) {
+function PostList({ scope = "social", posts: controlledPosts, setPosts: controlledSetPosts }) {
 
+    const [internalPosts, setInternalPosts] = useState([]);
     const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isLoadingInitialFeed, setLoadingFeed] = useState(true);
@@ -22,27 +27,49 @@ function PostList({ posts, setPosts }) {
     const [hasMore, setHasMore] = useState(false);
     const sentinelRef = useRef(null);
 
+    const isControlled = controlledPosts !== undefined && controlledSetPosts !== undefined;
+    const posts = isControlled ? controlledPosts : internalPosts;
+    const setPosts = isControlled ? controlledSetPosts : setInternalPosts;
+
     const { t } = useTranslation('feed');
+    const isNewsScope = scope === "news";
+
+    const loadInitialFeed = useCallback(async () => {
+        setLoadingFeed(true);
+        try {
+            const data = await getFeed(0, 10, scope);
+            const resp = data.data ?? data;
+
+            setPosts(resp.items ?? []);
+            setPage((resp.page ?? 0) + 1);
+            setHasMore(!!resp.hasMore);
+        } catch (err) {
+            console.error(err);
+            toast.error(t('list.loadError'));
+        } finally {
+            setLoadingFeed(false);
+        }
+    }, [scope, setPosts, t]);
 
     useEffect(() => {
-
-        async function loadInitialFeed() {
-            try {
-                const data = await getFeed(0, 10);
-                const resp = data.data ?? data;
-
-                setPosts(resp.items ?? []);
-                setPage((resp.page ?? 0) + 1);
-                setHasMore(!!resp.hasMore);
-            } catch (err) {
-                console.error(err);
-                toast.error(t('list.loadError'));
-            } finally {
-                setLoadingFeed(false);
-            }
-        }
-
+        setPage(0);
+        setHasMore(false);
+        setActiveCommentsPostId(null);
         loadInitialFeed();
+    }, [loadInitialFeed]);
+
+    useEffect(() => {
+        const onAuthorNameUpdated = (event) => {
+            const { username, name } = event.detail ?? {};
+            if (!username || !name) return;
+
+            setPosts((prev) => mapItemsWithAuthorName(prev, username, name));
+        };
+
+        window.addEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        return () => {
+            window.removeEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        };
     }, [setPosts]);
 
     const loadMore = useCallback(async () => {
@@ -51,7 +78,7 @@ function PostList({ posts, setPosts }) {
         setIsLoadingMore(true);
 
         try {
-            const data = await getFeed(page, 10);
+            const data = await getFeed(page, 10, scope);
             const resp = data.data ?? data;
             const items = resp.items ?? [];
 
@@ -69,7 +96,7 @@ function PostList({ posts, setPosts }) {
         } finally {
             setIsLoadingMore(false);
         }
-    }, [hasMore, isLoadingMore, page, setPosts]);
+    }, [hasMore, isLoadingMore, page, scope, setPosts, t]);
 
     useInfiniteScroll(sentinelRef, loadMore, {
         enabled: hasMore && !isLoadingMore,
@@ -132,14 +159,11 @@ function PostList({ posts, setPosts }) {
         );
     }
 
-
     const handleDelete = async (postId) => {
-
         try {
             await deletePost(postId);
-
             setPosts(prev => prev.filter(p => p.id !== postId));
-            toast.success(t('posts.deleteSuccess'))
+            toast.success(t('posts.deleteSuccess'));
         } catch (err) {
             toast.error(t('errors.deletePost'));
             throw err;
@@ -150,13 +174,20 @@ function PostList({ posts, setPosts }) {
         return <Loading className="py-10" />;
     }
 
+    const emptyMessage = isNewsScope ? t('list.emptyNews') : t('list.empty');
+    const emptyCta = isNewsScope ? null : t('list.emptyCta');
+
     return (
         <div className="space-y-8">
             {posts && posts.length === 0 ? (
                 <div className="py-8 text-center text-muted-foreground">
-                    {t('list.empty')}
-                    <br />
-                    {t('list.emptyCta')}
+                    {emptyMessage}
+                    {emptyCta && (
+                        <>
+                            <br />
+                            {emptyCta}
+                        </>
+                    )}
                 </div>
             ) : (
                 <>

@@ -12,6 +12,7 @@ import com.ft.transcendence.realtime.ws.app.RealtimeEventSender;
 import com.ft.transcendence.realtime.ws.app.RealtimeSessionRegistry;
 import com.ft.transcendence.realtime.ws.domain.RealtimeConnection;
 import com.ft.transcendence.realtime.ws.dto.RealtimeEventType;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,7 +29,7 @@ public class NotificationDispatcher {
     @Inject
     RealtimeEventSender eventSender;
     @Inject
-    StorageService storageService;
+    UserAvatarService userAvatarService;
 
     public void onLikePost(Long userId, Post post) {
         User actor = User.findById(userId);
@@ -152,12 +153,8 @@ public class NotificationDispatcher {
         if (sessionRegistry.isUserOnline(receiverId)) {
             RealtimeConnection connection = sessionRegistry.getAnyConnectionByUserId(receiverId);
             if (connection != null) {
-                String avatarUrl = content.avatarUrl;
-
-                if (avatarUrl != null && !avatarUrl.isEmpty())
-                    avatarUrl = storageService.generateUrl(content.avatarUrl);
-
-                NotificationResponse payload = NotificationResponse.of(saved, avatarUrl);
+                String avatarUrl = userAvatarService.getUserAvatarUrl(senderId);
+                NotificationResponse payload = NotificationResponse.of(saved, avatarUrl, User.findById(senderId));
                 eventSender.send(connection.connectionId, RealtimeEventType.NOTIFICATION_RECEIVED, payload);
             }
         }

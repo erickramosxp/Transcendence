@@ -8,6 +8,7 @@ import {
 	TabsTrigger,
 } from "@/design-system";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "@/shared/documentTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import {
 	useNotificationStore,
@@ -19,7 +20,7 @@ import { useNotificationPostModal } from "../hooks/useNotificationPostModal";
 import { MediaPostModal } from "@/features/profile/components/ui/MediaPostModal";
 
 export function NotificationView() {
-	const { t } = useTranslation("notifications");
+	const { t } = useTranslation(["notifications", "common"]);
 	const sentinelRef = useRef(null);
 
 	const {
@@ -47,6 +48,7 @@ export function NotificationView() {
 	);
 	const clearError = useNotificationStore((state) => state.clearError);
 	const unreadCount = useNotificationStore((state) => state.unreadCount);
+	useDocumentTitle(t("common:pageTitle.notifications"), { unreadCount });
 	const markingAllRead = useNotificationStore((state) => state.markingAllRead);
 	const markingReadId = useNotificationStore((state) => state.markingReadId);
 	const markEverythingRead = useNotificationStore(

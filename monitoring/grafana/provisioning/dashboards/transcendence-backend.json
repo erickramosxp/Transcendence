@@ -1,0 +1,162 @@
+{
+  "title": "🚀 Transcendence — Visão Geral",
+  "uid": "transcendence-backend",
+  "tags": ["transcendence", "overview"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "time": { "from": "now-7d", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "🟢 Backend",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "up{job=\"transcendence-backend\"}", "legendFormat": "Status" }],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }],
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "red" }, { "value": 1, "color": "green" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 2,
+      "title": "👥 Conexão Online agora",
+      "type": "stat",
+      "gridPos": { "x": 3, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Online" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 3,
+      "title": "📝 Posts na semana",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "increase(social_posts_created_total[7d])", "legendFormat": "posts" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 4,
+      "title": "💬 Mensagens na semana",
+      "type": "stat",
+      "gridPos": { "x": 9, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "increase(social_messages_sent_total[7d])", "legendFormat": "mensagens" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 5,
+      "title": "❤️ Likes em Posts",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "increase(social_likes_total{target=\"post\",action=\"like\"}[7d])", "legendFormat": "Likes em Posts" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 6,
+      "title": "💙 Likes em Comentários",
+      "type": "stat",
+      "gridPos": { "x": 15, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "increase(social_likes_total{target=\"comment\",action=\"like\"}[7d])", "legendFormat": "Likes em Comentários" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "orange" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 7,
+      "title": "🤝 Novos usuários",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "increase(social_auth_registrations_total[7d])", "legendFormat": "registros" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "blue" } } },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 8,
+      "title": "🧠 Heap JVM",
+      "type": "stat",
+      "gridPos": { "x": 21, "y": 0, "w": 3, "h": 4 },
+      "targets": [{ "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"} / jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"} * 100", "legendFormat": "Heap %" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{ "value": 0, "color": "green" }, { "value": 70, "color": "yellow" }, { "value": 85, "color": "red" }] }
+        }
+      },
+      "options": { "colorMode": "background" }
+    },
+    {
+      "id": 9,
+      "title": "👥 Conexão Online",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [{ "expr": "social_ws_connections_active", "legendFormat": "Conexão Online" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "fixedColor": "green", "mode": "fixed" } } }
+    },
+    {
+      "id": 10,
+      "title": "🧠 JVM Heap",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Heap Usado" },
+        { "expr": "jvm_memory_max_bytes{area=\"heap\",job=\"transcendence-backend\"}", "legendFormat": "Heap Máximo" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 11,
+      "title": "📝 Posts e Likes por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_posts_created_total[1h])", "legendFormat": "Posts Criados" },
+        { "expr": "increase(social_likes_total{target=\"post\",action=\"like\"}[1h])", "legendFormat": "Likes em Posts" },
+        { "expr": "increase(social_likes_total{target=\"comment\",action=\"like\"}[1h])", "legendFormat": "Likes em Comentários" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 12,
+      "title": "🌐 HTTP — Status por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"2..\"}[5m]))", "legendFormat": "2xx Sucesso" },
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"4..\"}[5m]))", "legendFormat": "4xx Erro do Cliente" },
+        { "expr": "sum(rate(http_server_requests_seconds_count{job=\"transcendence-backend\",status=~\"5..\"}[5m]))", "legendFormat": "5xx Erro do Servidor" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 13,
+      "title": "💬 Mensagens e Chats por hora",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "increase(social_messages_sent_total[1h])", "legendFormat": "Mensagens Enviadas" },
+        { "expr": "increase(social_chats_created_total{type=\"direct\"}[1h])", "legendFormat": "Chats Diretos Criados" },
+        { "expr": "increase(social_chats_created_total{type=\"group\"}[1h])", "legendFormat": "Grupos Criados" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "palette-classic" } } }
+    },
+    {
+      "id": 14,
+      "title": "⏱️ Latência P50 / P95 / P99",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P50 — Mediana" },
+        { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P95 — 95% das req" },
+        { "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{job=\"transcendence-backend\"}[5m])) by (le))", "legendFormat": "P99 — Pico" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "color": { "mode": "palette-classic" } } }
+    }
+  ]
+}

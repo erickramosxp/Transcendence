@@ -1,10 +1,10 @@
 package com.ft.transcendence.like.app;
 
 import com.ft.transcendence.comment.domain.Comment;
+import com.ft.transcendence.common.metrics.SocialMetrics;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
-import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -15,8 +15,12 @@ import java.time.OffsetDateTime;
 
 @ApplicationScoped
 public class LikeService {
+
     @Inject
     EntityManager entityManager;
+
+    @Inject
+    SocialMetrics metrics;
 
     @Inject
     NotificationDispatcher notificationDispatcher;
@@ -40,6 +44,8 @@ public class LikeService {
             entityManager.createQuery(
                     "UPDATE Post SET likeCount = likeCount + 1 WHERE id = :id"
             ).setParameter("id", postId).executeUpdate();
+
+            metrics.recordPostLike();
         }
 
         notificationDispatcher.onLikePost(userId, post);
@@ -62,6 +68,8 @@ public class LikeService {
             entityManager.createQuery(
                     "UPDATE Post SET likeCount = GREATEST(likeCount - 1, 0) WHERE id = :id"
             ).setParameter("id", postId).executeUpdate();
+
+            metrics.recordPostUnlike();
         }
     }
 
@@ -84,6 +92,8 @@ public class LikeService {
             entityManager.createQuery(
                     "UPDATE Comment SET likeCount = likeCount + 1 WHERE id = :id"
             ).setParameter("id", commentId).executeUpdate();
+
+            metrics.recordCommentLike();
         }
 
         notificationDispatcher.onLikeComment(userId, comment);
@@ -106,6 +116,8 @@ public class LikeService {
             entityManager.createQuery(
                     "UPDATE Comment SET likeCount = GREATEST(likeCount - 1, 0) WHERE id = :id"
             ).setParameter("id", commentId).executeUpdate();
+
+            metrics.recordCommentUnlike();
         }
     }
 }

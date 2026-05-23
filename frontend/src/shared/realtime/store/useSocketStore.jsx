@@ -9,6 +9,7 @@ import { useNotificationStore } from '@/features/notifications/store/useNotifica
 import { showNotificationToast } from '@/features/notifications/utils/showNotificationToast'
 import { showChatMessageToast } from '@/features/chat/utils/showChatMessageToast'
 import { usePresenceStore } from '@/features/friends/store/usePresenceStore'
+import { normalizePresencePayload } from '@/features/friends/utils/normalizePresencePayload'
 
 import {
     WS_SEND_EVENTS,
@@ -335,11 +336,21 @@ export const useSocketStore = create((set, get) => ({
                     }
                     break;
                 }
-                case WS_INCOMING_EVENTS.PRESENCE_UPDATED:
-                    usePresenceStore
-                        .getState()
-                        .updatePresence(data.payload)
-                    break;
+                case WS_INCOMING_EVENTS.PRESENCE_UPDATED: {
+                    const presence = normalizePresencePayload(data)
+                    if (!presence) break
+
+                    usePresenceStore.getState().updatePresence(presence)
+
+                    const presenceName = presence.name?.trim()
+                    const presenceUsername = presence.username?.trim()
+                    if (presenceUsername && presenceName) {
+                        useNotificationStore
+                            .getState()
+                            .applyAuthorNameUpdate(presenceUsername, presenceName)
+                    }
+                    break
+                }
                 case WS_INCOMING_EVENTS.TYPING_START:{
                     const payload = data.payload ?? data;
                     useChatStore.getState().applyTypingStart(payload);

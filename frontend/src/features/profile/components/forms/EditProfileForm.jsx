@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { LIMITS } from '@/shared/validation/limits';
 import { Button, Input, Label } from "@/design-system";
 import { validateProfile } from "@/shared/validation/validators";
+import { dispatchProfileAuthorNameUpdated } from "@/shared/profile/profileAuthorSync";
 
 export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
 
@@ -51,6 +52,14 @@ export function EditProfileForm({ onCancel, onSaved , userData, changeFields}) {
     try {
       await updateProfileInfo(payload);
       changeFields(payload);
+
+      if (userData?.username && payload.name) {
+        dispatchProfileAuthorNameUpdated({
+          username: userData.username,
+          name: payload.name,
+        });
+      }
+
       toast.success(t('header.editProfileModal.success'));
       onSaved?.();
     } catch (err) {

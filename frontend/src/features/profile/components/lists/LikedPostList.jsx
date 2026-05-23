@@ -35,17 +35,20 @@ export function LikedPostList({ username }) {
   }, [username]);
 
   useEffect(() => {
-    setPosts(prev =>
-      prev.map(post =>
+    if (!userData?.username) return;
+
+    setPosts((prev) =>
+      (prev ?? []).map((post) =>
         post.username === userData.username
           ? {
-            ...post,
-            avatarUrl: userData.avatarUrl
-          }
-          : post
-      )
+              ...post,
+              avatarUrl: userData.avatarUrl,
+              name: userData.name ?? post.name,
+            }
+          : post,
+      ),
     );
-  }, [userData.avatarUrl]);
+  }, [userData.avatarUrl, userData.name, userData.username, setPosts]);
 
 
   if (loading)

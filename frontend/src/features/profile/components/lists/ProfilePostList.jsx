@@ -15,15 +15,17 @@ export function ProfilePostList({ username }) {
   );
   const { userData } = useProfile();
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('profile');
 
   useEffect(() => {
 
     const getUserPosts = async () => {
+      
       try {
         await loadInitial();
 
       } catch (err) {
-        toast.error("Falha ao buscar posts do usuário");
+        toast.error(t('postList.error'));
       } finally {
         setLoading(false);
       }
@@ -33,17 +35,20 @@ export function ProfilePostList({ username }) {
   }, [username]);
 
   useEffect(() => {
-    setPosts(prev =>
-      prev.map(post =>
+    if (!userData?.username) return;
+
+    setPosts((prev) =>
+      (prev ?? []).map((post) =>
         post.username === userData.username
           ? {
-            ...post,
-            avatarUrl: userData.avatarUrl 
-          }
-          : post
-      )
+              ...post,
+              avatarUrl: userData.avatarUrl,
+              name: userData.name ?? post.name,
+            }
+          : post,
+      ),
     );
-  }, [userData.avatarUrl]);
+  }, [userData.avatarUrl, userData.name, userData.username, setPosts]);
 
   if (loading)
     return <Loading size="md" className="py-10" />

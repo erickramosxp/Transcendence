@@ -137,6 +137,38 @@ public class NotificationResourceTest extends BaseApiTest {
     }
 
     @Test
+    public void testNotificationUsesCurrentSenderNameAfterProfileUpdate() {
+        UserTestContext userA = createUser();
+        UserTestContext userB = createUser();
+        Long postId = createPost(userA);
+        likePost(userB, postId);
+
+        String updatedName = "Nome Atualizado " + System.currentTimeMillis();
+
+        given()
+                .header("Authorization", "Bearer " + userB.token)
+                .contentType("application/json")
+                .body("""
+                        {
+                          "name": "%s"
+                        }
+                        """.formatted(updatedName))
+                .when()
+                .patch("/user/profile")
+                .then()
+                .statusCode(200);
+
+        given()
+                .header("Authorization", "Bearer " + userA.token)
+                .when()
+                .get("/notifications")
+                .then()
+                .statusCode(200)
+                .body("items.size()", is(1))
+                .body("items[0].name", is(updatedName));
+    }
+
+    @Test
     public void testMarkAllAsRead() {
         UserTestContext userA = createUser();
         UserTestContext userB = createUser();

@@ -8,6 +8,7 @@ import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.like.domain.Like;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.post.domain.Post;
+import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -35,10 +36,16 @@ public class CommentService {
     @Inject
     NotificationDispatcher notificationDispatcher;
 
+    @Inject
+    UserAvatarService userAvatarService;
+
     @Transactional
     public CommentResponse create(Long userId, CommentRequest req) {
         if (req.text == null || req.text.isBlank())
             throw new BadRequestException("Comment must contain text");
+
+        if (req.text.length() > 500)
+            throw new BadRequestException("Comment must be at most 500 characters");
 
         Post post = Post.findById(req.postId);
         if (post == null)
@@ -58,10 +65,7 @@ public class CommentService {
                 "UPDATE Post SET commentCount = commentCount + 1 WHERE id = :id"
         ).setParameter("id", req.postId).executeUpdate();
 
-        String avatarUrl  = comment.user.avatarUrl;
-        if (avatarUrl != null && !avatarUrl.isBlank()) {
-            avatarUrl = storageService.generateUrl(avatarUrl);
-        }
+        String avatarUrl  = userAvatarService.getUserAvatarUrl(comment.user);
 
         notificationDispatcher.onComment(comment.user, comment);
 

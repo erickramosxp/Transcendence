@@ -37,9 +37,9 @@ function PostMenu({onAddPost}) {
 					<Video className=" size-6 text-primary"/>
 				</Button>
 
-				<Button onClick={() => handleOpen("music")}  size="rounded" variant="secondary" >
+				{/* <Button onClick={() => handleOpen("music")}  size="rounded" variant="secondary" >
 					<Music className=" size-6 text-primary"/>
-				</Button>
+				</Button> */}
 			</div>
 			{open && createPortal(
 					<Popup open={open} onClose={handleClose}>

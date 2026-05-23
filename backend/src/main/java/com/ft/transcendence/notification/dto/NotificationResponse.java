@@ -2,6 +2,7 @@ package com.ft.transcendence.notification.dto;
 
 import com.ft.transcendence.notification.domain.Notification;
 import com.ft.transcendence.notification.domain.NotificationType;
+import com.ft.transcendence.user.domain.User;
 
 import java.time.OffsetDateTime;
 
@@ -20,22 +21,34 @@ public class NotificationResponse {
     public String chatName;
 
     public static NotificationResponse of(Notification n, String resolvedAvatarUrl) {
+        return of(n, resolvedAvatarUrl, n.sender);
+    }
+
+    public static NotificationResponse of(Notification n, String resolvedAvatarUrl, User sender) {
         NotificationResponse r = new NotificationResponse();
         r.id = n.id;
         r.type = n.type;
         r.isRead = n.isRead;
         r.createdAt = n.createdAt;
 
+        if (sender != null) {
+            r.name = sender.name;
+            r.username = sender.username;
+        }
+
         if (n.content != null) {
-            r.name = n.content.name;
-            r.username = n.content.username;
-            r.avatarUrl = resolvedAvatarUrl;
+            if (sender == null) {
+                r.name = n.content.name;
+                r.username = n.content.username;
+            }
             r.postId = n.content.postId;
             r.commentId = n.content.commentId;
             r.friendshipId = n.content.friendshipId;
             r.preview = n.content.preview;
             r.chatName = n.content.chatName;
         }
+
+        r.avatarUrl = resolvedAvatarUrl;
 
         return r;
     }
