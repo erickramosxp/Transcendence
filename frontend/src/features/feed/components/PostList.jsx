@@ -11,6 +11,10 @@ import { toast } from "react-toastify";
 
 import { useTranslation } from "react-i18next";
 import { Loading } from "@/design-system";
+import {
+    PROFILE_AUTHOR_NAME_UPDATED,
+    mapItemsWithAuthorName,
+} from "@/shared/profile/profileAuthorSync";
 
 
 function PostList({ scope = "social", posts: controlledPosts, setPosts: controlledSetPosts }) {
@@ -53,6 +57,20 @@ function PostList({ scope = "social", posts: controlledPosts, setPosts: controll
         setActiveCommentsPostId(null);
         loadInitialFeed();
     }, [loadInitialFeed]);
+
+    useEffect(() => {
+        const onAuthorNameUpdated = (event) => {
+            const { username, name } = event.detail ?? {};
+            if (!username || !name) return;
+
+            setPosts((prev) => mapItemsWithAuthorName(prev, username, name));
+        };
+
+        window.addEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        return () => {
+            window.removeEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        };
+    }, [setPosts]);
 
     const loadMore = useCallback(async () => {
         if (isLoadingMore || !hasMore) return;
