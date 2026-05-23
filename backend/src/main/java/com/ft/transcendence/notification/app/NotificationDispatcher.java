@@ -153,7 +153,7 @@ public class NotificationDispatcher {
             RealtimeConnection connection = sessionRegistry.getAnyConnectionByUserId(receiverId);
             if (connection != null) {
                 String avatarUrl = userAvatarService.getUserAvatarUrl(senderId);
-                NotificationResponse payload = NotificationResponse.of(saved, avatarUrl);
+                NotificationResponse payload = NotificationResponse.of(saved, avatarUrl, User.findById(senderId));
                 eventSender.send(connection.connectionId, RealtimeEventType.NOTIFICATION_RECEIVED, payload);
             }
         }
