@@ -3,7 +3,6 @@ package com.ft.transcendence.user.api;
 import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.common.storage.FileUploadForm;
-import com.ft.transcendence.friendship.dto.FriendshipDTO;
 import com.ft.transcendence.user.app.UserDiscoveryService;
 import com.ft.transcendence.user.app.UserService;
 import com.ft.transcendence.user.domain.User;
@@ -13,13 +12,12 @@ import jakarta.inject.Inject;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 @Path("/user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -46,7 +44,7 @@ public class UserResource {
     @PATCH
     @Path("/profile")
     @Authenticated
-    public UpdateUserProfileResponse updateProfile(UpdateUserProfileRequest req) {
+    public UpdateUserProfileResponse updateProfile(@Valid UpdateUserProfileRequest req) {
         long userId = currentUser.id();
         return userService.updateProfile(userId, req);
     }
