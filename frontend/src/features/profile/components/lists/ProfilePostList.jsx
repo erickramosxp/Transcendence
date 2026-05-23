@@ -38,7 +38,7 @@ export function ProfilePostList({ username }) {
     if (!userData?.username) return;
 
     setPosts((prev) =>
-      prev.map((post) =>
+      (prev ?? []).map((post) =>
         post.username === userData.username
           ? {
               ...post,

@@ -21,7 +21,7 @@ export function usePostList(fetchFn) {
 
   const loadInitial = useCallback(async () => {
     const data = await fetchFn(0, 9);
-    setPosts(data.items);
+    setPosts(data.items ?? []);
     setPage(data.page + 1);
     setHasMore(data.hasMore);
   }, [fetchFn]);
@@ -36,7 +36,7 @@ export function usePostList(fetchFn) {
     try {
 
       const data = await fetchFn(page, 10);
-      setPosts(prev => [...prev, ...data.items]);
+      setPosts((prev) => [...(prev ?? []), ...(data.items ?? [])]);
       setPage(data.page + 1);
       setHasMore(data.hasMore);
     } catch {
