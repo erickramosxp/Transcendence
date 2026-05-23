@@ -378,9 +378,9 @@ Major = 2 pts | Minor = 1 pt
 | Type             | Qty            | Points     |
 | ---------------- | -------------- | ---------- |
 | Major            | 4              | 8          |
-| Minor            | 10             | 11         |
+| Minor            | 10             | 10         |
 | Module of Choice | 2              | 2          |
-| **Total**        | **15 modules** | **21 pts** |
+| **Total**        | **16 modules** | **20 pts** |
 
 
 ### Web
@@ -397,6 +397,13 @@ Major = 2 pts | Minor = 1 pt
 | Custom design system                             | Minor          | 1   | `frontend/src/design-system/` — primitives, tokens, Storybook                              | erramos                     |
 | Advanced search (filters, sorting, pagination)   | Minor          | 1   | `PaginatedSearchList`, user search on friends page                                         | yufonten                    |
 | File upload and management                       | Minor          | 1   | MinIO, `media` table, Tika validation, ffmpeg jobs, preview/blur                           | erramos                     |
+| News API integration (GNews)                     | Minor          | 1   | `@videanews` editorial account, GNews ingestion, News tab, `MomentNewsCard` — see `backend/docs/news-integration.md` | thfranco                    |
+
+#### Justification — News API integration (Minor, 1 pt)
+
+This module integrates an external news API ([GNews](https://gnews.io/docs/v4)) into the existing social platform. It is classified as **Minor** because its scope is narrower than a Major module: it adds a single editorial account, one scheduled ingestion pipeline, and feed UI extensions — without introducing a new authentication system or a standalone subsystem.
+
+It still demonstrates technical skill through MicroProfile REST Client usage, transactional deduplication (`ingested_news.source_url` unique constraint), Quarkus Scheduler, feed scope filtering, and reuse of the post/like/comment model for editorial content. The feature adds meaningful value by keeping the feed fresh with Brazilian headlines, offering a dedicated News tab, and a Flipboard-style sidebar widget — documented in full at [`backend/docs/news-integration.md`](backend/docs/news-integration.md).
 
 
 ### Accessibility and Internationalization
@@ -431,7 +438,6 @@ Major = 2 pts | Minor = 1 pt
 | Requirement              | Pts | Rationale                                                                                      | Implementation                                                                                                                                       | Member(s) |
 | ------------------------ | --- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | Security with Nginx      | 1   | Centralizes TLS, reverse proxy, API/WebSocket/MinIO routing, and SPA protection in production | `nginx/nginx.conf`, SSL, proxy to backend and Grafana                                                                                               | yufonten  |
-| News integration         | 1   | Enriches the feed with automatic headlines from an external source, expanding editorial content | `videanews` account, GNews API, `NewsIngestionService`, Quarkus scheduler, News tab, `MomentNewsCard`, `ingested_news` table, and `news` feed scope | thfranco  |
 
 
 ---
@@ -441,7 +447,7 @@ Major = 2 pts | Minor = 1 pt
 
 ### thfranco (Thaís Franco) — PM / Frontend Developer
 
-- **Modules:** Chat/profile/friends (Major), user management (Major), frontend framework (Minor), multi-browser compatibility (Minor), news integration (choice).
+- **Modules:** Chat/profile/friends (Major), user management (Major), frontend framework (Minor), multi-browser compatibility (Minor), news API integration (Minor).
 - **Main features:**
   - Initial frontend structure: Home, feed, mobile navigation, Makefile, and Docker Compose.
   - Full feed: post creation (text/photo/video), comments, likes, infinite pagination, and text links.
@@ -523,6 +529,7 @@ Major = 2 pts | Minor = 1 pt
 | ------------------- | --------------------------------------------------------- |
 | WebSocket protocol  | `frontend/src/shared/realtime/websocket_protocol.md`      |
 | Friendship system   | `frontend/src/features/friends/docs/friendship_system.md` |
+| News API integration | `backend/docs/news-integration.md`                       |
 | i18n guide          | `frontend/src/i18n/i18n_guide.md`                         |
 | Design System       | `frontend/src/design-system/README.md`                    |
 
