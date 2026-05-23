@@ -13,7 +13,10 @@ import jakarta.inject.Inject;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RealtimePresenceHandler {
@@ -26,29 +29,6 @@ public class RealtimePresenceHandler {
     RealtimeEventSender sender;
     @Inject
     UserAvatarService userAvatarService;
-
-    private PresenceUpdatePayload getUserPayload(Long userId) {
-        RealtimeConnection targetConnection = registry.getAnyConnectionByUserId(userId);
-        String name = null;
-        String username = null;
-        String avatarUrl = null;
-        OffsetDateTime now = OffsetDateTime.now();
-
-        if (targetConnection != null) {
-            name = targetConnection.name;
-            username = targetConnection.username;
-            avatarUrl = userAvatarService.getUserAvatarUrl(targetConnection.userId);
-        } else {
-            User user = User.findById(userId);
-            if (user != null) {
-                name = user.name;
-                username = user.username;
-                avatarUrl = userAvatarService.getUserAvatarUrl(user);
-            }
-        }
-
-        return PresenceUpdatePayload.of(userId, name, username, avatarUrl, presenceService.isOnline(userId), now);
-    }
 
     public void handleConnected(RealtimeConnection connection) {
         connection.lastSeenAt = OffsetDateTime.now();
@@ -64,12 +44,30 @@ public class RealtimePresenceHandler {
         Set<Long> targetUserIds = presenceService.resolveDefaultTargetUserIds(connection.userId);
         presenceService.subscribePresence(connection, targetUserIds);
 
+        if (targetUserIds.isEmpty())
+            return;
+
+        Map<Long, User> usersById = User.<User>find("id in ?1", targetUserIds)
+                .stream()
+                .collect(Collectors.toMap(u -> u.id, Function.identity()));
+
+        OffsetDateTime now = OffsetDateTime.now();
+
         List<Long> orderedUserIds = targetUserIds.stream()
-                .sorted(Comparator.comparing((Long userId) -> registry.isUserOnline(userId)).reversed())
+                .sorted(Comparator.comparing((Long id) -> registry.isUserOnline(id)).reversed())
                 .toList();
 
         for (Long userId : orderedUserIds) {
-            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, getUserPayload(userId));
+            User user = usersById.get(userId);
+            if (user == null)
+                continue;
+
+            PresenceUpdatePayload payload = PresenceUpdatePayload.of(
+                    userId, user.name, user.username,
+                    userAvatarService.getUserAvatarUrl(user),
+                    presenceService.isOnline(userId), now);
+
+            sender.send(connection.connectionId, RealtimeEventType.PRESENCE_UPDATED, payload);
         }
     }
 
