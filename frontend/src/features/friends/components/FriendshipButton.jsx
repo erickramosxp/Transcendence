@@ -44,7 +44,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
         return (
             <Button onClick={actions.sendRequest} title="Adicionar amigo" aria-label="Adicionar amigo" disabled={loading}>
                 <UserRoundPlus />
-                <span className="hidden sm:inline">
+                <span className={`${variant == 'inline' ? '' : 'hidden'} sm:inline`}>
                     {t('buttons.add')}
                 </span>
             </Button>
@@ -55,7 +55,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
         return (
             <Button onClick={actions.cancelRequest} variant={"destructive"} disabled={loading}>
                 <UserRoundX />
-                <span className="hidden sm:inline">
+                <span className={`${variant == 'inline' ? '' : 'hidden'} sm:inline`}>
                     {t('buttons.cancel')}
                 </span>
             </Button>
@@ -66,7 +66,7 @@ const FriendshipButton = ({ initialStatus, friendshipId, targetUserId, variant =
         return (
             <Button onClick={actions.unfriend} variant={"outline"} disabled={loading}>
                 <UserMinus />
-                <span className="hidden sm:inline">
+                <span className={`${variant == 'inline' ? '' : 'hidden'} sm:inline`}>
                     {t('buttons.undoFriendship')}
                 </span>
             </Button>

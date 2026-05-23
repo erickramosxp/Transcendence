@@ -8,6 +8,7 @@ import com.ft.transcendence.friendship.dto.FriendshipDTO;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.user.domain.User;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -129,7 +130,7 @@ public class FriendshipService {
         mirror.persist();
 
         User actor = User.findById(currentUserId);
-        notificationDispatcher.onFriendAccepted(actor, request.userId);
+        notificationDispatcher.onFriendAccepted(actor, request.userId, friendshipId);
     }
 
     @Transactional

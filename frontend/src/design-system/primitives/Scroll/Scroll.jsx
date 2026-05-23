@@ -8,7 +8,7 @@ export function Scroll({ children, className, ...props }) {
       {...props}
     >
       <ScrollArea.Viewport
-        className={cn("min-h-[80px] max-h-[250px]", className)}
+        className={cn("min-h-20 max-h-62", className)}
       >
         {children}
       </ScrollArea.Viewport>

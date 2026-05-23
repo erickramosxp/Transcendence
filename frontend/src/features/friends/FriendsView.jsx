@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/design-system';
 import FriendsList from './components/FriendsList';
 import FriendRequests from './components/FriendRequests';
-import FriendSuggestions from './components/FriendSuggestions';
+import FriendDiscovery from './components/discovery/FriendDiscovery';
 import { useFriends } from './hooks/useFriends';
 import { FriendsProvider } from './Context/FriendsContext';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,7 @@ export const FriendsView = () => {
                         <FriendRequests />
                     </TabsContent>
                     <TabsContent value="discover">
-                        <FriendSuggestions />
+                        <FriendDiscovery />
                     </TabsContent>
                 </Tabs>
             </FriendsProvider>

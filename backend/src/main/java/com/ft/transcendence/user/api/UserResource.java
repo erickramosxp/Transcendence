@@ -3,6 +3,8 @@ package com.ft.transcendence.user.api;
 import com.ft.transcendence.common.dto.PageResponse;
 import com.ft.transcendence.common.security.CurrentUser;
 import com.ft.transcendence.common.storage.FileUploadForm;
+import com.ft.transcendence.friendship.dto.FriendshipDTO;
+import com.ft.transcendence.user.app.UserDiscoveryService;
 import com.ft.transcendence.user.app.UserService;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
@@ -24,6 +26,8 @@ public class UserResource {
     UserService userService;
     @Inject
     CurrentUser currentUser;
+    @Inject
+    UserDiscoveryService userDiscoveryService;
 
     @GET
     @Path("/{username}")
@@ -171,5 +175,24 @@ public class UserResource {
         long userId = currentUser.id();
         UserAvatarResponse avatarResponse = userService.getAvatar(userId);
         return avatarResponse;
+    }
+
+    @GET
+    @Path("/search")
+    public PageResponse<UserSearchDTO> advancedSearch(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("10") int size,
+            @QueryParam("q") String query,
+            @QueryParam("location") String location,
+            @QueryParam("language") String language,
+            @QueryParam("sortBy") @DefaultValue("createdAt") String sortBy,
+            @QueryParam("sortDir") @DefaultValue("desc") String sortDir
+    ) {
+        Long currentUserId = currentUser.id();
+        PageResponse<UserSearchDTO> searched = userDiscoveryService.searchUsers(
+                currentUserId, page, size, query, location, language, sortBy, sortDir
+        );
+
+        return searched;
     }
 }
