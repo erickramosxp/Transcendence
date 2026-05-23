@@ -182,6 +182,7 @@ public class UserResource {
 
     @GET
     @Path("/search")
+    @Authenticated
     public PageResponse<UserSearchDTO> advancedSearch(
             @QueryParam("page") @DefaultValue("0") @Min(0) int page,
             @QueryParam("size") @DefaultValue("6") @Min(1) @Max(100) int size,

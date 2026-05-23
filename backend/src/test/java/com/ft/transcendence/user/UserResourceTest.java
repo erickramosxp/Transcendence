@@ -297,4 +297,85 @@ public class UserResourceTest extends BaseApiTest {
                 .then()
                 .statusCode(401);
     }
+
+    @Test
+    public void testAdvancedSearchWithDefaultParams() {
+        UserTestContext user1 = createUser();
+        UserTestContext user2 = createUser(); // Cria um segundo usuário para garantir que a busca retorne algo
+
+        given()
+                .header("Authorization", "Bearer " + user1.token)
+                .when()
+                // Assumindo que a classe Resource base tenha @Path("/user")
+                .get("/user/search")
+                .then()
+                .statusCode(200)
+                .body("items", Matchers.notNullValue())
+                .body("page", Matchers.equalTo(0))
+                .body("size", Matchers.equalTo(6)); // Tamanho default configurado na rota
+    }
+
+    @Test
+    public void testAdvancedSearchWithValidParams() {
+        UserTestContext user = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .queryParam("page", 0)
+                .queryParam("size", 10)
+                .queryParam("q", "Maria")
+                .queryParam("location", "Rio de Janeiro")
+                .queryParam("language", "pt-BR")
+                .queryParam("sortBy", "name")
+                .queryParam("sortDir", "asc")
+                .when()
+                .get("/user/search")
+                .then()
+                .statusCode(200)
+                .body("items", Matchers.notNullValue())
+                .body("size", Matchers.equalTo(10));
+    }
+
+    @Test
+    public void testAdvancedSearchInvalidLanguageValidation() {
+        UserTestContext user = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .queryParam("language", "fr-FR") // Idioma fora do regex ^(pt-BR|en-US|es-ES|all)$
+                .when()
+                .get("/user/search")
+                .then()
+                .statusCode(400); // Espera um Bad Request devido à falha de validação do Jakarta
+    }
+
+    @Test
+    public void testAdvancedSearchInvalidPagination() {
+        UserTestContext user = createUser();
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .queryParam("size", 200)
+                .when()
+                .get("/user/search")
+                .then()
+                .statusCode(400);
+
+        given()
+                .header("Authorization", "Bearer " + user.token)
+                .queryParam("page", -1)
+                .when()
+                .get("/user/search")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testAdvancedSearchRequiresAuth() {
+        given()
+                .when()
+                .get("/user/search")
+                .then()
+                .statusCode(401);
+    }
 }
