@@ -18,7 +18,7 @@ Build a complete web application — frontend, backend, database, media storage,
 | **Authentication** | Local registration and login (JWT), Google OAuth login, password change               |
 | **Social feed**   | Post publishing (text, image, video), comments, likes, infinite pagination             |
 | **Profile**       | Avatar, cover, biography, location, website, media grid, posts and likes               |
-| **Friendships**   | Bidirectional requests, suggestions, friends list, online presence                   |
+| **Friendships**   | Bidirectional requests, friends list, online presence, and **Discover** tab with advanced user search (filters, sorting, mutual friends) |
 | **Chat**          | Direct and group conversations, real-time messages via WebSocket, read status        |
 | **Notifications** | Likes, comments, friendships, and social events in real time                           |
 | **Editorial**     | Automated editorial account with headline ingestion via GNews API                      |
@@ -265,7 +265,7 @@ The team used GitHub Projects to manage tasks, splitting work through cards assi
 | Choice                           | Rationale                                                                                                                                                                                                         |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Quarkus (Java)**               | Modern framework, performance, mature ecosystem for REST, JWT, WebSockets, and PostgreSQL integration; fast builds compared to Spring Boot; good stack for learning since we had no prior experience             |
-| **PostgreSQL**                   | Robust relational database, JSONB support (notifications), Flyway migrations, widely used in production                                                                                                           |
+| **PostgreSQL**                   | Robust relational database, JSONB support (notifications), Flyway migrations, `pg_trgm`/`unaccent` for user discovery search, widely used in production                                                              |
 | **React + Vite**                 | Fast SPA, HMR in dev, rich ecosystem for UI and testing                                                                                                                                                           |
 | **MinIO**                        | S3-compatible, self-hosted, ideal for image/video uploads without relying on proprietary cloud                                                                                                                    |
 | **Native WebSockets (Quarkus)**  | Chat, online presence, and real-time notifications with low latency                                                                                                                                               |
@@ -276,62 +276,207 @@ The team used GitHub Projects to manage tasks, splitting work through cards assi
 
 ## Database Schema
 
-Migrations managed by **Flyway** in `backend/src/main/resources/db/migration/` (V1–V19).
+Migrations managed by **Flyway** in `backend/src/main/resources/db/migration/` (V1–V19 on `main`; friend discovery adds `add_search_indexes` and `mutual_friendship_index` — renumber on merge if versions collide).
 
 ### ER diagram (overview)
 
 ```mermaid
 erDiagram
-    users ||--o{ auth_provider : has
-    users ||--o{ posts : creates
-    users ||--o{ comments : writes
-    users ||--o{ likes : gives
-    users ||--o{ follows : follows
-    users ||--o{ friendships : requests
-    users ||--o{ notifications : receives
-    users ||--o| user_preferences : has
-    users ||--o{ chat_participants : joins
-    users ||--o{ chat_messages : sends
+    users {
+        int8 id PK
+        text email UNIQUE
+        text username UNIQUE
+        text name NULLABLE
+        bool active
+        text roles NULLABLE
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz last_login NULLABLE
+        text avatar_url NULLABLE
+        text banner_image_url NULLABLE
+        text biography NULLABLE
+        varchar website_url NULLABLE
+        varchar location NULLABLE
+    }
+    user_preferences {
+        int8 id PK
+        int8 user_id UNIQUE
+        text theme
+        text language
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    posts {
+        int8 id PK
+        int8 user_id
+        text text NULLABLE
+        text media_url NULLABLE
+        int8 like_count
+        int8 comment_count
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at NULLABLE
+    }
+    comments {
+        int8 id PK
+        int8 user_id
+        int8 post_id
+        text text
+        timestamptz created_at
+        timestamptz updated_at
+        int8 like_count
+        timestamptz deleted_at NULLABLE
+    }
+    likes {
+        int8 id PK
+        int8 user_id
+        int8 post_id NULLABLE
+        int8 comment_id NULLABLE
+        timestamptz created_at
+    }
+    follows {
+        int8 id PK
+        int8 follower_id
+        int8 followee_id
+        timestamptz created_at
+    }
+    friendships {
+        int8 id PK
+        int8 user_id
+        int8 friend_id
+        text status
+        timestamptz created_at
+    }
+    notifications {
+        int8 id PK
+        int8 user_id
+        text type
+        jsonb content NULLABLE
+        timestamptz created_at
+        int8 sender_id NULLABLE
+        bool is_read
+        int8 target_id NULLABLE
+    }
+    auth_provider {
+        int8 id PK
+        int8 user_id
+        auth_provider_type provider_type
+        text provider_user_id NULLABLE
+        text password_hash NULLABLE
+        timestamptz created_at
+    }
+    media {
+        int8 id PK
+        text model_type
+        int8 model_id
+        text media_type
+        text path_original
+        text path_preview NULLABLE
+        text path_blur NULLABLE
+        int4 width NULLABLE
+        int4 height NULLABLE
+        numeric duration NULLABLE
+        text status NULLABLE
+        timestamptz created_at
+        timestamptz updated_at NULLABLE
+    }
+    ingested_news {
+        int8 id PK
+        varchar source_url UNIQUE
+        varchar external_id NULLABLE
+        varchar title
+        text summary NULLABLE
+        varchar source_name NULLABLE
+        varchar image_url NULLABLE
+        int8 post_id NULLABLE
+        timestamptz published_at NULLABLE
+        timestamptz ingested_at
+    }
+    jobs {
+        int8 id PK
+        varchar type
+        varchar status
+        text payload
+        int4 attempts
+        int4 max_attempts
+        text last_error NULLABLE
+        timestamptz available_at
+        timestamptz processing_started_at NULLABLE
+        timestamptz finished_at NULLABLE
+        timestamptz created_at
+        timestamptz updated_at NULLABLE
+    }
+    chat_messages {
+        int8 id PK
+        int8 chat_id
+        int8 sender_id
+        text message_text NULLABLE
+        text media_url NULLABLE
+        text type
+        int8 reply_to_id NULLABLE
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at NULLABLE
+    }
+    message_read_status {
+        int8 id PK
+        int8 message_id
+        int8 user_id
+        timestamptz read_at
+    }
+    chat_participants {
+        int8 id PK
+        int8 chat_id
+        int8 user_id
+        text role NULLABLE
+        timestamptz joined_at
+        timestamptz updated_at
+    }
+    chats {
+        int8 id PK
+        text chat_name NULLABLE
+        text type NULLABLE
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz last_message_at NULLABLE
+    }
+    flyway_schema_history {
+        int4 installed_rank PK
+        varchar version NULLABLE
+        varchar description
+        varchar type
+        varchar script
+        int4 checksum NULLABLE
+        varchar installed_by
+        timestamp installed_on
+        int4 execution_time
+        bool success
+    }
 
-    posts ||--o{ comments : has
-    posts ||--o{ likes : receives
-    posts ||--o| media : "polymorphic"
-    posts ||--o| ingested_news : "editorial"
-
-    comments ||--o{ likes : receives
-
-    chats ||--o{ chat_participants : has
-    chats ||--o{ chat_messages : contains
-    chat_messages ||--o{ message_read_status : tracked_by
-
-    media }o--|| users : "avatar/profile"
-    jobs }o--|| media : processes
+    users ||--o{ posts : ""
+    users ||--o{ comments : ""
+    users ||--o{ likes : ""
+    users ||--o{ follows : ""
+    users ||--o{ friendships : ""
+    users ||--o{ user_preferences : ""
+    users ||--o{ notifications : ""
+    users ||--o{ chat_participants : ""
+    users ||--o{ chat_messages : ""
+    users ||--o{ auth_provider : ""
+    posts ||--o{ comments : ""
+    posts ||--o{ likes : ""
+    posts ||--o{ media : ""
+    posts ||--o{ ingested_news : ""
+    comments ||--o{ likes : ""
+    chats ||--o{ chat_participants : ""
+    chats ||--o{ chat_messages : ""
+    chat_messages ||--o{ message_read_status : ""
+    media }o--|| users : ""
 ```
 
+### Search indexes (friend discovery)
 
-
-### Main tables
-
-
-| Table                 | Description                      | Key fields                                                                                                                     |
-| --------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `users`               | Platform users                   | `id`, `email`, `username`, `name`, `avatar_url`, `banner_image_url`, `biography`, `location`, `website_url`, `active`, `roles` |
-| `auth_provider`       | Authentication providers         | `user_id`, `provider_type` (LOCAL/GOOGLE/GITHUB), `password_hash`, `provider_user_id`                                          |
-| `posts`               | Feed posts                       | `user_id`, `text`, `media_url`, `like_count`, `comment_count`, `deleted_at`                                                    |
-| `comments`            | Post comments                    | `user_id`, `post_id`, `text`, `like_count`, `deleted_at`                                                                       |
-| `likes`               | Likes on posts or comments       | `user_id`, `post_id` XOR `comment_id`                                                                                          |
-| `follows`             | Follow relationship              | `follower_id`, `followee_id`                                                                                                   |
-| `friendships`         | Bidirectional friendships        | `user_id`, `friend_id`, `status` (PENDING/ACCEPTED)                                                                            |
-| `chats`               | Conversations                    | `type` (direct/group), `chat_name`, `last_message_at`                                                                          |
-| `chat_participants`   | Chat participants                | `chat_id`, `user_id`, `role`                                                                                                   |
-| `chat_messages`       | Messages                         | `chat_id`, `sender_id`, `content`, `type`, `reply_to_id`, `deleted_at`                                                         |
-| `message_read_status` | Message read tracking            | `message_id`, `user_id`, `read_at`                                                                                             |
-| `notifications`       | Notifications                    | `user_id`, `sender_id`, `type`, `content` (jsonb), `target_id`, `is_read`                                                      |
-| `user_preferences`    | User preferences                 | `user_id`, `theme`, `language`                                                                                                 |
-| `media`               | Polymorphic media                | `model_type`, `model_id`, `media_type`, `path_original`, `path_preview`, `status`                                              |
-| `jobs`                | Async job queue                  | `type`, `status`, `payload`, `attempts`, `available_at`                                                                        |
-| `ingested_news`       | Ingested news (GNews)            | `source_url`, `title`, `post_id`, `ingested_at`                                                                                |
-
+On branch `feature/friend-discovery`, PostgreSQL extensions **`pg_trgm`** and **`unaccent`** support accent-insensitive partial search on `users.name`, `users.biography`, and `users.location`, plus trigram match on `users.username`. A composite index on `friendships (user_id, status, friend_id)` speeds up mutual-friends counting and sorting. After merge into `main`, these scripts must use the next available Flyway version (V15/V16 on the branch may conflict with existing media migrations).
 
 ---
 
@@ -349,11 +494,12 @@ Assignments based on commit history (`git log`) and aligned with responsibilitie
 | Comments and likes                      | Comment CRUD, likes on posts/comments, and concurrent counters                         | yufonten, thfranco, erramos           |
 | Media upload                            | `media` table, MinIO, crop/resize, async jobs with ffmpeg                                | erramos, thfranco, yathayde           |
 | User profile                            | Avatar, cover, bio, media grid, posts, likes, and profile editing                       | erramos, yufonten, thfranco           |
-| Friendship system                       | Bidirectional requests, accept/decline, suggestions, and paginated search              | erramos, yufonten, thfranco           |
+| Friendship system                       | Bidirectional requests, accept/decline, friends/requests tabs, and paginated list search | erramos, yufonten, thfranco           |
+| Friend discovery (advanced search)    | Discover tab: text search (name/username/bio), location and language filters, sort by relevance/name/mutual friends, infinite scroll, friendship actions in place | erramos                               |
 | Online presence                         | Presence WebSocket, online friends list on feed                                          | yufonten, erramos, thfranco           |
 | Real-time chat                          | DMs and groups, WebSocket messages, read status, and full chat UI                        | yufonten, thfranco, erramos           |
 | Notifications                           | Full flow (social CRUD), deduplication, page with infinite scroll and toasts             | yufonten, thfranco                    |
-| Advanced search                         | User search with pagination, filters, and sorting on friends page                        | erramos, yufonten, thfranco           |
+| Advanced search (friends list)          | Paginated search within the existing friends list (`PaginatedSearchList`)              | erramos, yufonten, thfranco           |
 | User preferences                        | Persisted theme and language (`user_preferences`) and settings tabs                    | erramos, yufonten                     |
 | Internationalization (i18n)             | UI in PT, EN, and ES with i18next and language selector                                | erramos, thfranco                     |
 | Multi-browser compatibility             | Playwright tests (Chromium + Firefox), documentation, and smoke tests                    | thfranco                              |
@@ -369,6 +515,8 @@ Assignments based on commit history (`git log`) and aligned with responsibilitie
 ---
 
 ## Modules
+
+The selection of the modules below was based on the features we chose to implement, as well as our level of knowledge and willingness to learn.
 
 Major = 2 pts | Minor = 1 pt
 
@@ -395,15 +543,8 @@ Major = 2 pts | Minor = 1 pt
 | Database ORM                                     | Minor          | 1   | Hibernate ORM + Panache, JPA entities and repositories                                     | yathayde                    |
 | Full social notifications system (CRUD)          | Minor          | 1   | `NotificationDispatcher`, like deduplication, WebSocket + notifications page               | yufonten                    |
 | Custom design system                             | Minor          | 1   | `frontend/src/design-system/` — primitives, tokens, Storybook                              | erramos                     |
-| Advanced search (filters, sorting, pagination)   | Minor          | 1   | `PaginatedSearchList`, user search on friends page                                         | yufonten                    |
+| Advanced search (filters, sorting, pagination)   | Minor          | 1   | `GET /user/search` (`UserDiscoveryService`), Discover tab (`FriendDiscovery`, `useFriendSearch`), PostgreSQL `pg_trgm` + `unaccent` indexes, mutual-friends sort | erramos, yufonten           |
 | File upload and management                       | Minor          | 1   | MinIO, `media` table, Tika validation, ffmpeg jobs, preview/blur                           | erramos                     |
-| News API integration (GNews)                     | Minor          | 1   | `@videanews` editorial account, GNews ingestion, News tab, `MomentNewsCard` — see `backend/docs/news-integration.md` | thfranco                    |
-
-#### Justification — News API integration (Minor, 1 pt)
-
-This module integrates an external news API ([GNews](https://gnews.io/docs/v4)) into the existing social platform. It is classified as **Minor** because its scope is narrower than a Major module: it adds a single editorial account, one scheduled ingestion pipeline, and feed UI extensions — without introducing a new authentication system or a standalone subsystem.
-
-It still demonstrates technical skill through MicroProfile REST Client usage, transactional deduplication (`ingested_news.source_url` unique constraint), Quarkus Scheduler, feed scope filtering, and reuse of the post/like/comment model for editorial content. The feature adds meaningful value by keeping the feed fresh with Brazilian headlines, offering a dedicated News tab, and a Flipboard-style sidebar widget — documented in full at [`backend/docs/news-integration.md`](backend/docs/news-integration.md).
 
 
 ### Accessibility and Internationalization
@@ -435,10 +576,23 @@ It still demonstrates technical skill through MicroProfile REST Client usage, tr
 ### Modules of Choice
 
 
-| Requirement              | Pts | Rationale                                                                                      | Implementation                                                                                                                                       | Member(s) |
-| ------------------------ | --- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| Security with Nginx      | 1   | Centralizes TLS, reverse proxy, API/WebSocket/MinIO routing, and SPA protection in production | `nginx/nginx.conf`, SSL, proxy to backend and Grafana                                                                                               | yufonten  |
+| Requirement                      | Pts | Rationale                                                                                      | Implementation                                                                                                                                       | Member(s) |
+| -------------------------------- | --- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| Security with Nginx              | 1   | Centralizes TLS, reverse proxy, API/WebSocket/MinIO routing, and SPA protection in production | `nginx/nginx.conf`, SSL, proxy to backend and Grafana                                                                                               | yufonten  |
+| News API integration (GNews)     | 1   | Adds editorial news on the social feed using scheduled ingestion, GNews REST client, and UI tabs in the SPA | `@videanews` editorial account, GNews ingestion, News tab, `MomentNewsCard` — see `backend/docs/news-integration.md`                                 | thfranco  |
 
+
+#### Justification — News API integration (Minor, 1 pt)
+
+This module integrates an external news API ([GNews](https://gnews.io/docs/v4)) into the existing social platform. Its classification as **Minor** is due to its focused scope: a single editorial account, one scheduled ingestion pipeline, and user interface enhancements for displaying editorial content. It does not introduce a new authentication subsystem or standalone service.
+
+Even with limited scope, the module exercises technical competencies with MicroProfile REST Client, transactional deduplication (`ingested_news.source_url` unique constraint), Quarkus Scheduler for job automation, feed filtering, and reusing core social models (post/like/comment) for editorial news. It adds visible value by populating the feed with fresh Brazilian news, providing a News tab, and a widget for headlines—see [`backend/docs/news-integration.md`](backend/docs/news-integration.md) for details.
+
+#### Justification — Security with Nginx (Module of Choice, 1 pt)
+
+This module implements security, routing, and production readiness using **Nginx** as a reverse proxy. Nginx is responsible for centralizing SSL/TLS termination, routing traffic securely to backend and Grafana services, and protecting static SPA frontend assets. It supports domain-based routing (frontend, backend, MinIO, monitoring), differentiates between HTTP and WebSocket upgrades, and enforces security headers.
+
+Documented in [`nginx/nginx.conf`](nginx/nginx.conf), this module follows best practices, such as generating self-signed SSL certificates, redirecting HTTP to HTTPS, and separating static and API traffic. In production, the Nginx configuration simplifies the deployment footprint, ensures API/WebSocket traffic is securely proxied, and improves resilience against attacks by restricting exposure and handling forwarding rules. This modular approach makes the application infrastructure more robust, maintainable, and aligned with industry deployment standards.
 
 ---
 
@@ -461,13 +615,14 @@ It still demonstrates technical skill through MicroProfile REST Client usage, tr
 
 ### erramos (Erick Ramos) — Tech Lead / Fullstack
 
-- **Modules:** Chat/profile/friends (Major), user management (Major), frontend framework (Minor), backend framework (Minor), design system (Minor), file upload (Minor), i18n (Minor), OAuth (Minor).
+- **Modules:** Chat/profile/friends (Major), user management (Major), frontend framework (Minor), backend framework (Minor), design system (Minor), file upload (Minor), advanced search (Minor), i18n (Minor), OAuth (Minor).
 - **Main features:**
-  - Design system: `design-system/` folder, primitives (Avatar, Button, Modal…), Storybook, `ThemeShowcase`, frontend visual refactor.
+  - Design system: `design-system/` folder, primitives (Avatar, Button, Modal, Select…), Storybook, `ThemeShowcase`, frontend visual refactor.
   - Authentication (frontend): initial mock, backend integration, `PrivateRoute`, Vitest tests.
   - Profile: `ProfileViewer`, `EditProfileForm`, avatar crop, media grid, follower modals.
   - Media upload: `media` + MinIO architecture, client-side compression/resize, video jobs (`ProcessVideoHandler`), loading skeleton.
   - Friendships (backend + frontend): REST endpoints, friendship button, `/friends` page with tabs, paginated search, documentation in `friendship_system.md`.
+  - Friend discovery (`feature/friend-discovery`): `UserDiscoveryService`, `GET /user/search`, Flyway search indexes (`pg_trgm`/`unaccent`), Discover tab UI, mutual-friends sorting, and `Select` primitive for filters.
   - i18n: i18next setup, translations for auth, home, settings, legal, profile, and `i18n_guide.md`.
   - Legal pages: Terms of Service and Privacy Policy with Accordion and section hooks.
   - Google OAuth on frontend; Docker Compose with MinIO; CI adjustments (ffmpeg, Playwright).
