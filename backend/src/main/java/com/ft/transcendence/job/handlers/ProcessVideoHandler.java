@@ -93,7 +93,7 @@ public class ProcessVideoHandler {
         ProcessBuilder pb = new ProcessBuilder(
                 "ffmpeg", "-y",
                 "-i", input.getAbsolutePath(),
-                "-vf", "scale=min(1280\\,iw):min(720\\,ih):force_original_aspect_ratio=decrease",
+                "-vf", "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2",
                 "-crf", "28",
                 "-preset", "fast",
                 "-c:v", "libx264",
