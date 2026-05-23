@@ -1,4 +1,4 @@
---V15__add_search_indexes.sql
+--V20__add_search_indexes.sql
 
 -- Habilita trigramas no PostgreSQL
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
