@@ -79,6 +79,13 @@ public class FriendshipService {
         return requests;
     }
 
+    public boolean hasPendingRequests(Long currentUserId) {
+
+        return Friendship.find("friendId = ?1 AND status = 'PENDING'", currentUserId)
+                .firstResultOptional()
+                .isPresent();
+    }
+
     public PageResponse<FriendshipDTO> getFriendsList(Long currentUserId, int pageIndex, int pageSize, String searchQuery) {
 
         if (pageIndex < 0 || pageSize <= 0)
