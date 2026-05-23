@@ -1,8 +1,12 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { toast } from "react-toastify";
 import { likePost, unlikePost, deletePost } from "@/features/feed/feedService";
 import { useTranslation } from "react-i18next";
+import {
+  PROFILE_AUTHOR_NAME_UPDATED,
+  mapItemsWithAuthorName,
+} from "@/shared/profile/profileAuthorSync";
 
 
 export function usePostList(fetchFn) {
@@ -17,7 +21,7 @@ export function usePostList(fetchFn) {
 
   const loadInitial = useCallback(async () => {
     const data = await fetchFn(0, 9);
-    setPosts(data.items);
+    setPosts(data.items ?? []);
     setPage(data.page + 1);
     setHasMore(data.hasMore);
   }, [fetchFn]);
@@ -32,7 +36,7 @@ export function usePostList(fetchFn) {
     try {
 
       const data = await fetchFn(page, 10);
-      setPosts(prev => [...prev, ...data.items]);
+      setPosts((prev) => [...(prev ?? []), ...(data.items ?? [])]);
       setPage(data.page + 1);
       setHasMore(data.hasMore);
     } catch {
@@ -46,6 +50,20 @@ export function usePostList(fetchFn) {
     enabled: hasMore && !isLoadingMore,
     rootMargin: "200px",
   });
+
+  useEffect(() => {
+    const onAuthorNameUpdated = (event) => {
+      const { username, name } = event.detail ?? {};
+      if (!username || !name) return;
+
+      setPosts((prev) => mapItemsWithAuthorName(prev, username, name));
+    };
+
+    window.addEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+    return () => {
+      window.removeEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+    };
+  }, []);
 
   async function handleLike(postId) {
     const liked = posts.find(p => p.id === postId).likedByMe;

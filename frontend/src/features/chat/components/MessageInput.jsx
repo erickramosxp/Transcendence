@@ -122,14 +122,14 @@ export default function MessageInput({
 				</div>
 			)}
 			<form onSubmit={handleSendMessage} className="ds-chat-input-form">
-				<Button
+				{/* <Button
 					variant="outline"
 					size="icon"
 					type="button"
 					className="ds-chat-input-icon-btn"
 				>
 					<Paperclip className="ds-chat-icon-input" />
-				</Button>
+				</Button> */}
 
 				<div className="relative min-w-0 flex-1">
 					<Input

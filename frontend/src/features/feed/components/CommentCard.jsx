@@ -24,6 +24,10 @@ import {
     Loading,
     LikeButton
 } from "@/design-system";
+import {
+    PROFILE_AUTHOR_NAME_UPDATED,
+    mapItemsWithAuthorName,
+} from "@/shared/profile/profileAuthorSync";
 
 export default function CommentCard({
     postId,
@@ -84,6 +88,20 @@ export default function CommentCard({
 
         requestComments();
     }, [postId]);
+
+    useEffect(() => {
+        const onAuthorNameUpdated = (event) => {
+            const { username, name } = event.detail ?? {};
+            if (!username || !name) return;
+
+            setComments((prev) => mapItemsWithAuthorName(prev, username, name));
+        };
+
+        window.addEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        return () => {
+            window.removeEventListener(PROFILE_AUTHOR_NAME_UPDATED, onAuthorNameUpdated);
+        };
+    }, []);
 
     useEffect(() => {
         if (!inModal || highlightCommentId == null || loadingComments) return;
