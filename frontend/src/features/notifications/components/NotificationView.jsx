@@ -87,10 +87,6 @@ export function NotificationView() {
 			<div className="max-w-4xl mx-auto px-3 sm:px-4 pb-10 pt-5 sm:pt-10">
 				<header className="mb-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
 					<div className="flex min-w-0 items-start gap-3">
-						{/* <Bell
-							className="mt-0.5 size-6 shrink-0 text-primary"
-							aria-hidden
-						/> */}
 						<div className="min-w-0">
 							<h1 className="ds-notification-title">
 								{t("title")}

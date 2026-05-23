@@ -38,25 +38,26 @@ const FriendCard = ({ user, friendshipState }) => {
   return (
     <Card>
       <CardContent className='flex items-center justify-between p-4 [&:last-child]:pb-4'>
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-3 flex-1 min-w-0'>
           <AvatarWithStatus
             name={user?.name}
             username={user?.username}
             src={user?.avatarUrl}
             status={user?.isOnline ? 'online' : 'offline'}
           />
-          <div>
-            <p className='font-medium'>{user?.name}</p>
-            <p className='text-muted-foreground'>@{user?.username}</p>
+          <div className='flex-1 min-w-0'>
+            <p className='font-medium truncate'>{user?.name}</p>
+            <p className='text-muted-foreground truncate'>@{user?.username}</p>
           </div>
         </div>
-        <div>
+        <div className='shrink-0'>
           <FriendshipButton
             friendshipId={user?.friendshipId}
             targetUserId={user?.friendId}
             initialStatus={friendshipState}
             onSuccess={handleSuccess}
             variant='inline'
+            className='shrink-0'
           />
         </div>
       </CardContent>

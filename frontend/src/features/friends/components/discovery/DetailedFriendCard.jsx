@@ -31,6 +31,7 @@ const DetailedFriendCard = ({ user }) => {
             p-4
             flex flex-col gap-3
             lg:flex-row lg:items-center lg:gap-6
+            px-2
     ">
 
                 {/* Perfil */}
