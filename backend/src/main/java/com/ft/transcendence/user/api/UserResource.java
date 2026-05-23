@@ -10,6 +10,9 @@ import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -180,11 +183,13 @@ public class UserResource {
     @GET
     @Path("/search")
     public PageResponse<UserSearchDTO> advancedSearch(
-            @QueryParam("page") @DefaultValue("0") int page,
-            @QueryParam("size") @DefaultValue("10") int size,
+            @QueryParam("page") @DefaultValue("0") @Min(0) int page,
+            @QueryParam("size") @DefaultValue("6") @Min(1) @Max(100) int size,
             @QueryParam("q") String query,
             @QueryParam("location") String location,
-            @QueryParam("language") String language,
+            @QueryParam("language")
+            @Pattern(regexp = "^(pt-BR|en-US|es-ES|all)$", message = "Invalid language")
+            String language,
             @QueryParam("sortBy") @DefaultValue("createdAt") String sortBy,
             @QueryParam("sortDir") @DefaultValue("desc") String sortDir
     ) {
