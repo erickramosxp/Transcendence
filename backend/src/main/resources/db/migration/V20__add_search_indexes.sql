@@ -13,8 +13,7 @@ CREATE OR REPLACE FUNCTION f_unaccent(text)
     IMMUTABLE
     STRICT
 AS $$
-    -- Uso do dicionário padrão de unaccent
-    SELECT unaccent('unaccent'::regdictionary, $1);
+    SELECT public.unaccent('unaccent'::regdictionary, $1);
 $$;
 
 -- Otimizador para busca de texto parcial
