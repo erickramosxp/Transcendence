@@ -161,7 +161,7 @@ volumes:
     driver_opts:
         type: none
         o: bind
-        device: /home/deploy/postgres_data
+        device: ${POSTGRES_DIR}
   prometheus_data:
   grafana_data:
   alertmanager_data:

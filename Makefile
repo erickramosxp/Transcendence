@@ -1,6 +1,9 @@
 COMPOSE     := docker compose
 COMPOSE_DEV := docker compose -f docker-compose_dev.yml
 
+-include .env
+export
+
 # --- Grupos de serviços ---
 DEV_SERVICES         := database_dev minio-dev backend_dev frontend_dev
 DEV_PROXY_SERVICES   := database_dev minio-dev backend_dev nginx_dev
@@ -91,6 +94,7 @@ env:
 #  BUILD + UP
 # ============================================================
 build:
+	@mkdir -p $(POSTGRES_DIR)
 	$(COMPOSE) up --build -d
 
 build_dev:
@@ -103,6 +107,7 @@ build_dev_proxy:
 #  UP
 # ============================================================
 up:
+	@mkdir -p $(POSTGRES_DIR)
 	$(COMPOSE) up -d
 
 up_dev:
@@ -121,6 +126,7 @@ up_metrics:
 
 # Sobe prod completo: app + monitoramento de uma vez
 up_full:
+	mkdir -p $(POSTGRES_DIR)
 	$(COMPOSE) up -d
 
 # Sobe só monitoramento prod (assume que a app já está no ar)
