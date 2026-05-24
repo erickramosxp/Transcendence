@@ -3,7 +3,7 @@ name: transcendence-prod
 services:
 
   database:
-    image: postgres:alpine
+    image: postgres:16-alpine3.23
     container_name: postgres_db
     restart: unless-stopped
     ports:
