@@ -13,7 +13,7 @@
     },
     "socialLogin": {
         "success": "Redirecionado para página inicial",
-        "error": "Ocorreu um erro inesperado",
+        "error": "Ocorreu um erro inesperado. Tente novamente mais tarde.",
         "googleError": "Falha no login com Google"
     }
 }

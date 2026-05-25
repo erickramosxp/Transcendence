@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { getUserPreferences } from "@/shared/api/preferencesService";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/design-system/hooks/useTheme";
+import { Loading } from "@/design-system";
 import i18n from "@/i18n";
 const AuthContext = createContext(null);
 
@@ -18,22 +19,57 @@ export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [socialLoginLoading, setSocialLoginLoading] = useState(false);
     const { changeLanguage } = useLanguage();
     const { changeTheme } = useTheme();
     let navigate = useNavigate();
     const { t } = useTranslation('authProvider');
 
+    const handleSocialLoginRedirect = async (code) => {
+
+        try {
+            const resp = await authService.socialLogin({ code });
+            const { token, user } = resp.data;
+            localStorage.setItem('@trascendence:token', token);
+            localStorage.setItem('@trascendence:user', JSON.stringify(user));
+            setUser(user);
+            setIsAuthenticated(true);
+            try {
+                const userPreferences = await getUserPreferences();
+                await changeLanguage(userPreferences.language);
+                await changeTheme(userPreferences.theme);
+            } catch (e) {
+                console.log(e);
+            }
+            setTimeout(() => {
+                toast.success(i18n.t('authProvider:socialLogin.success'));
+                navigate('/feed');
+                setSocialLoginLoading(false);
+            }, 1200);
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || i18n.t('authProvider:socialLogin.error');
+            toast.error(errorMsg);
+            setSocialLoginLoading(false);
+        }
+    };
+
 
     useEffect(() => {
-
         const storedUser = localStorage.getItem('@trascendence:user');
         const storedToken = localStorage.getItem('@trascendence:token');
-
         if (storedUser && storedToken) {
             setIsAuthenticated(true);
             setUser(JSON.parse(storedUser));
         }
         setLoading(false);
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            setSocialLoginLoading(true);
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            handleSocialLoginRedirect(code);
+        }
     }, []);
 
     const login = async (credentials) => {
@@ -103,11 +139,11 @@ export function AuthProvider({ children }) {
 
             let errorMsg;
             if (status === 400 && backendMsg?.includes('Email already'))
-              errorMsg = i18n.t('auth:errors.emailInUse');
+                errorMsg = i18n.t('auth:errors.emailInUse');
             else if (status === 400 && backendMsg?.includes('Username already'))
-              errorMsg = i18n.t('auth:errors.usernameInUse');
+                errorMsg = i18n.t('auth:errors.usernameInUse');
             else
-              errorMsg = backendMsg || i18n.t('auth:errors.error');
+                errorMsg = backendMsg || i18n.t('auth:errors.error');
 
             toast.error(errorMsg);
         }
@@ -124,48 +160,21 @@ export function AuthProvider({ children }) {
     const socialLogin = clientId ? (
         useGoogleLogin({
             flow: "auth-code",
-            onSuccess: async (googleCodeResponse) => {
-
-                try {
-                    const resp = await authService.socialLogin({ code: googleCodeResponse.code });
-
-                    const { token, user } = resp.data;
-
-                    localStorage.setItem('@trascendence:token', token);
-                    localStorage.setItem('@trascendence:user', JSON.stringify(user));
-
-                    setUser(user);
-                    setIsAuthenticated(true);
-
-                    try {
-                        const userPreferences = await getUserPreferences();
-                        await changeLanguage(userPreferences.language);
-                        await changeTheme(userPreferences.theme);
-
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                    setTimeout(() => {
-                        toast.success(i18n.t('authProvider:socialLogin.success'));
-                        navigate('/feed');
-                    }, 2000);
-
-                } catch (err) {
-
-                    const errorMsg = err.response?.data?.message || i18n.t('authProvider:socialLogin.error');
-                    console.log(errorMsg);
-                    toast.error(errorMsg);
-                }
-            },
+            ux_mode: "redirect",
+            redirect_uri: window.location.origin,
             onError: () => toast.error(i18n.t('authProvider:socialLogin.googleError')),
         })
     ) : (
         null
-    )
+    );
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, loading, login, register, socialLogin, logout }}>
+            {socialLoginLoading && (
+                <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-black/10 backdrop-blur-xs transition-all duration-300">
+                    <Loading full={true} />
+                </div>
+            )}
             {children}
         </AuthContext.Provider>
     );

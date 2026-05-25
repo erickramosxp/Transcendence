@@ -13,7 +13,7 @@
     },
     "socialLogin": {
         "success": "Redirected to home page",
-        "error": "An unexpected error occurred",
+        "error": "An unexpected error occurred. Please try again later.",
         "googleError": "Google login failed"
     }
 }
