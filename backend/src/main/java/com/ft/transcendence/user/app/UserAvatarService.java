@@ -1,9 +1,9 @@
 package com.ft.transcendence.user.app;
 
-import com.ft.transcendence.common.storage.StorageService;
 import com.ft.transcendence.media.app.MediaService;
 import com.ft.transcendence.media.domain.Media;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
 public class UserAvatarService {
 
     @Inject
-    StorageService storageService;
-
-    @Inject
     MediaService mediaService;
 
     public Map<Long, String> getAvatarUrls(List<User> users) {
@@ -24,10 +21,10 @@ public class UserAvatarService {
             return Collections.emptyMap();
         }
 
-        // 1. Extrai IDs únicos
+        // Extrai IDs únicos
         Set<Long> userIds = users.stream().map(u -> u.id).collect(Collectors.toSet());
 
-        // 2. Busca todas as mídias da nova tabela em lote
+        // Busca todas as mídias da nova tabela em lote
         List<Media> medias = Media.find("modelType = 'USER_PROFILE' and modelId IN ?1", userIds).list();
         Map<Long, Media> mediaByUserId = medias.stream()
                 .collect(Collectors.toMap(m -> m.modelId, m -> m, (m1, m2) -> m1));
@@ -35,7 +32,7 @@ public class UserAvatarService {
         Map<Long, String> avatarMap = new HashMap<>();
         Map<String, String> urlCache = new HashMap<>();
 
-        // 3. Associa cada usuário à sua URL correta
+        // Associa cada usuário à sua URL correta
         for (User user : users) {
             Media media = mediaByUserId.get(user.id);
             String url = null;
@@ -83,6 +80,7 @@ public class UserAvatarService {
         return null;
     }
 
+    @CacheResult(cacheName = "user-avatar-url")
     public String getUserAvatarUrl(Long userId) {
 
         if (userId == null) return null;

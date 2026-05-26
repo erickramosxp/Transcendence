@@ -4,6 +4,8 @@ import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import io.minio.messages.Item;
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheResult;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -113,6 +115,7 @@ public class MinioStorageService implements StorageService {
     }
 
     @Override
+    @CacheInvalidate(cacheName = "minio-urls-cache")
     public void delete(String path) {
         try {
             minioClient.removeObject(
@@ -158,6 +161,7 @@ public class MinioStorageService implements StorageService {
     }
 
     @Override
+    @CacheResult(cacheName = "minio-urls-cache")
     public String generateUrl(String path) {
         // Dev: bucket público, URL direta sem assinatura.
         // Prod: bucket privado, usa presigned URL com HTTPS.

@@ -21,6 +21,8 @@ import com.ft.transcendence.post.domain.Post;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.domain.User;
 import com.ft.transcendence.user.dto.*;
+import io.quarkus.cache.Cache;
+import io.quarkus.cache.CacheName;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -54,6 +56,10 @@ public class UserService {
 
     @Inject
     UserAvatarService userAvatarService;
+
+    @Inject
+    @CacheName("user-avatar-url")
+    Cache avatarCache;
 
     public UserPageResponse getUserPage(User user, Long currentUserId) {
         Long followers = Follow.count("followee.id = ?1", user.id);
@@ -443,6 +449,7 @@ public class UserService {
             newMedia.persist();
         }
         String avatarUrl = storageService.generateUrl(newPath);
+        avatarCache.invalidate(userId).await().indefinitely();
         return Response.ok(new UpdateAvatarResponse(avatarUrl)).build();
     }
 
@@ -482,6 +489,7 @@ public class UserService {
                 Log.error("Error creating delete media job for avatar", e);
             }
         }
+        avatarCache.invalidate(currentUserId).await().indefinitely();
     }
 
     public UserAvatarResponse getAvatar(long userId) {

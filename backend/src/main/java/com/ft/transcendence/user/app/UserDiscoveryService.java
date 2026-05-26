@@ -9,6 +9,7 @@ import com.ft.transcendence.user.dto.UserSearchDTO;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserDiscoveryService {
+
+    @Inject
+    UserAvatarService userAvatarService;
 
     public PageResponse<UserSearchDTO> searchUsers(Long currentUserId, int page, int size, String searchQuery, String location, String language, String sortBy, String sortDir) {
 
@@ -36,12 +40,13 @@ public class UserDiscoveryService {
         }
 
         List<Long> pageUserIds = users.stream().map(u -> u.id).toList();
+        Map<Long, String> avatarMap = userAvatarService.getAvatarUrlsByIds(pageUserIds);
         Map<Long, String> languageMap = fetchLanguageMap(pageUserIds);
         Map<Long, Long> mutualFriendsMap = fetchMutualFriendsMap(currentUserId, pageUserIds);
         List<Friendship> relations = fetchFriendshipRelations(currentUserId, pageUserIds);
 
         List<UserSearchDTO> dtoList = users.stream()
-                .map(user -> mapToDTO(user, currentUserId, languageMap, mutualFriendsMap, relations))
+                .map(user -> mapToDTO(user, currentUserId, languageMap, mutualFriendsMap, relations, avatarMap))
                 .toList();
 
         return new PageResponse<>(dtoList, page, size, hasMore);
@@ -133,7 +138,7 @@ public class UserDiscoveryService {
     }
 
 
-    private UserSearchDTO mapToDTO(User user, Long currentUserId, Map<Long, String> languageMap, Map<Long, Long> mutualFriendsMap, List<Friendship> relations) {
+    private UserSearchDTO mapToDTO(User user, Long currentUserId, Map<Long, String> languageMap, Map<Long, Long> mutualFriendsMap, List<Friendship> relations, Map<Long, String> avatarMap) {
         String status = "NONE";
         Long currentFriendshipId = null;
 
@@ -155,7 +160,7 @@ public class UserDiscoveryService {
         String userLang = languageMap.getOrDefault(user.id, null);
 
         return new UserSearchDTO(
-                user.id, user.name, user.username, user.avatarUrl,
+                user.id, user.name, user.username, avatarMap.getOrDefault(user.id, null),
                 user.biography, user.location, userLang,
                 status, currentFriendshipId, mutualCount
         );

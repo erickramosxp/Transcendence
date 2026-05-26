@@ -8,6 +8,9 @@ import com.ft.transcendence.notification.dto.NotificationContent;
 import com.ft.transcendence.notification.dto.NotificationResponse;
 import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.cache.Cache;
+import io.quarkus.cache.CacheName;
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -23,6 +26,10 @@ public class NotificationService {
 
     @Inject
     UserAvatarService userAvatarService;
+
+    @Inject
+    @CacheName("unread-notifications-cache")
+    Cache notificationCache;
 
     @Transactional
     public Notification create(Long receiverId, Long senderId, NotificationType type, NotificationContent content, Long targetId) {
@@ -82,6 +89,7 @@ public class NotificationService {
         return new PageResponse<>(items, pageIndex, pageSize, hasMore);
     }
 
+    @CacheResult(cacheName = "unread-notifications-cache")
     public long countUnread(Long userId) {
         return Notification.count("receiver.id = ?1 AND isRead = false", userId);
     }
@@ -94,10 +102,12 @@ public class NotificationService {
             throw new ForbiddenException("Access denied");
 
         n.isRead = true;
+        notificationCache.invalidate(userId).await().indefinitely();
     }
 
     @Transactional
     public void markAllAsRead(Long userId) {
         Notification.update("isRead = true WHERE receiver.id = ?1 AND isRead = false", userId);
+        notificationCache.invalidate(userId).await().indefinitely();
     }
 }
