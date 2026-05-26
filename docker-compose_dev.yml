@@ -50,7 +50,7 @@ services:
     environment:
       VITE_BACKEND_URL: http://localhost:8080
       VITE_EDITORIAL_USERNAME: ${EDITORIAL_USERNAME:-videanews}
-      GOOGLE_WEB_CLIENT_ID: ${GOOGLE_WEB_CLIENT_ID}
+      VITE_GOOGLE_WEB_CLIENT_ID: ${GOOGLE_WEB_CLIENT_ID}
     ports:
       - "5173:5173"
     volumes:
