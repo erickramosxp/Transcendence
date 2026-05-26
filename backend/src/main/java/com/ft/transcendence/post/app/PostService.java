@@ -22,6 +22,8 @@ import com.ft.transcendence.post.dto.FeedResponse;
 import com.ft.transcendence.post.dto.PostResponse;
 import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheResult;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -67,6 +69,7 @@ public class PostService {
     EditorialConfig editorialConfig;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "post-feed-cache")
     public Post createEditorialTextPost(long userId, String text, String externalImageUrl) {
         if (text == null || text.isBlank()) {
             throw new BadRequestException("Posts must contain text");
@@ -90,6 +93,7 @@ public class PostService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "post-feed-cache")
     public PostResponse create(Long userId, CreatePostForm req) throws IOException {
 
         validatePostReq(req);
@@ -134,6 +138,8 @@ public class PostService {
         return PostResponse.of(post, likedByMe, avatarUrl, mediaResponse);
     }
 
+
+    @CacheResult(cacheName = "post-feed-cache")
     public FeedResponse feed(int page, int size, long userId, String scope) {
         if (page < 0 || size <= 0)
             throw new BadRequestException("Invalid page or size");
@@ -205,6 +211,7 @@ public class PostService {
 
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "post-feed-cache")
     public void deletePost(Long userId, Long postId) {
 
         Post post = Post.findById(postId, LockModeType.PESSIMISTIC_WRITE);

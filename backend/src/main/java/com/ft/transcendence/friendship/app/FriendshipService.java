@@ -8,6 +8,8 @@ import com.ft.transcendence.friendship.dto.FriendshipDTO;
 import com.ft.transcendence.notification.app.NotificationDispatcher;
 import com.ft.transcendence.user.app.UserAvatarService;
 import com.ft.transcendence.user.domain.User;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheResult;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -92,6 +94,8 @@ public class FriendshipService {
                 .isPresent();
     }
 
+
+    @CacheResult(cacheName = "friends-list-cache")
     public PageResponse<FriendshipDTO> getFriendsList(Long currentUserId, int pageIndex, int pageSize, String searchQuery) {
 
         if (pageIndex < 0 || pageSize <= 0)
@@ -131,6 +135,7 @@ public class FriendshipService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "friends-list-cache")
     public void acceptRequest(Long friendshipId, Long currentUserId) {
 
         Friendship request = getAndValidatePendingRequest(friendshipId, currentUserId);
@@ -160,6 +165,7 @@ public class FriendshipService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "friends-list-cache")
     public void removeFriendship(Long currentUserId, Long friendshipId) {
 
         Friendship friendship = Friendship.<Friendship>findByIdOptional(friendshipId)
@@ -180,23 +186,6 @@ public class FriendshipService {
         metrics.recordFriendshipRemoved();
         User actor = User.findById(currentUserId);
         notificationDispatcher.onFriendBroken(actor, otherUserId);
-    }
-
-    public List<FriendshipDTO> searchFriends(Long myId, String query) {
-
-        String filter = "%" + query.toLowerCase() + "%";
-
-        List<FriendshipDTO> friends = Friendship.find(
-                        "SELECT f.id, u.id, u.name, u.username, u.avatarUrl " +
-                                "FROM Friendship f JOIN User u ON f.friendId = u.id " +
-                                "WHERE f.userId = ?1 AND f.status = 'ACCEPTED' " +
-                                "AND (LOWER(u.name) LIKE ?2 OR LOWER(u.username) LIKE ?2)",
-                        myId, filter
-                )
-                .project(FriendshipDTO.class)
-                .list();
-
-        return friends;
     }
 
     public PageResponse<FriendshipDTO> getOnlineFriends(Long currentUserId) {
