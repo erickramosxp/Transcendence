@@ -31,20 +31,22 @@ function CreateTextPost({ onAddPost, onClose }) {
           <div className="relative min-w-0 flex-1 space-y-3 sm:space-y-4">
             <div ref={anchorRef}>
 
-            <Textarea
-              maxLength={maxTextLength}
-              value={text}
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              placeholder={t('createPost.text.placeholder')}
-              className="min-h-[80px] resize-none sm:min-h-[100px]"
+              <Textarea
+                id="text-post-content"
+                name="content"
+                maxLength={maxTextLength}
+                value={text}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                placeholder={t('createPost.text.placeholder')}
+                className="min-h-[80px] resize-none sm:min-h-[100px]"
               />
-              </div>
+            </div>
 
             {linkPreview && (
               <div className="mt-2 rounded-lg border border-border bg-muted p-3">

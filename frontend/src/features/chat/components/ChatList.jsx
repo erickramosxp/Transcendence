@@ -107,6 +107,8 @@ export default function ChatList({
 			<div className="ds-chat-list-search">
 				<Input
 					type="search"
+					id="chat-search"
+					name="chatSearch"
 					aria-label={t("list.searchAriaLabel")}
 					icon={<Search className="size-4 text-muted-foreground" />}
 					placeholder={t("list.searchPlaceholder")}

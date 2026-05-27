@@ -37,6 +37,8 @@ function CreateVideoPost({ onAddPost, onClose }) {
 				<div className="flex gap-3 sm:gap-4">
 					<div className="flex-1 space-y-3 sm:space-y-4 min-w-0 relative">
 						<Textarea
+							id="video-post-content"
+							name="content"
 							maxLength={maxTextLength}
 							value={text}
 							onChange={handleChange}

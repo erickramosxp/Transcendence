@@ -133,6 +133,8 @@ export default function MessageInput({
 
 				<div className="relative min-w-0 flex-1">
 					<Input
+						id="chat-message-input"
+						name="message"
 						value={text}
 						maxLength={LIMITS.chatMessageMax}
 						onChange={(e) => onTextChange(e.target.value)}
