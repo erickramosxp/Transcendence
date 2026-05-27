@@ -52,6 +52,10 @@ services:
       GNEWS_COUNTRY: ${GNEWS_COUNTRY:-br}
       GNEWS_LANG: ${GNEWS_LANG:-pt}
       GNEWS_MAX_PER_RUN: ${GNEWS_MAX_PER_RUN:-10}
+    volumes:
+      # Chaves JWT — montadas em runtime, não embutidas na imagem.
+      # WORKDIR do container é /deployments, então ./keys resolve corretamente.
+      - ./backend/keys:/deployments/keys:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s
