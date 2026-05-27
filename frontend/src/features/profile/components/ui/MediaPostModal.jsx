@@ -21,7 +21,7 @@ export function MediaPostModal({
 			onClose={onClose}
 			title={t("mediaGrid.postModalTitle")}
 			size="xl"
-			scrollMode="content"
+			scrollMode="dialog"
 		>
 			{loading ? (
 				<div className="flex justify-center py-12">
