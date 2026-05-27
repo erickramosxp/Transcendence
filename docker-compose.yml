@@ -19,6 +19,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   backend:
     build:
       context: ./backend
@@ -52,6 +53,10 @@ services:
       GNEWS_COUNTRY: ${GNEWS_COUNTRY:-br}
       GNEWS_LANG: ${GNEWS_LANG:-pt}
       GNEWS_MAX_PER_RUN: ${GNEWS_MAX_PER_RUN:-10}
+      JWT_PUBLIC_KEY_LOCATION: file:/deployments/keys/publicKey.pem
+      JWT_PRIVATE_KEY_LOCATION: file:/deployments/keys/privateKey.pem
+    volumes:
+      - /home/deploy/keys:/deployments/keys:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/q/health/live >/dev/null || exit 1"]
       interval: 10s
