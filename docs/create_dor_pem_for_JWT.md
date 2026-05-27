@@ -1,0 +1,11 @@
+⚠️ Ações antes de mergear / deployar
+Rotacionar o par de chaves — a chave antiga continua no histórico do git, deve ser considerada comprometida:
+mkdir -p backend/keys
+openssl genpkey -algorithm RSA -out backend/keys/privateKey.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -in backend/keys/privateKey.pem -pubout -out backend/keys/publicKey.pem
+
+Em produção, colocar os dois .pem em ./backend/keys/ no host antes do docker compose up.
+
+Considerar purgar a chave antiga do histórico (git filter-repo ou BFG) + force-push.
+
+Todos os JWTs existentes serão invalidados — usuários terão que re-autenticar.

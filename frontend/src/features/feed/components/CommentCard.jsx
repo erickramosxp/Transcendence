@@ -220,6 +220,36 @@ export default function CommentCard({
         </div>
     );
 
+    const commentForm = (
+        <form onSubmit={handleSubmit} className="space-y-2">
+            <div className="flex items-end justify-end gap-2">
+                <Textarea
+                    id="comment-content"
+                    name="comment"
+                    maxLength={LIMITS.commentText}
+                    value={commentText}
+                    onChange={(e) => {
+                        const next = e.target.value;
+                        if (next.length > LIMITS.commentText) return;
+                        setCommentText(next);
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSubmit(e);
+                        }
+                    }}
+                    placeholder={t('comments.placeholder')}
+                    className="min-h-[40px] flex-1 resize-none"
+                />
+
+                <Button type="submit" variant="primary" size="sm" className="shrink-0">
+                    <Send className="h-4 w-4" />
+                </Button>
+            </div>
+        </form>
+    );
+
     return (
         <div className="space-y-3 pt-2">
             <Separator />
@@ -230,40 +260,20 @@ export default function CommentCard({
                     {t('comments.empty')}
                 </div>
             ) : inModal ? (
-                <div className="max-h-[min(20rem,50vh)] overflow-x-hidden overflow-y-auto px-1.5 py-1">
+                <div className="max-h-[min(20rem,45vh)] overflow-x-hidden overflow-y-auto px-1.5 py-1">
                     {commentList}
                 </div>
             ) : (
                 <Scroll className="max-h-[20rem]">{commentList}</Scroll>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-2">
-                <div className="flex items-center justify-end gap-2">
-                    <Textarea
-                        id="comment-content"
-                        name="comment"
-                        maxLength={LIMITS.commentText}
-                        value={commentText}
-                        onChange={(e) => {
-                            const next = e.target.value;
-                            if (next.length > LIMITS.commentText) return;
-                            setCommentText(next);
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSubmit(e);
-                            }
-                        }}
-                        placeholder={t('comments.placeholder')}
-                        className="min-h-[40px] resize-none"
-                    />
-
-                    <Button type="submit" variant="primary" size="sm">
-                        <Send className="h-4 w-4" />
-                    </Button>
+            {inModal ? (
+                <div className="sticky bottom-0 z-10 shrink-0 border-t border-border bg-card pt-3 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+                    {commentForm}
                 </div>
-            </form>
+            ) : (
+                !loadingComments && commentForm
+            )}
         </div>
     );
 }
