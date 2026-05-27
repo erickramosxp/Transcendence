@@ -168,9 +168,9 @@ export default function CommentCard({
                     className={cn(
                         "rounded-xl bg-muted p-3",
                         inModal &&
-                            highlightCommentId != null &&
-                            Number(comment.id) === Number(highlightCommentId) &&
-                            "ring-2 ring-inset ring-primary/60",
+                        highlightCommentId != null &&
+                        Number(comment.id) === Number(highlightCommentId) &&
+                        "ring-2 ring-inset ring-primary/60",
                     )}
                 >
                     <div className="flex gap-3">
@@ -207,7 +207,7 @@ export default function CommentCard({
                             </div>
 
                             <div className="mt-3 flex items-center gap-6 text-muted-foreground">
-                                <LikeButton 
+                                <LikeButton
                                     onClick={() => handleToggleLike(comment.id)}
                                     liked={comment.likedByMe}
                                     count={comment.likeCount}
@@ -240,6 +240,8 @@ export default function CommentCard({
             <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="flex items-center justify-end gap-2">
                     <Textarea
+                        id="comment-content"
+                        name="comment"
                         maxLength={LIMITS.commentText}
                         value={commentText}
                         onChange={(e) => {

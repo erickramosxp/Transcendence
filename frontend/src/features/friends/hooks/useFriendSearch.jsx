@@ -30,7 +30,6 @@ export const useFriendSearch = () => {
 
         try {
             const resp = await searchFriends(0, PAGE_SIZE, searchTerm, locationFilter, languageFilter, sortBy, sortDir);
-            console.log(resp);
             setUsersList(resp.items);
             setHasMore(resp.hasMore);
         } catch (error) {

@@ -44,6 +44,8 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 				<div className="flex gap-3 sm:gap-4">
 					<div className="relative min-w-0 flex-1 space-y-3 sm:space-y-4">
 						<Textarea
+							id="image-post-content"
+							name="content"
 							maxLength={maxTextLength}
 							value={text}
 							onChange={handleChange}
@@ -135,20 +137,20 @@ function CreatePhotoPost({ onAddPost, onClose }) {
 					</div>
 				</div>
 				{(uploadPercent !== null) &&
-					<ProgressBar value={uploadPercent}/>
+					<ProgressBar value={uploadPercent} />
 				}
 			</CardContent>
 			{file && (uploadPercent == null) &&
-			<CardFooter className='px-2.5'>
-				<PostPreview 
-					content={text}
-					file={file}
-					user={{
-						...user,
-						avatarUrl
-					}}
-				/>
-			</CardFooter>
+				<CardFooter className='px-2.5'>
+					<PostPreview
+						content={text}
+						file={file}
+						user={{
+							...user,
+							avatarUrl
+						}}
+					/>
+				</CardFooter>
 			}
 		</Card>
 	);
