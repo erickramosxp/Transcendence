@@ -37,10 +37,10 @@ export function Modal({
 
   const contentClass =
     scrollMode === "content"
-      ? "flex-1 min-h-0 overflow-y-auto px-2 pb-24 sm:pb-6"
+      ? "flex-1 min-h-0 overflow-y-auto px-2 pb-4 sm:px-4 sm:pb-6"
       : scrollMode === "none"
       ? "flex-1 p-4 sm:p-6 overflow-visible"
-      : "flex-1 p-4 sm:p-6";
+      : "flex-1 p-4 pb-6 sm:p-6";
 
   const dialogClass =
     scrollMode === "dialog"
@@ -49,7 +49,7 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-1 backdrop-blur-sm sm:p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-1 backdrop-blur-sm sm:p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose?.();
       }}
