@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 
 import { authService } from "@/features/auth/authService";
 import { toast } from "react-toastify";
@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
             }
             setTimeout(() => {
                 toast.success(i18n.t('authProvider:socialLogin.success'));
-                navigate('/feed');
+                navigate('/feed',{ replace: true });
                 setSocialLoginLoading(false);
             }, 1200);
         } catch (err) {
@@ -67,7 +67,6 @@ export function AuthProvider({ children }) {
         if (code) {
             setSocialLoginLoading(true);
             window.history.replaceState({}, document.title, window.location.pathname);
-
             handleSocialLoginRedirect(code);
         }
     }, []);

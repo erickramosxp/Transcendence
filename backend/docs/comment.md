@@ -62,5 +62,4 @@ Base path: `/comment`
 5. **Notificações Sociais**:
    - A criação de um comentário em um post dispara automaticamente uma notificação do tipo `COMMENT_POST` para o autor do post, exceto se o autor do comentário for o próprio dono do post (auto-comentário).
 6. **Controle de Acesso na Deleção**:
-   - Apenas o autor do comentário pode deletá-lo.
-   - *Nota de Alerta*: A verificação de autoridade contém uma lógica de restrição `if (comment.user.id.equals(userId)) throw new ForbiddenException();` que precisa ser invertida para `!comment.user.id.equals(userId)` para assegurar que apenas terceiros sejam bloqueados.
+   - Apenas o autor do comentário pode deletá-lo (validado através de `!comment.user.id.equals(userId)` para assegurar que apenas terceiros sejam bloqueados).

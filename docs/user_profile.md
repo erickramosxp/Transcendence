@@ -24,7 +24,7 @@ sequenceDiagram
     BE->>BE: Atualiza user.avatarUrl e cria registro Media
     BE->>BE: Dispara Job assíncrono (DELETE_S3_MEDIA) com caminhos antigos
     BE-->>FE: Retorna UpdateAvatarResponse (200)
-    FE->>FE: Atualiza avatar reativamente no app (Zustand & Header)
+    FE->>FE: Atualiza avatar reativamente no app (Context & Header)
     Job->>MinIO: Remove arquivos antigos do avatar do MinIO em background
 ```
 
@@ -38,7 +38,7 @@ sequenceDiagram
 | **Recorte Visual** | `react-easy-crop` (UI interativa) | — (Processado em canvas antes do POST) |
 | **Upload de Imagem** | Formulário multipart em React | `UserResource.java` (`PATCH /user/avatar`) |
 | **Expurgo de Mídia** | — (Transparente para o usuário) | `JobService.java` (`createDeleteMediaJob`) |
-| **Resolução de Avatar**| `useAuthStore` (avatarUrl resolvido) | `UserAvatarService.java` (Batch check) |
+| **Resolução de Avatar**| `useAuth()` (React Context) | `UserAvatarService.java` (Batch check) |
 | **Busca de Perfis** | Barra de busca e filtros na UI | `UserDiscoveryService.java` (HQL Dinâmico) |
 | **Accent-Insensitivity**| — | Função PostgreSQL `f_unaccent(coluna)` |
 
@@ -55,7 +55,7 @@ sequenceDiagram
    - Grava a nova imagem no MinIO e atualiza a referência `avatarUrl` no banco da entidade `User`.
    - Para evitar que o disco ou o bucket MinIO fiquem poluídos com gigabytes de imagens de avatar desatualizadas e órfãs, o backend cria uma lista contendo os caminhos dos arquivos antigos e aciona o módulo de Jobs assíncronos: `JobService.createDeleteMediaJob(caminhosAntigos)`.
    - O job roda em background em poucos segundos e remove fisicamente todos os objetos órfãos do storage MinIO.
-4. **Atualização**: O backend retorna a nova URL de avatar segura assinada no DTO `UpdateAvatarResponse`. O frontend captura o retorno e atualiza a store reativa do Zustand, refletindo a nova imagem de perfil em todos os cabeçalhos e janelas de chat de forma instantânea.
+4. **Atualização**: O backend retorna a nova URL de avatar segura assinada no DTO `UpdateAvatarResponse`. O frontend captura o retorno e atualiza o contexto reativo de autenticação, refletindo a nova imagem de perfil em todos os cabeçalhos e janelas de chat de forma instantânea.
 
 ### B. O Motor de Busca Avançada (Accent-Insensitive)
 1. **Frontend**: O usuário digita um termo de busca (ex: "Érick") na barra de pesquisa e seleciona filtros adicionais de localização e idioma preferencial. Dispara `GET /user/search` com os parâmetros.

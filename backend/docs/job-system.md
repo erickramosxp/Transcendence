@@ -29,11 +29,12 @@ A feature `job` segue a organização por feature usada no backend:
 ```text
 job/
 ├── JobPayloads/
-│   ├── DeletePostMediaPayload.java
+│   ├── DeleteMediaPayload.java
 │   └── ProcessVideoPayload.java
 ├── app/
 │   ├── JobProcessor.java
 │   ├── JobService.java
+│   ├── JobStateService.java
 │   └── JobWorker.java
 ├── domain/
 │   └── Job.java
@@ -76,7 +77,7 @@ CREATE INDEX idx_jobs_fetch ON jobs(status, available_at, created_at);
 ### Significado dos campos
 
 - `id`: identificador do job.
-- `type`: tipo do job, por exemplo `DELETE_POST_MEDIA` ou `PROCESS_VIDEO`.
+- `type`: tipo do job, por exemplo `DELETE_S3_MEDIA` ou `PROCESS_VIDEO`.
 - `status`: estado atual do job.
 - `payload`: JSON serializado com os dados necessários para execução.
 - `attempts`: quantidade de falhas/retries já executados.
@@ -132,26 +133,23 @@ Após o processamento:
 
 ## Tipos de job
 
-### DELETE_POST_MEDIA
+### DELETE_S3_MEDIA
 
-Responsável por apagar a mídia de um post após soft delete.
+Responsável por apagar arquivos de mídia do storage (MinIO/S3) após deleção (como o soft delete de um post ou a substituição de avatar).
 
 Payload atual:
 
 ```java
-public class DeletePostMediaPayload {
-    public Long postId;
-    public String mediaUrl;
+public class DeleteMediaPayload {
+    public List<String> pathsToDelete;
     public Long requestedByUserId;
 }
 ```
 
 Fluxo:
 
-1. Buscar o post.
-2. Ler `mediaUrl`.
-3. Apagar o arquivo no storage.
-4. Se o post ainda apontar para essa mídia, limpar `post.mediaUrl`.
+1. Ler `pathsToDelete`.
+2. Iterar sobre a lista de caminhos e apagar cada arquivo no storage via `StorageService.delete(path)`.
 
 ### PROCESS_VIDEO
 
@@ -244,14 +242,13 @@ Handler futuro para compressão de vídeo e geração de thumbnail.
 
 Fluxo de exclusão de mídia:
 
-1. Usuário faz delete de post.
+1. Usuário faz delete de post ou altera seu avatar.
 2. O post entra em soft delete.
-3. O `JobService` cria um job `DELETE_POST_MEDIA`.
+3. O `JobService` cria um job `DELETE_S3_MEDIA`.
 4. O `JobWorker` pega o job quando ele estiver disponível.
 5. O `JobProcessor` direciona para `DeletePostMediaHandler`.
-6. O handler remove a mídia do storage.
-7. Se a mídia ainda estiver associada ao post, o campo `mediaUrl` é limpo.
-8. O job é marcado como `DONE`.
+6. O handler remove as mídias associadas do storage.
+7. O job é marcado como `DONE`.
 
 ## Exemplo de registro no banco
 
@@ -259,9 +256,9 @@ Fluxo de exclusão de mídia:
 
 ```sql
 id: 101
-type: DELETE_POST_MEDIA
+type: DELETE_S3_MEDIA
 status: PENDING
-payload: {"postId":42,"mediaUrl":"user/1/post/...","requestedByUserId":7}
+payload: {"pathsToDelete":["users/1/post/42/main_xxx.jpg"],"requestedByUserId":7}
 attempts: 0
 max_attempts: 5
 last_error: null
