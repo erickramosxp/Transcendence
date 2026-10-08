@@ -124,6 +124,12 @@
             <version>3.3.0</version>
         </dependency>
 
+        <!-- Manipulação gráfica com Java2D/AWT para imagens no build nativo -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-awt</artifactId>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>io.quarkus</groupId>

@@ -18,12 +18,19 @@
 ###
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
 WORKDIR /work/
-RUN chown 1001 /work \
+RUN microdnf install -y freetype fontconfig tar xz java-21-openjdk-headless \
+    && curl -s https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz | tar -xJ --strip-components=1 -C /usr/local/bin --wildcards '*/ffprobe' \
+    && chmod +x /usr/local/bin/ffprobe \
+    && microdnf remove -y tar xz \
+    && microdnf clean all \
+    && chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
+
+COPY --chown=1001:root target/*.so /work/
 COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
 
 EXPOSE 8080
 USER 1001
 
-ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0", "-Djava.awt.headless=true"]

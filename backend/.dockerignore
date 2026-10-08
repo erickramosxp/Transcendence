@@ -1,4 +1,6 @@
 target/
+!target/*-runner
+!target/*.so
 .quarkus/
 .git
 .gitignore
